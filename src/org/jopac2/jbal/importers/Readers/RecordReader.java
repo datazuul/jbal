@@ -29,8 +29,8 @@ import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.jopac2.jbal.dbGateway.LoadData;
-import org.jopac2.jbal.dbGateway.ParoleSpooler;
+import org.jopac2.jbal.importers.LoadData;
+import org.jopac2.jbal.importers.ParoleSpooler;
 
 public abstract  class RecordReader extends BufferedReader {
 	protected String tipoNotizia;
@@ -75,11 +75,13 @@ public abstract  class RecordReader extends BufferedReader {
 		
         while(this.ready()&&linea!=null) {
             linea=this.readRecord();
-            try {
+
+			try {
 				data.process(linea,tipoNotizia,idTipo,paroleSpooler);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+
             i++;
             
             if((i%1000)==0) {
