@@ -46,7 +46,6 @@ import java.sql.SQLException;
 
 import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.jopac2.jbal.dbGateway.DbGateway;
-import org.jopac2.jbal.dbGateway.LoadData;
 import org.jopac2.jbal.importers.Readers.XsltTransformer;
 
 public class DataImporter extends Thread {
@@ -104,7 +103,7 @@ public class DataImporter extends Thread {
 	
     private void loadData(InputStream f,String dbType, String temporaryDir) {
     	DbGateway.commitAll(conn);
-        LoadData ld=new LoadData(conn);
+        org.jopac2.jbal.dbGateway.LoadData ld=new org.jopac2.jbal.dbGateway.LoadData(conn);
         ld.doJob(f,dbType,temporaryDir,DbGateway.getClassID(conn[0], dbType));
         ld.destroy();
     }
