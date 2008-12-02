@@ -24,15 +24,15 @@ package org.jopac2.jbal.importers.Readers;
  * TODO: creare un'nterfaccia
  */
 
+
 import java.sql.SQLException;
 
 import org.apache.cocoon.xml.AttributesImpl;
+import org.jopac2.jbal.importers.LoadData;
+import org.jopac2.jbal.importers.ParoleSpooler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.jopac2.jbal.dbGateway.LoadData;
-import org.jopac2.jbal.dbGateway.ParoleSpooler;
 
 public abstract class XmlHandler extends DefaultHandler {
 	protected String rootElement, recordElement;
@@ -98,11 +98,13 @@ public abstract class XmlHandler extends DefaultHandler {
                     System.out.println(i+" record in "+ t +" minuti (" + i/t + " R/m)");
                 }
 
+
                 try {
-                	data.process("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n"+currentRecord.toString(),tipoNotizia,idTipo,paroleSpooler);
-    			} catch (SQLException e) {
-    				e.printStackTrace();
-    			} 
+					data.process("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n"+currentRecord.toString(),tipoNotizia,idTipo,paroleSpooler);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
             }
             currentRecord.delete(0, currentRecord.length());
         	isRecord=false;
