@@ -29,15 +29,16 @@ package org.jopac2.jbal.iso2709;
 */
 
 /**
- * JOpac2 - Modulo formato "Sebina". v. 0.1
+ * JOpac2 - Modulo formato "Unimarc". v. 0.1
  *          Questo modulo permette di importare dati registrati nel formato
- *          Sebina.
+ *          Unimarc generico.
  *
- * Sebina indice e Sebina è prodotto da Akros Informatica - Ravenna
  */
 
 
 public class Unimarc extends Marc {
+	public static String MONOGRAFIA="M";
+	public static String COLLANA="C";
 
   public Unimarc(String stringa,String dTipo) {
     super(stringa,dTipo);
