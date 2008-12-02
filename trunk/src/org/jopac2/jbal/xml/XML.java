@@ -345,4 +345,9 @@ public abstract class XML implements RecordInterface {
 		throw new JOpac2Exception(
 		"Error: method removeTags is not implemented");
 	}
+	
+	public void checkNSBNSE(String tag, String nsb, String nse) {
+		// TODO Auto-generated method stub
+		
+	}
 }

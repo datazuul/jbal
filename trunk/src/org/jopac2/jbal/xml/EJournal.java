@@ -170,4 +170,6 @@ public class EJournal extends XML {
 		r+=Utils.ifExists(". - ISSN ",getStandardNumber());
 		return r;
 	}
+
+
 }
