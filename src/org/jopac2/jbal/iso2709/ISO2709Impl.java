@@ -45,6 +45,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.importers.Readers.IsoRecordReader;
 import org.jopac2.jbal.importers.Readers.RecordReader;
 import org.jopac2.utils.BookSignature;
@@ -208,4 +209,16 @@ public class ISO2709Impl extends ISO2709 {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public void checkNSBNSE(String tag, String nsb, String nse) {
+		for(int i=0;i<dati.size();i++) {
+			if(dati.elementAt(i).startsWith(tag)) {
+				Tag t=new Tag(tag);
+				t.checkNSBNSE(nsb, nse);
+				dati.setElementAt(t.toString(), i);
+			}
+		}
+	}
+
+
 }
