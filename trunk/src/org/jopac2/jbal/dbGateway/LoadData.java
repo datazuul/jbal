@@ -44,7 +44,7 @@ import org.jopac2.jbal.importers.Readers.RecordReader;
  *
  *   CREARE ANCHE IL FILE DELLE BIBLIOTECHE!!
  *     */
-public class LoadData {
+public class LoadData implements org.jopac2.jbal.importers.LoadData {
   public Connection conn[];
   private PreparedStatement preparedNotizia[];
   private PreparedStatement preparedTempLCP[];
@@ -109,7 +109,7 @@ public void init(String outDir,long idTipo) {
   private long currentIdNotizia=-1;
   
   public void InsertParole(String valore,long id_notizia, long idSequenzaTag, long id_classe, 
-		  ParoleSpooler paroleSpooler) throws SQLException { // long id_de, 
+		  org.jopac2.jbal.importers.ParoleSpooler paroleSpooler) throws SQLException { // long id_de, 
     String parola;
     boolean asterisco_trovato=!(valore.indexOf(" *")<DbGateway.MAX_POSIZIONE_ASTERISCO)||!valore.contains(" *");
 
@@ -192,7 +192,7 @@ public void init(String outDir,long idTipo) {
    * @param paroleSpooler
    * @return
    */
-  public long InsertParola(String parola, ParoleSpooler paroleSpooler) {
+  public long InsertParola(String parola, org.jopac2.jbal.importers.ParoleSpooler paroleSpooler) {
 	  long r=-1;
       parola=DbGateway.pulisciParola(parola);
       
@@ -220,8 +220,11 @@ public void init(String outDir,long idTipo) {
       catch(Exception e) {}
       return r;
   }
+  
 
-  public void process(String stringa,String tipo,long idTipo, ParoleSpooler paroleSpooler) throws SQLException {
+
+  
+  public void process(String stringa,String tipo,long idTipo, org.jopac2.jbal.importers.ParoleSpooler paroleSpooler) throws SQLException {
 	  RecordInterface notizia;
 	  Enumeration<TokenWord> tags=null;
   
@@ -411,6 +414,8 @@ public void init(String outDir,long idTipo) {
 		return c;
 	}
   }
+
+
   
 
 }

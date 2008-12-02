@@ -40,7 +40,7 @@ import com.whirlycott.cache.CacheConfiguration;
 import com.whirlycott.cache.CacheException;
 import com.whirlycott.cache.CacheManager;
 
-public class ParoleSpooler {
+public class ParoleSpooler implements org.jopac2.jbal.importers.ParoleSpooler {
 	private PreparedStatement preparedParole[];
 	private int nvalues=100;
 	private String prepared="insert into anagrafe_parole (id,parola,stemma) values (?,?,?)";
