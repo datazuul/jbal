@@ -67,7 +67,7 @@ public abstract  class RecordReader extends BufferedReader {
 	public void setup(Connection conn) {}
 	public void destroy(Connection conn) {}
 	
-	public void parse(BufferedReader f, LoadData data) throws IOException {
+	public void parse(RecordReader f, LoadData data) throws IOException {
 		String linea="";
 		long start_time=System.currentTimeMillis();
 		long i=0;
