@@ -4,7 +4,6 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.jopac2.jbal.RecordInterface;
-import org.jopac2.jbal.dbGateway.DbGateway;
 
 public class SimilarityHelp {
 	public static float weightedSimilarity(RecordInterface ma, RecordInterface mb) {
@@ -56,8 +55,8 @@ public class SimilarityHelp {
 			return -1;
 		}
 		else {
-			StringTokenizer tka=new StringTokenizer(DbGateway.processaMarcatori(a),DbGateway.SEPARATORI_PAROLE);
-			StringTokenizer tkb=new StringTokenizer(DbGateway.processaMarcatori(b),DbGateway.SEPARATORI_PAROLE);
+			StringTokenizer tka=new StringTokenizer(JbalHelper.processaMarcatori(a),JbalHelper.SEPARATORI_PAROLE);
+			StringTokenizer tkb=new StringTokenizer(JbalHelper.processaMarcatori(b),JbalHelper.SEPARATORI_PAROLE);
 			
 			Vector<String> ta=new Vector<String>();
 			Vector<String> tb=new Vector<String>();
