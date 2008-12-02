@@ -333,4 +333,17 @@ public interface RecordInterface {
 	 * Verifica se nella notizia c'è la stringa nel tag e nel campo indicato
 	 */
 	public boolean contains(String tag, String field, String s);
+	
+	/**
+	 * Verifica la coerenza NSB - NSE per ogni campo in tutti i tag indicati.
+	 * NSB e NSE sono utilizzati normalmente per marcare la parte non significativa di un titolo, ovvero
+	 * dove inizia la parte da indicizzare.
+	 * Sono anche utilizzati i codici di controllo:
+	 * String nsb=(String.valueOf((char)0x1b)+"H");
+	 * String nse=(String.valueOf((char)0x1b)+"I");
+	 * @param tag
+	 * @param nsb
+	 * @param nse
+	 */
+	public void checkNSBNSE(String tag, String nsb, String nse);
 }
