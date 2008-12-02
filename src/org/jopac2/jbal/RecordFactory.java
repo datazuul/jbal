@@ -45,19 +45,19 @@ public class RecordFactory {
 		
 		try {
 			Class<RecordInterface> iso=null;
-			if(iso==null) iso=getClassForName("JOpac2.dataModules.iso2709."+type);
+			if(iso==null) iso=getClassForName("org.jopac2.jbal.iso2709."+type);
 			if(iso==null) {
-	    		iso=getClassForName("JOpac2.dataModules.iso2709."+type_upper);
+	    		iso=getClassForName("org.jopac2.jbal.iso2709."+type_upper);
 			}
 			
-			if(iso==null) iso=getClassForName("JOpac2.dataModules.sutrs."+type);
+			if(iso==null) iso=getClassForName("org.jopac2.jbal.sutrs."+type);
 			if(iso==null) {
-	    		iso=getClassForName("JOpac2.dataModules.sutrs."+type_upper);
+	    		iso=getClassForName("org.jopac2.jbal.sutrs."+type_upper);
 			}
 			
-			if(iso==null) iso=getClassForName("JOpac2.dataModules.xml."+type);
+			if(iso==null) iso=getClassForName("org.jopac2.jbal.xml."+type);
 			if(iso==null) {
-	    		iso=getClassForName("JOpac2.dataModules.xml."+type_upper);
+	    		iso=getClassForName("org.jopac2.jbal.xml."+type_upper);
 			}
 	    	
 			java.lang.reflect.Constructor c=iso.getConstructor(new Class[] {String.class, String.class, String.class });
