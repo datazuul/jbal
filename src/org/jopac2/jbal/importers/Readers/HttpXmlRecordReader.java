@@ -39,7 +39,7 @@ import java.io.*;
 import org.apache.xerces.parsers.SAXParser;
 import org.xml.sax.InputSource;
 
-import org.jopac2.jbal.dbGateway.LoadData;
+import org.jopac2.jbal.importers.LoadData;
 import org.jopac2.jbal.importers.Readers.RecordReader;
 
 public class HttpXmlRecordReader extends RecordReader  {
