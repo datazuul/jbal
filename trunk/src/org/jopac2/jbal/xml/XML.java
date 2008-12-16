@@ -53,8 +53,8 @@ import org.xml.sax.SAXException;
 
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.jbal.iso2709.ISO2709Impl;
-import org.jopac2.jbal.importers.Readers.RecordReader;
 import org.jopac2.utils.*;
 
 public abstract class XML implements RecordInterface {

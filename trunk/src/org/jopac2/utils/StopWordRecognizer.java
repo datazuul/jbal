@@ -71,7 +71,7 @@ public class StopWordRecognizer
 
 	/**
 	 * @param parola
-	 * @return true se la parola è nelle stopword, false altrimenti
+	 * @return true se la parola e' nelle stopword, false altrimenti
 	 */
 	public boolean isStopWord(String parola)
 	{
