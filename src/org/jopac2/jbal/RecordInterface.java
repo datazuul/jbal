@@ -32,7 +32,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
-import org.jopac2.jbal.importers.Readers.RecordReader;
+import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.JOpac2Exception;
 import org.jopac2.utils.TokenWord;
