@@ -44,8 +44,8 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
-import org.jopac2.jbal.importers.Readers.IsoTxtRecordReader;
-import org.jopac2.jbal.importers.Readers.RecordReader;
+import org.jopac2.jbal.Readers.IsoTxtRecordReader;
+import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.utils.*;
 
 public class Bibliowin4 extends ISO2709Impl {
