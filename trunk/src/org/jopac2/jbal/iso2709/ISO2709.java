@@ -43,8 +43,11 @@ import java.util.*;
 
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
-import org.jopac2.jbal.importers.Readers.RecordReader;
-import org.jopac2.utils.*;
+import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.utils.BookSignature;
+import org.jopac2.utils.JOpac2Exception;
+import org.jopac2.utils.TokenWord;
+import org.jopac2.utils.Utils;
 
 public abstract class ISO2709 implements RecordInterface {
   public Vector<String> dati;

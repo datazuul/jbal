@@ -45,9 +45,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.Readers.IsoRecordReader;
+import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.jbal.abstractStructure.Tag;
-import org.jopac2.jbal.importers.Readers.IsoRecordReader;
-import org.jopac2.jbal.importers.Readers.RecordReader;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.SimilarityHelp;
 //import java.lang.*;

@@ -50,8 +50,8 @@ import java.util.*;
 //import java.lang.*;
 //import java.sql.*;
 import org.jopac2.jbal.RecordInterface;
-import org.jopac2.jbal.importers.Readers.IsoRecordReader;
-import org.jopac2.jbal.importers.Readers.RecordReader;
+import org.jopac2.jbal.Readers.IsoRecordReader;
+import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.utils.*;
 
 public class Easyweb extends ISO2709Impl {
