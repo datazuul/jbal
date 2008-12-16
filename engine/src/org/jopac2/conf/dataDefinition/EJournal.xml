@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE class SYSTEM 'class.dtd'>
+
+<!--
+    Document   : EJournal.xml
+    Created on : 1 giugno 2006, 22.12
+    Author     : romano
+    Description:
+        
+-->
+
+<class  name="EJournal">
+
+<description>
+	<TIT>
+            <element tag="/record/Titolo" field="" />
+	</TIT>
+	<NUM>
+            <element tag="/record/ISSN" field="" />
+	</NUM>
+</description>
+</class>
