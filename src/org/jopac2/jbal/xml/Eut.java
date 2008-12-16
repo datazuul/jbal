@@ -31,9 +31,8 @@ import java.util.Vector;
 
 import org.xml.sax.SAXException;
 
-
-import org.jopac2.jbal.importers.Readers.MdbTableRecordReader;
-import org.jopac2.jbal.importers.Readers.RecordReader;
+import org.jopac2.jbal.Readers.MdbTableRecordReader;
+import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.utils.BookSignature;
 
 

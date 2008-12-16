@@ -2,8 +2,8 @@ package org.jopac2.jbal.sutrs;
 
 import java.io.BufferedReader;
 
-import org.jopac2.jbal.importers.Readers.RecordReader;
-import org.jopac2.jbal.importers.Readers.TxtIndexRecordReader;
+import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.jbal.Readers.TxtIndexRecordReader;
 import org.jopac2.utils.JOpac2Exception;
 
 
