@@ -1,35 +1,22 @@
+{{{
 TODO
-
 2. parserRicerche
 	eliminare pezzi non utili
 	stampa albero migliorare stampa albero del parser
-
 3. implementare suite test complessivo
-
 5. cambiare id_notizia da long a int
-
 6. gestire errori web in maniera decente
-
 7. manca in doRicercaBitArray, non serve perché effettuato in ricercaID_LCP
 			this.cardinality = b.cardinality();
 			this.id_lcp=-1;
-
 9. inserire query di verifica delle tabelle (ESQL di cocoon)
-
 11.implementare postgress
-
 12.design delle pagine di amministrazione
-
 13.mkiso fs per creazione di cd autoboot con applicazione customizzata completa
-
 14. completare inserimento e cancellazione notizie (con maschere)
-
 15bis. cosa fa se metto 'TIT=vie piazze trieste' ??
-
 16. guardare log4j
-
 17. da verificare liste per titolo su treviso: pochi titoli che iniziano in alfabeto
-
 18. ricerca per più parole in liste
 query:
 select distinct a.parola,b.parola
@@ -39,17 +26,11 @@ and (b.id_classe=2 and b.posizione_parola=1 and b.parola>='|ruolo' )
 and a.id_notizia=b.id_notizia 
 and a.id_sequenza_tag=b.id_sequenza_tag
 ORDER BY a.parola,b.parola LIMIT 10
-
 19. verificare cosa è |ruolo
-
 20. fare indice apposito su questi campi
-
 21. eliminare la tabella parole da query successive nella creione liste
-
 22. verificare il compact delle tabelle (riduzione spazio a seguito di aggiunta indici)
-
 23. eliminare indice solo su parole su notizie_posizione_parole
-
 24. stemma di numeri
 25. aggiungere porter al catalogo demo
 26. Try this URL: http://yourwebapp/?cocoon-reload=1
@@ -155,3 +136,4 @@ and dr.id_ricerca=4
 and lcp.id_classe in (1,2)
 group by stemma 
 order by stemma
+}}}
