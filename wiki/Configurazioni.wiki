@@ -1,3 +1,6 @@
 =per creare il db=
 
 lanciare org.jopac2.engine.command.JOpac2Import
+
+=struttura db=
+org.jopac2.engine.dbGateway.createAllTables
