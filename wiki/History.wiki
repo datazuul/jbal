@@ -1,3 +1,4 @@
+{{{
 History
 23.04.2006	AC usare classe BitSet di java al posto di BitArray home made
 		   	ok eliminare classe bitarray e usare solo bitset
@@ -33,3 +34,4 @@ History
 28.08.2007	RT Eliminata classe JOpac2DBManager e consolidati i metodi in DBGateway
 30.08.2007	RT Aggiunti metodi setup(Connection conn) e destroy(Connection conn) a RecordReader
 31.08.2007	RT se con search= non viene specificata la classe assume una ricerca in ANY
+}}}
