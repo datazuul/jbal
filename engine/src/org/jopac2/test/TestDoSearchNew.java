@@ -30,12 +30,14 @@ import java.util.SortedMap;
 import java.util.Vector;
 
 import org.jopac2.engine.NewSearch.DoSearchNew;
+import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.dbGateway.StaticDataComponent;
 import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
 import org.jopac2.engine.utils.MyTimer;
 import org.jopac2.engine.utils.SearchResultSet;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.utils.ZipUnzip;
 
 
 /**
@@ -147,15 +149,15 @@ public class TestDoSearchNew {
 	
 	public static void testListe() throws SQLException {
 		String id_classe="2";
-		String from_parola="";
+		String from_parola="i";
 		
 		Hashtable<String,Integer> h=new Hashtable<String,Integer>();
-		String sql="SELECT distinct id_parola,posizione_parola,parola " +
+		String sql="SELECT distinct id_parola,posizione_parola,p.parola " +
 			"FROM notizie_posizione_parole a, anagrafe_parole p " +
 			"WHERE a.id_parola=p.id and a.id_classe="+id_classe+" and a.posizione_parola=0 " +
-			"and parola>='"+from_parola+"' " +
+			"and p.parola>='"+from_parola+"' " +
 			"ORDER BY p.parola " +
-			"LIMIT 100";
+			"LIMIT 1";
 
 	
 			Statement stmt=conn.createStatement();
@@ -174,9 +176,9 @@ public class TestDoSearchNew {
 					int id_notizia=rs0.getInt("id_notizia");
 					int id_sequenza_tag=rs0.getInt("id_sequenza_tag");
 
-					String sql1="SELECT b.id_sequenza_tag,b.id_parola,b.posizione_parola,p.parola " +
+					String sql1="SELECT b.id_sequenza_tag,b.id_parola,b.posizione_parola,p.parola,id_notizia " +
 								"FROM notizie_posizione_parole b, anagrafe_parole p " +
-								"WHERE  b.id_parola=p.id and b.id_notizia=" + id_notizia + " " +
+								"WHERE b.id_parola=p.id and b.id_notizia=" + id_notizia + " " +
 								"and b.id_classe=" + id_classe + " " +
 								"and b.id_sequenza_tag="+id_sequenza_tag +" " +
 								"order by id_notizia, posizione_parola";
@@ -187,6 +189,10 @@ public class TestDoSearchNew {
 
 					while(rs1.next()) {
 						cur_name+=rs1.getString("parola")+" ";
+						String w=rs1.getString("id_notizia");
+						RecordInterface recordInterface=DbGateway.getNotiziaByJID(conn, w);
+						System.out.println(recordInterface);
+						
 					}
 					cur_name=cur_name.trim();
 					//System.out.println(cur_name);
@@ -240,6 +246,8 @@ public class TestDoSearchNew {
 	
 	public static void main(String[] args) throws ExpressionException, SQLException {
 		Init();	
+		
+		testListe();
 		String str="";
 		str="2=in&2=sergio&2=trampus&2=pippo";
 		str="2=i&2=promessi&2=sposi&(2=trampus|2=alighieri|2=caramia|2=manzoni)";		
