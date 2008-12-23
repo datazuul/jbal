@@ -28,6 +28,7 @@ import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.dbGateway.StaticDataComponent;
 import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
 import org.jopac2.engine.utils.SearchResultSet;
+import org.jopac2.jbal.RecordInterface;
 
 /**
  * 
@@ -72,5 +73,9 @@ public class DoSearchNew {
 		result.setQueryCount(resultSet.size());
 		result.setRecordIDs(resultSet);
 		return result;
+	}
+
+	public RecordInterface getRecord(Long t) {
+		return DbGateway.getNotiziaByJID(conn, t.longValue());
 	}
 }
