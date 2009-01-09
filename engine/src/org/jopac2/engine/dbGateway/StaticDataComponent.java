@@ -86,7 +86,7 @@ public final class StaticDataComponent { //, Contextualizable, ThreadSafe {
   
    public void init() {
 	    staticclient = new SBAInternalClient(); 
-            
+
 	    stopword=new StopWordRecognizer();
 	    stopword.LoadList(new File(path+"stopwords.lst"));
    }
