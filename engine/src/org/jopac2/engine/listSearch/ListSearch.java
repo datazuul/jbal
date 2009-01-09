@@ -4,17 +4,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Vector;
 
 import org.jopac2.engine.dbGateway.StaticDataComponent;
 
-
 public class ListSearch {
 	
-	public static Vector<String> testListe(Connection conn,String classe,String fromParola,int limit) throws SQLException {	
+	public static Vector<String> listSearch(Connection conn,String classe,String fromParola,int limit) throws SQLException {	
 		long idClasse=StaticDataComponent.getChannelIndexbyName(classe);
 		Hashtable<String, Integer> h = new Hashtable<String, Integer>();
 		//estrae le parole>=al parametro passato che sono nelle classe passata delle notizie in posizione 0
