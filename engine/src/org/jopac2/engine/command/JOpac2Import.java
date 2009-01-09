@@ -41,7 +41,7 @@ public class JOpac2Import {
 	
 	private void doJob() {
 		DataImporter dataimporter=new DataImporter(inputFile,filetype,JOpac2confdir, conns, clearDatabase);
-		dataimporter.run();
+		dataimporter.start();
 	}
 
 	private void destroy() throws SQLException, IOException {
