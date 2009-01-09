@@ -95,8 +95,8 @@ public class Utils {
   
   public static String removeAccents(String s){
 	  try {
-		  //return Normalizer.decompose( s, false,0 ).replaceAll( "\\p{InCombiningDiacriticalMarks}+", "" );
-		  return Normalizer.normalize(s, java.text.Normalizer.Form.NFKC, 0).replaceAll( "\\p{InCombiningDiacriticalMarks}+", "" );
+		  return Normalizer.decompose( s, false,0 ).replaceAll( "\\p{InCombiningDiacriticalMarks}+", "" );
+		  //return Normalizer.normalize(s, java.text.Normalizer.Form.NFKC, 0).replaceAll( "\\p{InCombiningDiacriticalMarks}+", "" );
 	  } catch ( NoSuchMethodError ex ) {
 		  s = s.toUpperCase();
 		  s = s.replaceAll( "[åË€çÌ]", "A" );

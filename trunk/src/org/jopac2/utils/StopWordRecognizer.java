@@ -52,18 +52,19 @@ public class StopWordRecognizer
 	{
 		try
 		{
-			BufferedReader br = new BufferedReader(new FileReader(f));
-			while(br.ready())
-			{
-				stopWordList.add(br.readLine().toLowerCase());
+			if(!f.exists()) {
+				System.err.println("Not found: "+f.getCanonicalPath());
 			}
-			br.close();
+			else {
+				BufferedReader br = new BufferedReader(new FileReader(f));
+				while(br.ready())
+				{
+					stopWordList.add(br.readLine().toLowerCase());
+				}
+				br.close();
+			}
 		}
-		catch(FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
