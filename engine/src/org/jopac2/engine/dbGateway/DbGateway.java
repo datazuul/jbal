@@ -1138,39 +1138,7 @@ public final class DbGateway {
 	      }
 		return r;
 	}
-	/**
-	 * restituisce elenco di notizie
-	 * @param myConnection
-	 * @param lclasseid
-	 * @param offset
-	 * @return
-	 */
-	public static Vector<Long> listRecordsNotizie(Connection myConnection, int lclasseid, String offset) {
-		Vector<Long> r=new Vector<Long>();
-		String query="SELECT id_notizia, id_parola,posizione_parola,parola " +
-				"FROM notizie_posizione_parole a, anagrafe_parole p " +
-				"WHERE a.id_parola=p.id and a.id_classe="+lclasseid+" and a.posizione_parola=0 ";
-		if((offset!=null)&&(offset.length()>0)) query=query+"and parola>='"+offset+"' ";
-		query=query+"ORDER BY a.posizione_parola,p.parola " +
-				"LIMIT 10";
-		
-		 desc(myConnection,query);
-		 
-		try {
-	        Statement stmt=myConnection.createStatement();
-	        ResultSet rs=stmt.executeQuery(query);
-	        while(rs.next()) {
-	        	r.add(rs.getLong("id_notizia"));
-	        }
-	        rs.close();
-	        stmt.close();
-	      }
-	      catch (Exception e) {
-	        e.printStackTrace();
-	      }
-		return r;
-	}
-	
+
 	/**
 	 * ricostruisce la stringa legata ad un valore rispettando la posizione delle parole
 	 * @param myConnection
