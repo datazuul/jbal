@@ -169,7 +169,7 @@ public class TestDoSearchNew {
 	public static void testListe(){
 		Vector<String> v;
 		try {
-			v = ListSearch.testListe(conn,"TIT","i",3);
+			v = ListSearch.listSearch(conn,"TIT","i",3);
 			for(int i=0;i<v.size();i++) {
 				String c=v.elementAt(i);
 				System.out.println(c);//+": "+h.get(c));
