@@ -61,6 +61,7 @@ public class SearchResultSet {
     private Vector<Long> recordIDs=null;
     private long queryCount;
     private double queryTime;
+    private boolean stemmer=false;
     
     public void setQuery(String query) {this.query=query;}
     public void setOptimizedQuery(String optimizedQuery) {this.optimizedQuery=optimizedQuery;}
@@ -68,6 +69,7 @@ public class SearchResultSet {
     public void setRecordIDs(Vector<Long> recordIDs) {this.recordIDs=recordIDs;}
     public void setQueryCount(long queryCount) {this.queryCount=queryCount;}
     public void setQueryTime(double queryTime) {this.queryTime=queryTime;}
+    public void setStemmer(boolean stemmerStatus) {this.stemmer=stemmerStatus;}
     
     public String getQuery() {return query;}
     public String getOptimizedQuery() {return optimizedQuery;}
@@ -75,4 +77,5 @@ public class SearchResultSet {
     public Vector<Long> getRecordIDs() {return recordIDs;}
     public long getQueryCount() {return queryCount;}
     public double getQueryTime() {return queryTime;}
+    public boolean getStemmer() {return stemmer;}
 }
