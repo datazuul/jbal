@@ -4,17 +4,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Hashtable;
 import java.util.Vector;
 
 import org.jopac2.engine.dbGateway.StaticDataComponent;
+import org.jopac2.engine.utils.SearchResultSet;
 
 public class ListSearch {
 	
-	public static Vector<String> listSearch(Connection conn,String classe,String fromParola,int limit) throws SQLException {	
+	public static SearchResultSet listSearch(Connection conn,String classe,String fromParola,int limit) throws SQLException {	
 		long idClasse=StaticDataComponent.getChannelIndexbyName(classe);
-		Hashtable<String, Integer> h = new Hashtable<String, Integer>();
+		//Hashtable<String, Vector<Integer>> h = new Hashtable<String, Vector<Integer>>();
+		Vector<Long> listResult=new Vector<Long>();
 		//estrae le parole>=al parametro passato che sono nelle classe passata delle notizie in posizione 0
 		String sql = "SELECT distinct id_parola,posizione_parola,p.parola "
 				   + "  FROM notizie_posizione_parole a, anagrafe_parole p "
@@ -43,7 +43,11 @@ public class ListSearch {
 			ResultSet rs0 = stmt0.executeQuery();
 			while (rs0.next()) {
 				int id_notizia = rs0.getInt("id_notizia");
-				int id_sequenza_tag = rs0.getInt("id_sequenza_tag");
+				
+				listResult.addElement(new Long(id_notizia));
+				
+/*				int id_sequenza_tag = rs0.getInt("id_sequenza_tag");
+				
 				//per ciascuna notizia e id_sequenza_tag determinata, riscostruisce la sequenza del titolo in cur_name 
 				String sql1 = "SELECT b.id_sequenza_tag,b.id_parola,b.posizione_parola,p.parola,id_notizia "
 						    + "  FROM notizie_posizione_parole b, anagrafe_parole p "
@@ -70,12 +74,16 @@ public class ListSearch {
 				cur_name = cur_name.trim(); 
 				//conteggio occorrenze di cur_name
 				if (h.containsKey(cur_name)) {
-					h.put(cur_name, new Integer(h.get(cur_name).intValue() + 1));
+					Vector<Integer> vt=h.get(cur_name);
+					vt.addElement(new Integer(id_notizia));
+					h.put(cur_name, vt);
 				} else {
-					h.put(cur_name, new Integer(1));
+					Vector<Integer> vt=new Vector<Integer>();
+					vt.addElement(new Integer(id_notizia));
+					h.put(cur_name, vt);
 				}
 				rs1.close();
-				stmt1.close();
+				stmt1.close(); */
 			}
 			rs0.close();
 			stmt0.close();
@@ -83,8 +91,12 @@ public class ListSearch {
 		rs.close();
 		stmt.close();
 		conn.close();
-		Vector<String> v = new Vector<String>(h.keySet());
-		Collections.sort(v);
-		return v;
+		//Vector<String> v = new Vector<String>(h.keySet());
+		//Collections.sort(v);
+		//return v;
+		
+		SearchResultSet result=new SearchResultSet();
+		result.setRecordIDs(listResult);
+		return result;
 	}
 }
