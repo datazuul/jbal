@@ -52,7 +52,8 @@ public class DoSearchNew {
 	}
 	
 	public SearchResultSet executeSearch(String query, boolean useStemmer) throws ExpressionException {
-		SearchResultSet result = new SearchResultSet(); 		
+		SearchResultSet result = new SearchResultSet();
+		result.setStemmer(useStemmer);
 		long start_time = System.currentTimeMillis();
 		resultSet.clear();		
 		result.setQuery(query);
