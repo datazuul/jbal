@@ -37,7 +37,8 @@ import java.util.Vector;
 
 import java.net.URLDecoder;
 
-import sun.text.NormalizerImpl;
+import sun.text.normalizer.NormalizerImpl;
+
 
 
 public class Utils {
