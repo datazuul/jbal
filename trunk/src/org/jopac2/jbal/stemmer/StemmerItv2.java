@@ -378,11 +378,11 @@ public class StemmerItv2 extends Radice {
                 	 * (c'e' stato un problema di codifca caratteri sui sorgenti)
                 	 * 
                 	 */
-                case 'à': // a accentata
-                case 'è': // e accentata
-                case 'ì': // i accentata
-                case 'ò': { k = k-1; precedente = true; break; } // ò accentata
-                //case 'ù': { k = k-1; break; } // u accentata
+                case '√†': // a accentata
+                case '√®': // e accentata
+                case '√¨': // i accentata
+                case '√≤': { k = k-1; precedente = true; break; } // o accentata
+                //case '√π': { k = k-1; break; } // u accentata
                 default: return;
             }
         }
