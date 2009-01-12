@@ -1,10 +1,12 @@
-import sun.text.NormalizerImpl;
+import sun.text.normalizer.NormalizerImpl;
+
+
 
 
 public class Test {
 
 	public static void main(String[] args) {
-		String s="ˆ˜";
+		String s="Ã¨Ã Ã¬Ã¹Ã²ÄÅ¡Å¾Ä‘";
 		s=NormalizerImpl.canonicalDecomposeWithSingleQuotation(s).replaceAll( "\\p{InCombiningDiacriticalMarks}+", "" );
 		
 		System.out.println(s);
