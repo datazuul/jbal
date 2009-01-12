@@ -37,7 +37,8 @@ import java.util.Vector;
 
 import java.net.URLDecoder;
 
-import sun.text.Normalizer;
+import sun.text.NormalizerImpl;
+
 
 public class Utils {
 
@@ -95,8 +96,16 @@ public class Utils {
   
   public static String removeAccents(String s){
 	  try {
+		  /**
+		   * Normalizer e' cambiato da java 5 a java 6.
+		   * Questa soluzione l'ho trovata guardando il codice di java.text.Normalizer.java in jdk6
+		   */
+		  return NormalizerImpl.canonicalDecomposeWithSingleQuotation(s).replaceAll( "\\p{InCombiningDiacriticalMarks}+", "" );
+		  /*
+		  return NormalizerImpl.canonicalDecomposeWithSingleQuotation(s);
 		  return Normalizer.decompose( s, false,0 ).replaceAll( "\\p{InCombiningDiacriticalMarks}+", "" );
-		  //return Normalizer.normalize(s, java.text.Normalizer.Form.NFKC, 0).replaceAll( "\\p{InCombiningDiacriticalMarks}+", "" );
+		  return Normalizer.normalize(s, sun.text.Normalizer..Form.NFKD, 0).replaceAll( "\\p{InCombiningDiacriticalMarks}+", "" );
+		  */
 	  } catch ( NoSuchMethodError ex ) {
 		  s = s.toUpperCase();
 		  s = s.replaceAll( "[åË€çÌ]", "A" );
