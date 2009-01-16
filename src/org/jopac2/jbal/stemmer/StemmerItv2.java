@@ -84,8 +84,8 @@ public class StemmerItv2 extends Radice {
      * La variabile mod segnala se sono stati trovati questi suffissi
      * La variabile s memorizza quante lettere sono state tolte dalla fine della
      *    parola
-     * se la variabile mod √® true viene controllato se ci sono anche i suffissi
-     *    ando endo ar er ir e cos√¨ vengono modificati e si esce
+     * se la variabile mod e' true viene controllato se ci sono anche i suffissi
+     *    ando endo ar er ir e cosi' vengono modificati e si esce
      * senno viene ripristinata la parola iniziale riaggiungento a k la s
      */
     private void step0() {
@@ -167,7 +167,7 @@ public class StemmerItv2 extends Radice {
             if ((ends("icatore"))&&(k-7>=r2)) { k = k - 7 ; modifica = false; return;}
             if ((ends("icatori"))&&(k-7>=r2)) { k = k - 7; modifica = false; return;}
             
-            if ((ends("abilitÔøΩ"))&&(k-7>=r2)) { k = k - 7; modifica = false; return;}
+            if ((ends("abilito"))&&(k-7>=r2)) { k = k - 7; modifica = false; return;}
             
             if ((ends("icativo"))&&(k-7>=r2)) { k = k - 7; modifica = false; return;}
             if ((ends("icativi"))&&(k-7>=r2)) { k = k - 7; modifica = false; return;}
@@ -199,8 +199,8 @@ public class StemmerItv2 extends Radice {
             if (ends("logia")&&(k-5>=r2)) { setto("log"); modifica = false; return;}
             if (ends("logie")&&(k-5>=r2)) { setto("log"); modifica = false; return;}
             
-            if ((ends("icitÔøΩ"))&&(k-5>=r2)) { k = k - 5; modifica = false; return;}
-            if ((ends("ivitÔøΩ"))&&(k-5>=r2)) { k = k - 5; modifica = false; return;}
+            if ((ends("icito"))&&(k-5>=r2)) { k = k - 5; modifica = false; return;}
+            if ((ends("ivito"))&&(k-5>=r2)) { k = k - 5; modifica = false; return;}
             
             if ((ends("ativo"))&&(k-5>=r2)) { k = k - 5; modifica = false; return;}
             if ((ends("ativi"))&&(k-5>=r2)) { k = k - 5; modifica = false; return;}
@@ -219,9 +219,9 @@ public class StemmerItv2 extends Radice {
             if (ends("ista")&&(k-4>=r2)) {k = k - 4; modifica = false; return;}
             if (ends("iste")&&(k-4>=r2)) {k = k - 4; modifica = false; return;}
             if (ends("isti")&&(k-4>=r2)) {k = k - 4; modifica = false; return;}
-            if (ends("istÔøΩ")&&(k-4>=r2)) {k = k - 4; modifica = false; return;}
-            if (ends("istÔøΩ")&&(k-4>=r2)) {k = k - 4; modifica = false; return;}
-            if (ends("istÔøΩ")&&(k-4>=r2)) {k = k - 4; modifica = false; return;}
+            if (ends("isto")&&(k-4>=r2)) {k = k - 4; modifica = false; return;}
+            if (ends("isto")&&(k-4>=r2)) {k = k - 4; modifica = false; return;}
+            if (ends("isto")&&(k-4>=r2)) {k = k - 4; modifica = false; return;}
             if (ends("ante")&&(k-4>=r2)) {k = k - 4; modifica = false; return;}
             if (ends("anti")&&(k-4>=r2)) {k = k - 4; modifica = false; return;}
             
@@ -238,7 +238,7 @@ public class StemmerItv2 extends Radice {
             if (ends("osa")&&(k-3>=r2)) { k = k - 3; modifica = false; return;}
             if (ends("ose")&&(k-3>=r2)) { k = k - 3; modifica = false; return;}
         
-            if (ends("itÔøΩ")&&(k-3>=r2)) { k = k - 3; modifica = false; return;}
+            if (ends("ito")&&(k-3>=r2)) { k = k - 3; modifica = false; return;}
             
             if (ends("ivo")&&(k-3>=r2)) { k = k - 3; modifica = false; return;}
             if (ends("ivi")&&(k-3>=r2)) { k = k - 3; modifica = false; return;}
@@ -250,7 +250,7 @@ public class StemmerItv2 extends Radice {
      }
      
     /* step2() toglie determinati suffissi
-     * Viene eseguita se e solo se la variabile modifica ÔøΩ true.
+     * Viene eseguita se e solo se la variabile modifica ò true.
      * Questa variabile viene modificata nello step1(), diventa true se non
      * viene trovato nessun suffisso senno diventa false. 
      */
@@ -327,16 +327,16 @@ public class StemmerItv2 extends Radice {
             if (ends("ava")&&(k-3>=rv)) { k = k - 3; return;}
             if (ends("avi")&&(k-3>=rv)) { k = k - 3; return;}
             if (ends("avo")&&(k-3>=rv)) { k = k - 3; return;}
-            if (ends("erÔøΩ")&&(k-3>=rv)) { k = k - 3; return;}
+            if (ends("ero")&&(k-3>=rv)) { k = k - 3; return;}
             if (ends("ere")&&(k-3>=rv)) { k = k - 3; return;}
-            if (ends("erÔøΩ")&&(k-3>=rv)) { k = k - 3; return;}
+            if (ends("ero")&&(k-3>=rv)) { k = k - 3; return;}
             if (ends("ete")&&(k-3>=rv)) { k = k - 3; return;}
             if (ends("eva")&&(k-3>=rv)) { k = k - 3; return;}
             if (ends("evi")&&(k-3>=rv)) { k = k - 3; return;}
             if (ends("evo")&&(k-3>=rv)) { k = k - 3; return;}
-            if (ends("irÔøΩ")&&(k-3>=rv)) { k = k - 3; return;}
+            if (ends("iro")&&(k-3>=rv)) { k = k - 3; return;}
             if (ends("ire")&&(k-3>=rv)) { k = k - 3; return;}
-            if (ends("irÔøΩ")&&(k-3>=rv)) { k = k - 3; return;}
+            if (ends("iro")&&(k-3>=rv)) { k = k - 3; return;}
             if (ends("ita")&&(k-3>=rv)) { k = k - 3; return;}
             if (ends("ite")&&(k-3>=rv)) { k = k - 3; return;}
             if (ends("iti")&&(k-3>=rv)) { k = k - 3; return;}
@@ -371,18 +371,8 @@ public class StemmerItv2 extends Radice {
                 case 'a':
                 case 'e':
                 case 'i':
-                case 'o':
-                //case 'u':
-                	/**
-                	 * TODO: Controllare le lettere accentate con la versione originale!!
-                	 * (c'e' stato un problema di codifca caratteri sui sorgenti)
-                	 * 
-                	 */
-                case '√†': // a accentata
-                case '√®': // e accentata
-                case '√¨': // i accentata
-                case '√≤': { k = k-1; precedente = true; break; } // o accentata
-                //case '√π': { k = k-1; break; } // u accentata
+                case 'o': { k = k-1; precedente = true; break; }
+                //case 'ù': { k = k-1; break; } // u accentata
                 default: return;
             }
         }
@@ -403,7 +393,7 @@ public class StemmerItv2 extends Radice {
     }
     
     /* Funzione che determina i valori di r1 e r2
-     * che decino se una determinato suffisso puÔøΩ essere eliminato o no
+     * che decino se una determinato suffisso può essere eliminato o no
      * r1 viene determinato come la prima consonate preceduta da vocale
      * r2 viene determinato come la prima consonate preceduta da vocale dopo r1
      */
@@ -486,11 +476,11 @@ public class StemmerItv2 extends Radice {
     
     
     /* Funzione che determina il valore di rv
-     * che decide se una determinato suffisso puÔøΩ essere eliminato o no.
-     * Se la seconda lettere ÔøΩ una consonate rv diventa la prima vocale successiva.
+     * che decide se una determinato suffisso può essere eliminato o no.
+     * Se la seconda lettere ò una consonate rv diventa la prima vocale successiva.
      * Se le prime due lettere sono vocali rv diventa la prima consonante successiva.
      * Negli altri casi rv diventa la terza lettera.
-     * Se perÔøΩ la parola ÔøΩ piÔøΩ corta rv rimane a zero.
+     * Se però la parola ò piò corta rv rimane a zero.
      */
     private void puntatorerv(){
         int indice = 0;
@@ -499,7 +489,7 @@ public class StemmerItv2 extends Radice {
         if (indice == k)
              return;
         
-        // if dove la seconda lettera ÔøΩ una consonante
+        // if dove la seconda lettera ò una consonante
         if (cons(1)) {
             indice = 1;
             //va avanti fino a quando non trova una vocale
@@ -516,7 +506,7 @@ public class StemmerItv2 extends Radice {
                     } 
                 }
             }
-        } // fine if dove la seconda lettera ÔøΩ una consonante
+        } // fine if dove la seconda lettera ò una consonante
         
         // if dove le prime due lettere sono vocali
         if ((!cons(0))&&(!cons(1))) {
@@ -548,9 +538,9 @@ public class StemmerItv2 extends Radice {
         return;
     }
     
-    /* Determina se all'iesima posizone c'ÔøΩ una consonante o una vocale
-     * torna true se ÔøΩ una consonante
-     * e false se ÔøΩ una vocale
+    /* Determina se all'iesima posizone c'ò una consonante o una vocale
+     * torna true se ò una consonante
+     * e false se ò una vocale
      */
     private boolean cons(int i){
        switch (b[i]){
@@ -558,12 +548,7 @@ public class StemmerItv2 extends Radice {
            case 'e':
            case 'i':
            case 'o':
-           case 'u':
-           case 225:
-           case 233:
-           case 237:
-           case 243:
-           case 250: return false;
+           case 'u':return false;
            default: return true;
        }
    }
