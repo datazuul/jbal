@@ -1,5 +1,7 @@
 package org.jopac2.jbal.stemmer;
 
+import org.jopac2.utils.Utils;
+
 public class Radice extends Stemmer {
 		public Radice() {
 			super();
@@ -17,6 +19,7 @@ public class Radice extends Stemmer {
 	    * gli spazi.
 	    */
 	   public String radice (String parola){
+		   parola=Utils.removeAccents(parola);
 	       //char[] w = new char[501];
 	       int ch;
 	       String u;
