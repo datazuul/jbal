@@ -325,12 +325,12 @@ public interface RecordInterface {
 	public boolean contains(String s);
 	
 	/**
-	 * Verifica se nella notizia c'è la stringa nel tag indicato, indifferentemente da campo
+	 * Verifica se nella notizia c'e' la stringa nel tag indicato, indifferentemente da campo
 	 */
 	public boolean contains(String tag, String s);
 	
 	/**
-	 * Verifica se nella notizia c'è la stringa nel tag e nel campo indicato
+	 * Verifica se nella notizia c'e' la stringa nel tag e nel campo indicato
 	 */
 	public boolean contains(String tag, String field, String s);
 	
@@ -346,4 +346,10 @@ public interface RecordInterface {
 	 * @param nse
 	 */
 	public void checkNSBNSE(String tag, String nsb, String nse);
+	
+	/**
+	 * Inserisce come titolo il title
+	 * @param title
+	 */
+	public void setTitle(String title);
 }
