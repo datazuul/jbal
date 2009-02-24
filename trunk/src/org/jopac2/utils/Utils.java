@@ -37,14 +37,13 @@ import java.util.Vector;
 
 import java.net.URLDecoder;
 
-import sun.text.normalizer.NormalizerImpl;
-
-
+import com.ibm.icu.text.Transliterator;
 
 public class Utils {
 
   public static String cr=String.valueOf((char)13);
   public static String lf=String.valueOf((char)10);
+
   
   public static final String SEPARATORI_PAROLE=" ,.;()/-'\\:=@%$&!?[]#*<>\016\017";
   
@@ -95,30 +94,11 @@ public class Utils {
     return query.replaceAll("%26", "&").replaceAll("&amp;", "&");
   }
   
-  public static String removeAccents(String s){
-	  try {
-		  /**
-		   * Normalizer e' cambiato da java 5 a java 6.
-		   * Questa soluzione l'ho trovata guardando il codice di java.text.Normalizer.java in jdk6
-		   */
-		  return NormalizerImpl.canonicalDecomposeWithSingleQuotation(s).replaceAll( "\\p{InCombiningDiacriticalMarks}+", "" );
-		  /*
-		  return NormalizerImpl.canonicalDecomposeWithSingleQuotation(s);
-		  return Normalizer.decompose( s, false,0 ).replaceAll( "\\p{InCombiningDiacriticalMarks}+", "" );
-		  return Normalizer.normalize(s, sun.text.Normalizer..Form.NFKD, 0).replaceAll( "\\p{InCombiningDiacriticalMarks}+", "" );
-		  */
-	  } catch ( NoSuchMethodError ex ) {
-		  s = s.toUpperCase();
-		  s = s.replaceAll( "[åË€çÌ]", "A" );
-		  s = s.replaceAll( "[æéèƒ]", "E" );
-		  s = s.replaceAll( "[ëíìê]", "I" );
-		  s = s.replaceAll( "[ïñ…îÍ]", "O" );
-		  s = s.replaceAll( "[óô†ò]", "U" );
-		  s = s.replaceAll( "‚", "C" );
-		  s = s.replaceAll( "„", "N" );
-		  return s;
-	  }
-  }
+  static Transliterator accentsconverter = Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
+  
+  public static String removeAccents(String s) {
+		return accentsconverter.transliterate(s);
+	}
   
   
   /**
