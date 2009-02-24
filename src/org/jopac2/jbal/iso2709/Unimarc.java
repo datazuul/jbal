@@ -47,4 +47,8 @@ public class Unimarc extends Marc {
   public Unimarc(String stringa,String dTipo,String livello) {
     super(stringa,dTipo,livello);
   }
+  
+  public void setTitle(String title) {
+	  addTag("200 1"+dl+"a"+title);
+  }
 }

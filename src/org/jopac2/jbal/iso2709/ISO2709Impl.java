@@ -220,5 +220,10 @@ public class ISO2709Impl extends ISO2709 {
 		}
 	}
 
+	public void setTitle(String title) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
