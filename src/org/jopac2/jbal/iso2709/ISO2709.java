@@ -94,7 +94,7 @@ public abstract class ISO2709 implements RecordInterface {
   protected String recordStatus="n";
   protected String recordType="a";
   protected String recordBiblioLevel="m";
-  protected String recordHierarchicalLevelCode="0";
+  protected String indicatorLength="0";
 
   public String getType() {
        return recordType;
@@ -121,11 +121,11 @@ public abstract class ISO2709 implements RecordInterface {
   }
   
   public String getHierarchicalLevelCode(){
-  	return recordHierarchicalLevelCode;
+  	return indicatorLength;
   }
   
   public void setHierarchicalLevelCode(String lCode){
-  	recordHierarchicalLevelCode = lCode;
+  	indicatorLength = lCode;
   }
   
   public boolean hasLinkUp() {
@@ -380,6 +380,11 @@ public Vector<String> getTag(String tag) {
   
   public String toReadableString() {
 	  StringBuffer r=new StringBuffer();
+	  r.append("Record status: "+recordStatus+"\n");
+	  r.append("Record type: "+recordType+"\n");
+	  r.append("Record biblio level: "+recordBiblioLevel+"\n");
+	  r.append("Record hierarchical level code: "+indicatorLength+"\n");
+	  
 	  for(int i=0;i<dati.size();i++) {
 		  r.append(dati.elementAt(i).replaceAll("["+dl+"]", "^")+"\n");
 	  }
@@ -436,12 +441,32 @@ public Vector<String> getTag(String tag) {
     inString=stringa;
 
     try {
+    	/**
+    	 * http://www.ifla.org/VI/3/p1996-1/uni.htm
+    	 * 
+    	 
+			Record length						5			0-4
+			Record status						1			5
+			Implementation codes				4			6-9
+			Indicator length					1			10
+			Subfield identifier length			1			11
+			Base address of data				5			12-16
+			Additional record definition		3			17-19
+			Directory map						4			20-23
+
+    	 */
+    	
+    	
       long recordlength = Long.parseLong((String)stringa.substring(0,5));
       if(recordlength > 0) {
+    	// record status
         recordStatus = stringa.substring(5,6);
+        // 2 bytes, are "Implementation Codes"
         recordType = stringa.substring(6,7);
         recordBiblioLevel = stringa.substring(7,8);
-        recordHierarchicalLevelCode = stringa.substring(8,9);
+        
+        // indicatorLength
+        indicatorLength = stringa.substring(8,9);
 
         //String EntryMap = stringa.substring(20,24);
         int readed = 24;
