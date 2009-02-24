@@ -92,7 +92,7 @@ public class Bibliowin4 extends ISO2709Impl {
 					recordStatus = stringa.substring(5, 6);
 					recordType = stringa.substring(6, 7);
 					recordBiblioLevel = stringa.substring(7, 8);
-					recordHierarchicalLevelCode = stringa.substring(8, 9);
+					indicatorLength = stringa.substring(8, 9);
 				} else {
 					dati.addElement(in[i]);
 					if (in[i].startsWith("001"))
