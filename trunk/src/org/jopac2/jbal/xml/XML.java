@@ -172,7 +172,7 @@ public abstract class XML implements RecordInterface {
   /**
    * 13/2/2003 - R.T.
    *    Modificato, ritorna un vettore con i contenuti
-   *    invece degli html. Il resto verrà fatto fuori.
+   *    invece degli html. Il resto verrï¿½ fatto fuori.
    */
   public Vector<RecordInterface> getHasParts() {
     return linkDown;
@@ -350,4 +350,7 @@ public abstract class XML implements RecordInterface {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void setTitle(String title) {}
+
 }
