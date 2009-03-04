@@ -351,6 +351,68 @@ public abstract class XML implements RecordInterface {
 		
 	}
 	
-	public void setTitle(String title) {}
+	public void setTitle(String title)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void addAuthor(String author)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void addClassification(String classification)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void addComment(String comment)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void addEditor(String editor)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void addPart(RecordInterface part)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void addPartOf(RecordInterface partof)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void addSerie(RecordInterface serie)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void addSubject(String subject)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void setAbstract(String abstractText)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void setDescription(String description)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void setEdition(String edition)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void setISBD(String isbd)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void setPublicationDate(String publicationDate)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void setPublicationPlace(String publicationPlace)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+
+	public void setStandardNumber(String standardNumber) throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
 
 }
