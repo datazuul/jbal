@@ -86,7 +86,10 @@ public void initLinkUp() {
         for(int i=0;i<v.size();i++) {
         	RecordInterface not=RecordFactory.buildRecord(0,(String)v.elementAt(i),this.getTipo(),this.getLivello());
           //ISO2709 not=ISO2709.creaNotizia(0,(String)v.elementAt(i),this.getTipo(),this.getLivello());
-
+        	if(tag.equals("410")) {
+        		not.removeTags("410");
+        		not.setBiblioLevel(Unimarc.COLLANA); // Cosi' è giusto ma controllare il nome del campo!! Non e' il tipo?!
+        	}
     	  r.addElement(not);
         }
       }
