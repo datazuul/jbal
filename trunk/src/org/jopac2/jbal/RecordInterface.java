@@ -108,16 +108,37 @@ public interface RecordInterface {
 	 * Restituisce un vettore di record inferiori
 	 */
 	public Vector<RecordInterface> getHasParts();
+	
+	/**
+	 * aggiunge una monografia inferiore
+	 * @param part
+	 * @throws JOpac2Exception 
+	 */
+	public void addPart(RecordInterface part) throws JOpac2Exception;
 
 	/**
-	 * Restituisce un vettore di record inferiori
+	 * Restituisce un vettore di record superiori
 	 */
 	public Vector<RecordInterface> getIsPartOf();
+	
+	/**
+	 * aggiunge una monografia supeiore
+	 * @param partof
+	 * @throws JOpac2Exception 
+	 */
+	public void addPartOf(RecordInterface partof) throws JOpac2Exception;
 
 	/**
 	 * Restituisce un vettore di record di collana
 	 */
 	public Vector<RecordInterface> getSerie();
+	
+	/**
+	 * aggiunge un record di collana
+	 * @param serie
+	 * @throws JOpac2Exception 
+	 */
+	public void addSerie(RecordInterface serie) throws JOpac2Exception;
 	
 	/**
 	 * Restituisce un vettore di record associati al tag indicato
@@ -182,24 +203,51 @@ public interface RecordInterface {
 	 * Restituisce un vettore di autori
 	 */
 	public Vector<String> getAuthors(); // Autori
+	
+	/**
+	 * Aggiunge un autore al record
+	 * @param author
+	 * @throws JOpac2Exception 
+	 */
+	public void addAuthor(String author) throws JOpac2Exception;
 
 	/**
 	 * Restituisce un vettore di soggetti
 	 * @return
 	 */
 	public Vector<String> getSubjects(); // Soggetti
+	
+	/**
+	 * Aggiunge un subject al record
+	 * @param subject
+	 * @throws JOpac2Exception 
+	 */
+	public void addSubject(String subject) throws JOpac2Exception;
 
 	/**
 	 * Restituisce un vettore di classificazioni
 	 * @return
 	 */
 	public Vector<String> getClassifications(); // Classificazioni
+	
+	/**
+	 * Aggiunge una classificazione al record
+	 * @throws JOpac2Exception 
+	 */
+	public void addClassification(String classification) throws JOpac2Exception;
 
 	/**
 	 * Restituisce un vettore di editori
 	 * @return
 	 */
 	public Vector<String> getEditors(); // Editori
+	
+	/**
+	 * Aggiunge un editore al record
+	 * @param editor
+	 * @throws JOpac2Exception 
+	 */
+	public void addEditor(String editor) throws JOpac2Exception;
 
 	/**
 	 * Restituisce l'informazione sull'edizione
@@ -208,16 +256,36 @@ public interface RecordInterface {
 	public String getEdition(); // Edizione
 	
 	/**
+	 * Imposta l'indicazione di edizione
+	 * @param edition
+	 * @throws JOpac2Exception 
+	 */
+	public void setEdition(String edition) throws JOpac2Exception;
+	
+	/**
 	 * Restituisce l'informazione sul luogo di edizione
 	 * @return
 	 */
 	public String getPublicationPlace(); // Luogo di pubblicazione
+	
+	/**
+	 * imposta l'indicazione sul luogo di pubblicazione
+	 * @throws JOpac2Exception 
+	 */
+	public void setPublicationPlace(String publicationPlace) throws JOpac2Exception;
 
 	/**
 	 * Restituisce l'informazione sulla data di pubblicazione
 	 * @return
 	 */
 	public String getPublicationDate(); // Data di pubblicazione
+	
+	/**
+	 * imposta l'indicazione sulla data di pubblicazione
+	 * @param publicationDate
+	 * @throws JOpac2Exception 
+	 */
+	public void setPublicationDate(String publicationDate) throws JOpac2Exception;
 
 	/**
 	 * Restituisce il titolo associato al volume descritto nel
@@ -227,11 +295,25 @@ public interface RecordInterface {
 	public String getTitle(); // Titolo
 
 	/**
+	 * imposta il titolo
+	 * @param title
+	 * @throws JOpac2Exception 
+	 */
+	public void setTitle(String title) throws JOpac2Exception;
+	
+	/**
 	 * Restituisce una descrizione ISBD per il volume descritto nel record 
 	 * bibliografico corrente
 	 * @return
 	 */
 	public String getISBD(); // ISBD
+	
+	/**
+	 * imposta la descrizione ISBD
+	 * @param isbd
+	 * @throws JOpac2Exception 
+	 */
+	public void setISBD(String isbd) throws JOpac2Exception;
 
 	/**
 	 * Restituisce un vettore di localizzazioni per il record bibliografico corrente
@@ -251,6 +333,13 @@ public interface RecordInterface {
 	 * @return
 	 */
 	public String getAbstract(); // Abstract
+	
+	/**
+	 * imposta l'abstract del record
+	 * @param abstractText
+	 * @throws JOpac2Exception 
+	 */
+	public void setAbstract(String abstractText) throws JOpac2Exception;
 
 	/**
 	 * Restituisce la descrizione fisica del volume descritto nel
@@ -258,6 +347,13 @@ public interface RecordInterface {
 	 * @return
 	 */
 	public String getDescription(); // Descrizione fisica
+	
+	/**
+	 * imposta la descrizione fisica del volume
+	 * @param description
+	 * @throws JOpac2Exception 
+	 */
+	public void setDescription(String description) throws JOpac2Exception;
 
 	/**
 	 * Costruisce una rappresentazione ISO2709 per il record bibliografico
@@ -286,10 +382,24 @@ public interface RecordInterface {
 	public String getStandardNumber();
 	
 	/**
+	 * imposta il numero standard ISBN o ISSN
+	 * @param standardNumber
+	 * @throws JOpac2Exception 
+	 */
+	public void setStandardNumber(String standardNumber) throws JOpac2Exception;
+	
+	/**
 	 * Restituisce le note sul materiale
 	 * @return
 	 */
 	public String getComments();
+	
+	/**
+	 * aggiunge un commento (nota) al record
+	 * @param comment
+	 * @throws JOpac2Exception 
+	 */
+	public void addComment(String comment) throws JOpac2Exception;
 
 	/**
 	 * Rimuove le signatures (inventari, collocazioni e altri codici gestionali della biblioteca)
@@ -346,10 +456,4 @@ public interface RecordInterface {
 	 * @param nse
 	 */
 	public void checkNSBNSE(String tag, String nsb, String nse);
-	
-	/**
-	 * Inserisce come titolo il title
-	 * @param title
-	 */
-	public void setTitle(String title);
 }
