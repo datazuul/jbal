@@ -32,7 +32,7 @@ package org.jopac2.jbal.iso2709;
  *          Questo modulo permette di importare dati registrati nel formato
  *          Sosebi (export Unimarc).
  *
- * Sosebi è prodotto da So.Se.Bi. Italia
+ * Sosebi ï¿½ prodotto da So.Se.Bi. Italia
  */
 
 
@@ -46,9 +46,11 @@ package org.jopac2.jbal.iso2709;
 
 import java.util.*;
 
+import org.jopac2.jbal.abstractStructure.Field;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.*;
 
-public class Sosebi extends Marc {
+public class Sosebi extends Unimarc {
 
   public Sosebi(String stringa,String dTipo) {
     super(stringa,dTipo);
@@ -68,33 +70,34 @@ public class Sosebi extends Marc {
  *         Se serve anche il polo ci lo mettiamo nel codice della biblioteca?
  * 24/6/2003 - R.T.
  *         Deve trasportare anche la consistenza, nel caso sia un periodico.
- *         Ciascun elemento del vettore è una coppia (biblioteca,dati).
- *         Biblioteca è una coppia (codice_biblioteca, nome_biblioteca).
+ *         Ciascun elemento del vettore e' una coppia (biblioteca,dati).
+ *         Biblioteca e' una coppia (codice_biblioteca, nome_biblioteca).
  *         I dati sono una coppia (collocazione, inventario)
- *         Collocazione è una coppia (collocazione, sintesi_posseduto)
+ *         Collocazione e' una coppia (collocazione, sintesi_posseduto)
  *         Inventario e' una String
- *         Se non è un periodico sintesi_posseduto sarà null o String vuota.
+ *         Se non e' un periodico sintesi_posseduto sara' null o String vuota.
  * 16/9/2004 - R.T.
- *         Riformulato. Non usa più coppie ma l'oggetto BookSignature.
+ *         Riformulato. Non usa piu' coppie ma l'oggetto BookSignature.
  *         Ritorna un vettore di BookSignatures.
  */
 public Vector<BookSignature> getSignatures() {
-    Vector<String> v=getTag("950");
+    Vector<Tag> v=getTags("950");
     Vector<BookSignature> res=new Vector<BookSignature>();
-    String biblioteca=getFirstElement(getFirstTag("801"),"b");
+    Tag bi=getFirstTag("801");
+    String biblioteca=bi.getField("b").getContent();
     if(v.size()>0) {
       for(int i=0;i<v.size();i++) {
 //        String biblioteca=getFirstElement((String)v.elementAt(i),"a");
-        String codBib=getFirstElement((String)v.elementAt(i),"e").substring(0,2);
+        String codBib=v.elementAt(i).getField("e").getContent().substring(0,2);
 
-        Vector<String> collocazioni=getElement((String)v.elementAt(i),"d");
-        Vector<String> inventari=getElement((String)v.elementAt(i),"e");
-        Vector<String> sintesi=getElement((String)v.elementAt(i),"b");
+        Vector<Field> collocazioni=v.elementAt(i).getFields("d");
+        Vector<Field> inventari=v.elementAt(i).getFields("e");
+        Vector<Field> sintesi=v.elementAt(i).getFields("b");
 
         for(int j=0;j<collocazioni.size();j++) {
           String r="";
           try {
-            String t=(String)collocazioni.elementAt(j);
+            String t=(String)collocazioni.elementAt(j).getContent();
             r+=t.substring(2,12);
             if(!t.substring(12,24).startsWith("/")) {
               r+="/";
@@ -109,9 +112,9 @@ public Vector<BookSignature> getSignatures() {
             r+="[Errore decodifica]";
           }
 
-          String te=((String)inventari.elementAt(j)).substring(2,5)+" ";
-          String sin=((String)sintesi.elementAt(j));
-          te+=((String)inventari.elementAt(j)).substring(5,14);
+          String te=inventari.elementAt(j).getContent().substring(2,5)+" ";
+          String sin=sintesi.elementAt(j).getContent();
+          te+=inventari.elementAt(j).getContent().substring(5,14);
           
           res.addElement(new BookSignature(codBib,biblioteca,te,r,sin));
         }
@@ -123,9 +126,14 @@ public Vector<BookSignature> getSignatures() {
   public String quote(String s) {
     String r=super.quote(s);
     r=r.replaceAll("\0161\017","'*");
-    r=r.replaceAll("\016A\017u","ù");
+    r=r.replaceAll("\016A\017u","?");
 
 
     return r;
   }
+
+public void addSignature(BookSignature signature) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
 }

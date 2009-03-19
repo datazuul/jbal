@@ -35,7 +35,7 @@ package org.jopac2.jbal.iso2709;
  *          Questo modulo permette di importare dati registrati nel formato
  *          CDS ISIS / BIBLO.
  *
- * CDS ISIS è prodotto dall'UNESCO
+ * CDS ISIS ï¿½ prodotto dall'UNESCO
  *
  * TODO: come vengono visualizzati e cercati i terzi livelli? Come vengono visualizzati?
  * 
@@ -46,12 +46,18 @@ import java.util.*;
 //import java.lang.*;
 //import java.sql.*;
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.abstractStructure.Delimiters;
+import org.jopac2.jbal.abstractStructure.Tag;
+import org.jopac2.jbal.classification.ClassificationInterface;
+import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.*;
 
 public class Isisbiblo extends ISO2709Impl {
 	private final static String rt="#";
 	private final static String ft="#";
-	private final static String dl="^";        //' delimiter	
+	private final static String dl="^";        //' delimiter
+	
+
 
     public Isisbiblo(String stringa, String dTipo) {
     super();
@@ -94,14 +100,16 @@ public class Isisbiblo extends ISO2709Impl {
 
   // ritorna un vettore di elementi biblo
 public Vector<RecordInterface> getLink(String tag) {
-    String v=getFirstTag(tag);
+    Tag v=getFirstTag(tag);
 
     Vector<RecordInterface> r=new Vector<RecordInterface>();
     try {
-      if(v.length()>0) { // se il vettore ha elementi, allora faro' almeno una query
+      if(v!=null) { // se il vettore ha elementi, allora faro' almeno una query
           Isisbiblo not=new Isisbiblo();    // crea un nuovo elemento Isisbiblo
-          not.dati=new Vector<String>();
-          not.dati.addElement("011"+v.substring(3));
+          not.dati=new Vector<Tag>();
+          Tag t=new Tag("011",' ',' ');
+          t.setRawContent(v.getRawContent());
+          not.dati.addElement(t);
  //          ISO2709.creaNotizia(0,v,this.getTipo(),this.getLivello());
  //         Utils.Log("Display:");
  //         Utils.Log(not.toTag());
@@ -117,18 +125,16 @@ public Vector<RecordInterface> getLink(String tag) {
   }
 
 public Vector<String> getAuthors() {
-    Vector<String> v=getTag("041");     // Autore principale
-    v.addAll(getTag("051"));    // coAutore principale
-    v.addAll(getTag("054"));    // altri Autori
+    Vector<Tag> v=getTags("041");     // Autore principale
+    v.addAll(getTags("051"));    // coAutore principale
+    v.addAll(getTags("054"));    // altri Autori
 
     Vector<String> r=new Vector<String>();
     if(v.size()>0) {
       for(int i=0;i<v.size();i++) {
         
-        String k=getFirstElement((String)v.elementAt(i),"C")+
-        	getFirstElement((String)v.elementAt(i),"c")+
-        	", "+getFirstElement((String)v.elementAt(i),"N")+
-        	getFirstElement((String)v.elementAt(i),"n");
+        String k=Utils.ifExists("", v.elementAt(i).getField("C"),v.elementAt(i).getField("c"))+
+        	Utils.ifExists(", ",v.elementAt(i).getField("N"),v.elementAt(i).getField("n"));
         r.addElement(k);
       }
     }
@@ -154,25 +160,25 @@ public Vector<String> getAuthors() {
  *          741^V = numero volume
  *          001 = inventario
  * 16/9/2004 - R.T.
- *     Riformulato. Non usa più coppia ma ritorna un vettore
+ *     Riformulato. Non usa piu' coppia ma ritorna un vettore
  *     di BookSignature per maggiore chiarezza
  */
 public Vector<BookSignature> getSignatures() {
-    String v=getFirstTag("741"); // prende dati collocazione
+    Tag v=getFirstTag("741"); // prende dati collocazione
     Vector<BookSignature> res=new Vector<BookSignature>();
     
     try {
-	    String codiceBib=getFirstElement(v,"B")+getFirstElement(v,"b");
-	    String b=((String)(getFirstTag("712"))).substring(3); // prende la biblioteca (nome?)
+	    String codiceBib=v.getField("B").getContent()+v.getField("b").getContent();
+	    String b=getFirstTag("712").getRawContent(); // prende la biblioteca (nome?)
 	    
 	    
-	    String col=getFirstElement(v,"S")+getFirstElement(v,"s")+
-	    	"/"+getFirstElement(v,"F")+getFirstElement(v,"f");     // collocazione
-	    col+=Utils.ifExists("/",getFirstElement(v,"N")+getFirstElement(v,"n"));
-	    String inv=((String)(getTag("001").elementAt(0))).substring(3); // prende l'inventario
+	    String col=v.getField("S").getContent()+v.getField("s").getContent()+
+	    	"/"+v.getField("F").getContent()+v.getField("f").getContent();     // collocazione
+	    col+=Utils.ifExists("/",v.getField("N"),v.getField("n"));
+	    String inv=getFirstTag("001").getRawContent(); // prende l'inventario
 	    String con="";
 	    try {
-	        con=((String)getFirstTag("173")).substring(3);     // consistenza del periodico
+	        con=getFirstTag("173").getRawContent();     // consistenza del periodico
 	    }
 	    catch (Exception e) {
 	        con="";
@@ -203,7 +209,7 @@ public Vector<BookSignature> getSignatures() {
      * <...=.....> devo togliere le angolate e prendere solo la parte a sx dell'=
      * <....> ...... devo togliere le angolate e mettere l'asterisco
      * <....> / oppore un separatore devo togilere le angolate e basta
-     * <<....=....> .... >...... questo è un caso certo
+     * <<....=....> .... >...... questo e' un caso certo
      *
      * Questo caso va bene (mette solo gli *)
      * <... >..... = <... >......
@@ -279,34 +285,35 @@ public Vector<BookSignature> getSignatures() {
 
   public String getTitle() {
     String r="";
-    String tag=getFirstTag("011");
-    r=getFirstElement(tag,"T");
+    Tag tag=getFirstTag("011");
+    r=tag.getField("T").getContent();
 //    Utils.Log("Titolo: "+r);
     return r;
   }
 
   public String getISBD() {
     String r="";
-    String tag=getFirstTag("011");                          				// AREA 1
-    r=getFirstElement(tag,"T") + getFirstElement(tag,"t") + 				// titolo proprio
-        Utils.ifExists(" : ",getFirstElement(tag,"C")+getFirstElement(tag,"c")) +    // compl. titolo
-        Utils.ifExists(" = ",getFirstElement(tag,"P")+getFirstElement(tag,"p")) +    // titolo parallelo
-        Utils.ifExists(" / ",getFirstElement(tag,"R")+getFirstElement(tag,"r")) +    // resp. princip.
-        Utils.ifExists(" ; ",getFirstElement(tag,"A")+getFirstElement(tag,"a")) +    // altra respon.
-        Utils.ifExists(" . ",getFirstElement(tag,"S")+getFirstElement(tag,"s")) +    // titolo successivo
-        Utils.ifExists(" ; ",getFirstElement(tag,"V")+getFirstElement(tag,"v"));     // numero di volume se è una collana. Se è monografia non c'è il ^V
+    Tag tag=getFirstTag("011");                          				// AREA 1
+    r=Utils.ifExists("",tag.getField("T"),tag.getField("t")) + 				// titolo proprio
+        Utils.ifExists(" : ",tag.getField("C"),tag.getField("c")) +    // compl. titolo
+        Utils.ifExists(" : ",tag.getField("P"),tag.getField("p")) +    // titolo parallelo
+        Utils.ifExists(" : ",tag.getField("R"),tag.getField("r")) +    // resp. princip.
+        Utils.ifExists(" : ",tag.getField("A"),tag.getField("a")) +    // altra respon.
+        Utils.ifExists(" : ",tag.getField("S"),tag.getField("s")) +    // titolo successivo
+        Utils.ifExists(" : ",tag.getField("V"),tag.getField("v"));     // numero di volume se e' una collana. 
+    																							 // Se e' monografia non c'e' il ^V
     
-    String t=getFirstTag("012");                            // AREA 2
-    if(t.length()>0) {
-      r+=Utils.ifExists(". - ",getFirstElement(t,"E")+getFirstElement(t,"e")+
-    		  ", "+getFirstElement(t,"R")+getFirstElement(t,"r"));
+    tag=getFirstTag("012");                            // AREA 2
+    if(tag!=null) {
+      r+=Utils.ifExists(". - ",tag.getField("E"),tag.getField("e"))+
+      Utils.ifExists(", ",tag.getField("R"),tag.getField("r"));
     }
-    t=getFirstTag("014");
-    r+=Utils.ifExists(". - ",getFirstElement(t,"L")+getFirstElement(t,"l")+
-        Utils.ifExists(" : ",getFirstElement(t,"N")+getFirstElement(t,"n"))+
-        Utils.ifExists(", ",getFirstElement(t,"D")+getFirstElement(t,"d")));
-    t=getFirstTag("015");
-    r+=Utils.ifExists(" ; ",getFirstElement(t,"E")+getFirstElement(t,"e"));
+    tag=getFirstTag("014");
+    r+=Utils.ifExists(". - ",tag.getField("L"),tag.getField("l"))+
+        Utils.ifExists(" : ",tag.getField("N"),tag.getField("n"))+
+        Utils.ifExists(", ",tag.getField("D"),tag.getField("d"));
+    tag=getFirstTag("015");
+    r+=Utils.ifExists(" ; ",tag.getField("E"),tag.getField("e"));
     
     // commento
     r+=Utils.ifExists(" ((", getFirstTag("172"));
@@ -314,9 +321,6 @@ public Vector<BookSignature> getSignatures() {
     return quote(r);
   }
 
-  /*
-   * TODO Implementare metodo getEdition
-   */
   public String getEdition() {
   	return null;
   }
@@ -336,5 +340,146 @@ public Vector<BookSignature> getSignatures() {
 public String getDescription() {
 	// TODO Auto-generated method stub
 	return null;
+}
+
+@Override
+public Vector<String> getClassifications() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public Vector<String> getEditors() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public Vector<RecordInterface> getLinked(String tag) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public String getPublicationDate() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public String getPublicationPlace() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public Vector<String> getSubjects() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public void addAuthor(String author) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addClassification(ClassificationInterface data) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addComment(String comment) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addPart(RecordInterface part) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addPartOf(RecordInterface partof) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addSerie(RecordInterface serie) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addSignature(BookSignature signature) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addSubject(SubjectInterface subject) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void clearSignatures() throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public String getComments() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public String getStandardNumber() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public void setAbstract(String abstractText) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setDescription(String description) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setEdition(String edition) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setISBD(String isbd) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setPublicationDate(String publicationDate) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setPublicationPlace(String publicationPlace) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setStandardNumber(String standardNumber) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setTitle(String title) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setTitle(String title, boolean significant) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addPublisher(String publisher) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
 }
 }

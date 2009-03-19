@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 
 import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.jbal.Readers.TxtIndexRecordReader;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.JOpac2Exception;
 
 
@@ -42,7 +43,13 @@ public class PregressoImages_sutrs extends Sutrs {
   }
   
   public void init(String stringa) {
-	  addTag("001"+stringa);
+	  Tag t=new Tag("001",' ',' ');
+	  try {
+		t.setRawContent(stringa);
+	} catch (JOpac2Exception e) {
+		e.printStackTrace();
+	}
+	addTag(t);
 	  setBid(stringa);
   }
   

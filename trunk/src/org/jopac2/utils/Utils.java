@@ -37,6 +37,9 @@ import java.util.Vector;
 
 import java.net.URLDecoder;
 
+import org.jopac2.jbal.abstractStructure.Field;
+import org.jopac2.jbal.abstractStructure.Tag;
+
 import com.ibm.icu.text.Transliterator;
 
 public class Utils {
@@ -155,6 +158,56 @@ public class Utils {
       return(l);
   }
   
+  /**
+   * Return a string concatenation of prefix and (e1 || e2) content
+   * or empty string
+   * Note: if e1 has a value e2 is not evaluated
+   * @param prefix
+   * @param e1
+   * @param e2
+   * @return
+   */
+  public static String ifExists(String prefix, Field e1, Field e2) {
+	  String r="";
+	  if(e1!=null && e1.getContent().length()>0) {
+		  r+=prefix+e1.getContent();
+	  }
+	  else if(e2!=null && e2.getContent().length()>0) {
+		  r+=prefix+e2.getContent();
+	  }
+	  return r;
+  }
+  
+  /**
+   * Return a string concatenation of prefix and e1
+   * or empty string
+   * @param prefix
+   * @param e1
+   * @return
+   */
+  public static String ifExists(String prefix, Field e1) {
+	  String r="";
+	  if(e1!=null && e1.getContent().length()>0) {
+		  r+=prefix+e1.getContent();
+	  }
+	  return r;
+  }
+  
+  /**
+   * Return a string concatenation of prefix and tag.getRawContent
+   * or empty string
+   * @param prefix
+   * @param tag
+   * @return
+   */
+  public static String ifExists(String prefix, Tag tag) {
+	  String r="";
+	  if(tag!=null && tag.getRawContent().length()>0) {
+		  r+=prefix+tag.getRawContent();
+	  }
+	  return r;
+  }
+  
   public static String ifExists(String prefix,String element) {
     if(element!=null && element.length()>0) {
       return prefix+element;
@@ -183,7 +236,7 @@ public class Utils {
   }
 
   public static String unQuote(String s) {
-  /** @todo che cosa è dl? mettere una roba decente */
+  /** @todo che cosa ï¿½ dl? mettere una roba decente */
     String dl="";
     String ctk;
     String r="";
@@ -278,7 +331,7 @@ public class Utils {
      while(tk.hasMoreTokens()) {  // qui dentro lavoro solo sul gruppo &
        //TreeMap andItems=new TreeMap();
        
-   // il token ha solo stringhe in and, mi basta che quella con cardinalità
+   // il token ha solo stringhe in and, mi basta che quella con cardinalitï¿½
    // minore sia in testa
        andQuery=tk.nextToken();
        andCQuery="";
@@ -289,7 +342,7 @@ public class Utils {
          classe=item.substring(0,item.indexOf("="));
          parola=item.substring(item.indexOf("=")+1);
 
-         // classe può essere un numero o una stringa. Se e' una stringa prendi il numero.
+         // classe puï¿½ essere un numero o una stringa. Se e' una stringa prendi il numero.
          try {
            // ovvero prova a dedurne un numero
          	Integer i=new Integer(classe);

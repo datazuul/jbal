@@ -53,8 +53,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.iso2709.ISO2709Impl;
+import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.BookSignature;
+import org.jopac2.utils.JOpac2Exception;
 //import org.xml.sax.XMLReader;
 @SuppressWarnings("unchecked")
 public class Rdf extends ISO2709Impl {
@@ -384,5 +388,116 @@ public class Rdf extends ISO2709Impl {
 public String getDescription() {
 	// TODO Auto-generated method stub
 	return null;
+}
+
+@Override
+public Vector<RecordInterface> getLinked(String tag) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public void addAuthor(String author) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addClassification(ClassificationInterface data) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addComment(String comment) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addPart(RecordInterface part) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addPartOf(RecordInterface partof) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addSerie(RecordInterface serie) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addSignature(BookSignature signature) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addSubject(SubjectInterface subject) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void clearSignatures() throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public String getComments() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public String getStandardNumber() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public void setAbstract(String abstractText) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setDescription(String description) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setEdition(String edition) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setISBD(String isbd) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setPublicationDate(String publicationDate) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setPublicationPlace(String publicationPlace) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setStandardNumber(String standardNumber) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setTitle(String title) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setTitle(String title, boolean significant) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addPublisher(String publisher) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
 }
 }

@@ -47,6 +47,10 @@ package org.jopac2.jbal.iso2709;
 
 import java.util.*;
 
+import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.abstractStructure.Tag;
+import org.jopac2.jbal.classification.ClassificationInterface;
+import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.JOpac2Exception;
 
@@ -91,8 +95,17 @@ return null;
   }
 
   public Vector<String> getAuthors() {
-    return this.getElement(getTag("300"),"a");
-  }
+	    Vector<Tag> v=getTags("300");
+	    Vector<String> r=new Vector<String>();
+	    String k="";
+	    if(v.size()>0) {
+	      for(int i=0;i<v.size();i++) {
+	        k=v.elementAt(i).getField("a").getContent();
+	        r.addElement(k);
+	      }
+	    }
+	    return r;
+	  }
 
 /**
  * 13/2/2003 - R.T.
@@ -109,35 +122,31 @@ return null;
  *         I dati sono una coppia (collocazione, inventario)
  *         Collocazione e' una coppia (collocazione, sintesi_posseduto)
  *         Inventario e' una String
- *         Se non � un periodico sintesi_posseduto sara' null o String vuota.
+ *         Se non e' un periodico sintesi_posseduto sara' null o String vuota.
  */
   public Vector<BookSignature> getSignatures() {
-    String s=getFirstElement(getFirstTag("002"),"n");
+    String s=getFirstTag("002").getField("n").getContent();
     Vector<BookSignature> r=new Vector<BookSignature>();
     s=s.replaceAll("html","TIF");
-    String t=getFirstTag("330");
+    Tag t=getFirstTag("330");
     
     r.addElement(new BookSignature(s, "Catalogo Pregresso per autore", 
-    		getFirstElement(t,"a"), 
-    		getFirstElement(t,"b")));
+    		t.getField("a").getContent(), 
+    		t.getField("b").getContent()));
   	return r;
   }
   
-  /* (non-Javadoc)
-   * @see JOpac2.dataModules.iso2709.ISO2709Impl#clearSignatures()
-   */
-  @Override
   public void clearSignatures() throws JOpac2Exception {
   	this.removeTag("002");
   	this.removeTag("330");
   }
 
   public String getTitle() {
-    String r=getFirstElement(getFirstTag("310"),"a");
+    String r=getFirstTag("310").getField("a").getContent();
 
 //  	String r=getFirstTag("310"); //getFirstElement(getFirstTag("310"),"a");
   	
-  	if(r.length()==0)  getFirstElement(getFirstTag("100"),"a"); 
+  	if(r.length()==0)  getFirstTag("100").getField("a").getContent(); 
   	// r=getFirstTag("100");
     
   	//r=r.substring(r.indexOf(";a"));
@@ -152,7 +161,7 @@ return null;
 
   public String getISBD() {
     String r=getTitle();
-    String k=getFirstElement(getFirstTag("311"),"a");
+    String k=getFirstTag("311").getField("a").getContent();
     if(k!=null && k.length()>0) r=r+" / "+k;
     return r;
   }
@@ -167,5 +176,153 @@ return null;
 public String getDescription() {
 	// TODO Auto-generated method stub
 	return null;
+}
+
+@Override
+public String getAbstract() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public Vector<String> getClassifications() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public String getEdition() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public Vector<String> getEditors() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public Vector<RecordInterface> getLinked(String tag) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public String getPublicationDate() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public String getPublicationPlace() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public Vector<String> getSubjects() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public void addAuthor(String author) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addClassification(ClassificationInterface data) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addComment(String comment) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addPart(RecordInterface part) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addPartOf(RecordInterface partof) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addSerie(RecordInterface serie) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addSignature(BookSignature signature) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addSubject(SubjectInterface subject) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public String getComments() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public String getStandardNumber() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public void setAbstract(String abstractText) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setDescription(String description) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setEdition(String edition) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setISBD(String isbd) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setPublicationDate(String publicationDate) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setPublicationPlace(String publicationPlace) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setStandardNumber(String standardNumber) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setTitle(String title) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void setTitle(String title, boolean significant) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addPublisher(String publisher) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
 }
 }

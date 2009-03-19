@@ -30,12 +30,14 @@ package org.jopac2.jbal.sutrs;
 
 import java.util.*;
 
+import org.jopac2.jbal.abstractStructure.Field;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.JOpac2Exception;
 
 public class Iuav_sutrs extends Sutrs {
 //  private static String rt=String.valueOf((char)0x1d);
 //  private static String ft=String.valueOf((char)0x1e);
-  private static String dl=String.valueOf((char)0x1f);        //' delimiter
+//  private static String dl=String.valueOf((char)0x1f);        //' delimiter
 	
   /*public int delimiterPosition=27;
   public char delimiter=':';
@@ -66,54 +68,86 @@ public class Iuav_sutrs extends Sutrs {
   		if(temp.startsWith("Livello bibliografico:")){
   			if(temp.contains("Monografia")){
   				setType("M");
-  				addTag("035  "+dl+"a"+temp.substring(23));
+  				Tag t=new Tag("035",' ',' ');
+  				t.addField(new Field("a",temp.substring(23)));
+  				addTag(t);
   			}
   		}
   		else if(temp.startsWith("Tipo documento:")){
-  			addTag("315  "+dl+"a"+temp.substring(15).trim());
+  			Tag t=new Tag("315",' ',' ');
+			t.addField(new Field("a",temp.substring(15).trim()));
+			addTag(t);
   		}
   		else if(temp.startsWith("Titolo:")){
   			temp = temp.substring(7).trim();
   			temp = temp.replaceAll("\\*","");
-  			addTag("200  "+dl+"a"+temp);
+  			Tag t=new Tag("200",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		else if(temp.startsWith("Pubblicazione:")){
-  			String tag2add = "210  ";
+  			Tag t=new Tag("210",' ',' ');
   			temp = temp.substring(14).trim();
   			String luogo, editore, anno = "";
   			StringTokenizer st1 = new StringTokenizer(temp,":,");
-  			luogo = st1.nextToken().trim(); tag2add = tag2add + dl+"a"+luogo;
-  			if(st1.hasMoreTokens()){editore = st1.nextToken().trim(); tag2add = tag2add +dl+"c"+editore;}
-  			if(st1.hasMoreTokens()){anno = st1.nextToken().trim(); tag2add = tag2add+dl+"d"+anno;}
-  			addTag(tag2add);
+  			luogo = st1.nextToken().trim();
+  			t.addField(new Field("a",luogo));
+  			if(st1.hasMoreTokens()){
+  				editore = st1.nextToken().trim(); 
+  				t.addField(new Field("c",editore));
+  			}
+  			if(st1.hasMoreTokens()){
+  				anno = st1.nextToken().trim();
+  				t.addField(new Field("d",anno));
+  			}
+			addTag(t);
   		}
   		else if(temp.startsWith("Descrizione fisica:")){
   			temp = temp.substring(19).trim();
-  			addTag("215  "+dl+"a"+temp);
+  			Tag t=new Tag("215",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		else if(temp.startsWith("Fa parte di:") || temp.startsWith("Collezione:") ){
   			temp = temp.substring(12).trim();
   			temp = temp.replaceAll("\\*","");
   			temp = temp.split("#")[0];
-  			addTag("410  "+dl+"a"+temp);
+  			Tag t=new Tag("410",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		else if(temp.startsWith("Nomi:") || temp.startsWith("Autor")){
   			temp = temp.substring(5).trim();
   			if(temp.startsWith("e:"))temp = temp.substring(2).trim();
-  			if(temp.contains(",")){ addTag("700  "+ dl+"a"+temp.split(",")[0].trim()+ dl+"b"+temp.split(",")[1].trim()); }
-  			else addTag("700  "+dl+"a"+temp);
+  			if(temp.contains(",")){
+  				Tag t=new Tag("700",' ',' ');
+  				t.addField(new Field("a",temp.split(",")[0].trim()));
+  				t.addField(new Field("b",temp.split(",")[1].trim()));
+  				addTag(t);
+  			}
+  			else {
+  				Tag t=new Tag("700",' ',' ');
+  				t.addField(new Field("a",temp));
+  				addTag(t);
+  			}
 		}
   		else if(temp.startsWith("Soggetti:")){
   			temp = temp.substring(9).trim();
-  			addTag("615  "+dl+"a"+temp);
+  			Tag t=new Tag("615",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		else if(temp.startsWith("Paese di pubblicazione:")){
   			temp = temp.substring(23).trim();
-  			addTag("102  "+dl+"a"+temp);
+  			Tag t=new Tag("102",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		else if(temp.startsWith("Lingua di pubblicazione:")){
   			temp = temp.substring(24).trim();
-  			addTag("101  "+dl+"a"+temp);
+  			Tag t=new Tag("101",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		
   		else if(temp.contains("Codice identificativo:")){
@@ -130,14 +164,18 @@ public class Iuav_sutrs extends Sutrs {
 	}
   	
   	inString = inString.trim();
-  	addTag("001"+bid);
-  	addTag("970  " + inString);
+  	try {
+		Tag t=new Tag("001",' ',' ');
+		t.setRawContent(bid);
+		addTag(t);
+		t=new Tag("970",' ',' ');
+		t.setRawContent(inString);
+		addTag(t);
+	} catch (JOpac2Exception e) {
+		e.printStackTrace();
+	}
   }
 	
-  /* (non-Javadoc)
-   * @see JOpac2.dataModules.iso2709.ISO2709Impl#clearSignatures()
-   */
-  @Override
   public void clearSignatures() throws JOpac2Exception {
   	this.removeTag("970");
   }	

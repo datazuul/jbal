@@ -54,7 +54,7 @@ import org.jopac2.utils.SimilarityHelp;
 //import JOpac2.utils.*;
 import org.jopac2.utils.JOpac2Exception;
 
-public class ISO2709Impl extends ISO2709 {
+public abstract class ISO2709Impl extends ISO2709 {
   //public Vector<String> dati;
 
   public ISO2709Impl(String notizia,String dTipo,String livello) {
@@ -72,8 +72,6 @@ public class ISO2709Impl extends ISO2709 {
   }
 
   /*
-   * TODO Implementare metodo getEdition
-   */
   public String getEdition() {
   	return null;
   }
@@ -115,6 +113,8 @@ public class ISO2709Impl extends ISO2709 {
 				"Error: method clearSignatures is not implemented");
 	}
 	
+	*/
+	
 	/* (non-Javadoc)
 	 * @see JOpac2.dataModules.iso2709.ISO2709Impl#getHash()
 	 */
@@ -136,6 +136,7 @@ public class ISO2709Impl extends ISO2709 {
 
 	// public abstract String getAuthors(String separator, boolean html) {return
 	// "Error: method getAuthors is by ISO2709";}
+	/*
 	public String getTitle() {
 		return "Error: method getAuthors is by ISO2709";
 	}
@@ -143,21 +144,24 @@ public class ISO2709Impl extends ISO2709 {
 	public String getISBD() {
 		return "Error: method getISBD is by ISO2709";
 	}
+	*/
   
 
 /* (non-Javadoc)
  * @see JOpac2.dataModules.ISO2709#getDescription()
  */
+	/*
 	public String getDescription() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+*/
 
 	public RecordReader getRecordReader(InputStream dataFile) throws UnsupportedEncodingException {
 		return new IsoRecordReader(dataFile,ft,rt);
 	}
 
+	/*
 	public String getComments() {
 		// TODO Auto-generated method stub
 		return null;
@@ -171,7 +175,7 @@ public class ISO2709Impl extends ISO2709 {
 	public void addSignature(BookSignature booksignature) throws JOpac2Exception {
 		throw new JOpac2Exception(
 				"Error: method addSignature is not implemented");
-	}
+	}*/
 
 	public float similarity(RecordInterface ma) {
 		return similarity(this,ma);
@@ -187,40 +191,57 @@ public class ISO2709Impl extends ISO2709 {
 	}
 
 	public boolean contains(String tag, String s) {
-		String d=getTag(tag).toString();
+		String d=getTags(tag).toString();
 		return d.contains(s);
 	}
 
 	public boolean contains(String tag, String field, String s) {
-		String d=getElement(getTag(tag),field).toString();
-		return d.contains(s);
+		Vector<Tag> t=getTags(tag);
+		boolean r=false;
+		for(int i=0;t!=null && i<t.size();i++) {
+			if(t.elementAt(i).getField(field).getContent().contains(s)) {
+				r=true;
+				break;
+			}
+		}
+		return r;
 	}
 
 	public void removeTags(String tag) throws JOpac2Exception {
 		for(int i=dati.size()-1;i>=0;i--) {
-			if(dati.elementAt(i).startsWith(tag)) {
+			if(dati.elementAt(i).getTagName().equals(tag)) {
 				dati.removeElementAt(i);
 			}
 		}
 	}
 
+	/*
 	@Override
+	
 	public Vector<RecordInterface> getLinked(String tag) throws JOpac2Exception {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}*/
+
+	/**
+	 * Use tag.checkNSBNSE(...) instead
 
 	public void checkNSBNSE(String tag, String nsb, String nse) {
 		for(int i=0;i<dati.size();i++) {
-			if(dati.elementAt(i).startsWith(tag)) {
+			if(dati.elementAt(i).getTagName().equals(tag)) {
 				Tag t=new Tag(tag);
 				t.checkNSBNSE(nsb, nse);
-				dati.setElementAt(t.toString(), i);
+				dati.setElementAt(t, i);
 			}
 		}
-	}
+	}*/
 
+	/*
 	public void setTitle(String title)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
+	
+	public void setTitle(String title, boolean significant)  throws JOpac2Exception {
 		throw new JOpac2Exception("No such method defined!");
 	}
 
@@ -283,6 +304,5 @@ public class ISO2709Impl extends ISO2709 {
 	public void setStandardNumber(String standardNumber) throws JOpac2Exception {
 		throw new JOpac2Exception("No such method defined!");
 	}
-
-
+	*/
 }
