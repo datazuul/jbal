@@ -33,6 +33,7 @@ import org.xml.sax.SAXException;
 
 import org.jopac2.jbal.Readers.MdbTableRecordReader;
 import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.BookSignature;
 
 
@@ -49,7 +50,7 @@ public class Eut extends XML {
 	 * 	<Autore 4>null</Autore 4> 
 	 * 	<ISBN>null</ISBN> 
 	 * 	<Anno>1999.0</Anno> 
-	 * 	<Prezzo>€ 20,00</Prezzo> 
+	 * 	<Prezzo>euro 20,00</Prezzo> 
 	 * 	<Abstract>Presentazione ... </Abstract> 
 	 * 	<File immagine>due_sponde_mediterraneo</File immagine> 
 	 * </record>
@@ -123,8 +124,8 @@ public class Eut extends XML {
 		Vector<BookSignature> v=new Vector<BookSignature>();
 		String sito=getNodeContent("File_immagine");
 		
-		sito=sito.toLowerCase().replaceAll("à", "a");
-		sito=sito.replaceAll("ò", "o").replaceAll("ù", "u");
+		sito=sito.toLowerCase().replaceAll("ÔøΩ", "a");
+		sito=sito.replaceAll("ÔøΩ", "o").replaceAll("ÔøΩ", "u");
 		sito=sito.replaceAll("\\W", "_");
 		
 		String link=getNodeContent("Prezzo");
@@ -161,5 +162,15 @@ public class Eut extends XML {
 
 	public String getISBD() {
 		return getNodeContent("Titolo");
+	}
+
+	public void addTag(Tag newTag) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Vector<Tag> getTags(String tag) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

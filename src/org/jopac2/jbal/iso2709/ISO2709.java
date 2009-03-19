@@ -44,13 +44,15 @@ import java.util.*;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.jbal.abstractStructure.Delimiters;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.JOpac2Exception;
 import org.jopac2.utils.TokenWord;
 import org.jopac2.utils.Utils;
 
 public abstract class ISO2709 implements RecordInterface {
-  public Vector<String> dati;
+  public Vector<Tag> dati;
   public Vector<TokenWord> tw;
 
   protected String rt=String.valueOf((char)0x1d);
@@ -58,6 +60,7 @@ public abstract class ISO2709 implements RecordInterface {
   public String dl=String.valueOf((char)0x1f);        //' delimiter
   public String cr=String.valueOf((char)13);
   public String lf=String.valueOf((char)10);
+  public Delimiters delimiters=new Delimiters(rt,ft,dl);
   private long JOpacID=0;
   protected String bid=null;
   protected String descrizioneTipo;
@@ -152,11 +155,11 @@ public abstract class ISO2709 implements RecordInterface {
     return linkSerie;
   }
 
-public void addTag(String newTag) {
+  public void addTag(Tag newTag) {
       dati.addElement(newTag);
   }
   
-public void addTag(Vector<String> newTags) {
+  public void addTag(Vector<Tag> newTags) {
       dati.addAll(newTags);
   }
   
@@ -214,7 +217,7 @@ public void addTag(Vector<String> newTags) {
     return(t);
   }
 
-  public Vector<String> getTag() {
+  public Vector<Tag> getTags() {
     return dati;
   }
   
@@ -222,18 +225,25 @@ public void addTag(Vector<String> newTags) {
       return dati.size();
   }
 
-  public String getFirstTag(String tag) {
-    String r;
+  public Tag getFirstTag(String tag) {
+    Tag r;
     try {
-      r=(String)(getTag(tag).elementAt(0));
+      r=(getTags(tag).elementAt(0));
     }
     catch (Exception e) {
-      return "";
+      return null;
 //      return e.getMessage();
     }
     return r;
   }
 
+  /**
+   * 09/03/2009 First get Tag, then get firstElement from Tag
+   * @deprecated
+   * @param tagString
+   * @param element
+   * @return
+   */
   public String getFirstElement(String tagString,String element) {
     String r;
     try {
@@ -248,6 +258,8 @@ public void addTag(Vector<String> newTags) {
   
   
   /***
+   * 09/03/2009 First get Tag, then get firstElement from Tag
+   * @deprecated
    * 16/09/2004 - R.T.
    *     Dato un vettore di tag e il codice di un elemento
    *     ritorna un vettore che contiene tutti gli elementi dei tag
@@ -262,12 +274,18 @@ public Vector<String> getElement(Vector<String> tags, String elements) {
       return v;
   }
 
+  /**
+   * Rivedere dove viene usato qs metodo
+   * @deprecated
+   * @param tag
+   * @return
+   */
   public String getTagElements(String tag) {
-  	Vector<String> myTag=getTag(tag);
+  	Vector<Tag> myTag=getTags(tag);
   	String t,r="";
   	
   	for(int i=0;i<myTag.size();i++) {
-  		t=((String)myTag.elementAt(i)).substring(3);
+  		t=myTag.elementAt(i).toString().substring(3);
   		t=t.replaceAll(rt," ");
   		t=t.replaceAll(ft," ");
   		t=t.replaceAll(dl," ");
@@ -322,10 +340,10 @@ public Vector<String> getElement(String tagString, String elements) {
  * @param tag
  */
 public void removeTag(String tag) {
- if(tag.length()!=3) return;
+ //if(tag.length()!=3) return;
  
  for(int i=0;i<dati.size();i++) {
-      if(((String)(dati.elementAt(i))).startsWith(tag)) {
+      if(dati.elementAt(i).getTagName().equals(tag)) {
         dati.removeElementAt(i);
         i--; // per far in modo che dopo lo shift degli elementi venga ricontrollato questo indice
       }
@@ -344,18 +362,18 @@ public void removeArea(String area) {
  if(area.length()==0) return;
  
  for(int i=0;i<dati.size();i++) {
-      if(((String)(dati.elementAt(i))).startsWith(area)) {
+      if(dati.elementAt(i).getTagName().equals(area)) {
         dati.removeElementAt(i);
         i--; // per far in modo che dopo lo shift degli elementi venga ricontrollato questo indice
       }
     }
 }
 
-public Vector<String> getTag(String tag) {
-    Vector<String> r=new Vector<String>();
+public Vector<Tag> getTags(String tag) {
+    Vector<Tag> r=new Vector<Tag>();
     
     for(int i=0;i<dati.size();i++) {
-      if(((String)(dati.elementAt(i))).startsWith(tag)) {
+      if(dati.elementAt(i).getTagName().equals(tag)) {
         if(!r.contains(dati.elementAt(i))) r.addElement(dati.elementAt(i));
       }
     }
@@ -386,7 +404,7 @@ public Vector<String> getTag(String tag) {
 	  r.append("Record hierarchical level code: "+indicatorLength+"\n");
 	  
 	  for(int i=0;i<dati.size();i++) {
-		  r.append(dati.elementAt(i).replaceAll("["+dl+"]", "^")+"\n");
+		  r.append(dati.elementAt(i).toString().replaceAll("["+dl+"]", "^")+"\n");
 	  }
 	  return r.toString();
   }
@@ -435,6 +453,9 @@ public Vector<String> getTag(String tag) {
     rt=r;
     ft=f;
     dl=d;
+    delimiters.setRt(rt);
+    delimiters.setFt(ft);
+    delimiters.setDl(dl);
   }
 
   public void init(String stringa) {
@@ -487,7 +508,7 @@ public Vector<String> getTag(String tag) {
           String s = my_trim(getTag(record, Directory[z]));
           String tag = Utils.mid(Directory[z], 1, 3);
 
-          dati.addElement(tag+s);
+          dati.addElement(new Tag(tag+s,delimiters));
           if(tag.equals("001")) {
             bid=s;
           }
@@ -519,7 +540,8 @@ public Vector<String> getTag(String tag) {
 //        Utils.Log(Utils.LOG_DEBUG,"Coded token: "+ctk);
         if(ctk.substring(0,1).equals("1")) {
           if(s.length()>0) {
-            dati.addElement(s);
+        	  if(!s.startsWith(delimiters.getDl()))
+        		  dati.addElement(new Tag(s,delimiters));
             if(s.substring(0,3).equals("001")) {
               bid=s.substring(3);
             }
@@ -528,16 +550,16 @@ public Vector<String> getTag(String tag) {
           }
         }
         else {
-          s+=dl+ctk;
+          s+=delimiters.getDl()+ctk;
         }
       }
-      if(s.length()>0) {
-        dati.addElement(s);
+      if(s.length()>0 && !s.startsWith(delimiters.getDl())) {
+        dati.addElement(new Tag(s,delimiters));
       }
     }
     catch (Exception e) {
       // aaahhhh, se arrivo qua vuol dire che non ci capisco una mazza,
-      // o il record � proprio fallato
+      // o il record e' proprio fallato
       e.printStackTrace();
 //      Utils.Log(1,stringa);
     }
@@ -545,7 +567,7 @@ public Vector<String> getTag(String tag) {
 
   public void iso2709Costruttore(String notizia,String dTipo,int livello) {
     Directory=new String[1000];
-    dati=new Vector<String>();
+    dati=new Vector<Tag>();
     tw=new Vector<TokenWord>();
     descrizioneTipo=dTipo;
     init(notizia);
@@ -593,7 +615,7 @@ public Vector<String> getTag(String tag) {
     String r=null;
 	try {
 	  	String leader = getStatus() + getType() +  // definisce il leader che deve essere scritto
-	                    getBiblioLevel() + getHierarchicalLevelCode() + " 22";   // il primo carattere � sempre 'n'? CONTROLLARE su specifiche!
+	                    getBiblioLevel() + getHierarchicalLevelCode() + "000"; //+ " 22";   // il primo carattere e' sempre 'n'? CONTROLLARE su specifiche!
 	
 	    int ba=27;
 	    String directory="";
@@ -602,23 +624,24 @@ public Vector<String> getTag(String tag) {
 	    long temp = 24 + 12 * getRows() + 1;             // base address data
 	    leader = leader.concat(Utils.pad("00000",temp));
 	        
-	    Vector<String> t=this.getTag();
+	    Vector<Tag> t=this.getTags();
 	    
-	    for(int i=0;i<t.size();i++){
+	    /*for(int i=0;i<t.size();i++){
 	    	t.setElementAt(((String)t.elementAt(i)).replaceAll("[\r\n]","|").trim(),i);
-	    }
-	    leader=leader.concat("   ");                  // implementation defined
+	    }*/
+	    leader=leader.concat("000");                  // implementation defined
 	    leader=leader.concat("4500");                 // entry map
 	
 	    ba+=this.getRows()*12;
 	    long c=0;
 	    for(int z=0;z<t.size();z++) {
-	        directory=directory.concat(((String)t.elementAt(z)).substring(0,3));
-	        directory=directory.concat(Utils.pad("0000",((String)t.elementAt(z)).length()-2));
+	    	String k=t.elementAt(z).toString();
+	        directory=directory.concat(k.substring(0,3));
+	        directory=directory.concat(Utils.pad("0000",k.length()-2));
 	        directory=directory.concat(Utils.pad("00000",c));
-	        c+=((String)t.elementAt(z)).length()-2;
-	        ba+=((String)t.elementAt(z)).length()-2;	
-	        data=data+((String)t.elementAt(z)).substring(3)+ft;
+	        c+=k.length()-2;
+	        ba+=k.length()-2;	
+	        data=data+k.substring(3)+ft;
 	    }
 	    if(rt!=null) data=data.concat(rt);
 	        
@@ -652,8 +675,7 @@ public Vector<String> getTag(String tag) {
 
 
   public ISO2709() {
-
-      dati=new Vector<String>();
+      dati=new Vector<Tag>();
       tw=new Vector<TokenWord>();
   }
 
@@ -663,8 +685,8 @@ public Vector<String> getTag(String tag) {
 		boolean unico = true;
 
 		for (int z = 0; z < dati.size(); z++) {
-			String valore_tag = ((String) dati.elementAt(z)).substring(3);
-			String tag = ((String) dati.elementAt(z)).substring(0, 3);
+			String valore_tag = dati.elementAt(z).toString().substring(3);
+			String tag = dati.elementAt(z).getTagName();
 
 			if (valore_tag.indexOf(dl) >= 0)
 				unico = false;

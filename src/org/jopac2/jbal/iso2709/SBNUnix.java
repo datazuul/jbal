@@ -32,16 +32,18 @@ package org.jopac2.jbal.iso2709;
  *          Questo modulo permette di importare dati registrati nel formato
  *          SBN-UNIX Client/server.
  *
- * SBN-UNIX Client/server è prodotto dall'ICCU - Italia
+ * SBN-UNIX Client/server ï¿½ prodotto dall'ICCU - Italia
  */
 
 
 
 import java.util.*;
 
+import org.jopac2.jbal.abstractStructure.Field;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.*;
 
-public class SBNUnix extends Marc {
+public class SBNUnix extends Unimarc {
 
   public SBNUnix(String stringa,String dTipo) {
     super(stringa,dTipo);
@@ -58,31 +60,31 @@ public class SBNUnix extends Marc {
  *         Se serve anche il polo ci lo mettiamo nel codice della biblioteca?
  * 24/6/2003 - R.T.
  *         Deve trasportare anche la consistenza, nel caso sia un periodico.
- *         Ciascun elemento del vettore è una coppia (biblioteca,dati).
- *         Biblioteca è una coppia (codice_biblioteca, nome_biblioteca).
+ *         Ciascun elemento del vettore e' una coppia (biblioteca,dati).
+ *         Biblioteca e' una coppia (codice_biblioteca, nome_biblioteca).
  *         I dati sono una coppia (collocazione, inventario)
- *         Collocazione è una coppia (collocazione, sintesi_posseduto)
+ *         Collocazione e' una coppia (collocazione, sintesi_posseduto)
  *         Inventario e' una String
- *         Se non è un periodico sintesi_posseduto sarà null o String vuota.
+ *         Se non e' un periodico sintesi_posseduto sara' null o String vuota.
  */
   public Vector<BookSignature> getSignatures() {
-    Vector<String> v=getTag("950");
+    Vector<Tag> v=getTags("950");
     Vector<BookSignature> res=new Vector<BookSignature>();
-    if(v.size()>0) {
+    if(v!=null && v.size()>0) {
       for(int i=0;i<v.size();i++) {
-        String biblioteca=getFirstElement((String)v.elementAt(i),"a");
-        String codBib=getFirstElement((String)v.elementAt(i),"e").substring(0,2);
+        String biblioteca=v.elementAt(i).getField("a").getContent();
+        String codBib=v.elementAt(i).getField("e").getContent().substring(0,2);
         //Parametro bib=new Parametro(codBib,biblioteca);
 
-        Vector<String> collocazioni=getElement((String)v.elementAt(i),"d");
-        Vector<String> inventari=getElement((String)v.elementAt(i),"e");
-        Vector<String> sintesi=getElement((String)v.elementAt(i),"b");
+        Vector<Field> collocazioni=v.elementAt(i).getFields("d");
+        Vector<Field> inventari=v.elementAt(i).getFields("e");
+        Vector<Field> sintesi=v.elementAt(i).getFields("b");
         //Vector<Parametro> colInv=new Vector<Parametro>();
 
         for(int j=0;j<collocazioni.size();j++) {
           String r="";
           try {
-            String t=(String)collocazioni.elementAt(j);
+            String t=collocazioni.elementAt(j).getContent();
             r+=t.substring(2,12);
             if(!t.substring(12,24).startsWith("/")) {
               r+="/";
@@ -97,9 +99,9 @@ public class SBNUnix extends Marc {
             r+="[Errore decodifica]";
           }
 
-          String te=((String)inventari.elementAt(j)).substring(2,5)+" ";
-          String sin=((String)sintesi.elementAt(j));
-          te+=((String)inventari.elementAt(j)).substring(5,14);
+          String te=inventari.elementAt(j).getContent().substring(2,5)+" ";
+          String sin=sintesi.elementAt(j).getContent();
+          te+=inventari.elementAt(j).getContent().substring(5,14);
           //colInv.addElement(new Parametro(new Parametro(r,sin),te));
           res.addElement(new BookSignature(codBib,biblioteca,te,r,sin));
         }
@@ -109,6 +111,11 @@ public class SBNUnix extends Marc {
     }
     return res;
   }
+
+public void addSignature(BookSignature signature) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
   
  
 }

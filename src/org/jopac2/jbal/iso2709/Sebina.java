@@ -32,16 +32,18 @@ package org.jopac2.jbal.iso2709;
  *          Questo modulo permette di importare dati registrati nel formato
  *          Sebina.
  *
- * Sebina indice e Sebina è prodotto da Akros Informatica - Ravenna
+ * Sebina indice e Sebina ï¿½ prodotto da Akros Informatica - Ravenna
  */
 
 
 import java.util.*;
 
+import org.jopac2.jbal.abstractStructure.Field;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.*;
 
 
-public class Sebina extends Marc {
+public class Sebina extends Unimarc {
 
   public Sebina(String stringa,String dTipo) {
     super(stringa,dTipo);
@@ -60,16 +62,16 @@ public class Sebina extends Marc {
 	  String te = signature.getBookNumber();
 	  String r = signature.getBookLocalization();
 	  String sin = signature.getBookCons();
-	  StringBuffer tagString = new StringBuffer();
-	  tagString.append("950  ");
 	  
-	  if(biblioteca.length()>0) tagString.append(dl+"a"+biblioteca);
-	  if(sin.length()>0) tagString.append(dl+"b"+sin);
-	  if(r.length()>0) tagString.append(dl+"d"+r);
-	  if(te.length()>0) tagString.append(dl+"e"+te);
-	  if(codBib.length()>0) tagString.append(dl+"f"+codBib);
+	  Tag tagSignature=new Tag("950",' ',' ');
 	  
-	  addTag(tagString.toString());
+	  if(biblioteca.length()>0) tagSignature.addField(new Field("a",biblioteca));
+	  if(sin.length()>0) tagSignature.addField(new Field("b",sin));
+	  if(r.length()>0) tagSignature.addField(new Field("d",r));
+	  if(te.length()>0) tagSignature.addField(new Field("e",te));
+	  if(codBib.length()>0) tagSignature.addField(new Field("f",codBib));
+	  
+	  addTag(tagSignature);
 	  
 	  
   }
@@ -95,28 +97,28 @@ public class Sebina extends Marc {
    *         Ritorna un vettore di BookSignatures.
    */
     public Vector<BookSignature> getSignatures() {
-      Vector<String> v=getTag("950");
+      Vector<Tag> v=getTags("950");
       Vector<BookSignature> res=new Vector<BookSignature>();
       if(v.size()>0) {
         for(int i=0;i<v.size();i++) {
-          String biblioteca=getFirstElement((String)v.elementAt(i),"a");
+          String biblioteca=v.elementAt(i).getField("a").getContent();
           
           /* 950^f contiene il codice Sebina solo se i dati vengono dal Pregresso
            * altrimenti e' i primi due caratteri dell'inventario
            */
-          String codBib=getFirstElement((String)v.elementAt(i),"f");
+          String codBib=v.elementAt(i).getField("f").getContent();
           
           
           try {
 	          if(codBib.equals(""))
-	        	  codBib=getFirstElement((String)v.elementAt(i),"e").substring(0,2);
+	        	  codBib=v.elementAt(i).getField("e").getContent().substring(0,2);
           }
           catch (Exception e) {}
           
 
-          Vector<String> collocazioni=getElement((String)v.elementAt(i),"d");
-          Vector<String> inventari=getElement((String)v.elementAt(i),"e");
-          Vector<String> sintesi=getElement((String)v.elementAt(i),"b");
+          Vector<Field> collocazioni=v.elementAt(i).getFields("d");
+          Vector<Field> inventari=v.elementAt(i).getFields("e");
+          Vector<Field> sintesi=v.elementAt(i).getFields("b");
 
           for(int j=0;j<collocazioni.size();j++) {
             String r="";
@@ -124,7 +126,7 @@ public class Sebina extends Marc {
             String sin="";
 
             try {
-              String t=(String)collocazioni.elementAt(j);
+              String t=collocazioni.elementAt(j).getContent();
               r+=t.substring(2,12);
               if(!t.substring(12,24).startsWith("/")) {
                 r+="/";
@@ -136,20 +138,20 @@ public class Sebina extends Marc {
               r+=t.substring(24,36);
             }
             catch (Exception e) {
-              r=(String)collocazioni.elementAt(j);
+              r=collocazioni.elementAt(j).getContent();
             }
 
 
             try {
-            	te =((String)inventari.elementAt(j)).substring(2,5)+" ";
-            	te+=((String)inventari.elementAt(j)).substring(5,14);
-                sin=((String)sintesi.elementAt(j));
+            	te =(inventari.elementAt(j)).getContent().substring(2,5)+" ";
+            	te+=(inventari.elementAt(j)).getContent().substring(5,14);
+                sin=sintesi.elementAt(j).getContent();
             }
             catch (Exception e) {
                 //sin="[Errore decodifica]";
             	sin="";
             	try {
-            		te=((String)inventari.elementAt(j));
+            		te=inventari.elementAt(j).getContent();
             	}
             	catch (Exception e1) {}
             }

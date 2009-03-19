@@ -34,9 +34,13 @@ package org.jopac2.jbal.sutrs;
 
 import java.util.*;
 
+import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.abstractStructure.Tag;
+import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.iso2709.ISO2709Impl;
+import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.BookSignature;
-import org.jopac2.utils.Utils;
+import org.jopac2.utils.JOpac2Exception;
 
 public class Sutrs extends ISO2709Impl {
 
@@ -67,11 +71,11 @@ public int delimiterPosition=27;
   public String getLabel(String label) {
   	String r="";
   	int i=0;
-  	String t;
+  	Tag t;
   	
   	while(i<dati.size()) {
-  		t=(String)dati.elementAt(i);
-  		if(t.startsWith(label)) r=t.substring(label.length()+1);
+  		t=dati.elementAt(i);
+  		if(t.getRawContent().startsWith(label)) r=t.getRawContent().substring(label.length()+1);
   		i++;
   	}
   	
@@ -108,7 +112,7 @@ public int delimiterPosition=27;
   	}
   	
   	if(bid==null){
-  		StringTokenizer st1 = new StringTokenizer(stringa," !\"£$%&()='?^[*]+@#§-.,;:_\n\r|");
+  		StringTokenizer st1 = new StringTokenizer(stringa," !\"ï¿½$%&()='?^[*]+@#ï¿½-.,;:_\n\r|");
   		while(st1.hasMoreElements()){
   			String temp = st1.nextToken();
   			if(temp.matches("[a-zA-Z][a-zA-Z]..?\\d\\d\\d\\d\\d\\d\\d")){
@@ -129,7 +133,13 @@ public int delimiterPosition=27;
   	for(int i=0;i<in.length;i++) {
   		if((in[i].length()>delimiterPosition)&&(in[i].charAt(delimiterPosition)==delimiter)) {
   			if(currentContent.length()>0) {
-  				dati.addElement(currentLabel+":"+currentContent.trim());
+  				Tag t=new Tag(currentLabel,' ',' ');
+  				try {
+					t.setRawContent(currentContent.trim());
+				} catch (JOpac2Exception e) {
+					e.printStackTrace();
+				}
+  				dati.addElement(t);
   			}
   			currentLabel=cleanLabel(in[i].substring(0,delimiterPosition));
   			currentContent=in[i].substring(delimiterPosition+1);
@@ -139,29 +149,20 @@ public int delimiterPosition=27;
   		}
   	}
   	if(currentContent.length()>0) {
-		dati.addElement(currentLabel+":"+currentContent.trim());
+  		Tag t=new Tag(currentLabel,' ',' ');
+		try {
+			t.setRawContent(currentContent.trim());
+		} catch (JOpac2Exception e) {
+			e.printStackTrace();
+		}
+		dati.addElement(t);
 	}
   }
 	
   	public Vector<String> getAuthors() {
-	    Vector<String> v=getTag("700");
-	    v.addAll(getTag("701"));
-	    v.addAll(getTag("702"));
-	    Vector<String> r=new Vector<String>();
-	    String k="";
-	    if(v.size()>0) {
-	      for(int i=0;i<v.size();i++) {
-	        k=getFirstElement((String)v.elementAt(i),"a");
-	        k+=" "+getFirstElement((String)v.elementAt(i),"b");
-	        r.addElement(k);
-	      }
-	    }
-	    return r;
+	    return null;
 	  }
 	
-	/* (non-Javadoc)
-	 * @see JOpac2.dataModules.ISO2709#getEdition()
-	 */
 	public String getEdition() {
 		// TODO Auto-generated method stub
 		return "";
@@ -171,73 +172,19 @@ public int delimiterPosition=27;
 	
 	public String getPublicationDate() {
 	  	
-	    Vector<String> v = getTag("210");
-
-	    String k="";
-	    if(v.size()>0) {      
-	        k=getFirstElement((String)v.elementAt(0),"d");      
-	    }
-	    k = k.trim();
-	    
-	    while(k.matches("[\\D].+")){
-	    	k = k.substring(1);
-	    }
-	    while(k.matches(".+[\\D]")){
-	    	k = k.substring(0,k.length()-1);
-	    }
-	    
-	    if(k.matches("[\\d]+[\\D]+[\\d]+"))   
-	    	k = k.substring(0,4);
-	    
-	    return k;
+return null;
 	}
-	
-	/* (non-Javadoc)
-	 * @see JOpac2.dataModules.ISO2709#getTitle()
-	 */
+
 	public String getTitle() {
-		String r;
-		String tag=getFirstTag("200");
-		r=quote(getFirstElement(tag,"a"));
-		return r;
+return null;
 	}
 	
 	public String getISBD() {
-	    String r;
-	    r=getTitle();
-	    String tag=getFirstTag("200");;
-	    r+=getFirstElement(tag,"d");
-	    r+=Utils.ifExists(" : ",getFirstElement(tag,"e"));
-	    r+=Utils.ifExists(" / ",getFirstElement(tag,"f"));
-	    r+=Utils.ifExists(" ; ",getFirstElement(tag,"g"));
-
-	    tag=getFirstTag("205");
-	    r+=Utils.ifExists(". - ",getFirstElement(tag,"a"));
-	    r+=Utils.ifExists(" ; ",getFirstElement(tag,"b"));
-
-	    tag=getFirstTag("210");
-	    r+=Utils.ifExists(". - ",getFirstElement(tag,"a"));
-	    r+=Utils.ifExists(" : ",getFirstElement(tag,"c"));
-	    r+=Utils.ifExists(" , ",getFirstElement(tag,"d"));
-
-
-	    tag=getFirstTag("215");
-	    r+=Utils.ifExists(". - ",getFirstElement(tag,"a"));
-	    r+=Utils.ifExists(" : ",getFirstElement(tag,"c"));
-	    r+=Utils.ifExists(" ; ",getFirstElement(tag,"d"));
-	    r+=Utils.ifExists(" + ",getFirstElement(tag,"e"));
-
-	    tag=getFirstTag("300");
-	    r+=Utils.ifExists(". - ",getFirstElement(tag,"a"));
-
-	    tag=getFirstTag("010");
-	    r+=Utils.ifExists(". - ",getFirstElement(tag,"a"));
-
-	    return quote(r);
+	    return null;
 	  }
 	
 	public String getComments() {
-		return getFirstElement(getFirstTag("300"),"a");
+		return null;
 	}
 	
 	
@@ -250,55 +197,141 @@ public int delimiterPosition=27;
 	}
 	
 	public String getDescription() {
-		return getFirstElement(getTagElements("215"),"a");
+		return null;
 	}
 	
 	public void addSignature(BookSignature signature) {
 		  
-		  if(getSignatures().contains(signature)) return;
-		  
-		  String codBib = signature.getLibraryId();
-		  String biblioteca = signature.getLibraryName();
-		  String te = signature.getBookNumber();
-		  String r = signature.getBookLocalization();
-		  String sin = signature.getBookCons();
-		  StringBuffer tagString = new StringBuffer();
-		  tagString.append("950  ");
-		  
-		  if(biblioteca.length()>0) tagString.append(dl+"a"+biblioteca);
-		  if(sin.length()>0) tagString.append(dl+"b"+sin);
-		  if(r.length()>0) tagString.append(dl+"d"+r);
-		  if(te.length()>0) tagString.append(dl+"e"+te);
-		  if(codBib.length()>0) tagString.append(dl+"f"+codBib);
-		  
-		  addTag(tagString.toString());
 		}
 		
 	   public Vector<BookSignature> getSignatures() {
-		    String libraryId="", libraryName="", bookNumber="", bookLocalization="";
-			Vector<String> loc=getTag("950");
-			Vector<BookSignature> ret=new Vector<BookSignature>();
-			for(int i=0;i<loc.size();i++) {
-				String thisloc=getFirstElement(loc.elementAt(i),"l").trim();
-				if(thisloc!=null && thisloc.length()>0) {
-					int a=thisloc.indexOf("-");
-					int b=thisloc.indexOf("-",a+1);
-					if(a>0 && b>a) {
-						libraryId=thisloc.substring(0, a);
-						libraryName=thisloc.substring(b+1);
-						bookNumber=thisloc.substring(a+1,b);
-						ret.addElement(new BookSignature(libraryId, libraryName, bookNumber, bookLocalization));
-					}
-					
-				}
-				else {
-					libraryId=getFirstElement(loc.elementAt(i),"f");
-					libraryName=getFirstElement(loc.elementAt(i),"a");
-					bookNumber=getFirstElement(loc.elementAt(i),"e");
-					bookLocalization=getFirstElement(loc.elementAt(i),"d");
-					ret.addElement(new BookSignature(libraryId, libraryName, bookNumber, bookLocalization));
-				}
-			}
-			return ret;
+		    return null;
 	   }
+
+	@Override
+	public Vector<String> getClassifications() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Vector<RecordInterface> getLinked(String tag) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Vector<String> getSubjects() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void addAuthor(String author) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addClassification(ClassificationInterface data) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addComment(String comment) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addEditor(String editor) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addPart(RecordInterface part) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addPartOf(RecordInterface partof) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addSerie(RecordInterface serie) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addSubject(SubjectInterface subject) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void clearSignatures() throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String getStandardNumber() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setAbstract(String abstractText) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setDescription(String description) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setEdition(String edition) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setISBD(String isbd) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setPublicationDate(String publicationDate)
+			throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setPublicationPlace(String publicationPlace)
+			throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setStandardNumber(String standardNumber) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setTitle(String title) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setTitle(String title, boolean significant)
+			throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Vector<String> getEditors() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void addPublisher(String publisher) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
 }

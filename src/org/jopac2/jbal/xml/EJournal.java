@@ -32,6 +32,7 @@ import org.xml.sax.SAXException;
 
 import org.jopac2.jbal.Readers.MdbTableRecordReader;
 import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.Utils;
 
@@ -169,6 +170,16 @@ public class EJournal extends XML {
 		r+=Utils.ifExists(" ((",getComments());
 		r+=Utils.ifExists(". - ISSN ",getStandardNumber());
 		return r;
+	}
+
+	public void addTag(Tag newTag) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Vector<Tag> getTags(String tag) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

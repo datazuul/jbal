@@ -32,6 +32,8 @@ import java.util.*;
 
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.abstractStructure.Field;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.JOpac2Exception;
 
 public class Sbn_sutrs extends Sutrs {
@@ -82,40 +84,60 @@ public void init(String stringa) {
   		if(temp.startsWith("Livello bibliografico:")){
   			if(temp.contains("Monografia")){
   				setBiblioLevel("M");
-  				addTag("035  "+dl+"a"+temp.substring(23));
+  				Tag t=new Tag("035",' ',' ');
+  				t.addField(new Field("a",temp.substring(23)));
+  				addTag(t);
   			}
   		}
   		else if(temp.startsWith("Tipo documento:")){
-  			addTag("315  "+dl+"a"+temp.substring(15).trim());
+  			Tag t=new Tag("315",' ',' ');
+			t.addField(new Field("a",temp.substring(15).trim()));
+			addTag(t);
   		}
   		else if(temp.startsWith("Titolo:")){
   			temp = temp.substring(7).trim();
   			temp = temp.replaceAll("\\*","");
-  			addTag("200  "+dl+"a"+temp);
+  			Tag t=new Tag("200",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		else if(temp.startsWith("Note Generali:")) {
   			temp = temp.substring(14).trim();
-  			addTag("300  "+dl+"a"+temp);
+  			Tag t=new Tag("300",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		else if(temp.startsWith("Pubblicazione:")){
-  			String tag2add = "210  ";
   			temp = temp.substring(14).trim();
-  			String luogo, editore, anno = "";
+  			String  editore, anno = "",luogo;
   			StringTokenizer st1 = new StringTokenizer(temp,":,");
-  			luogo = st1.nextToken().trim(); tag2add = tag2add + dl+"a"+luogo;
-  			if(st1.hasMoreTokens()){editore = st1.nextToken().trim(); tag2add = tag2add +dl+"c"+editore;}
-  			if(st1.hasMoreTokens()){anno = st1.nextToken().trim(); tag2add = tag2add+dl+"d"+anno;}
-  			addTag(tag2add);
+  			Tag t=new Tag("210",' ',' ');
+			
+  			luogo = st1.nextToken().trim();
+  			t.addField(new Field("a",luogo));
+  			if(st1.hasMoreTokens()){
+  				editore = st1.nextToken().trim();
+  				t.addField(new Field("c",editore));
+  			}
+  			if(st1.hasMoreTokens()){
+  				anno = st1.nextToken().trim();
+  				t.addField(new Field("d",anno));
+  			}
+  			addTag(t);
   		}
   		else if(temp.startsWith("Descrizione fisica:")){
   			temp = temp.substring(19).trim();
-  			addTag("215  "+dl+"a"+temp);
+  			Tag t=new Tag("215",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		else if(temp.startsWith("Fa parte di:")){
   			temp = temp.substring(12).trim();
   			temp = temp.replaceAll("\\*","");
   			temp = temp.split("#")[0];
-  			addTag("461  "+dl+"a"+temp);
+  			Tag t=new Tag("461",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   			
   			if(linkUp==null) linkUp=new Vector<RecordInterface>();
 			RecordInterface ma=RecordFactory.buildRecord(0, "Titolo:"+temp, "sbn_sutrs", 0);
@@ -125,7 +147,9 @@ public void init(String stringa) {
   			temp = temp.substring(11).trim();
   			temp = temp.replaceAll("\\*","");
   			temp = temp.split("#")[0];
-  			addTag("410  "+dl+"a"+temp);
+  			Tag t=new Tag("410",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   			
   			if(linkSerie==null) linkSerie=new Vector<RecordInterface>();
 			RecordInterface ma=RecordFactory.buildRecord(0, "Titolo:"+temp, "sbn_sutrs", 0);
@@ -141,7 +165,9 @@ public void init(String stringa) {
   				int lc=temp1[t].indexOf("#");
   				if(lc>=0) temp=temp1[t].substring(0,temp1[t].indexOf("#"));
   				else temp=temp1[t];
-  				addTag("463  "+dl+"a"+temp);
+  				Tag ta=new Tag("463",' ',' ');
+  				ta.addField(new Field("a",temp));
+  				addTag(ta);
   				RecordInterface ma=RecordFactory.buildRecord(0, "Titolo:"+temp, "sbn_sutrs", 0);
   				linkDown.addElement(ma);
   			}
@@ -165,28 +191,38 @@ public void init(String stringa) {
 	  			else {
 	  				codice=null;
 	  			}
+	  			
+	  			Tag t=new Tag("700",' ',' ');
+				
+	  			
 	  			if(nome_cognome.contains(",")) {
-	  				tag700="700  "+ dl+"a"+nome_cognome.split(",")[0].trim()+ dl + 
-	  						"b"+nome_cognome.split(",")[1].trim();
+		  			t.addField(new Field("a",nome_cognome.split(",")[0].trim()));
+		  			t.addField(new Field("b",nome_cognome.split(",")[1].trim()));
 	  			}
 	  			else {
-	  				tag700="700  "+dl+"a"+nome_cognome;
+	  				t.addField(new Field("a",nome_cognome));
 	  			}
 	  			if(codice!=null) tag700=tag700+dl+"3"+codice;
-	  			addTag(tag700);
+				addTag(t);
 	  		}
 		}
   		else if(temp.startsWith("Soggetti:")){
   			temp = temp.substring(9).trim();
-  			addTag("615  "+dl+"a"+temp);
+  			Tag t=new Tag("615",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		else if(temp.startsWith("Paese di pubblicazione:")){
   			temp = temp.substring(23).trim();
-  			addTag("102  "+dl+"a"+temp);
+  			Tag t=new Tag("102",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		else if(temp.startsWith("Lingua di pubblicazione:")){
   			temp = temp.substring(24).trim();
-  			addTag("101  "+dl+"a"+temp);
+  			Tag t=new Tag("101",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		
   		else if(temp.contains("ICCU") && temp.contains("ident")){
@@ -196,7 +232,9 @@ public void init(String stringa) {
   			temp=temp.substring(15);
   			String[] l=temp.split("#");
   			for(int i=0;i<l.length;i++) {
-  				addTag("950  "+dl+"l"+l[i]);
+  				Tag t=new Tag("950",' ',' ');
+  				t.addField(new Field("l",l[i]));
+  				addTag(t);
   			}
   		}
   	}
@@ -209,8 +247,17 @@ public void init(String stringa) {
 	}
   	
   	inString = inString.trim();
-  	addTag("001"+bid);
-  	addTag("970  " + inString);
+  	try {
+		Tag t=new Tag("001",' ',' ');
+		t.setRawContent(bid);
+		addTag(t);
+		
+		t=new Tag("970",' ',' ');
+		t.setRawContent(inString);
+		addTag(t);
+	} catch (JOpac2Exception e) {
+		e.printStackTrace();
+	}
 	
   	 	
   	/*String currentLabel="";

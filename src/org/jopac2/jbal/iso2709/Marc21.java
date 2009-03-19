@@ -2,6 +2,13 @@ package org.jopac2.jbal.iso2709;
 
 import java.util.Vector;
 
+import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.abstractStructure.Tag;
+import org.jopac2.jbal.classification.ClassificationInterface;
+import org.jopac2.jbal.subject.SubjectInterface;
+import org.jopac2.utils.BookSignature;
+import org.jopac2.utils.JOpac2Exception;
+
 /*******************************************************************************
 *
 *  JOpac2 (C) 2002-2007 JOpac2 project
@@ -35,7 +42,7 @@ import java.util.Vector;
 public class Marc21 extends ISO2709Impl {
 
 	/*
-	 * TODO Marc21 è tutto da fare!!!
+	 * TODO Marc21 e' tutto da fare!!!
 	 */
   public Marc21(String stringa,String dTipo) {
     super(stringa,dTipo);
@@ -46,17 +53,17 @@ public class Marc21 extends ISO2709Impl {
   }
 
   public Vector<String> getAuthors() {
-    Vector<String> v=getTag("100");
-    v.addAll(getTag("110"));
-    v.addAll(getTag("111"));
+    Vector<Tag> v=getTags("100");
+    v.addAll(getTags("110"));
+    v.addAll(getTags("111"));
     Vector<String> r=new Vector<String>();
     String k="";
     if(v.size()>0) {
       for(int i=0;i<v.size();i++) {
-        k=getFirstElement((String)v.elementAt(i),"a");
-        k+=" "+getFirstElement((String)v.elementAt(i),"b");
-        k+=" "+getFirstElement((String)v.elementAt(i),"c");
-        k+=" "+getFirstElement((String)v.elementAt(i),"d");
+        k=v.elementAt(i).getField("a").getContent();
+        k+=" "+v.elementAt(i).getField("b").getContent();
+        k+=" "+v.elementAt(i).getField("c").getContent();
+        k+=" "+v.elementAt(i).getField("d").getContent();
         r.addElement(k);
       }
     }
@@ -65,49 +72,50 @@ public class Marc21 extends ISO2709Impl {
   
   public String getTitle() {
     String r;
-    String tag=getFirstTag("245");
-    r=quote(getFirstElement(tag,"a"));
+    Tag tag=getFirstTag("245");
+    r=quote(tag.getField("a").getContent());
     return r;
   }
   
   public String getISBD() {
     String r;
     r=getTitle();
-    String tag=getFirstTag("245");
-    r+=getFirstElement(tag,"h");
-    r+=getFirstElement(tag,"b");
-    r+=getFirstElement(tag,"c");
-    r+=getFirstElement(tag,"n");
-    r+=getFirstElement(tag,"p");
-    r+=getFirstElement(tag,"f");
+    Tag tag=getFirstTag("245");
+    r+=tag.getField("h").getContent();
+    r+=tag.getField("b").getContent();
+    r+=tag.getField("c").getContent();
+    r+=tag.getField("n").getContent();
+    r+=tag.getField("p").getContent();
+    r+=tag.getField("f").getContent();
     
     r+=" .- ";
     tag=getFirstTag("260");;
-    r+=getFirstElement(tag,"a");
-    r+=getFirstElement(tag,"b");
-    r+=getFirstElement(tag,"c");
+    r+=tag.getField("a").getContent();
+    r+=tag.getField("b").getContent();
+    r+=tag.getField("c").getContent();
 
     r+=" .- ";
     tag=getFirstTag("300");;
-    r+=getFirstElement(tag,"a");
-    r+=getFirstElement(tag,"b");
-    r+=getFirstElement(tag,"c");
+    r+=tag.getField("a").getContent();
+    r+=tag.getField("b").getContent();
+    r+=tag.getField("c").getContent();
 
 
     return quote(r);
   }
 
   public String getEdition() {
-  	String r,tag;
-  	tag=getFirstTag("250");;
-    r=getFirstElement(tag,"a");
-    r+=getFirstElement(tag,"b");
+  	Tag tag;
+  	String r;
+  	tag=getFirstTag("250");
+    r=tag.getField("a").getContent();
+    r+=tag.getField("b").getContent();
   	return r;
   }
 
   
   public String getBid() {
-  	return getFirstTag("001");
+  	return getFirstTag("001").getRawContent();
   }
   
   // TODO per questo tipo trovare l'abstract
@@ -115,11 +123,160 @@ public class Marc21 extends ISO2709Impl {
   	return null;
   }
   public Vector<String> getSubjects() {
-  	return getElement(getTag("650"),"a");
+	  Vector<Tag> t=getTags("650");
+	  Vector<String> r=new Vector<String>();
+	  for(int i=0;t!=null && i<t.size();i++) {
+		  r.addElement(t.elementAt(i).getField("a").getContent());
+	  }
+  	return r;
   }
 
 
 	public String getDescription() {
-		return getTagElements("300");
+		return getFirstTag("300").getRawContent();
+	}
+
+	@Override
+	public Vector<String> getClassifications() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Vector<String> getEditors() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Vector<RecordInterface> getLinked(String tag) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getPublicationDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getPublicationPlace() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Vector<BookSignature> getSignatures() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void addAuthor(String author) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addClassification(ClassificationInterface data) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addComment(String comment) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addPart(RecordInterface part) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addPartOf(RecordInterface partof) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addSerie(RecordInterface serie) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addSignature(BookSignature signature) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addSubject(SubjectInterface subject) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void clearSignatures() throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String getComments() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getStandardNumber() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setAbstract(String abstractText) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setDescription(String description) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setEdition(String edition) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setISBD(String isbd) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setPublicationDate(String publicationDate)
+			throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setPublicationPlace(String publicationPlace)
+			throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setStandardNumber(String standardNumber) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setTitle(String title) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setTitle(String title, boolean significant)
+			throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addPublisher(String publisher) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
 	}
 }

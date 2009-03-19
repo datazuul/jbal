@@ -2,7 +2,10 @@ package org.jopac2.jbal.iso2709;
 
 import java.util.Vector;
 
+import org.jopac2.jbal.abstractStructure.Field;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.BookSignature;
+import org.jopac2.utils.JOpac2Exception;
 
 
 /*******************************************************************************
@@ -41,7 +44,7 @@ import org.jopac2.utils.BookSignature;
  */
 
 
-public class Comarc extends Marc {
+public class Comarc extends Unimarc {
 
   public Comarc(String stringa,String dTipo) {
     super(stringa,dTipo);
@@ -53,21 +56,21 @@ public class Comarc extends Marc {
   
   
 public Vector<BookSignature> getSignatures() {
-      Vector<String> v=getTag("996");
+      Vector<Tag> v=getTags("996");
       Vector<BookSignature> res=new Vector<BookSignature>();
       
-      String t1=getFirstTag("000");
+      Tag t1=getFirstTag("000");
       
       if(v.size()>0) {
         for(int i=0;i<v.size();i++) {
-          String biblioteca=getFirstElement(t1,"c");
+          String biblioteca=t1.getField("c").getContent();
           biblioteca=biblioteca.substring(0,biblioteca.indexOf("::"));
           
           String codBib="http://sikkp.kp.sik.si/"; //getFirstElement((String)v.elementAt(i),"e").substring(0,2);
 
-          Vector<String> collocazioni=getElement((String)v.elementAt(i),"e");
-          Vector<String> inventari=getElement((String)v.elementAt(i),"d");
-          Vector<String> sintesi=getElement((String)v.elementAt(i),"b");
+          Vector<Field> collocazioni=v.elementAt(i).getFields("e");
+          Vector<Field> inventari=v.elementAt(i).getFields("d");
+          Vector<Field> sintesi=v.elementAt(i).getFields("b");
 
 
           String r;
@@ -75,17 +78,17 @@ public Vector<BookSignature> getSignatures() {
           String te;
           
           for(int j=0;j<inventari.size();j++) {
-            try {r=cleanData((String)collocazioni.elementAt(j));} catch (Exception e) {r=null;}
+            try {r=cleanData(collocazioni.elementAt(j).getContent());} catch (Exception e) {r=null;}
             
             try {
-            	te=(String)inventari.elementAt(j);
+            	te=inventari.elementAt(j).getContent();
             	te=cleanData(te);
             } 
             catch (Exception e) {
             	te=null;
             }
             
-            try {sin=cleanData((String)sintesi.elementAt(j));} catch (Exception e) {sin=null;} 
+            try {sin=cleanData(sintesi.elementAt(j).getContent());} catch (Exception e) {sin=null;} 
             
             res.addElement(new BookSignature(codBib,biblioteca,te,r,sin));
           }
@@ -104,4 +107,9 @@ public Vector<BookSignature> getSignatures() {
     	in=in.replaceAll("\\\\i"," - ");
     	return in;
     }
+
+	public void addSignature(BookSignature signature) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
 }

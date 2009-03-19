@@ -27,13 +27,15 @@ package org.jopac2.jbal.sutrs;
 * @version 19/07/2005
 */
 
+import org.jopac2.jbal.abstractStructure.Field;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.HtmlCodec;
 import org.jopac2.utils.JOpac2Exception;
 
 public class Sol_sutrs extends Sutrs {
 //  private static String rt=String.valueOf((char)0x1d);
 //  private static String ft=String.valueOf((char)0x1e);
-  private static String dl=String.valueOf((char)0x1f);        //' delimiter
+//  private static String dl=String.valueOf((char)0x1f);        //' delimiter
 	
   /*public int delimiterPosition=27;
   public char delimiter=':';
@@ -63,15 +65,21 @@ public class Sol_sutrs extends Sutrs {
   		if(temp.startsWith("Livello bibliografico:")){
   			if(temp.contains("Monografia")){
   				setType("M");
-  				addTag("035  "+dl+"a"+temp.substring(23));
+  				Tag t=new Tag("035",' ',' ');
+  				t.addField(new Field("a",temp.substring(23)));
+  				addTag(t);
   			}
   		}
   		else if(temp.startsWith("Type :")){
-  			addTag("315  "+dl+"a"+temp.substring(6).trim());
+  			Tag t=new Tag("315",' ',' ');
+			t.addField(new Field("a",temp.substring(6).trim()));
+			addTag(t);
   		}
   		else if(temp.startsWith("Isbd :")){
   			temp = temp.substring(6).trim();
-  			addTag("200  "+dl+"a"+temp);	
+  			Tag t=new Tag("200",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		/*else if(temp.startsWith("Publisher :")){
   			String tag2add = "210  ";
@@ -85,30 +93,49 @@ public class Sol_sutrs extends Sutrs {
   		}*/
   		else if(temp.startsWith("Descrizione fisica:")){
   			temp = temp.substring(19).trim();
-  			addTag("215  "+dl+"a"+temp);
+  			Tag t=new Tag("215",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		else if(temp.startsWith("Fa parte di:") || temp.startsWith("Collezione:") ){
   			temp = temp.substring(12).trim();
   			temp = temp.replaceAll("\\*","");
   			temp = temp.split("#")[0];
-  			addTag("410  "+dl+"a"+temp);
+  			Tag t=new Tag("410",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		else if(temp.startsWith("Creator :") || temp.startsWith("Contributor :")){
   			temp = temp.substring(temp.indexOf(":")+1).trim();
-  			if(temp.contains(",")){ addTag("700  "+ dl+"a"+temp.split(",")[0].trim()+ dl+"b"+temp.split(",")[1].trim()); }
-  			else addTag("700  "+dl+"a"+temp);
+  			if(temp.contains(",")){
+  				Tag t=new Tag("700",' ',' ');
+  				t.addField(new Field("a",temp.split(",")[0].trim()));
+  				t.addField(new Field("b",temp.split(",")[1].trim()));
+  				addTag(t);
+  			}
+  			else {
+  				Tag t=new Tag("700",' ',' ');
+  				t.addField(new Field("a",temp));
+  				addTag(t);
+  			}
 		}
   		else if(temp.startsWith("Subject :")){
   			temp = temp.substring(9).trim();
-  			addTag("615  "+dl+"a"+temp);
+  			Tag t=new Tag("615",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		else if(temp.startsWith("Paese di pubblicazione:")){
   			temp = temp.substring(23).trim();
-  			addTag("102  "+dl+"a"+temp);
+  			Tag t=new Tag("102",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		else if(temp.startsWith("Lingua di pubblicazione:")){
   			temp = temp.substring(24).trim();
-  			addTag("101  "+dl+"a"+temp);
+  			Tag t=new Tag("101",' ',' ');
+			t.addField(new Field("a",temp));
+			addTag(t);
   		}
   		
   		/*else if(temp.contains("Identifier :")){
@@ -130,8 +157,16 @@ public class Sol_sutrs extends Sutrs {
 	}
   	
   	inString = inString.trim();
-  	addTag("001"+bid);
-  	addTag("970  " + inString);
+  	try {
+		Tag t=new Tag("001",' ',' ');
+		t.setRawContent(bid);
+		addTag(t);
+		t=new Tag("970",' ',' ');
+		t.setRawContent(inString);
+		addTag(t);
+	} catch (JOpac2Exception e) {
+		e.printStackTrace();
+	}
   }
   
   /* (non-Javadoc)

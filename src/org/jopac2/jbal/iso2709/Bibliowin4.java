@@ -46,26 +46,19 @@ import java.util.*;
 
 import org.jopac2.jbal.Readers.IsoTxtRecordReader;
 import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.*;
 
-public class Bibliowin4 extends ISO2709Impl {
+public class Bibliowin4 extends Unimarc {
 	private String rawRecord=null;
+	
+	  public Bibliowin4(String stringa,String dTipo) {
+		    super(stringa,dTipo);
+		  }
 
-	public Bibliowin4(String stringa, String dTipo) {
-		super();
-		iso2709Costruttore(stringa, dTipo, 0);
-		initLinkUp();
-		initLinkDown();
-		initLinkSerie();
-	}
-
-	public Bibliowin4(String stringa, String dTipo, String livello) {
-		super();
-		iso2709Costruttore(stringa, dTipo, Integer.parseInt(livello));
-		initLinkUp();
-		initLinkDown();
-		initLinkSerie();
-	}
+		  public Bibliowin4(String stringa,String dTipo,String livello) {
+		    super(stringa,dTipo,livello);
+		  }
 
 	/**
 	 * Esempio record:
@@ -94,7 +87,7 @@ public class Bibliowin4 extends ISO2709Impl {
 					recordBiblioLevel = stringa.substring(7, 8);
 					indicatorLength = stringa.substring(8, 9);
 				} else {
-					dati.addElement(in[i]);
+					dati.addElement(new Tag(in[i]));
 					if (in[i].startsWith("001"))
 						bid = in[i].substring(9);
 				}
@@ -117,71 +110,6 @@ public class Bibliowin4 extends ISO2709Impl {
 
 	}
 
-	// ritorna un vettore di elementi biblo
-	@SuppressWarnings("unchecked")
-	public Vector getLink(String tag) {
-		String v = getFirstTag(tag);
-
-		Vector r = new Vector();
-		try {
-			if (v.length() > 0) { // se il vettore ha elementi, allora faro'
-									// almeno una query
-				Bibliowin4 not = new Bibliowin4(); // crea un nuovo elemento
-													// Isisbiblo
-				not.dati = new Vector();
-				not.dati.addElement("011" + v.substring(3));
-				not.setBid(getBid());
-				not.setTerminator("#", "#", "^");
-				r.addElement(not);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return r;
-	}
-
-	public Vector<String> getSubjects() {
-		return getElement(getTag("610"), "a");
-	}
-
-	public Vector<String> getClassifications() {
-		return getElement(getTag("676"), "a");
-	}
-
-	public Vector<String> getEditors() {
-		return getElement(getTag("210"), "c");
-	}
-
-	public String getPublicationPlace() {
-		return getFirstElement(getFirstTag("210"), "a");
-	}
-
-	public String getPublicationDate() {
-		return getFirstElement(getFirstTag("210"), "d");
-	}
-
-	// TODO per questo tipo trovare l'abstract
-	public String getAbstract() {
-		return null;
-	}
-
-	public Vector<String> getAuthors() { // 200 f ; g (ripetuto)
-		String v = getFirstTag("200"); // Autore principale
-
-		Vector<String> r = new Vector<String>();
-
-		String t = getFirstElement(v, "f");
-		if (t.length() > 0)
-			r.addElement(t);
-
-		Vector<String> g = getElement(v, "g");
-		for (int i = 0; i < g.size(); i++) {
-			r.addElement(g.elementAt(i));
-		}
-		g.clear();
-		g = null;
-		return r;
-	}
 
 	/**
 	 * 29/12/2003 - R.T. Input: null Output: Vector di coppie. La coppia
@@ -191,22 +119,16 @@ public class Bibliowin4 extends ISO2709Impl {
 	 * nel codice della biblioteca?
 	 */
 	public Vector<BookSignature> getSignatures() {
-		Vector<String> v = getTag("950"); // prende dati collocazione
+		Vector<Tag> v = getTags("950"); // prende dati collocazione
 		Vector<BookSignature> res = new Vector<BookSignature>();
 
 		for (int i = 0; i < v.size(); i++) {
-			String codiceBib = getFirstElement(v.elementAt(i), "j"); // non
-																		// c'e'
-																		// il
-																		// nome
-																		// biblioteca,
-																		// solo
-																		// il
-																		// codice
+			String codiceBib = v.elementAt(i).getField("j").getContent(); 
+			// non c'e' il nome biblioteca, solo il codice
 
-			String col = getFirstElement(v.elementAt(i), "e") + // collocazione
-					Utils.ifExists(": ", getFirstElement(v.elementAt(i), "n"));
-			String inv = getFirstElement(v.elementAt(i), "c"); // prende
+			String col = v.elementAt(i).getField("e").getContent() + // collocazione
+					Utils.ifExists(": ", v.elementAt(i).getField("n").getContent());
+			String inv = v.elementAt(i).getField("c").getContent(); // prende
 																// l'inventario
 
 			res.addElement(new BookSignature(codiceBib, codiceBib, inv, col));
@@ -216,63 +138,9 @@ public class Bibliowin4 extends ISO2709Impl {
 		return res;
 	}
 
-	/* (non-Javadoc)
-	 * @see JOpac2.dataModules.iso2709.ISO2709Impl#clearSignatures()
-	 */
-	@Override
-	public void clearSignatures() throws JOpac2Exception {
-		this.removeArea("9");
-	}
-
-	public String getTitle() {
-		String r = "";
-		String tag = getFirstTag("200");
-		r = getFirstElement(tag, "a")
-				+ Utils.ifExists(": ", getFirstElement(tag, "e")); // specificazione
-		// Utils.Log("Titolo: "+r);
-		return r;
-	}
-
-	/*
-	 * TODO Implementare metodo getEdition
-	 */
-	public String getEdition() {
-		return null;
-	}
-
-	public String getISBD() {
-		String r = "";
-		String tag = getFirstTag("200"); // AREA 1
-		String dim = getFirstTag("215");
-		r = getFirstElement(tag, "a") + // titolo proprio
-				Utils.ifExists(": ", getFirstElement(tag, "e")) + // specificazione
-				Utils.ifExists(" / ", getFirstElement(tag, "f")); // resp.
-																	// princip.
-
-		Vector<String> g = getElement(tag, "g");
-		for (int i = 0; i < g.size(); i++) {
-			r = r + "; " + g.elementAt(i);
-		}
-
-		r = r + Utils.ifExists(". - ", getPublicationPlace()) + // luogo di
-																// pubblicazione
-				Utils.ifExists(" : ", getEditors()) + // editore
-				Utils.ifExists(", ", getPublicationDate()) + // data di
-																// pubblicazione
-				Utils.ifExists(". - ", getFirstElement(dim, "a")) + // num.
-																	// pagine
-				Utils.ifExists(" : ", getFirstElement(dim, "c")) + // illustrazioni
-				Utils.ifExists(" : ", getFirstElement(dim, "d")); // misure
-
-		return quote(r);
-	}
-
-	public Bibliowin4() {
-	}
-
-	public String getDescription() {
+	public void addSignature(BookSignature signature) throws JOpac2Exception {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 
 	public RecordReader getRecordReader(InputStream f) throws UnsupportedEncodingException {

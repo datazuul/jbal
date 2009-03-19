@@ -54,7 +54,10 @@ import org.xml.sax.SAXException;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.jbal.abstractStructure.Tag;
+import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.iso2709.ISO2709Impl;
+import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.*;
 
 public abstract class XML implements RecordInterface {
@@ -190,7 +193,7 @@ public abstract class XML implements RecordInterface {
       //dati.addElement(newTag);
   }
   
-  public void addTag(Vector<String> newTags) {
+  public void addTag(Vector<Tag> newTags) {
       //dati.addAll(newTags);
   }
   
@@ -354,12 +357,16 @@ public abstract class XML implements RecordInterface {
 	public void setTitle(String title)  throws JOpac2Exception {
 		throw new JOpac2Exception("No such method defined!");
 	}
+	
+	public void setTitle(String title, boolean significant)  throws JOpac2Exception {
+		throw new JOpac2Exception("No such method defined!");
+	}
 
 	public void addAuthor(String author)  throws JOpac2Exception {
 		throw new JOpac2Exception("No such method defined!");
 	}
 
-	public void addClassification(String classification)  throws JOpac2Exception {
+	public void addClassification(ClassificationInterface data)  throws JOpac2Exception {
 		throw new JOpac2Exception("No such method defined!");
 	}
 
@@ -367,7 +374,7 @@ public abstract class XML implements RecordInterface {
 		throw new JOpac2Exception("No such method defined!");
 	}
 
-	public void addEditor(String editor)  throws JOpac2Exception {
+	public void addPublisher(String publisher) throws JOpac2Exception {
 		throw new JOpac2Exception("No such method defined!");
 	}
 
@@ -383,7 +390,7 @@ public abstract class XML implements RecordInterface {
 		throw new JOpac2Exception("No such method defined!");
 	}
 
-	public void addSubject(String subject)  throws JOpac2Exception {
+	public void addSubject(SubjectInterface subject)  throws JOpac2Exception {
 		throw new JOpac2Exception("No such method defined!");
 	}
 
