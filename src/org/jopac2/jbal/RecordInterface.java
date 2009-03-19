@@ -33,6 +33,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.jbal.abstractStructure.Tag;
+import org.jopac2.jbal.classification.ClassificationInterface;
+import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.JOpac2Exception;
 import org.jopac2.utils.TokenWord;
@@ -152,13 +155,13 @@ public interface RecordInterface {
 	 * Aggiunge al record bibliografico una informazione codificata in un tag
 	 * unimarc
 	 */
-	public void addTag(String newTag);
+	public void addTag(Tag newTag);
 
 	/**
 	 * Aggiunge al record bibliografico un vettore di informazioni codificate in
 	 * un tag unimarc
 	 */
-	public void addTag(Vector<String> newTags);
+	public void addTag(Vector<Tag> newTags);
 	
 
 	/**
@@ -222,7 +225,7 @@ public interface RecordInterface {
 	 * @param subject
 	 * @throws JOpac2Exception 
 	 */
-	public void addSubject(String subject) throws JOpac2Exception;
+	public void addSubject(SubjectInterface subject) throws JOpac2Exception;
 
 	/**
 	 * Restituisce un vettore di classificazioni
@@ -234,7 +237,7 @@ public interface RecordInterface {
 	 * Aggiunge una classificazione al record
 	 * @throws JOpac2Exception 
 	 */
-	public void addClassification(String classification) throws JOpac2Exception;
+	public void addClassification(ClassificationInterface data) throws JOpac2Exception;
 
 	/**
 	 * Restituisce un vettore di editori
@@ -247,7 +250,7 @@ public interface RecordInterface {
 	 * @param editor
 	 * @throws JOpac2Exception 
 	 */
-	public void addEditor(String editor) throws JOpac2Exception;
+	public void addPublisher(String publisher) throws JOpac2Exception;
 
 	/**
 	 * Restituisce l'informazione sull'edizione
@@ -300,6 +303,20 @@ public interface RecordInterface {
 	 * @throws JOpac2Exception 
 	 */
 	public void setTitle(String title) throws JOpac2Exception;
+	
+	
+	/**
+	 * imposta il titolo
+	 * false = Title is not significant
+	 *         This title does not warrant an added entry.
+	 * true  = Title is significant
+	 *         An access point is to be made from this title.
+	 *         
+	 * @param title
+	 * @param significant
+	 * @throws JOpac2Exception
+	 */
+	public void setTitle(String title, boolean significant) throws JOpac2Exception;
 	
 	/**
 	 * Restituisce una descrizione ISBD per il volume descritto nel record 
@@ -418,6 +435,13 @@ public interface RecordInterface {
 	public void removeTags(String tag) throws JOpac2Exception;
 	
 	/**
+	 * Return a Tag vector for the tag given
+	 * @param tag
+	 * @return
+	 */
+	public Vector<Tag> getTags(String tag);
+	
+	/**
 	 * Calcola un hash relativo alla notizia, senza tener conto di eventuali dati gestionali.
 	 * @return
 	 * @throws NoSuchAlgorithmException 
@@ -455,5 +479,5 @@ public interface RecordInterface {
 	 * @param nsb
 	 * @param nse
 	 */
-	public void checkNSBNSE(String tag, String nsb, String nse);
+	//public void checkNSBNSE(String tag, String nsb, String nse);
 }
