@@ -1,17 +1,13 @@
 package org.jopac2.jbal.iso2709;
 
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
 
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jopac2.jbal.abstractStructure.Field;
@@ -24,7 +20,6 @@ public class EutMarc extends Unimarc {
 
 	public EutMarc(String stringa, String tipo) {
 		super(stringa, tipo);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
