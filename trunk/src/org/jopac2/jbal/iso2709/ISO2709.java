@@ -339,7 +339,7 @@ public Vector<String> getElement(String tagString, String elements) {
  * Rimuove tutti i tag con codice tag
  * @param tag
  */
-public void removeTag(String tag) {
+/*public void removeTag(String tag) {
  //if(tag.length()!=3) return;
  
  for(int i=0;i<dati.size();i++) {
@@ -348,7 +348,7 @@ public void removeTag(String tag) {
         i--; // per far in modo che dopo lo shift degli elementi venga ricontrollato questo indice
       }
     }
-}
+}*/
 
 /**
  * Rimuove tutti i tag nell'area indicata (nella forma, ad esempio, 9xx)

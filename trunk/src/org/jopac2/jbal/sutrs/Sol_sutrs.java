@@ -174,6 +174,6 @@ public class Sol_sutrs extends Sutrs {
    */
   @Override
   public void clearSignatures() throws JOpac2Exception {
-  	this.removeTag("970");
+  	this.removeTags("970");
   }
 }

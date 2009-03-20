@@ -577,19 +577,51 @@ public void initLinkUp() {
 	}
 
 	public void setISBD(String isbd)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
+		throw new JOpac2Exception("ERROR: Use single setTitle(), setEdition, ....");
 	}
 
+	/**
+	 * 210 $d
+	 */
 	public void setPublicationDate(String publicationDate)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
+		Tag p=getFirstTag("210");
+		if(p==null) p=new Tag("210",' ',' ');
+		p.removeField("d");
+		p.addField(new Field("d",publicationDate));
+		removeTags("210");
+		addTag(p);
 	}
 
+	/**
+	 * 210 $a
+	 */
 	public void setPublicationPlace(String publicationPlace)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
+		Tag p=getFirstTag("210");
+		if(p==null) p=new Tag("210",' ',' ');
+		p.removeField("a");
+		p.addField(new Field("a",publicationPlace));
+		removeTags("210");
+		addTag(p);
 	}
 
-	public void setStandardNumber(String standardNumber) throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
+	/**
+	 * 
+	 * @param standardNumber
+	 * @param codeSystem
+	 * @throws JOpac2Exception
+	 */
+	public void setStandardNumber(String standardNumber, String codeSystem) throws JOpac2Exception {
+		String tagName="035";
+		if(codeSystem.equals("ISBN")) tagName="010";
+		else if(codeSystem.equals("ISSN")) tagName="011";
+		else if(codeSystem.equals("ISMN")) tagName="013";
+		else if(codeSystem.equals("ISRN")) tagName="015";
+		else if(codeSystem.equals("NBN")) tagName="020";
+		else if(codeSystem.equals("GPN")) tagName="022";
+		Tag n=new Tag(tagName,' ',' ');
+		n.addField(new Field("a",standardNumber));
+
+		addTag(n);
 	}
 
   private void marcCostruttore(String stringa,String dTipo,int livello) {

@@ -308,7 +308,7 @@ return null;
 		
 	}
 
-	public void setStandardNumber(String standardNumber) throws JOpac2Exception {
+	public void setStandardNumber(String standardNumber, String codeSystem) throws JOpac2Exception {
 		// TODO Auto-generated method stub
 		
 	}
