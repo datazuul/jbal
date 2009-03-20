@@ -131,28 +131,61 @@ public void initLinkUp() {
     return r;
   }
 
+    /**
+     * Indicator 1: Title Significance Indicator
+     * 
+     * This specifies whether the agency preparing the record considers that the title proper as specified in the first $a subfield deserves treatment as an access point. This corresponds to making a title added entry or treating the title as main entry under certain cataloguing codes.
+     * 
+     * 0 Title is not significant
+     * This title does not warrant an added entry.
+     * 
+     * 1 Title is significant
+     * An access point is to be made from this title.
+     * 
+     * For access points for any title other than the first occurring title proper, see RELATED FIELDS below.
+     * 
+     * Indicator 2: blank (not defined) 
+     * 
+     * 200  $a ; $a [] $b . $c = $d : $e / $f ; $g . $h ,. $i
+	 * 
+     */
   public String getTitle() {
-    String r;
+    String r=null;
     Tag tag=getFirstTag("200");
-    r=quote(tag.getField("a").getContent());
-    r+=Utils.ifExists(" : ",tag.getField("e").getContent());
+    Vector<Field> a=tag.getFields("a");
+    r=a.elementAt(0).getContent();
+    for(int i=1;i<a.size();i++) r+=" ; "+a.elementAt(i).getContent();
+    r+=Utils.ifExists(" [] ",tag.getField("b"));
+    r+=Utils.ifExists(" . ",tag.getField("c"));
+    r+=Utils.ifExists(" = ",tag.getField("d"));
+    r+=Utils.ifExists(" : ",tag.getField("e"));
+    r+=Utils.ifExists(" / ",tag.getField("f"));
+    r+=Utils.ifExists(" ; ",tag.getField("g"));
+    r+=Utils.ifExists(" . ",tag.getField("h"));
+    r+=Utils.ifExists(" , ",tag.getField("i"));
+
     return r;
   }
 
   public String getISBD() {
     String r;
     r=getTitle();
+    /*
     Tag tag=getFirstTag("200");
     r+=tag.getField("d").getContent();
     r+=Utils.ifExists(" : ",tag.getField("e").getContent());
     r+=Utils.ifExists(" / ",tag.getField("f").getContent());
     r+=Utils.ifExists(" ; ",tag.getField("g").getContent());
-
+	*/
+    
+    r+=getEdition();
+    /*
     tag=getFirstTag("205");
     r+=Utils.ifExists(". - ",tag.getField("a").getContent());
     r+=Utils.ifExists(" ; ",tag.getField("b").getContent());
-
-    tag=getFirstTag("210");
+	*/
+    
+    Tag tag=getFirstTag("210");
     r+=Utils.ifExists(". - ",tag.getField("a").getContent());
     r+=Utils.ifExists(" : ",tag.getField("c").getContent());
     r+=Utils.ifExists(" , ",tag.getField("d").getContent());
@@ -173,16 +206,37 @@ public void initLinkUp() {
     return quote(r);
   }
   
-  
-//TODO per questo tipo trovare  l'abstract
+
+  /**
+   * 330^a
+   */
   public String getAbstract() {
-  	return null;
+	  String r=null;
+	  Field a=null;
+	  Tag t=getFirstTag("330");
+	  if(t!=null) a=t.getField("a");
+	  if(a!=null) r=a.getContent();
+  	return r;
   }
   
-  /*
-   * TODO da implementare getEdition
+  /**
+   * 205 $a = $d / $f ; $g , $b
    */
-  public String getEdition() {return null;}
+  public String getEdition() {
+	  String r="";
+	  Tag t=getFirstTag("205");
+	  Field a=t.getField("a");
+	  Field d=t.getField("d");
+	  Field f=t.getField("f");
+	  Field g=t.getField("g");
+	  Field b=t.getField("b");
+	  r+=Utils.ifExists("", a);
+	  r+=Utils.ifExists(" = ", d);
+	  r+=Utils.ifExists(" / ", f);
+	  r+=Utils.ifExists(" ; ", g);
+	  r+=Utils.ifExists(" , ", b);
+	  return r;
+  }
   
   /* 
    * TODO:Prendere fuori il BID giustoe esiste?
@@ -284,12 +338,89 @@ public void initLinkUp() {
 		  	return r;
 		  }
   
+	/**
+     * Indicator 1: Title Significance Indicator
+     * 
+     * This specifies whether the agency preparing the record considers that the title proper as specified in the first $a subfield deserves treatment as an access point. This corresponds to making a title added entry or treating the title as main entry under certain cataloguing codes.
+     * 
+     * 0 Title is not significant
+     * This title does not warrant an added entry.
+     * 
+     * 1 Title is significant
+     * An access point is to be made from this title.
+     * 
+     * For access points for any title other than the first occurring title proper, see RELATED FIELDS below.
+     * 
+     * Indicator 2: blank (not defined) 
+     * 
+     * 200  $a ; $a [] $b . $c = $d : $e / $f ; $g . $h ,. $i
+	 */
 	public void setTitle(String title, boolean significant)  throws JOpac2Exception {
+		Field i=null, h=null, e=null, d=null, c=null, b=null; // a ripetibile, f+g ripetibile
+		Vector<Field> a=new Vector<Field>(), f=new Vector<Field>();
 		char s='1';
 		if(!significant) s='0';
 		removeTags("200");
 		Tag t=new Tag("200",s,' ');
-		t.addField(new Field("a",title));
+				
+		if(title.contains(" , ")) {
+			int j=title.indexOf(" , ");
+			String k=title.substring(j+3);
+			title=title.substring(0,j);
+			i=new Field("i",k);
+		}
+		if(title.contains(" . ")) {
+			int j=title.lastIndexOf(" . ");
+			String k=title.substring(j+3);
+			if(k.length()<20) {
+				title=title.substring(0,j);
+				if(i==null) i=new Field("i",k);
+				else h=new Field("h",k);
+			}
+		}
+		if(title.contains(" / ")) {
+			int j=title.indexOf(" / ");
+			String k=title.substring(j+3);
+			title=title.substring(0,j);
+			String[] p=k.split(" ; ");
+			f.addElement(new Field("f",p[0]));
+			for(int z=1;z<p.length;z++) f.addElement(new Field("g",p[z]));
+		}
+		if(title.contains(" : ")) {
+			int j=title.indexOf(" : ");
+			String k=title.substring(j+3);
+			title=title.substring(0,j);
+			e=new Field("e",k);
+		}
+		if(title.contains(" = ")) {
+			int j=title.indexOf(" = ");
+			String k=title.substring(j+3);
+			title=title.substring(0,j);
+			d=new Field("d",k);
+		}
+		if(title.contains(" . ")) {
+			int j=title.indexOf(" . ");
+			String k=title.substring(j+3);
+			title=title.substring(0,j);
+			c=new Field("c",k);
+		}
+		if(title.contains(" [] ")) {
+			int j=title.indexOf(" [] ");
+			String k=title.substring(j+3);
+			title=title.substring(0,j);
+			b=new Field("b",k);
+		}
+		String[] p=title.split(" ; ");
+		for(int z=0;z<p.length;z++) a.addElement(new Field("a",p[z]));
+		
+		for(int z=0;z<a.size();z++) t.addField(a.elementAt(z));
+		if(b!=null) t.addField(b);
+		if(c!=null) t.addField(c);
+		if(d!=null) t.addField(d);
+		if(e!=null) t.addField(e);
+		for(int z=0;z<f.size();z++) t.addField(f.elementAt(z));
+		if(h!=null) t.addField(h);
+		if(i!=null) t.addField(i);
 		addTag(t);
 	}
 	
@@ -333,25 +464,6 @@ public void initLinkUp() {
 	}
 
 	
-	/**
-	 * For all: indicators blank
-	 * 675 Universal Decimal Classification (UDC)
-	 * 		$a Number (not repeatable)
-	 * 		$v Edition (not repeatable)
-	 * 		$z Language of edition (not repeatable)
-	 * 676 Dewey Decimal Classification (DDC)
-	 * 		$a Number (not repeatable)
-	 * 		$v Edition (not repeatable)
-	 * 		$z Language of edition (not repeatable)
-	 * 680 Library of Congress Classification (LCC)
-	 * 		$a Class number (not repeatable)
-	 *		$b Book number (not repeatable)
-	 * 686 Other Class Numbers (any other of the above)
-	 * 		$a Class number (repeatable)
-	 *		$b Book Number (repeatable)
-	 * 		$c Classification Subdivision (repeatable)
-	 *		$2 System Code (not repeatable)
-	 */
 	public void addClassification(ClassificationInterface data)  throws JOpac2Exception {
 		String tag="";
 		String classificationSchema=data.getClassificationName();
@@ -398,62 +510,6 @@ public void initLinkUp() {
 		throw new JOpac2Exception("No such method defined!");
 	}
 
-	/**
-	 * 600 Personal Name Used as Subject
-	 * 		Indicator 1: blank (not defined)
-	 * 		Indicator 2: Form of Name Indicator
-	 * 				0 Name entered under forename or in direct order
-	 *				1 Name entered under surname (family name, patronymic etc.)
-	 *		$a Entry Element
-	 *		$b Part of Name Other than Entry Element
-	 *		$c Additions to Name Other than Dates
-	 * 		$d Roman Numerals
-	 *		$f Dates
-	 *		$g Expansion of Initials of Forename
-	 *		$j Form Subdivision
-	 *		$p Affiliation/address
-	 *		$t Title
-	 *		$j Form Subdivision
-	 *		$x Topical Subdivision
-	 *		$y Geographical Subdivision
-	 *		$z Chronological Subdivision
-	 *		$2 System Code
-	 *		$3 Authority Record Number
-	 * 601 Corporate Body Name Used as Subject
-	 * 		Indicator 1: Meeting Indicator
-	 * 			0 Corporate name
-	 * 			1 Meeting
-	 * 		Indicator 2: Form of Name Indicator
-	 * 			0 Name in inverted order
-	 * 			1 Name entered under place or jurisdiction
-	 * 			2 Name entered under name in direct order
-	 * 		$a Entry Element
-	 * 		$b Subdivision (or name if entered under place)
-	 * 		$c Addition to Name or Qualifier
-	 * 		$d Number of Meeting and/or Number of Part of a Meeting
-	 * 		$e Location of Meeting
-	 * 		$f Date of Meeting
-	 * 		$g Inverted Element
-	 * 		$h Part of Name other than Entry Element and Inverted Element
-	 * 		$j Form Subdivision
-	 * 		$t Title (Not used. For author/title subject headings, use field 604 NAME AND TITLE USED AS SUBJECT.)
-	 * 		$j Form Subdivision
-	 * 		$x Topical Subdivision
-	 * 		$y Geographical Subdivision
-	 * 		$z Chronological Subdivision
-	 * 		$2 System Code (It is recommended that subfield $2 always be present in each occurrence of the field)
-	 * 		$3 Authority Record Number
-	 * 602 Family Name Used as Subject
-	 * 604 Name and Title Used as Subject
-	 * 605 Title Used as Subject
-	 * 606 Topical Name Used as Subject
-	 * 607 Geographical Name Used as Subject
-	 * 608 Form, Genre or Physical Characteristics Heading
-	 * 610 Uncontrolled Subject Terms
-	 * 615 Subject Category (Provisional)
-	 * 620 Place Access
-	 * 626 Technical Details Access (Electronic Resources) (Obsolete) 
-	 */
 	public void addSubject(SubjectInterface subject)  throws JOpac2Exception {
 		String tag=subject.getTagIdentifier();
 		Tag t=new Tag(tag,' ',' ');
@@ -464,16 +520,60 @@ public void initLinkUp() {
 		addTag(t);
 	}
 
+	/**
+	 * 330^a
+	 */
 	public void setAbstract(String abstractText)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
+		Tag a=new Tag("330",' ',' ');
+		a.addField(new Field("a",abstractText));
+		addTag(a);
 	}
 
 	public void setDescription(String description)  throws JOpac2Exception {
 		throw new JOpac2Exception("No such method defined!");
 	}
 
+	/**
+	 * 
+     * 205 $a = $d / $f ; $g , $b
+     *
+	 */
 	public void setEdition(String edition)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
+		Tag e=new Tag("205",' ',' ');
+		Field a=null, d=null, f=null, g=null, b=null;
+		
+		if(edition.contains(" , ")) {
+			int i=edition.indexOf(" , ");
+			String k=edition.substring(i+3);
+			edition=edition.substring(0,i);
+			b=new Field("b",k);
+		}
+		if(edition.contains(" ; ")) {
+			int i=edition.indexOf(" ; ");
+			String k=edition.substring(i+3);
+			edition=edition.substring(0,i);
+			g=new Field("g",k);
+		}
+		if(edition.contains(" / ")) {
+			int i=edition.indexOf(" / ");
+			String k=edition.substring(i+3);
+			edition=edition.substring(0,i);
+			f=new Field("f",k);
+		}
+		if(edition.contains(" = ")) {
+			int i=edition.indexOf(" = ");
+			String k=edition.substring(i+3);
+			edition=edition.substring(0,i);
+			d=new Field("d",k);
+		}
+		a=new Field("a",edition);
+		
+		if(a!=null) e.addField(a);
+		if(d!=null) e.addField(d);
+		if(f!=null) e.addField(f);
+		if(g!=null) e.addField(g);
+		if(b!=null) e.addField(b);
+		addTag(e);
 	}
 
 	public void setISBD(String isbd)  throws JOpac2Exception {
