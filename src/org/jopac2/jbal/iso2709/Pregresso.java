@@ -137,8 +137,8 @@ return null;
   }
   
   public void clearSignatures() throws JOpac2Exception {
-  	this.removeTag("002");
-  	this.removeTag("330");
+  	this.removeTags("002");
+  	this.removeTags("330");
   }
 
   public String getTitle() {
@@ -306,7 +306,7 @@ public void setPublicationPlace(String publicationPlace) throws JOpac2Exception 
 	
 }
 
-public void setStandardNumber(String standardNumber) throws JOpac2Exception {
+public void setStandardNumber(String standardNumber, String codeSystem) throws JOpac2Exception {
 	// TODO Auto-generated method stub
 	
 }

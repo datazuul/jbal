@@ -177,7 +177,7 @@ public class Iuav_sutrs extends Sutrs {
   }
 	
   public void clearSignatures() throws JOpac2Exception {
-  	this.removeTag("970");
+  	this.removeTags("970");
   }	
 	
 }

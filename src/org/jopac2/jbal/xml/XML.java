@@ -418,7 +418,7 @@ public abstract class XML implements RecordInterface {
 		throw new JOpac2Exception("No such method defined!");
 	}
 
-	public void setStandardNumber(String standardNumber) throws JOpac2Exception {
+	public void setStandardNumber(String standardNumber, String codeSystem) throws JOpac2Exception {
 		throw new JOpac2Exception("No such method defined!");
 	}
 

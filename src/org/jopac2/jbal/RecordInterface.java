@@ -399,11 +399,18 @@ public interface RecordInterface {
 	public String getStandardNumber();
 	
 	/**
-	 * imposta il numero standard ISBN o ISSN
+	 * imposta il numero standard
+	 * ISBN
+	 * ISSN
+	 * ISRN
+	 * ISMN
+	 * NBN National bibliography number
+     * GPN Government publication number
+     * Other system control number
 	 * @param standardNumber
 	 * @throws JOpac2Exception 
 	 */
-	public void setStandardNumber(String standardNumber) throws JOpac2Exception;
+	public void setStandardNumber(String standardNumber, String codeSystem) throws JOpac2Exception;
 	
 	/**
 	 * Restituisce le note sul materiale

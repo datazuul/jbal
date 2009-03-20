@@ -197,7 +197,7 @@ public Vector<BookSignature> getSignatures() {
 
 
 public void clearSignatures() throws JOpac2Exception {
-	this.removeTag("800");
+	this.removeTags("800");
 }
 
 public String quote(String t) {
@@ -437,7 +437,7 @@ public void setPublicationPlace(String publicationPlace) throws JOpac2Exception 
 	
 }
 
-public void setStandardNumber(String standardNumber) throws JOpac2Exception {
+public void setStandardNumber(String standardNumber, String codeSystem) throws JOpac2Exception {
 	// TODO Auto-generated method stub
 	
 }
