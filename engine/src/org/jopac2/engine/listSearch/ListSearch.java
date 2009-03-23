@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 import org.jopac2.engine.dbGateway.StaticDataComponent;
+import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.utils.SearchResultSet;
 
 public class ListSearch {
@@ -113,13 +114,12 @@ public class ListSearch {
 		long idClasse=StaticDataComponent.getChannelIndexbyName(classe);
 		Vector<Long> listResult=new Vector<Long>();
 		String sql = "SELECT distinct id_notizia,testo "
-				   + "  FROM TIT_NDX "
+			       + "  FROM "+DbGateway.nomeTableListe(classe)+" "
 				   + " WHERE testo>=? " 
 			       + "ORDER BY testo " 
 			       + "LIMIT ?";//numero di parole da restituire>=
 
 		PreparedStatement stmt = conn.prepareStatement(sql);
-		//stmt.setLong(1, idClasse);
 		stmt.setString(1, parole);
 		stmt.setLong(2, limit);
 		ResultSet rs = stmt.executeQuery();
