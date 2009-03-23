@@ -210,9 +210,13 @@ public abstract class ISO2709 implements RecordInterface {
   }
 
   private String getTag(String record, String DirEntry) {
-    int FieldLength = Integer.parseInt(Utils.mid(DirEntry, 4, 4));
-    int Starting = Integer.parseInt(Utils.mid(DirEntry, 8, 5)) + 1;
-    String t = Utils.mid(record, Starting, FieldLength);
+	//x.substring(start-1,start+len-1)
+	  String t=DirEntry.substring(3,7);
+    int FieldLength = Integer.parseInt(t);
+    t=DirEntry.substring(7,12);
+    int Starting = Integer.parseInt(t) + 1;
+    t=record.substring(Starting-1,Starting+FieldLength-1);
+    //t = Utils.mid(record, Starting, FieldLength);
     t=my_trim(t);
     return(t);
   }
@@ -429,13 +433,15 @@ public Vector<Tag> getTags(String tag) {
 
     String s = "";
     for(int k = 1;k<t.length()+1;k++) {
-      c = Utils.mid(t, k, 1);
+    	c=t.substring(k-1,k);
+      //c = Utils.mid(t, k, 1);
       if (c.equals(dl)==true) {
-        s = s + "[" + Utils.mid(t, k + 1, 1) + "]";
+    	  s=s+"["+t.substring(k,k+1)+"]";
+        //s = s + "[" + Utils.mid(t, k + 1, 1) + "]";
         k = k + 1;
       } else {
         if (c.equals(String.valueOf((char)27))==true) {
-          if (((String)Utils.mid(t, k + 1, 1)).equals("I")) {
+          if(t.substring(k,k+1).equals("I")) {//   if (((String)Utils.mid(t, k + 1, 1)).equals("I")) {
             s = s + "*";
           }
           k = k + 1;
@@ -496,17 +502,21 @@ public Vector<Tag> getTags(String tag) {
         readed = readed + 1;
 
         while (DirEntry.equals(ft)==false) {
-            String t = Utils.mid(stringa, readed, 12);
+            //String t = Utils.mid(stringa, readed, 12);
+        	String t=stringa.substring(readed-1,readed+12-1);
             readed = readed + 12;
             Directory[ndir] = t;
             ndir = ndir + 1;
-            DirEntry = Utils.mid(stringa, readed, 1);
+            DirEntry = stringa.substring(readed-1, readed);
+            //DirEntry = Utils.mid(stringa, readed, 1);
         }
 
-        String record = Utils.mid(stringa, readed + 1);
+        String record=stringa.substring(readed);
+        //String record = Utils.mid(stringa, readed + 1);
         for(int z = 0; z<= ndir - 1;z++) {
           String s = my_trim(getTag(record, Directory[z]));
-          String tag = Utils.mid(Directory[z], 1, 3);
+          String tag=Directory[z].substring(0,3);
+          //String tag = Utils.mid(Directory[z], 1, 3);
 
           dati.addElement(new Tag(tag+s,delimiters));
           if(tag.equals("001")) {
