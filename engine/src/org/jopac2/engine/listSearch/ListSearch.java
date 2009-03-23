@@ -11,7 +11,16 @@ import org.jopac2.engine.utils.SearchResultSet;
 
 public class ListSearch {
 	
-	public static SearchResultSet listSearch(Connection conn,String classe,String fromParola,int limit) throws SQLException {	
+	/**
+	 * @deprecated
+	 * @param conn
+	 * @param classe
+	 * @param fromParola
+	 * @param limit
+	 * @return
+	 * @throws SQLException
+	 */
+	public static SearchResultSet listSearch_old(Connection conn,String classe,String fromParola,int limit) throws SQLException {	
 		long idClasse=StaticDataComponent.getChannelIndexbyName(classe);
 		//Hashtable<String, Vector<Integer>> h = new Hashtable<String, Vector<Integer>>();
 		Vector<Long> listResult=new Vector<Long>();
@@ -100,7 +109,7 @@ public class ListSearch {
 		return result;
 	}
 	
-	public static SearchResultSet listSearch2(Connection conn,String classe,String parole,int limit) throws SQLException {	
+	public static SearchResultSet listSearch(Connection conn,String classe,String parole,int limit) throws SQLException {	
 		long idClasse=StaticDataComponent.getChannelIndexbyName(classe);
 		Vector<Long> listResult=new Vector<Long>();
 		String sql = "SELECT distinct id_notizia,testo "
@@ -110,9 +119,9 @@ public class ListSearch {
 			       + "LIMIT ?";//numero di parole da restituire>=
 
 		PreparedStatement stmt = conn.prepareStatement(sql);
-		stmt.setLong(1, idClasse);
-		stmt.setString(2, parole);
-		stmt.setLong(3, limit);
+		//stmt.setLong(1, idClasse);
+		stmt.setString(1, parole);
+		stmt.setLong(2, limit);
 		ResultSet rs = stmt.executeQuery();
 		int id_notizia;
 		while (rs.next()) {
