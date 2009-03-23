@@ -186,22 +186,30 @@ public void initLinkUp() {
 	*/
     
     Tag tag=getFirstTag("210");
-    r+=Utils.ifExists(". - ",tag.getField("a").getContent());
-    r+=Utils.ifExists(" : ",tag.getField("c").getContent());
-    r+=Utils.ifExists(" , ",tag.getField("d").getContent());
+    if(tag!=null) {
+	    r+=Utils.ifExists(". - ",tag.getField("a"));
+	    r+=Utils.ifExists(" : ",tag.getField("c"));
+	    r+=Utils.ifExists(" , ",tag.getField("d"));
+    }
 
 
     tag=getFirstTag("215");
-    r+=Utils.ifExists(". - ",tag.getField("a").getContent());
-    r+=Utils.ifExists(" : ",tag.getField("c").getContent());
-    r+=Utils.ifExists(" ; ",tag.getField("d").getContent());
-    r+=Utils.ifExists(" + ",tag.getField("e").getContent());
+    if(tag!=null) {
+	    r+=Utils.ifExists(". - ",tag.getField("a"));
+	    r+=Utils.ifExists(" : ",tag.getField("c"));
+	    r+=Utils.ifExists(" ; ",tag.getField("d"));
+	    r+=Utils.ifExists(" + ",tag.getField("e"));
+    }
 
     tag=getFirstTag("300");
-    r+=Utils.ifExists(". - ",tag.getField("a").getContent());
-
+    if(tag!=null) {
+    	r+=Utils.ifExists(". - ",tag.getField("a"));
+    }
+    
     tag=getFirstTag("010");
-    r+=Utils.ifExists(". - ",tag.getField("a").getContent());
+    if(tag!=null) {
+    	r+=Utils.ifExists(". - ",tag.getField("a"));
+    }
 
     return quote(r);
   }
@@ -225,16 +233,18 @@ public void initLinkUp() {
   public String getEdition() {
 	  String r="";
 	  Tag t=getFirstTag("205");
-	  Field a=t.getField("a");
-	  Field d=t.getField("d");
-	  Field f=t.getField("f");
-	  Field g=t.getField("g");
-	  Field b=t.getField("b");
-	  r+=Utils.ifExists("", a);
-	  r+=Utils.ifExists(" = ", d);
-	  r+=Utils.ifExists(" / ", f);
-	  r+=Utils.ifExists(" ; ", g);
-	  r+=Utils.ifExists(" , ", b);
+	  if(t!=null) {
+		  Field a=t.getField("a");
+		  Field d=t.getField("d");
+		  Field f=t.getField("f");
+		  Field g=t.getField("g");
+		  Field b=t.getField("b");
+		  r+=Utils.ifExists("", a);
+		  r+=Utils.ifExists(" = ", d);
+		  r+=Utils.ifExists(" / ", f);
+		  r+=Utils.ifExists(" ; ", g);
+		  r+=Utils.ifExists(" , ", b);
+	  }
 	  return r;
   }
   
@@ -284,7 +294,7 @@ public void initLinkUp() {
 
 	public String getPublicationPlace() {
 		Tag tag=getFirstTag("210");
-		return tag==null?"":tag.getField("a").getContent();
+		return tag==null?"":Utils.ifExists("", tag.getField("a"));
 	}
 
 
@@ -294,7 +304,7 @@ public void initLinkUp() {
 
     String k="";
     if(v.size()>0) {      
-        k=v.elementAt(0).getField("d").getContent();
+        k=Utils.ifExists("", v.elementAt(0).getField("d"));
     }
     k = k.trim();
     
@@ -322,7 +332,7 @@ public void initLinkUp() {
 		if(tag==null) tag=getFirstTag("020");
 		if(tag==null) tag=getFirstTag("022");
 		if(tag==null) tag=getFirstTag("035");
-		return tag==null?"":tag.getField("a").getContent();
+		return tag==null?"":Utils.ifExists("", tag.getField("a"));
 	}
 
   /**
