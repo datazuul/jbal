@@ -1367,10 +1367,13 @@ public final class DbGateway {
 	public static void updateTableListe(Connection conn, int id_notizia, String testo) throws SQLException {
 		String classe="TIT";
 		String tab=classe+"_NDX";
+		String dl=String.valueOf((char)0x1b);
 		
 		String sql="REPLACE INTO "+tab+" SET id_notizia=?, testo=?";
 		PreparedStatement pst=conn.prepareStatement(sql);
 		pst.setInt(1, id_notizia);
+		testo=testo.replaceAll(dl+"I", ""); // rimuove delimitatori asterisco
+		testo=testo.replaceAll(dl+"H", "");
 		if(testo.length()>50) testo=testo.substring(0,49);
 		pst.setString(2, testo);
 		pst.execute();
