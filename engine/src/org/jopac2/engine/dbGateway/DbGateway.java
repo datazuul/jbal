@@ -56,7 +56,7 @@ public final class DbGateway {
 	  static final int MAX_POSIZIONE_ASTERISCO=5;
 	  static final boolean DEBUG=true;
 	  /** @todo  doppio asterisco. che vuol dire?
-	   *   vul dire che le indicazioni di responsabilità vengono indicizzate
+	   *   vul dire che le indicazioni di responsabilitï¿½ vengono indicizzate
 	   *   con al massimo fino a 4 parole chiave che
 	   *   vengono segnate dall'asterisco.*/
 
@@ -640,7 +640,7 @@ public final class DbGateway {
     }
     
     /**
-     * Cancella la notizia puntata da <i>jid</i>. jid è la chiave primaria della tabella notizie.
+     * Cancella la notizia puntata da <i>jid</i>. jid ï¿½ la chiave primaria della tabella notizie.
      * @param conn
      * @param jid
      * @throws SQLException
@@ -846,7 +846,7 @@ public final class DbGateway {
 	}
 
 /*	
- * 12 giugno 2007, questo metodo era giˆ commentato
+ * 12 giugno 2007, questo metodo era giï¿½ commentato
  * private static void linkNotiziaTag(Connection[] conn, long jid, String tag, 
 			String valore_tag, long idTipo, String dl, Vector<ClasseDettaglio> clDettaglio, 
 			ParoleSpooler paroleSpooler) {
@@ -1044,7 +1044,7 @@ public final class DbGateway {
 	   * 07/03/2003 - R.T.
 	   *      Cambiato: ai fini dell'indicizzazione vanno inserite anche le
 	   *      parole prima della parte significativa del titolo.
-	   *      Quindi semplicemente se c'è l'asterisco lo tolgo e se ci sono
+	   *      Quindi semplicemente se c'ï¿½ l'asterisco lo tolgo e se ci sono
 	   *      i marcatori li tolgo MA LASCIO LE PAROLE INCLUSE
 	   */
 	  public static String processaMarcatori(String valore) {
@@ -1357,11 +1357,23 @@ public final class DbGateway {
 		String classe="TIT";
 		String tab=classe+"_NDX";
 		DbGateway.dropTable(conn, tab);
-		String sql1="CREATE TABLE tab (id_notizia INT NOT NULL,testo varchar(50)," +
+		String sql1="CREATE TABLE "+tab+" (id_notizia INT NOT NULL,testo varchar(50)," +
 				    "PRIMARY KEY(id_notizia) ENGINE = MYISAM CHARACTER SET utf8";
 		Statement stmt=conn.createStatement();
 		stmt.execute(sql1);
 		stmt.close();
+	}
+	
+	public static void updateTableListe(Connection conn, int id_notizia, String testo) throws SQLException {
+		String classe="TIT";
+		String tab=classe+"_NDX";
+		
+		String sql="REPLACE INTO "+tab+" SET id_notizia=?, testo=?";
+		PreparedStatement pst=conn.prepareStatement(sql);
+		pst.setInt(1, id_notizia);
+		pst.setString(2, testo.substring(0,49));
+		pst.execute();
+		pst.close();
 	}
 	public static void cleanUpRicerche(Connection conn, String sessionId) throws SQLException {
 		Statement stmt=conn.createStatement();
