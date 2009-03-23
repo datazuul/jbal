@@ -1,5 +1,11 @@
 {{{
 TODO
+23.3.2009 liste nuova versione
+1. in dbgateway, dove c'è il tag cr_liste ciclare su tutte le classi
+2. modificare il metodo updatetableliste passando anche la classe stringa
+3. nella ricerca, se la tabella non esiste già, chiamare prima il metodo dbgateway.rebuildList passando la classe specifica
+4. per testare l'esistenza della tabella 
+-----------
 2. parserRicerche
 	eliminare pezzi non utili
 	stampa albero migliorare stampa albero del parser
