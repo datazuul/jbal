@@ -97,9 +97,11 @@ public class Utils {
     return query.replaceAll("%26", "&").replaceAll("&amp;", "&");
   }
   
-  static Transliterator accentsconverter = Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
+  // IMPORTANTE: non usare un'istanza statica perché va in errore Cocoon
+  //static final Transliterator accentsconverter = Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
   
   public static String removeAccents(String s) {
+	  Transliterator accentsconverter = Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
 		return accentsconverter.transliterate(s);
 	}
   
@@ -289,10 +291,19 @@ public class Utils {
 
   }
 */
+  /**
+   * @deprecated
+   */
   public static String mid(String x, int start,int len) {
     return x.substring(start-1,start+len-1);
   }
 
+  /**
+   * @deprecated
+   * @param x
+   * @param start
+   * @return
+   */
   public static String mid(String x, int start) {
     return x.substring(start-1);
   }
