@@ -238,8 +238,7 @@ public class Utils {
   }
 
   public static String unQuote(String s) {
-  /** @todo che cosa � dl? mettere una roba decente */
-    String dl="";
+    String dl=String.valueOf((char)0x1b);
     String ctk;
     String r="";
     if(s.startsWith(dl+"H")) s=s.substring(2);
