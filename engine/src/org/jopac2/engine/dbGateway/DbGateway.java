@@ -1375,6 +1375,22 @@ public final class DbGateway {
 		pst.execute();
 		pst.close();
 	}
+	
+	public static void rebuildList(Connection conn) throws SQLException {
+		//String classe="TIT";
+		//String tab=classe+"_NDX";
+		
+		long maxid=DbGateway.getMaxIdTable(conn, "notizie");
+		long step=maxid/100;
+		for(int jid=0;jid<maxid;jid++) {
+			if(jid % step == 0)
+				System.out.println("Rebuilding hash: "+Utils.percentuale(maxid,jid)+"%");
+			RecordInterface ma=DbGateway.getNotiziaByJID(conn, jid);
+			DbGateway.updateTableListe(conn, jid, ma.getTitle());
+		}
+
+	}
+	
 	public static void cleanUpRicerche(Connection conn, String sessionId) throws SQLException {
 		Statement stmt=conn.createStatement();
 		ResultSet rs=stmt.executeQuery("select id from ricerche where jsession_id='"+sessionId+"'");
