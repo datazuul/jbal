@@ -1358,7 +1358,7 @@ public final class DbGateway {
 		String tab=classe+"_NDX";
 		DbGateway.dropTable(conn, tab);
 		String sql1="CREATE TABLE "+tab+" (id_notizia INT NOT NULL,testo varchar(50)," +
-				    "PRIMARY KEY(id_notizia) ENGINE = MYISAM CHARACTER SET utf8";
+				    "PRIMARY KEY(id_notizia)) ENGINE = MYISAM CHARACTER SET utf8";
 		Statement stmt=conn.createStatement();
 		stmt.execute(sql1);
 		stmt.close();
@@ -1371,7 +1371,8 @@ public final class DbGateway {
 		String sql="REPLACE INTO "+tab+" SET id_notizia=?, testo=?";
 		PreparedStatement pst=conn.prepareStatement(sql);
 		pst.setInt(1, id_notizia);
-		pst.setString(2, testo.substring(0,49));
+		if(testo.length()>50) testo=testo.substring(0,49);
+		pst.setString(2, testo);
 		pst.execute();
 		pst.close();
 	}
@@ -1380,13 +1381,16 @@ public final class DbGateway {
 		//String classe="TIT";
 		//String tab=classe+"_NDX";
 		
+		createTableListe(conn);
+		
 		long maxid=DbGateway.getMaxIdTable(conn, "notizie");
 		long step=maxid/100;
 		for(int jid=0;jid<maxid;jid++) {
 			if(jid % step == 0)
-				System.out.println("Rebuilding hash: "+Utils.percentuale(maxid,jid)+"%");
+				System.out.println("Rebuilding list index: "+Utils.percentuale(maxid,jid)+"%");
 			RecordInterface ma=DbGateway.getNotiziaByJID(conn, jid);
-			DbGateway.updateTableListe(conn, jid, ma.getTitle());
+			if(ma!=null) 
+				DbGateway.updateTableListe(conn, jid, ma.getTitle());
 		}
 
 	}
