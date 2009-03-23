@@ -252,7 +252,7 @@ public final class DbGateway {
     	DbGateway.createIndex(conn, "idx_all", "notizie_posizione_parole", "id_parola, id_notizia, id_sequenza_tag");
     	DbGateway.createIndex(conn, "idx_np", "notizie_posizione_parole", "id_notizia, posizione_parola");
     	//ALTER TABLE `dbTrev`.`notizie_posizione_parole` ADD INDEX `idx2`(`id_notizia`, `posizione_parola`);
-        
+    	DbGateway.createIndex(conn,"TIT_NDX_x1", "TIT_NDX", "testo(50)", true);//CR_LISTE
     }
     
     private static void createHashTable(Connection conn) {
@@ -310,6 +310,7 @@ public final class DbGateway {
 	    		 "ENGINE = MYISAM " +
 	    		 "CHARACTER SET utf8");
 	    DbGateway.createTableRicerche(conn);
+	    DbGateway.createTableListe(conn);//CR_LISTE
     }
     
 	private static void createAllTablesHSQLDB(Connection conn) throws SQLException {
@@ -363,6 +364,7 @@ public final class DbGateway {
 		
     	DbGateway.dropTable(conn,"notizie");
     	DbGateway.dropTable(conn,"notizie_posizione_parole");
+    	DbGateway.dropTable(conn,"TIT_NDX");//CR_LISTE
     	//DbGateway.dropTable(conn,"data_element");
     	//DbGateway.dropTable(conn,"l_parole_de");
     	DbGateway.dropTable(conn,"anagrafe_parole");
@@ -907,8 +909,8 @@ public final class DbGateway {
 		stmt.execute("truncate table data_element");
 		stmt.execute("truncate table anagrafe_parole");
 		stmt.execute("truncate table notizie_posizione_parole");
-		
-		
+		stmt.execute("truncate table TIT_NDX");  //CR_LISTE
+				
 		ResultSet rs=stmt.executeQuery("select * from tipi_notizie");
 		while(rs.next()) {
 			tipiNotizie.put(new Integer(rs.getInt("id")),rs.getString("nome"));
@@ -1350,7 +1352,17 @@ public final class DbGateway {
 		stmt.execute(sql2);
 		stmt.close();
 	}
-
+	
+	public static void createTableListe(Connection conn) throws SQLException {//CR_LISTE
+		String classe="TIT";
+		String tab=classe+"_NDX";
+		DbGateway.dropTable(conn, tab);
+		String sql1="CREATE TABLE tab (id_notizia INT NOT NULL,testo varchar(50)," +
+				    "PRIMARY KEY(id_notizia) ENGINE = MYISAM CHARACTER SET utf8";
+		Statement stmt=conn.createStatement();
+		stmt.execute(sql1);
+		stmt.close();
+	}
 	public static void cleanUpRicerche(Connection conn, String sessionId) throws SQLException {
 		Statement stmt=conn.createStatement();
 		ResultSet rs=stmt.executeQuery("select id from ricerche where jsession_id='"+sessionId+"'");
