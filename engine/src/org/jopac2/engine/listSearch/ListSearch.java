@@ -99,4 +99,31 @@ public class ListSearch {
 		result.setRecordIDs(listResult);
 		return result;
 	}
+	
+	public static SearchResultSet listSearch2(Connection conn,String classe,String parole,int limit) throws SQLException {	
+		long idClasse=StaticDataComponent.getChannelIndexbyName(classe);
+		Vector<Long> listResult=new Vector<Long>();
+		String sql = "SELECT distinct id_notizia,testo "
+				   + "  FROM TIT_NDX "
+				   + " WHERE testo>=? " 
+			       + "ORDER BY testo " 
+			       + "LIMIT ?";//numero di parole da restituire>=
+
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setLong(1, idClasse);
+		stmt.setString(2, parole);
+		stmt.setLong(3, limit);
+		ResultSet rs = stmt.executeQuery();
+		int id_notizia;
+		while (rs.next()) {
+			id_notizia = rs.getInt("id_notizia");
+			listResult.addElement(new Long(id_notizia));
+		}
+		rs.close();
+		stmt.close();
+		conn.close();
+		SearchResultSet result=new SearchResultSet();
+		result.setRecordIDs(listResult);
+		return result;
+	}
 }
