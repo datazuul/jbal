@@ -62,7 +62,7 @@ public class JOpac2CreateList {
 		
 		JOpac2CreateList ji=new JOpac2CreateList(dbUrl,dbUser,dbPassword);
 		ji.doJob();
-		ji.wait();
+		
 		ji.destroy();
 	}
 
