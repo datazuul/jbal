@@ -293,9 +293,9 @@ public class Utils {
   /**
    * @deprecated
    */
-  public static String mid(String x, int start,int len) {
+ /* public static String mid(String x, int start,int len) {
     return x.substring(start-1,start+len-1);
-  }
+  }*/
 
   /**
    * @deprecated
@@ -303,9 +303,9 @@ public class Utils {
    * @param start
    * @return
    */
-  public static String mid(String x, int start) {
+  /*public static String mid(String x, int start) {
     return x.substring(start-1);
-  }
+  }*/
   
  /* public static String getResource(String name) {
   	servletContext sc=
@@ -341,7 +341,7 @@ public class Utils {
      while(tk.hasMoreTokens()) {  // qui dentro lavoro solo sul gruppo &
        //TreeMap andItems=new TreeMap();
        
-   // il token ha solo stringhe in and, mi basta che quella con cardinalit�
+   // il token ha solo stringhe in and, mi basta che quella con cardinalita'
    // minore sia in testa
        andQuery=tk.nextToken();
        andCQuery="";
@@ -352,7 +352,7 @@ public class Utils {
          classe=item.substring(0,item.indexOf("="));
          parola=item.substring(item.indexOf("=")+1);
 
-         // classe pu� essere un numero o una stringa. Se e' una stringa prendi il numero.
+         // classe puo' essere un numero o una stringa. Se e' una stringa prendi il numero.
          try {
            // ovvero prova a dedurne un numero
          	Integer i=new Integer(classe);
