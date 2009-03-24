@@ -272,8 +272,8 @@ public String quote(String t) {
     s="";
 
     for(int k = 1;k<t.length()+1;k++) {
-
-      c = Utils.mid(t, k, 1);
+    	c=t.substring(k-1,k);
+      //c = Utils.mid(t, k, 1);
       if (c.equals("<")==true) {
 //        s = s + "&lt;";
       } else {
