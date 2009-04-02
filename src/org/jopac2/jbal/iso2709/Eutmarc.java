@@ -21,6 +21,11 @@ public class Eutmarc extends Unimarc {
         public Eutmarc(String stringa, String tipo) {
                 super(stringa, tipo);
         }
+        
+        public Eutmarc(String stringa, String tipo, String livello) {
+            super(stringa, tipo, livello);
+    }
+
 
         @Override
         public Vector<BookSignature> getSignatures() {
