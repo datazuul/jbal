@@ -243,7 +243,7 @@ public class Tag {
 				insb=content.indexOf(nsb,cp);
 				inse=content.indexOf(nse,cp);
 			}
-			fields.elementAt(i).setContent(content.trim());
+			fields.elementAt(i).setContent(content); // non fare trim(): se dl e' all'inizio viene perso
 		}
 	}
 
