@@ -74,7 +74,7 @@ public class LoadData implements LoadDataInterface {
   public void appendNotizie() {
     try {
       Statement stmt=conn[0].createStatement();
-      ResultSet rs=stmt.executeQuery("SELECT Max(notizie.id) AS MaxOfid FROM notizie;");
+      ResultSet rs=stmt.executeQuery("SELECT Max(notizie.id) AS MaxOfid FROM notizie");
       if(rs.next()) {
         id_nz_f=rs.getInt(1);
         inz=id_nz_f;
@@ -87,7 +87,7 @@ public class LoadData implements LoadDataInterface {
     
     try {
         Statement stmt=conn[0].createStatement();
-        ResultSet rs=stmt.executeQuery("SELECT Max(anagrafe_parole.id) AS MaxOfid FROM anagrafe_parole;");
+        ResultSet rs=stmt.executeQuery("SELECT Max(anagrafe_parole.id) AS MaxOfid FROM anagrafe_parole");
         if(rs.next()) {
           id_ap_f=rs.getInt(1);
           //inz=id_nz_f;

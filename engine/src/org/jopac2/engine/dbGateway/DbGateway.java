@@ -36,6 +36,9 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.jopac2.engine.dbGateway.derby.derby;
+import org.jopac2.engine.dbGateway.hsqldb.hsqldb;
+import org.jopac2.engine.dbGateway.mysql.mysql;
 import org.jopac2.engine.importers.LoadClasses;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
@@ -48,7 +51,7 @@ import org.jopac2.utils.Utils;
 import org.jopac2.utils.ZipUnzip;
 
 
-public final class DbGateway {
+public abstract class DbGateway {
 	  /** @todo  le costanti vanno messe in file di configurazione!!!*/
 	
 	// 18.07.2006 RT tolto * da SEPARATORI PAROLE per usarlo come inizio parole da indicizzare
@@ -56,7 +59,7 @@ public final class DbGateway {
 	  static final int MAX_POSIZIONE_ASTERISCO=5;
 	  static final boolean DEBUG=true;
 	  /** @todo  doppio asterisco. che vuol dire?
-	   *   vul dire che le indicazioni di responsabilit� vengono indicizzate
+	   *   vul dire che le indicazioni di responsabilita' vengono indicizzate
 	   *   con al massimo fino a 4 parole chiave che
 	   *   vengono segnate dall'asterisco.*/
 
@@ -111,9 +114,9 @@ public final class DbGateway {
 	 * @param conn
 	 * @param sql
 	 * @param timelog, boolean if the execution has to be logged
+	 * @throws SQLException 
 	 */
-    public static void execute(Connection conn, String sql, boolean timelog) {
-        try {
+    public static void execute(Connection conn, String sql, boolean timelog) throws SQLException {
         	if(conn==null||conn.isClosed())System.out.println("Conn is closed");
         	
             Statement stmt=conn.createStatement();
@@ -124,18 +127,15 @@ public final class DbGateway {
             	System.out.println("time :"+sql+" "+(System.currentTimeMillis()-now)+"ms");
             }
             stmt.close();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
     
     /**
      * Executes sql query with no logging
      * @param conn
      * @param sql
+     * @throws SQLException 
      */
-    public static void execute(Connection conn, String sql) {
+    public static void execute(Connection conn, String sql) throws SQLException {
     	execute(conn, sql, false);
     }
 
@@ -143,8 +143,9 @@ public final class DbGateway {
      * Creates database with <i>dbName</i>
      * @param conn
      * @param dbName
+     * @throws SQLException 
      */
-    public static void createDB(Connection conn, String dbName) {
+    public static void createDB(Connection conn, String dbName) throws SQLException {
         execute(conn, "create database "+dbName);
     }
     
@@ -153,38 +154,17 @@ public final class DbGateway {
      * @param conn
      * @param indexName
      * @param tableName
+     * @throws SQLException 
      */
-    public static void dropIndex(Connection conn, String indexName, String tableName) {
+    public static void dropIndex(Connection conn, String indexName, String tableName) throws SQLException {
     	execute(conn,"drop index " + indexName + " on " + tableName);
     }
     
-    /**
-     * Creates index with <i>indexName</i> on table <i>tableName</i> using keys <i>keys</i>
-     * @param conn
-     * @param indexName
-     * @param tableName
-     * @param unique true/false
-     * @param keys
-     */
-    public static void createIndex(Connection conn, String indexName, String tableName, String keys, boolean unique) {
-    	String isUnique="";
-    	if(unique) isUnique="unique";
-    	/*
-    	 * hsqldb non permette limiti sugli indici di varchar
-    	 */
-    	if(conn.toString().contains("hsqldb")) {
-    		int k=keys.indexOf('(');
-    		while(k>=0) {
-    			int z=keys.indexOf(')');
-    			keys=keys.substring(0,k)+keys.substring(z+1);
-    			k=keys.indexOf('(');
-    		}
-    	}
-    	String sql="create " + isUnique + " index " + indexName + " on " + tableName + " (" + keys + ")";
-    	execute(conn, sql);
-    }
+    public abstract void createIndex(Connection conn, String indexName, String tableName, String keys, boolean unique) throws SQLException;
     
-    public static void createIndex(Connection conn, String indexName, String tableName, String keys) {
+    
+    
+    public void createIndex(Connection conn, String indexName, String tableName, String keys) throws SQLException {
     	createIndex(conn, indexName, tableName, keys, false);
     }
     
@@ -194,17 +174,16 @@ public final class DbGateway {
      * @param dbName
      */
     public static void dropDB(Connection conn, String dbName) {
-        execute(conn, "drop database if exists "+dbName);
+        try {
+			execute(conn, "drop database if exists "+dbName);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
     }
     
-    /**
-     * Drops table <i>tableName</i>
-     * @param conn
-     * @param tableName
-     */
-    public static void dropTable(Connection conn, String tableName) {
-    	execute(conn,"drop table if exists " + tableName);
-    }
+    public abstract void dropTable(Connection conn, String tableName) throws SQLException;
+    
+
 
     /**
      * Commits on all connections in array conn[]
@@ -221,7 +200,7 @@ public final class DbGateway {
 			}
     }
     
-    public static void importClassiDettaglio(Connection conn, String configFile) {
+    public void importClassiDettaglio(Connection conn, String configFile) {
         LoadClasses lClasses=new LoadClasses(configFile);
         lClasses.doJob();
         Vector<ClassItem> SQLInstructions=lClasses.getSQLInstructions();
@@ -229,207 +208,42 @@ public final class DbGateway {
         
         for(int i=0;i<SQLInstructions.size();i++) {
             currentItem=SQLInstructions.elementAt(i);
-            DbGateway.insertClassItem(conn, currentItem);
+            try {
+				insertClassItem(conn, currentItem);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
         }
     }
     
-    public static void create1stIndex(Connection conn){
-    	DbGateway.createIndex(conn,"anagrafe_parole_parola", "anagrafe_parole", "parola(30)", true);
+    public void create1stIndex(Connection conn) throws SQLException{
+    	createIndex(conn,"anagrafe_parole_parola", "anagrafe_parole", "parola(30)", true);
     }
     
-    public static void createDBindexes(Connection conn) {
-    	DbGateway.createIndex(conn,"notizie_bid", "notizie", "bid");
-    	DbGateway.createIndex(conn,"anagrafe_parole_stemma", "anagrafe_parole", "stemma");
-    	DbGateway.createIndex(conn,"classi_dettaglio_id_classe", "classi_dettaglio", "id_classe");
-    	DbGateway.createIndex(conn,"classi_dettaglio_id_tag", "classi_dettaglio", "tag");
-    	DbGateway.createIndex(conn,"classi_dettaglio_id_de", "classi_dettaglio", "data_element");
+    public void createDBindexes(Connection conn) throws SQLException {
+    	createIndex(conn,"notizie_bid", "notizie", "bid");
+    	createIndex(conn,"anagrafe_parole_stemma", "anagrafe_parole", "stemma");
+    	createIndex(conn,"classi_dettaglio_id_classe", "classi_dettaglio", "id_classe");
+    	createIndex(conn,"classi_dettaglio_id_tag", "classi_dettaglio", "tag");
+    	createIndex(conn,"classi_dettaglio_id_de", "classi_dettaglio", "data_element");
     	//DbGateway.createIndex(conn,"intSearchProp", "intSearch", "proprietario");
-    	DbGateway.createIndex(conn,"temp_3", "temp_lcpn", "id_parola,id_classe");
+    	createIndex(conn,"temp_3", "temp_lcpn", "id_parola,id_classe");
 //		  "PRIMARY KEY(id_notizia, id_classe, posizione_parola), " +
 //		  "INDEX idx_classe(id_classe, posizione_parola)) ");
     	
-    	DbGateway.createIndex(conn, "idx_pcp", "notizie_posizione_parole", "id_classe, posizione_parola, parola");
-    	DbGateway.createIndex(conn, "idx_all", "notizie_posizione_parole", "id_parola, id_notizia, id_sequenza_tag");
-    	DbGateway.createIndex(conn, "idx_np", "notizie_posizione_parole", "id_notizia, posizione_parola");
+    	createIndex(conn, "idx_pcp", "notizie_posizione_parole", "id_classe, posizione_parola, parola");
+    	createIndex(conn, "idx_all", "notizie_posizione_parole", "id_parola, id_notizia, id_sequenza_tag");
+    	createIndex(conn, "idx_np", "notizie_posizione_parole", "id_notizia, posizione_parola");
     	//ALTER TABLE `dbTrev`.`notizie_posizione_parole` ADD INDEX `idx2`(`id_notizia`, `posizione_parola`);
-    	DbGateway.createIndex(conn,nomeTableListe("TIT")+"_x1", nomeTableListe("TIT"), "testo(50)", true);//CR_LISTE
     }
     
-    private static void createHashTable(Connection conn) {
-    	boolean isMysql=true,isHsqldb=false;
-		if(conn.toString().contains("hsqldb")) {
-			isMysql=false;isHsqldb=true;
-		}
-		if(isMysql) {
-			DbGateway.execute(conn,"create table hash (hash varchar(32) not null,"+
-	        "id_notizia integer not null,primary key(id_notizia)) ENGINE = MYISAM DEFAULT CHARSET=utf8");
-		}
-		if(isHsqldb) {
-			DbGateway.execute(conn,"create table hash (id_notizia integer not null identity primary key,"+
-	        "hash varchar(32) not null");
-		}
-    }
+    protected abstract void createHashTable(Connection conn) throws SQLException;
+    public abstract void createAllTables(Connection conn) throws SQLException;
+    public abstract long getIDwhere(Connection conn, String tableName, String fieldName, String fieldValue);
+    public abstract void createDBl_tables(Connection conn) throws SQLException;
     
-    private static void createAllTablesMysql(Connection conn) throws SQLException {
-        DbGateway.execute(conn,"create table notizie (id integer not null auto_increment,"+
-        "bid varchar(50),id_tipo integer,notizia blob,primary key(id)) ENGINE = MYISAM DEFAULT CHARSET=utf8");
-        DbGateway.createHashTable(conn);
-	    //DbGateway.execute(conn,"create table data_element (ID int not null,"+
-	    //    "id_notizia int,id_classi_dettaglio int) ENGINE = MYISAM DEFAULT CHARSET=utf8");
-	    //DbGateway.execute(conn,"create table l_parole_de (ID int not null,"+
-	    //"id_parola int,id_de int) ENGINE = MYISAM DEFAULT CHARSET=utf8");
-	    DbGateway.execute(conn,"create table anagrafe_parole (ID int not null auto_increment,"+
-	        "parola varchar(50), stemma varchar(50),primary key(id)) ENGINE = MYISAM DEFAULT CHARSET=utf8"); //type=memory
-	    //DbGateway.execute(conn,"create table classi ("+
-	    //    "ID int not null auto_increment,nome char(30) ,primary key(id)) ENGINE = MYISAM DEFAULT CHARSET=utf8");
-	    DbGateway.execute(conn,"create table classi_dettaglio ("+
-	        "ID int not null auto_increment,id_tipo int, id_classe int,"+
-	        "tag char(50),data_element char(1) ,primary key(id)) ENGINE = MYISAM DEFAULT CHARSET=utf8");
-	    DbGateway.execute(conn,"create table tipi_notizie ("+
-	        "ID int not null auto_increment, nome text,primary key(id)) ENGINE = MYISAM DEFAULT CHARSET=utf8");
-	    DbGateway.execute(conn,"create table intSearchKeys ("+
-	        "ID int not null auto_increment, id_intSearch int, "+
-	        "id_notizia int, primary key(ID)) ENGINE = MYISAM DEFAULT CHARSET=utf8");
-	    DbGateway.execute(conn,"create table intSearch (ID int not null auto_increment, "+
-	        "data_estrazione datetime, nome_ricerca varchar(50), "+
-	        "proprietario varchar(32), n_notizie int, sql_cmd longtext, "+
-	        "primary key(ID)) ENGINE = MYISAM DEFAULT CHARSET=utf8");
-	    DbGateway.execute(conn,"create table temp_lcpn "+
-            "(id_notizia int,id_parola int,id_classe int " +
-//            ", primary key(id_notizia,id_parola,id_classe) "+
-            ") ENGINE = MYISAM DEFAULT CHARSET=utf8");
-	    DbGateway.execute(conn, "CREATE TABLE notizie_posizione_parole " +
-	    		"(id_notizia INT NOT NULL DEFAULT 0, " +
-	    		 "id_classe INT NOT NULL DEFAULT 0, " +
-	    		 "id_sequenza_tag INT NOT NULL DEFAULT 0, " +
-	    		 "id_parola INT NOT NULL DEFAULT 0, " +
-	    		 "parola  varchar(50), " +
-	    		 "posizione_parola INT NOT NULL DEFAULT 0) " +
-//	    		  "INDEX idx_key(id_notizia, id_classe, posizione_parola), " +
-//	    		  "INDEX idx_classe(id_classe, posizione_parola)) " +
-	    		 "ENGINE = MYISAM " +
-	    		 "CHARACTER SET utf8");
-	    DbGateway.createTableRicerche(conn);
-	    DbGateway.createTableListe(conn,"TIT");//CR_LISTE
-    }
     
-	private static void createAllTablesHSQLDB(Connection conn) throws SQLException {
-        DbGateway.execute(conn,"create table notizie (id integer not null identity primary key,"+
-        	"bid varchar(14),id_tipo integer,notizia varchar)");
-        DbGateway.createHashTable(conn);
-        
-	    //DbGateway.execute(conn,"create table data_element (ID int not null identity primary key,"+
-	    //    "id_notizia int,id_classi_dettaglio int)");
-	    //DbGateway.execute(conn,"create table l_parole_de (ID int not null,"+
-	    //	"id_parola int,id_de int)");
-	    DbGateway.execute(conn,"create table anagrafe_parole (ID int not null identity primary key,"+
-	        "parola varchar(50), stemma varchar(50))");
-	    DbGateway.execute(conn,"create table classi (ID int not null identity primary key,nome char(30))");
-	    DbGateway.execute(conn,"create table classi_dettaglio ("+
-	        "ID int not null identity primary key,id_tipo int, id_classe int,"+
-	        "tag char(50),data_element char(1))");
-	    DbGateway.execute(conn,"create table tipi_notizie ("+
-	        "ID int not null identity primary key, nome varchar)");
-	    DbGateway.execute(conn,"create table intSearchKeys ("+
-	        "ID int not null identity primary key, id_intSearch int, id_notizia int)");
-	    DbGateway.execute(conn,"create table intSearch (ID int not null identity primary key, "+
-	        "data_estrazione datetime, nome_ricerca varchar(50), "+
-	        "proprietario varchar(32), n_notizie int, sql_cmd varchar)");
-	    DbGateway.execute(conn,"create table temp_lcpn "+
-            "(id_notizia int,id_parola int,id_classe int)");
-	    DbGateway.execute(conn, "CREATE TABLE notizie_posizione_parole " +
-	    		"(id_notizia INT, " +
-	    		 "id_classe INT, " +
-	    		 "id_sequenza_tag INT, " +
-	    		 "id_parola INT, " +
-	    		 "posizione_parola INT) ");
-//	    		  "PRIMARY KEY(id_notizia, id_classe, posizione_parola), " +
-//	    		  "INDEX idx_classe(id_classe, posizione_parola)) ");
-	    DbGateway.createTableRicerche(conn);
-	}
-    
-    /**
-     * Creates all tables
-     * @param conn
-     */
-	public static void createAllTables(Connection conn) {
-		/**
-		 * TODO: astrarre la creazione delle tabelle?
-		 */
-		boolean isMysql=true,isHsqldb=false;
-		
-		if(conn.toString().contains("hsqldb")) {
-			isMysql=false;isHsqldb=true;
-		}
-		
-    	DbGateway.dropTable(conn,"notizie");
-    	DbGateway.dropTable(conn,"notizie_posizione_parole");
-    	DbGateway.dropTable(conn,nomeTableListe("TIT"));//CR_LISTE
-    	//DbGateway.dropTable(conn,"data_element");
-    	//DbGateway.dropTable(conn,"l_parole_de");
-    	DbGateway.dropTable(conn,"anagrafe_parole");
-    	DbGateway.dropTable(conn,"classi");
-    	DbGateway.dropTable(conn,"classi_dettaglio");
-    	DbGateway.dropTable(conn,"tipi_notizie");
-    	DbGateway.dropTable(conn,"intSearchKeys");
-    	DbGateway.dropTable(conn,"intSearch");
-    	DbGateway.dropTable(conn,"temp_lcpn");
-    	DbGateway.dropTable(conn,"hash");
-    	DbGateway.dropTable(conn, "ricerche_dettaglio");
-    	DbGateway.dropTable(conn, "ricerche");
-    	
-    	
-		try {
-			if(isMysql) createAllTablesMysql(conn);
-			if(isHsqldb) createAllTablesHSQLDB(conn);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-	}
-	
-
-
-	/**
-	 * Gets <i>id</i> in table <i>tableName</i> where field <i>fieldName</i> is equal to <i>fieldValue</i>
-	 * If <i>id</i> is not available the value is inserted and the id generated by the primary key is returned.
-	 * @param conn
-	 * @param tableName
-	 * @param fieldName
-	 * @param fieldValue
-	 * @return
-	 */
-    public static long getIDwhere(Connection conn, String tableName, String fieldName, String fieldValue) {
-        long currentID=-1;
-        
-        try {
-            Statement stmt=conn.createStatement();
-
-            ResultSet r=stmt.executeQuery("select id from "+tableName+" "+
-                "where ("+fieldName+"='"+fieldValue+"')");
-            if(r.next()) currentID=r.getLong("id");
-            r.close();
-            
-            if((currentID==-1)) {
-                stmt.execute("insert into "+tableName+" ("+fieldName+") "+
-                    "values('"+fieldValue+"')");
-                if(conn.toString().contains("hsqldb")) r = stmt.executeQuery("call identity()"); 
-                else r = stmt.executeQuery("SELECT last_insert_id()");
-                r.next();
-                currentID=r.getLong(1);
-                r.close();
-            }
-            stmt.close();
-        }
-        catch (Exception e) {
-        	e.printStackTrace();
-            currentID=-1;
-        }
-        return currentID;
-    }
-    
-    public static long getClassID(Connection conn, String className) {
+    public long getClassID(Connection conn, String className) {
         return getIDwhere(conn, "tipi_notizie","nome",className);
     }
     
@@ -437,93 +251,9 @@ public final class DbGateway {
         return getIDwhere(conn, "classi","nome",elementName);
     }*/
     
-    public static void createDBl_tables(Connection conn) {
-    	boolean isHsqldb=false;
-        execute(conn, "drop table if exists l_classi_parole",true);
-        
-        /**
-         * TODO: generalizzare il tipo di db
-         */
-        if(conn.toString().contains("hsqldb")) {
-        	isHsqldb=true;
-	        execute(conn, "create table l_classi_parole ("+
-		            "ID int not null identity primary key,id_parola int,id_classe int,"+
-		            "n_notizie int)");
-        }
-        else {
-	        execute(conn, "create table l_classi_parole ("+
-	            "ID int not null auto_increment,id_parola int,id_classe int,"+
-	            "n_notizie int ,primary key(id)) ENGINE = MYISAM DEFAULT CHARSET=utf8");
-        }
-        execute(conn, "create index l_classi_parole_idx1 on l_classi_parole (id_parola)");
-        execute(conn, "create index l_classi_parole_idx2 on l_classi_parole (id_classe)");
-        execute(conn, "create index l_classi_parole_idx3 on l_classi_parole (id_parola,id_classe)");
 
-        execute(conn, "drop table if exists l_classi_parole_notizie",true);
-        
-        if(conn.toString().contains("hsqldb")) {
-        	execute(conn, "create table l_classi_parole_notizie ("+
-    	            "ID int not null identity primary key,id_l_classi_parole int,"+
-    	            "id_notizia int)");
-        }
-        else {
-	        execute(conn, "create table l_classi_parole_notizie ("+
-	            "ID int not null auto_increment,id_l_classi_parole int,"+
-	            "id_notizia int,primary key(id)) ENGINE = MYISAM DEFAULT CHARSET=utf8");
-        }
-        execute(conn, "create index l_classi_parole_notizie_idclassi "+
-            "on l_classi_parole_notizie (id_l_classi_parole)");
-        execute(conn, "create index l_classi_parole_notizie_idnotizie "+
-            "on l_classi_parole_notizie (id_notizia)");
-
-   //     execute("drop table if exists temp_lcpn");
-
-        //--minuti: 60 minuti (ris:6,7m recs a partire da 7,9m su l_parole_de, 340k notizie)
-
-   /*     execute("create table temp_lcpn as "+
-            "select id_notizia,id_parola,id_classe "+
-            "from data_element,classi_dettaglio,l_parole_de "+
-            "where data_element.id_classi_dettaglio = classi_dettaglio.id "+
-            "      and l_parole_de.id_de=data_element.id "+
-            "group by id_notizia,id_parola,id_classe ENGINE = MYISAM");
-
-        //-- 6min (usato da entrambe le query successive)
-        
-        execute("create index temp_3 on temp_lcpn (id_parola,id_classe)"); */
-
-        //-- 1min, 667k
-        
-        execute(conn, "insert into l_classi_parole (id_parola,id_classe,n_notizie) "+
-            "select id_parola,id_classe,count(*) as n_notizie "+
-            "from temp_lcpn "+
-            "group by id_parola,id_classe",true);
-
-        //--minuti: 16min, 6780360 (=temp_lcpn)
-        
-        if(isHsqldb) {
-	        execute(conn, "insert into l_classi_parole_notizie(id_notizia,id_l_classi_parole) "+
-		            "select id_notizia, lcp.id "+
-		            "from l_classi_parole lcp, "+
-		            "temp_lcpn "+
-		            "where "+
-		            "temp_lcpn.id_parola=lcp.id_parola and "+
-		            "temp_lcpn.id_classe=lcp.id_classe",true);
-        }
-        else {
-	        execute(conn, "insert into l_classi_parole_notizie(id_notizia,id_l_classi_parole) "+
-	            "select id_notizia,lcp.id "+
-	            "from l_classi_parole lcp use index (l_classi_parole_idx3), "+
-	            "temp_lcpn force index (temp_3) "+
-	            "where "+
-	            "temp_lcpn.id_parola=lcp.id_parola and "+
-	            "temp_lcpn.id_classe=lcp.id_classe",true);
-        }
-
-//        execute("drop table if exists temp_lcpn");
-    }
-
-	public static void insertClassItem(Connection conn, ClassItem currentItem) {
-        long currentClassID=DbGateway.getClassID(conn, currentItem.getClassName());
+	public void insertClassItem(Connection conn, ClassItem currentItem) throws SQLException {
+        long currentClassID=getClassID(conn, currentItem.getClassName());
         long currentElementID=StaticDataComponent.getChannelIndexbyName(currentItem.getElementName()); //DbGateway.getElementNameID(conn, currentItem.getElementName());
         
         String sql="insert into classi_dettaglio (id_classe,id_tipo,tag,data_element) "+
@@ -699,7 +429,7 @@ public final class DbGateway {
      * @param clDettaglio Hashtable (tag+dataelement,id_classe) dalla tabella classi_dettaglio
      * @throws SQLException
      */    
-    public static void inserisciNotizia(Connection conn, String tipo, 
+    public void inserisciNotizia(Connection conn, String tipo, 
     		String notizia) throws SQLException {
   	  RecordInterface ma;
   	  //ma=ISO2709.creaNotizia(0,notizia,tipo,0);
@@ -714,7 +444,7 @@ public final class DbGateway {
      * @param clDettaglio Hashtable (tag+dataelement,id_classe) dalla tabella classi_dettaglio
      * @throws SQLException
      */
-    public static void inserisciNotizia(Connection conn, RecordInterface notizia) throws SQLException {
+    public void inserisciNotizia(Connection conn, RecordInterface notizia) throws SQLException {
     	long idTipo=getIdTipo(conn, notizia.getTipo());
     	long jid=insertTableNotizie(conn,notizia, idTipo);
     	
@@ -884,10 +614,10 @@ public final class DbGateway {
 	/**
 	 * Ricostruisce la tabelle hash con le firme MD5 delle notizie
 	 */
-	public static void rebuildHash(Connection conn) throws SQLException {
-		DbGateway.dropTable(conn, "hash");
-		DbGateway.createHashTable(conn);
-		DbGateway.createIndex(conn, "idx_hash", "hash", "hash");
+	public void rebuildHash(Connection conn) throws SQLException {
+		dropTable(conn, "hash");
+		createHashTable(conn);
+		createIndex(conn, "idx_hash", "hash", "hash");
 		long maxid=DbGateway.getMaxIdTable(conn, "notizie");
 		long step=maxid/100;
 		for(long jid=0;jid<maxid;jid++) {
@@ -1034,7 +764,7 @@ public final class DbGateway {
 		return id_lcp;
 	}
 
-	public static long getIdTipo(Connection conn, String tipo) {
+	public long getIdTipo(Connection conn, String tipo) {
 		return getIDwhere(conn, "tipi_notizie", "nome", tipo);
 	}
 	
@@ -1073,7 +803,11 @@ public final class DbGateway {
 	  }
 	  
 	  public static void InsertParola(Connection conn, String parola, String stemma, Long id_parola) {
-		  DbGateway.execute(conn, "insert into anagrafe_parole (parola,ID,stemma) values ('"+parola+"',"+id_parola+", '"+stemma+"');");
+		  try {
+			DbGateway.execute(conn, "insert into anagrafe_parole (parola,ID,stemma) values ('"+parola+"',"+id_parola+", '"+stemma+"');");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	  }
 	  
 	  // converte minuscole e accentate
@@ -1325,49 +1059,27 @@ public final class DbGateway {
 		}
 		return r;
 	}
+	
+	public abstract void createTableRicerche(Connection conn) throws SQLException;
 
-	public static void createTableRicerche(Connection conn) throws SQLException {
-		DbGateway.dropTable(conn, "dettaglio_ricerche");
-		String sql1="CREATE TABLE ricerche_dettaglio (" +
-				  "id_notizia INT NOT NULL, " +
-				  "id_ricerca INT NOT NULL, " +
-				  "PRIMARY KEY(id_notizia, id_ricerca) " +
-				") " +
-				"ENGINE = MYISAM " +
-				"CHARACTER SET utf8";
-
-
-		String sql2="CREATE TABLE ricerche (" +
-				  "id INT NOT NULL AUTO_INCREMENT, " +
-				  "jsession_id varchar(100) NOT NULL, " +
-				  "testo_ricerca LONGTEXT, " +
-				  "PRIMARY KEY(id), " +
-				  "INDEX jsession_idx(jsession_id) " +
-				") " +
-				"ENGINE = MYISAM " +
-				"CHARACTER SET utf8";
-
-		Statement stmt=conn.createStatement();
-		stmt.execute(sql1);
-		stmt.execute(sql2);
-		stmt.close();
-	}
+	
 	
 	public static String nomeTableListe(String classe){//CR_LISTE
 		return classe+"_NDX";
 	}
 	
-	public static void createTableListe(Connection conn,String classe) throws SQLException {//CR_LISTE
-		DbGateway.dropTable(conn, nomeTableListe(classe));
+	public void createTableListe(Connection conn,String classe) throws SQLException {//CR_LISTE
+		dropTable(conn, nomeTableListe(classe));
 		String sql1="CREATE TABLE "+nomeTableListe(classe)+" (id_notizia INT NOT NULL,testo varchar(50)," +
 				    "PRIMARY KEY(id_notizia)) ENGINE = MYISAM CHARACTER SET utf8";
 		Statement stmt=conn.createStatement();
 		stmt.execute(sql1);
 		stmt.close();
+    	createIndex(conn,nomeTableListe(classe)+"_x1", nomeTableListe(classe), "testo(50)", true);//CR_LISTE
+
 	}
 	
-	public static void updateTableListe(Connection conn, int id_notizia, String testo) throws SQLException {//CR_LISTE
-		String classe="TIT";
+	public static void updateTableListe(Connection conn, String classe, int id_notizia, String testo) throws SQLException {//CR_LISTE
 		String tab=nomeTableListe(classe);
 		String dl=String.valueOf((char)0x1b);
 		
@@ -1382,16 +1094,37 @@ public final class DbGateway {
 		pst.close();
 	}
 	
-	public static void rebuildList(Connection conn) throws SQLException {
-		createTableListe(conn,"TIT");//CR_LISTE		
+	public void rebuildList(Connection conn) {
+		String done="";
+		for(int i=0;i<StaticDataComponent.channels.length;i++) {
+			if(!done.contains("|"+StaticDataComponent.channels[i]+"|")) {
+				try {
+					rebuildList(conn,StaticDataComponent.channels[i]);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				done+="|"+StaticDataComponent.channels[i]+"|"; // semplice per non fare due volte lo stesso indice
+			}
+		}
+	}
+	
+	public void rebuildList(Connection conn, String classe) throws SQLException {
+		createTableListe(conn,classe);//CR_LISTE		
 		long maxid=DbGateway.getMaxIdTable(conn, "notizie");
 		long step=maxid/100;
 		for(int jid=0;jid<maxid;jid++) {
 			if(jid % step == 0)
-				System.out.println("Rebuilding list index: "+Utils.percentuale(maxid,jid)+"%");
+				System.out.println("Rebuilding list index ("+nomeTableListe(classe)+"): "+Utils.percentuale(maxid,jid)+"%");
 			RecordInterface ma=DbGateway.getNotiziaByJID(conn, jid);
-			if(ma!=null) 
-				DbGateway.updateTableListe(conn, jid, ma.getTitle());
+			if(ma!=null) {
+				String testo=null;
+				if(classe.equals("TIT")) ma.getTitle();
+				else if(classe.equals("NUM")) ma.getStandardNumber();
+				else if(classe.equals("DTE")) ma.getPublicationDate();
+				//,"AUT","LAN","MAT","SBJ","BIB","INV","CLL",,"ABS"
+				if(testo!=null)
+					DbGateway.updateTableListe(conn, classe, jid, testo);
+			}
 		}
 
 	}
@@ -1407,5 +1140,12 @@ public final class DbGateway {
 		rs.close();
 		stmt.execute("delete from ricerche where jsession_id='"+sessionId+"'");
 		stmt.close();
+	}
+
+	public static DbGateway getInstance(String string) {
+		if(string.contains("mysql")) return new mysql();
+		else if(string.contains("hsqldb")) return new hsqldb();
+		else if(string.contains("derby")) return new derby();
+		return null;
 	}
 }

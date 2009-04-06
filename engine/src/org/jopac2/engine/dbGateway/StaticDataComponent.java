@@ -29,9 +29,7 @@ package org.jopac2.engine.dbGateway;
 * @version	19/05/2005
 */
 
-import org.jopac2.engine.MetaSearch.DoNewMetaSearch;
 import org.jopac2.engine.Z3950.SBAInternalClient;
-import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.utils.StopWordRecognizer;
 
 
@@ -44,7 +42,7 @@ import java.sql.*;
 //import javax.servlet.ServletConfig;
 
 /**
- * TODO questa classe è da rivedere. O si fa singleton oppure deve prendere una connection e risolvere sul db.
+ * TODO questa classe e' da rivedere. O si fa singleton oppure deve prendere una connection e risolvere sul db.
  * Forse la prima per performance standarizzando i nomi / id delle classi.
  * Si potrebbe anche abolire la tabella classi e tenere solo i codici?
  */
@@ -59,7 +57,8 @@ public final class StaticDataComponent { //, Contextualizable, ThreadSafe {
    
    
    // ANY ripetuto due volte per mettere in posizione 0 qualche cosa e mantenere compatibilita' con i db esistenti
-   private static String[] channels={"ANY","AUT","TIT","NUM","LAN","MAT","DTE","SBJ","BIB","INV","CLL","ANY","JID","ABS"};
+   // SE SI AGGIUNGE CANALI CONTROLLARE DbGateway.rebuildList(Connection conn, String classe)
+   public static String[] channels={"ANY","AUT","TIT","NUM","LAN","MAT","DTE","SBJ","BIB","INV","CLL","ANY","JID","ABS"};
    
    public StopWordRecognizer getStopWordRecognizer() {
    		return stopword;

@@ -53,6 +53,7 @@ public class DataImporter extends Thread {
 	private String filetype,tempDir,confdir;
 	Connection[] conn=null;
 	boolean clearDatabase=true;
+	DbGateway dbGateway=null;
 	
 	public DataImporter(InputStream f,String filetype,String JOpac2confdir,Connection[] conns, boolean clearDatabase) {
 		this.f=f;
@@ -60,42 +61,41 @@ public class DataImporter extends Thread {
 		confdir=JOpac2confdir;
 		this.conn=conns;
 		this.clearDatabase=clearDatabase;
+		dbGateway=DbGateway.getInstance(conns[0].toString());
 	}
 	
-	private void inizializeDB(Connection conn) {
+	private void inizializeDB(Connection conn) throws SQLException {
 		System.out.println("Creating tables");
-		DbGateway.createAllTables(conn);
+		dbGateway.createAllTables(conn);
 		System.out.println("Importing data types");
 		/*try {
 			DbGateway.createClasses(conn);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}*/
-		DbGateway.importClassiDettaglio(conn,confdir+"/dataDefinition/DataType.xml");
+		dbGateway.importClassiDettaglio(conn,confdir+"/dataDefinition/DataType.xml");
 		
 //		System.out.println("Droping db indexes");
 //		manager.dropDBindexes();
 		
 		System.out.println("Create DB 1st index");
-		DbGateway.create1stIndex(conn);
+		dbGateway.create1stIndex(conn);
 //        System.out.println("Create DB indexes");
 //		manager.commitAll();
 	}
 	
-	public void consolidateDB(Connection conn) {
-		/** TODO
-		 * consolidare anche il treemap del LoadData
-		 */
+	public void consolidateDB(Connection conn) throws SQLException {
+
         System.out.println("Creating indexes");
-        DbGateway.createDBindexes(conn);
+        dbGateway.createDBindexes(conn);
         System.out.println("Generating l_tables");
-        DbGateway.createDBl_tables(conn);
+        dbGateway.createDBl_tables(conn);
 	}
 	
     private void loadData(InputStream f,String dbType, String temporaryDir) {
     	DbGateway.commitAll(conn);
         LoadData ld=new LoadData(conn);
-        ld.doJob(f,dbType,temporaryDir,DbGateway.getClassID(conn[0], dbType));
+        ld.doJob(f,dbType,temporaryDir,dbGateway.getClassID(conn[0], dbType));
         ld.destroy();
     }
 	
