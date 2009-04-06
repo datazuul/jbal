@@ -23,6 +23,9 @@ public class JOpac2Import {
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
 	private static String _classHSQLDBDriver = "org.hsqldb.jdbcDriver";
 	
+    private static String _classDerbyDriver = "org.apache.derby.jdbc.EmbeddedDriver";
+    
+	
 	public JOpac2Import(String inputFile, String filetype, String JOpac2confdir, String dbUrl, String dbUser, String dbPassword, boolean clearDatabase) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		File fi=new File(inputFile);
 		this.inputFile=new FileInputStream(fi);
@@ -31,6 +34,7 @@ public class JOpac2Import {
 		conns=new Connection[max_conn];
 		String driver=_classMySQLDriver;
 		if(dbUrl.contains(":hsqldb:")) driver=_classHSQLDBDriver;
+		if(dbUrl.contains(":derby:")) driver=_classDerbyDriver;
 		
 		Class.forName(driver).newInstance();
 		
@@ -44,10 +48,13 @@ public class JOpac2Import {
 		dataimporter.start();
 	}
 
-	private void destroy() throws SQLException, IOException {
+	private void destroy(String dbUrl) throws SQLException, IOException {
 		this.inputFile.close();
 		for(int i=0;i<conns.length;i++) {
 			conns[i].close();
+		}
+		if(dbUrl.contains(":derby:")) {
+			DriverManager.getConnection("jdbc:derby:;shutdown=true");
 		}
 	}
 	
@@ -61,17 +68,18 @@ public class JOpac2Import {
 		//JOpac2Import ji=new JOpac2Import(args[0],args[1],args[2],args[3],args[4],args[5],true);
 		//String webcontentdir="/java_source/keiko/WebContent";
 		String sitename="sebina";
-		String filename="/java_source/engine/data/demo_Sebina.uni";
-		String filetype="sebina";
-		String JOpac2confdir="/java_source/engine/src/org/jopac2/conf";
-		String dbUrl="jdbc:mysql://localhost/db"+sitename;
+		String filename="/java_jopac2/engine/data/eutRecords.iso";
+		String filetype="eutmarc";
+		String JOpac2confdir="/java_jopac2/engine/src/org/jopac2/conf";
+		String dbUrl = "jdbc:derby:db"+sitename+";create=true";
+		//String dbUrl="jdbc:mysql://localhost/db"+sitename;
 		String dbUser="root";
 		String dbPassword="";
 		
 		JOpac2Import ji=new JOpac2Import(filename,filetype,JOpac2confdir,dbUrl,dbUser,dbPassword,true);
 		ji.doJob();
 		ji.wait();
-		ji.destroy();
+		ji.destroy(dbUrl);
 	}
 
 

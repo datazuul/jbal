@@ -1,16 +1,12 @@
 package org.jopac2.engine.command;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.jopac2.engine.dbGateway.DbGateway;
-import org.jopac2.engine.importers.DataImporter;
 
 
 public class JOpac2CreateList {
@@ -33,11 +29,8 @@ public class JOpac2CreateList {
 	}
 	
 	private void doJob() {
-		try {
-			DbGateway.rebuildList(conns[0]);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		DbGateway dbGateway=DbGateway.getInstance(conns[0].toString());
+		dbGateway.rebuildList(conns[0]);
 	}
 
 	private void destroy() throws SQLException, IOException {
