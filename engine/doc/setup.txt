@@ -1,0 +1,8 @@
+CREATE DATABASE jopac2 DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+<Connector port="8080" 
+      maxThreads="150" minSpareThreads="25" maxSpareThreads="75" 
+      enableLookups="false" redirectPort="8443" debug="0" 
+      acceptCount="100" connectionTimeout="20000" 
+      disableUploadTimeout="true" 
+      URIEncoding="UTF-8" /> 
