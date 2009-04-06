@@ -16,6 +16,13 @@ import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.JOpac2Exception;
 
 public class Eutmarc extends Unimarc {
+	
+		public static final String MONOGRAFIA = "M";
+		public static final String PERIODICO = "P";
+		public static final String COLLANA = "C";
+		public static final String FASCICOLO = "F";
+		public static final String SPOGLIO = "S";
+	
         private int maxx=104, maxy=150;
 
         public Eutmarc(String stringa, String tipo) {
@@ -24,7 +31,33 @@ public class Eutmarc extends Unimarc {
         
         public Eutmarc(String stringa, String tipo, String livello) {
             super(stringa, tipo, livello);
-    }
+        }
+        
+//        901 ^a mettiamo il tipo:
+//            M = monografia
+//            P = periodico
+//            C = collana
+//            F = fascicolo
+//            S = spoglio (articolo)
+        
+        public void setPublicationType(String type){
+        	try {
+				removeTags("901");
+			} catch (JOpac2Exception e) { }
+        	Tag t = new Tag("901",' ',' ');
+        	t.addField(new Field("a",type));
+        	addTag(t);
+        }
+        
+        public String getPublicationType(){
+        	String s = null;
+        	Field a = null;
+        	Tag t=getFirstTag("901");
+      	  	if(t!=null) a=t.getField("a");
+      	  	if(a!=null) s=a.getContent();
+      	  	return s;
+      	  
+        }
 
 
         @Override
@@ -93,6 +126,77 @@ public class Eutmarc extends Unimarc {
         public int getMaxy() {
                 return maxy;
         }
+        
+    	
+    	/**
+    	 * 904^p^n 
+    	 */
+    	public void setPrezzo(String p, String note){
+    		boolean ok = false;
+    		
+    		Tag a = new Tag("904",' ',' ');
+    		if(p!=null && p.length()>0){
+    			a.addField(new Field("p",p));
+    			ok = true;
+    		}
+    		if(note!=null && note.length()>0){
+    			a.addField(new Field("n",note));
+    			ok = true;
+    		}
+    		if(ok)
+    			addTag(a);
+    	}
+    	
+
+		@Override
+		public void setDescription(String description) throws JOpac2Exception {
+			//la stringa splittata su "&" deve avere 4 parti
+			//pagine&ill.&cm&alleg
+			String[] split = description.split("&");
+			if(split.length!=4) throw new JOpac2Exception("Description not in right format");
+			else{	
+				Tag t = new Tag("215",' ',' ');
+				boolean add = false;
+				if(split[0].length()>1){
+					t.addField(new Field("a",split[0].trim())); add = true;
+				}
+				if(split[1].length()>1){
+					t.addField(new Field("c",split[1].trim())); add = true;
+				}
+				if(split[2].length()>1){
+					t.addField(new Field("d",split[2].trim())); add = true;
+				}
+				if(split[3].length()>1){
+					t.addField(new Field("e",split[3].trim())); add = true;
+				}
+				if(add){
+					removeTags("215");
+					addTag(t);
+				}
+			}
+		}
+
+		public void setCollana(String collana, String collanaN) {
+			Tag t = new Tag("225",'|',' ');
+			if(collana != null && collana.length()>0){
+				t.addField(new Field("a",collana));
+				if(collanaN != null && collanaN.length()>0)
+					t.addField(new Field("v",collanaN+"."));
+				addTag(t);
+			}
+		}
+
+		public void setEditor() {
+
+			Tag t = new Tag("210",' ',' ');
+			t.addField(new Field("a","Trieste"));
+			t.addField(new Field("c","Edizioni Università"));
+			
+			
+		}
+		
+    	
+    	
 
 }
 
