@@ -8,5 +8,7 @@
 	<classpathentry kind="lib" path="lib/cocoon-2.1.9.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.0-rc4.jar"/>
 	<classpathentry kind="lib" path="lib/jackcess-1.1.9.jar"/>
+	<classpathentry kind="lib" path="lib/icu4j.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
