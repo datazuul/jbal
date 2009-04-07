@@ -48,6 +48,10 @@
         <description>Formato per le pubblicazioni EUT.</description>
     </data>
     <data>
+        <name>Eutmarc</name>
+        <description>Formato per le pubblicazioni EUT.</description>
+    </data>
+    <data>
         <name>PregressoImages_sutrs</name>
         <description>Formato per l'indice delle schedine pregresso UniTS.</description>
     </data>
