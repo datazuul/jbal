@@ -117,7 +117,7 @@ public void init(String outDir,long idTipo) {
   public void InsertParole(String valore,long id_notizia, long idSequenzaTag, long id_classe, 
 		  ParoleSpoolerInterface paroleSpooler) throws SQLException { // long id_de, 
     String parola;
-    boolean asterisco_trovato=!(valore.indexOf(" *")<DbGateway.MAX_POSIZIONE_ASTERISCO)||!valore.contains(" *");
+    //boolean asterisco_trovato=!(valore.indexOf(" *")<DbGateway.MAX_POSIZIONE_ASTERISCO)||!valore.contains(" *");
 
     StringTokenizer tk=new StringTokenizer(DbGateway.processaMarcatori(valore),DbGateway.SEPARATORI_PAROLE);
 
@@ -136,7 +136,7 @@ public void init(String outDir,long idTipo) {
       parola=tk.nextToken().trim();
       
       if(parola.startsWith("*")) {
-    	  asterisco_trovato=true;
+    	  //asterisco_trovato=true;
     	  parola=parola.substring(1);
       }
 
@@ -150,10 +150,13 @@ public void init(String outDir,long idTipo) {
 	      	  executePreparedTempLCP(id_notizia,id_parola,id_classe);
 	      }
 	      
+	      
+	      /*
 	      if(asterisco_trovato) {
 	    	  DbGateway.insertNotiziePosizioneParole(conn[0],id_notizia, idSequenzaTag, id_classe, id_parola, posizione_parola, parola);
 	    	  posizione_parola++;
 	      }
+	      */
       }
     }
   }
