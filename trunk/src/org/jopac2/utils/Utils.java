@@ -100,8 +100,10 @@ public class Utils {
   // IMPORTANTE: non usare un'istanza statica perché va in errore Cocoon
   //static final Transliterator accentsconverter = Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
   
+  static Transliterator accentsconverter=null;
+  
   public static String removeAccents(String s) {
-	  Transliterator accentsconverter = Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
+	   if(accentsconverter==null) accentsconverter = Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
 		return accentsconverter.transliterate(s);
 	}
   
