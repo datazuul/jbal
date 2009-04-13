@@ -88,16 +88,6 @@ public abstract class ISO2709 implements RecordInterface {
     //System.gc();
   }
   
-/**
- * 01/10/2003 - RT
- *          Definisce il tipo di record e lo stato.
- */
-  //private String recordStatus="a";
-  //private String recordType="m";
-  protected String recordStatus="n";
-  protected String recordType="a";
-  protected String recordBiblioLevel="m";
-  protected String indicatorLength="0";
 
   public String getType() {
        return recordType;
@@ -123,11 +113,11 @@ public abstract class ISO2709 implements RecordInterface {
   	recordBiblioLevel = lev;
   }
   
-  public String getHierarchicalLevelCode(){
+  public String getIndicatorLength(){
   	return indicatorLength;
   }
   
-  public void setHierarchicalLevelCode(String lCode){
+  public void setIndicatorLength(String lCode){
   	indicatorLength = lCode;
   }
   
@@ -299,6 +289,12 @@ public Vector<String> getElement(Vector<String> tags, String elements) {
   	return r;
   }
   
+  /**
+   * @deprecated
+   * @param tagString
+   * @param elements
+   * @return
+   */
 public Vector<String> getElement(String tagString, String elements) {
 	/**
 	 * 4/2/2008 - R.T. modificato in modo che se elements==null || elements.lenght()==0 e non ci sono dl
@@ -463,6 +459,21 @@ public Vector<Tag> getTags(String tag) {
     delimiters.setFt(ft);
     delimiters.setDl(dl);
   }
+  
+  /**
+   * 01/10/2003 - RT
+   *          Definisce il tipo di record e lo stato.
+   */
+    protected long recordlength=-1;
+    protected String recordStatus="n";
+    protected String implementationCodes="    "; // 4 char (recordType, recordBiblioLevel, '0' , '0')
+    protected String recordType="a";
+    protected String recordBiblioLevel="m";
+    protected String indicatorLength="0";
+    protected String subfieldIdentifierLength="0";
+    protected String baseAddressOfData="     "; // 5 bytes
+    protected String additionalRecordDefinition="   "; // 3 bytes
+    protected String directoryMap="    "; // 4 bytes
 
   public void init(String stringa) {
     inString=stringa;
@@ -484,18 +495,29 @@ public Vector<Tag> getTags(String tag) {
     	 */
     	
     	
-      long recordlength = Long.parseLong((String)stringa.substring(0,5));
+      recordlength = Long.parseLong((String)stringa.substring(0,5));
       if(recordlength > 0) {
     	// record status
         recordStatus = stringa.substring(5,6);
-        // 2 bytes, are "Implementation Codes"
-        recordType = stringa.substring(6,7);
-        recordBiblioLevel = stringa.substring(7,8);
+        // 4 bytes, are "Implementation Codes"
+        implementationCodes=stringa.substring(6,10);
+        recordType = implementationCodes.substring(0,1);
+        recordBiblioLevel = implementationCodes.substring(1,2);
         
         // indicatorLength
-        indicatorLength = stringa.substring(8,9);
+        indicatorLength = stringa.substring(10,11);
+        // Subfield identifier length
+        subfieldIdentifierLength = stringa.substring(11,12);
+        
+        // base address of data
+        baseAddressOfData=stringa.substring(12,17);
+        
+        // additional record definition
+        additionalRecordDefinition=stringa.substring(17,20);
+        
+        // directory map
+        directoryMap=stringa.substring(20,24);
 
-        //String EntryMap = stringa.substring(20,24);
         int readed = 24;
         int ndir = 0;
         String DirEntry = stringa.substring(readed, readed+1);
@@ -622,25 +644,40 @@ public Vector<Tag> getTags(String tag) {
  * @throws Exception 
    */
   protected String toISO2709() throws Exception {
+	  /**
+  	 * http://www.ifla.org/VI/3/p1996-1/uni.htm
+  	 * 
+  	 
+			Record length						5			0-4
+			Record status						1			5
+			Implementation codes				4			6-9
+			Indicator length					1			10
+			Subfield identifier length			1			11
+			Base address of data				5			12-16
+			Additional record definition		3			17-19
+			Directory map						4			20-23
+
+  	 */
     String r=null;
 	try {
-	  	String leader = getStatus() + getType() +  // definisce il leader che deve essere scritto
-	                    getBiblioLevel() + getHierarchicalLevelCode() + "000"; //+ " 22";   // il primo carattere e' sempre 'n'? CONTROLLARE su specifiche!
+	  	String leader = recordStatus + 
+	  					recordType + 
+	                    recordBiblioLevel + 
+	                    implementationCodes.substring(2) +
+	                    indicatorLength +
+	                    subfieldIdentifierLength ;
 	
 	    int ba=27;
 	    String directory="";
 	    String data="";
 	
-	    long temp = 24 + 12 * getRows() + 1;             // base address data
+	    long temp = 24 + 12 * getRows() + 1;             // base address of data
 	    leader = leader.concat(Utils.pad("00000",temp));
-	        
-	    Vector<Tag> t=this.getTags();
 	    
-	    /*for(int i=0;i<t.size();i++){
-	    	t.setElementAt(((String)t.elementAt(i)).replaceAll("[\r\n]","|").trim(),i);
-	    }*/
-	    leader=leader.concat("000");                  // implementation defined
-	    leader=leader.concat("4500");                 // entry map
+	    leader=leader.concat(additionalRecordDefinition);                  // implementation defined
+	    leader=leader.concat(directoryMap);                 // entry map
+	    
+	    Vector<Tag> t=this.getTags();
 	
 	    ba+=this.getRows()*12;
 	    long c=0;
