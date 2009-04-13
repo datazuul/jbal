@@ -126,7 +126,7 @@ public abstract class XML implements RecordInterface {
   private String recordStatus="n";
   private String recordType="a";
   private String recordBiblioLevel="m";
-  private String recordHierarchicalLevelCode="0";
+  private String indicatorLength="0";
 
   public String getType() {
        return recordType;
@@ -152,12 +152,12 @@ public abstract class XML implements RecordInterface {
   	recordBiblioLevel = lev;
   }
   
-  public String getHierarchicalLevelCode(){
-  	return recordHierarchicalLevelCode;
+
+  public String getIndicatorLength() {
+	  return indicatorLength;
   }
-  
-  public void setHierarchicalLevelCode(String lCode){
-  	recordHierarchicalLevelCode = lCode;
+  public void setIndicatorLength(String lCode) {
+	  indicatorLength=lCode;
   }
   
   public boolean hasLinkUp() {
