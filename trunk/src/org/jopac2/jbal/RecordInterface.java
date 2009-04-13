@@ -86,8 +86,8 @@ public interface RecordInterface {
 	/**
 	 * Verificare questi due
 	 */
-	public String getHierarchicalLevelCode();
-	public void setHierarchicalLevelCode(String lCode);
+	public String getIndicatorLength();
+	public void setIndicatorLength(String lCode);
 
 	/**
 	 * Restituisce true se ci sono collegamenti superiori al record
