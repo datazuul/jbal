@@ -43,6 +43,7 @@ import org.jopac2.engine.importers.LoadClasses;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.xmlHandlers.ClassItem;
+import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.ClasseDettaglio;
 import org.jopac2.utils.JOpac2Exception;
 import org.jopac2.utils.ObjectPair;
@@ -1070,28 +1071,30 @@ public abstract class DbGateway {
 	
 	public void createTableListe(Connection conn,String classe) throws SQLException {//CR_LISTE
 		dropTable(conn, nomeTableListe(classe));
-		String sql1="CREATE TABLE "+nomeTableListe(classe)+" (id_notizia INT NOT NULL,testo varchar(50)," +
-				    "PRIMARY KEY(id_notizia)) ENGINE = MYISAM CHARACTER SET utf8";
+		String sql1="CREATE TABLE "+nomeTableListe(classe)+" (id INT NOT NULL auto_increment, id_notizia INT NOT NULL,testo varchar(50)," +
+				    "PRIMARY KEY(id)) ENGINE = MYISAM CHARACTER SET utf8";
 		Statement stmt=conn.createStatement();
 		stmt.execute(sql1);
 		stmt.close();
-    	createIndex(conn,nomeTableListe(classe)+"_x1", nomeTableListe(classe), "testo(50)", true);//CR_LISTE
+    	createIndex(conn,nomeTableListe(classe)+"_x1", nomeTableListe(classe), "testo(50)", false);//CR_LISTE
 
 	}
 	
 	public static void updateTableListe(Connection conn, String classe, int id_notizia, String testo) throws SQLException {//CR_LISTE
-		String tab=nomeTableListe(classe);
-		String dl=String.valueOf((char)0x1b);
-		
-		String sql="REPLACE INTO "+tab+" SET id_notizia=?, testo=?";
-		PreparedStatement pst=conn.prepareStatement(sql);
-		pst.setInt(1, id_notizia);
-		testo=testo.replaceAll(dl+"I", ""); // rimuove delimitatori asterisco
-		testo=testo.replaceAll(dl+"H", "");
-		if(testo.length()>50) testo=testo.substring(0,49);
-		pst.setString(2, testo);
-		pst.execute();
-		pst.close();
+		if(testo!=null) {
+			String tab=nomeTableListe(classe);
+			String dl=String.valueOf((char)0x1b);
+			
+			String sql="INSERT INTO "+tab+" SET id_notizia=?, testo=?";
+			PreparedStatement pst=conn.prepareStatement(sql);
+			pst.setInt(1, id_notizia);
+			testo=testo.replaceAll(dl+"I", ""); // rimuove delimitatori asterisco
+			testo=testo.replaceAll(dl+"H", "");
+			if(testo.length()>50) testo=testo.substring(0,49);
+			pst.setString(2, testo);
+			pst.execute();
+			pst.close();
+		}
 	}
 	
 	public void rebuildList(Connection conn) {
@@ -1113,22 +1116,39 @@ public abstract class DbGateway {
 		long maxid=DbGateway.getMaxIdTable(conn, "notizie");
 		long step=maxid/100;
 		for(int jid=0;jid<maxid;jid++) {
-			if(jid % step == 0)
+			if(step==0 || jid % step == 0)
 				System.out.println("Rebuilding list index ("+nomeTableListe(classe)+"): "+Utils.percentuale(maxid,jid)+"%");
 			RecordInterface ma=DbGateway.getNotiziaByJID(conn, jid);
 			if(ma!=null) {
-				String testo=null;
-				if(classe.equals("TIT")) ma.getTitle();
-				else if(classe.equals("NUM")) ma.getStandardNumber();
-				else if(classe.equals("DTE")) ma.getPublicationDate();
-				//,"AUT","LAN","MAT","SBJ","BIB","INV","CLL",,"ABS"
-				if(testo!=null)
-					DbGateway.updateTableListe(conn, classe, jid, testo);
+				if(classe.equals("TIT")) DbGateway.updateTableListe(conn, classe, jid, ma.getTitle()); //testo=ma.getTitle();
+				else if(classe.equals("NUM")) DbGateway.updateTableListe(conn, classe, jid, ma.getStandardNumber()); // testo=ma.getStandardNumber();
+				else if(classe.equals("DTE")) DbGateway.updateTableListe(conn, classe, jid, ma.getPublicationDate()); // testo=ma.getPublicationDate();
+				else if(classe.equals("AUT")) DbGateway.updateTableListe(conn, classe, jid, ma.getAuthors());
+				else if(classe.equals("SBJ")) DbGateway.updateTableListe(conn, classe, jid, ma.getSubjects());
+				else if(classe.equals("BIB")) {
+					Vector<BookSignature> signatures=ma.getSignatures();
+					for(int i=0;signatures!=null && i<signatures.size();i++) {
+						DbGateway.updateTableListe(conn, classe, jid, signatures.elementAt(i).getLibraryName());
+					}
+				}
+				else {
+					//System.out.println("LISTA NON IMPLEMENTATA PER: "+classe);
+				}
+				
+				// TODO "LAN","MAT","INV","CLL","ABS"
 			}
 		}
 
 	}
 	
+
+	private static void updateTableListe(Connection conn, String classe,
+			int jid, Vector<String> testi) throws SQLException {
+		for(int i=0;testi!=null && i<testi.size();i++) {
+			DbGateway.updateTableListe(conn, classe, jid, testi.elementAt(i));
+		}
+	}
+
 	public static void cleanUpRicerche(Connection conn, String sessionId) throws SQLException {
 		Statement stmt=conn.createStatement();
 		ResultSet rs=stmt.executeQuery("select id from ricerche where jsession_id='"+sessionId+"'");

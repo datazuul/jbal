@@ -2,7 +2,6 @@ package org.jopac2.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.sql.Connection;
 
 import org.jopac2.engine.command.JOpac2Import;
 import org.junit.After;

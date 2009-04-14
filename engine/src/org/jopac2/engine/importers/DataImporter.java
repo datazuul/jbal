@@ -154,6 +154,9 @@ public class DataImporter extends Thread {
 				
 	            consolidateDB(conn[0]);
 	            
+	            DbGateway dbGateway=DbGateway.getInstance(conn[0].toString());
+	    		dbGateway.rebuildList(conn[0]);
+	            
 	            System.out.println("End of process: OK");
 	            //System.out.println("Total time: "+((System.currentTimeMillis()-now)/60000)+" minutes.");
 				
