@@ -16,7 +16,7 @@ public class mysql extends DbGateway {
 	
 	public void createAllTables(Connection conn) throws SQLException {
     	dropTable(conn,"notizie");
-    	dropTable(conn,"notizie_posizione_parole");
+    	//TODO cicla su tutte
     	dropTable(conn,nomeTableListe("TIT"));//CR_LISTE
     	//DbGateway.dropTable(conn,"data_element");
     	//DbGateway.dropTable(conn,"l_parole_de");
@@ -62,16 +62,6 @@ public class mysql extends DbGateway {
             "(id_notizia int,id_parola int,id_classe int " +
 //            ", primary key(id_notizia,id_parola,id_classe) "+
             ")"+mysql);
-	    DbGateway.execute(conn, "CREATE TABLE notizie_posizione_parole " +
-	    		"(id_notizia INT NOT NULL DEFAULT 0, " +
-	    		 "id_classe INT NOT NULL DEFAULT 0, " +
-	    		 "id_sequenza_tag INT NOT NULL DEFAULT 0, " +
-	    		 "id_parola INT NOT NULL DEFAULT 0, " +
-	    		 "parola  varchar(50), " +
-	    		 "posizione_parola INT NOT NULL DEFAULT 0) " +
-//	    		  "INDEX idx_key(id_notizia, id_classe, posizione_parola), " +
-//	    		  "INDEX idx_classe(id_classe, posizione_parola)) " +
-	    		 mysql);
 	    createTableRicerche(conn);
 	    //DbGateway.createTableListe(conn,"TIT");//CR_LISTE
     }

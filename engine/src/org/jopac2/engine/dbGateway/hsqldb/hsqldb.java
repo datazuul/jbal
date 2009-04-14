@@ -17,7 +17,7 @@ public class hsqldb extends DbGateway {
 	
 	public void createAllTables(Connection conn) throws SQLException {
 		dropTable(conn,"notizie");
-    	dropTable(conn,"notizie_posizione_parole");
+		// TODO ciclare su tutte le classi
     	dropTable(conn,nomeTableListe("TIT"));//CR_LISTE
     	//DbGateway.dropTable(conn,"data_element");
     	//DbGateway.dropTable(conn,"l_parole_de");
@@ -55,14 +55,7 @@ public class hsqldb extends DbGateway {
 	        "proprietario varchar(32), n_notizie int, sql_cmd varchar)");
 	    DbGateway.execute(conn,"create table temp_lcpn "+
             "(id_notizia int,id_parola int,id_classe int)");
-	    DbGateway.execute(conn, "CREATE TABLE notizie_posizione_parole " +
-	    		"(id_notizia INT, " +
-	    		 "id_classe INT, " +
-	    		 "id_sequenza_tag INT, " +
-	    		 "id_parola INT, " +
-	    		 "posizione_parola INT) ");
-//	    		  "PRIMARY KEY(id_notizia, id_classe, posizione_parola), " +
-//	    		  "INDEX idx_classe(id_classe, posizione_parola)) ");
+	    
 	    createTableRicerche(conn);
 	}
 	

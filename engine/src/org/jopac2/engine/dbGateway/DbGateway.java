@@ -229,13 +229,7 @@ public abstract class DbGateway {
     	createIndex(conn,"classi_dettaglio_id_de", "classi_dettaglio", "data_element");
     	//DbGateway.createIndex(conn,"intSearchProp", "intSearch", "proprietario");
     	createIndex(conn,"temp_3", "temp_lcpn", "id_parola,id_classe");
-//		  "PRIMARY KEY(id_notizia, id_classe, posizione_parola), " +
-//		  "INDEX idx_classe(id_classe, posizione_parola)) ");
     	
-    	createIndex(conn, "idx_pcp", "notizie_posizione_parole", "id_classe, posizione_parola, parola");
-    	createIndex(conn, "idx_all", "notizie_posizione_parole", "id_parola, id_notizia, id_sequenza_tag");
-    	createIndex(conn, "idx_np", "notizie_posizione_parole", "id_notizia, posizione_parola");
-    	//ALTER TABLE `dbTrev`.`notizie_posizione_parole` ADD INDEX `idx2`(`id_notizia`, `posizione_parola`);
     }
     
     protected abstract void createHashTable(Connection conn) throws SQLException;
@@ -371,7 +365,7 @@ public abstract class DbGateway {
     }
     
     /**
-     * Cancella la notizia puntata da <i>jid</i>. jid � la chiave primaria della tabella notizie.
+     * Cancella la notizia puntata da <i>jid</i>. jid e' la chiave primaria della tabella notizie.
      * @param conn
      * @param jid
      * @throws SQLException
@@ -393,7 +387,6 @@ public abstract class DbGateway {
           execute(conn[1],"delete from l_classi_parole_notizie where id_notizia="+jid);
 
         execute(conn[1],"delete from notizie where id='"+jid+"'");
-        execute(conn[1],"delete from notizie_posizione_parole where id_notizia="+jid);
         qry2.close();
     }
     
@@ -409,18 +402,6 @@ public abstract class DbGateway {
         return id_nz;
     }
     
-    
-    
-/*    rs=stmt.executeQuery("SELECT Max(data_element.id) AS MaxOfid FROM data_element;");
-    if(rs.next()) {
-      id_de_f=rs.getInt(1);
-    }
-    rs.close();
-    rs=stmt.executeQuery("SELECT Max(l_parole_de.id) AS MaxOfid FROM l_parole_de;");
-    if(rs.next()) {
-      id_lpd_f=rs.getInt(1);
-    }
-    rs.close();*/
 
     /**
      * 
@@ -576,41 +557,6 @@ public abstract class DbGateway {
 		return jid;
 	}
 
-/*	
- * 12 giugno 2007, questo metodo era gi� commentato
- * private static void linkNotiziaTag(Connection[] conn, long jid, String tag, 
-			String valore_tag, long idTipo, String dl, Vector<ClasseDettaglio> clDettaglio, 
-			ParoleSpooler paroleSpooler) {
-	    String ctk;
-	    
-	    boolean unico=true;
-	    
-	    if(valore_tag.indexOf(dl)>=0) unico=false; 
-	    
-	    StringTokenizer tk=new StringTokenizer(valore_tag,dl);
-	    while(tk.hasMoreTokens()) {
-	      String valore="";
-
-	      ctk=tk.nextToken().trim();
-	      try {
-	    	if(ctk.length()>0) {
-	    		String de="";
-	    		if(!unico) de=ctk.substring(0,1);
-	    		
-	    		int k=clDettaglio.indexOf(new ClasseDettaglio(-1,-1,-1,tag,de));
-	    		if(k>=0) {
-	    			ClasseDettaglio cd=clDettaglio.elementAt(k);
-	    			if(!unico) valore=ctk.substring(1);
-		            InsertParole(conn,valore,jid,cd,paroleSpooler);
-	    		}
-	    	}
-	      }
-	      catch (Exception e) {
-	    	  e.printStackTrace();
-//			        System.out.println("WARNING! id_notizia:"+Long.toString(id_notizia)+" / tag: "+tag+" / de: "+id_cl_dettaglio+" ignored");
-	      }
-	    }
-	}*/
 	
 	/**
 	 * Ricostruisce la tabelle hash con le firme MD5 delle notizie
@@ -639,7 +585,7 @@ public abstract class DbGateway {
 		stmt.execute("truncate table l_parole_de");
 		stmt.execute("truncate table data_element");
 		stmt.execute("truncate table anagrafe_parole");
-		stmt.execute("truncate table notizie_posizione_parole");
+		// TODO ciclare su tutte le classi
 		stmt.execute("truncate table "+nomeTableListe("TIT"));  //CR_LISTE
 				
 		ResultSet rs=stmt.executeQuery("select * from tipi_notizie");
@@ -679,14 +625,11 @@ public abstract class DbGateway {
 			ParoleSpooler paroleSpooler) throws SQLException {
 	    String parola;
 	    StringTokenizer tk=paroleTokenizer(valore);
-	    boolean asterisco_trovato=!(valore.indexOf(" *")<DbGateway.MAX_POSIZIONE_ASTERISCO);
-	    long posizione_parola=0;
 
 	    while(tk.hasMoreTokens()) {
 	      parola=tk.nextToken().trim();
 	      
 	      if(parola.startsWith("*")) {
-	    	  asterisco_trovato=true;
 	    	  parola=parola.substring(1); // parola senza l'asterisco
 	      }
 	      
@@ -694,39 +637,11 @@ public abstract class DbGateway {
 		      long id_parola=InsertParola(conn[1],parola,paroleSpooler);
 		      long id_lcp=insertLClassiParole(conn[2],id_parola,cl.getIdClasse());
 		      insertLClassiParoleNotizie(conn[3],jid,id_lcp);
-		      
-		      if(asterisco_trovato) {
-		    	  insertNotiziePosizioneParole(conn[0],jid, idSequenzaTag, cl.getIdClasse(), id_parola, posizione_parola, parola);
-		    	  posizione_parola++;
-		      }
 	      }
 	    }
 	}
 	
-	/*private static long insertLParoleDE(Connection conn, long id_parola, long id_de) throws SQLException {
-    	long id_lpde=getMaxIdTable(conn,"l_parole_de")+1;
-    	Statement stmt=conn.createStatement();
-    	stmt.execute("INSERT INTO l_parole_de (id,id_parola,id_de) VALUES (" + 
-    			id_lpde + ", " + id_parola + ", " + id_de + ")");
-    	stmt.close();
-		return id_lpde;
-	}*/
 
-	/*private static long insertDataElement(Connection conn, long jid, long id_cl) throws SQLException {
-    	long id_de=getMaxIdTable(conn,"data_element")+1;
-    	Statement stmt=conn.createStatement();
-    	stmt.execute("INSERT INTO data_element (id,id_notizia,id_classi_dettaglio) VALUES (" + 
-    			id_de + ", " + jid + ", " + id_cl +")");
-    	stmt.close();
-		return id_de;
-	}*/
-
-	public static void insertNotiziePosizioneParole(Connection conn, long jid, long idSequenzaTag, long idClasse, long id_parola, long posizione_parola, String parola) throws SQLException {
-		Statement stmt=conn.createStatement();
-    	stmt.execute("INSERT INTO notizie_posizione_parole (id_notizia,id_classe,id_sequenza_tag, id_parola,posizione_parola, parola) " +
-    			"VALUES (" + jid + ", " + idClasse + ", " + idSequenzaTag + ", " + id_parola + ", " + posizione_parola + ", '" + parola + "')");
-    	stmt.close();
-	}
 
 	private static long insertLClassiParoleNotizie(Connection conn, long jid, long id_lcp) throws SQLException {
     	long id_lcpn=getMaxIdTable(conn,"l_classi_parole_notizie")+1;
@@ -771,11 +686,12 @@ public abstract class DbGateway {
 	
 	  // determina se eliminare parole (inizia per ESC+H e ESC+I o *)
 	  /**
+	   * @deprecated
 	   * TODO: dovrebbe essere in MARC o ISO2709 piuttosto?
 	   * 07/03/2003 - R.T.
 	   *      Cambiato: ai fini dell'indicizzazione vanno inserite anche le
 	   *      parole prima della parte significativa del titolo.
-	   *      Quindi semplicemente se c'� l'asterisco lo tolgo e se ci sono
+	   *      Quindi semplicemente se c'e' l'asterisco lo tolgo e se ci sono
 	   *      i marcatori li tolgo MA LASCIO LE PAROLE INCLUSE
 	   */
 	  public static String processaMarcatori(String valore) {
@@ -875,73 +791,7 @@ public abstract class DbGateway {
 	      }
 		return r;
 	}
-
-	/**
-	 * ricostruisce la stringa legata ad un valore rispettando la posizione delle parole
-	 * @param myConnection
-	 * @param lclasseid
-	 * @param offset
-	 * @return
-	 */
-	public static String ricostruisceValore(Connection myConnection, int lclasseid, long id_notizia) {
-		String query="SELECT id_notizia, id_parola,posizione_parola,parola "+
-		"FROM notizie_posizione_parole a, anagrafe_parole p " +
-		"WHERE a.id_notizia="+id_notizia+" and a.id_parola=p.id and a.id_classe="+lclasseid+
-		" ORDER BY a.posizione_parola";
-		String dmy="";
-		
-		desc(myConnection,query);
-		
-		try {
-	        Statement stmt=myConnection.createStatement();
-	        ResultSet rs=stmt.executeQuery(query);
-	        
-	        while(rs.next()) {
-	        	dmy+=rs.getString("parola")+" ";
-	        }
-	        rs.close();
-	        stmt.close();
-	      }
-	      catch (Exception e) {
-	        e.printStackTrace();
-	      }
-		return dmy.trim();
-	}	
 	
-	/**
-	 * restituisce elenco di valori,legati alla classe, ricostruendo la stringa relativa
-	 * @param myConnection
-	 * @param id_classe
-	 * @param from_parola
-	 * @return
-	 */
-	public static Vector<String> listParole(Connection myConnection, int id_classe, String from_parola) {
-		Vector<String> r=new Vector<String>();
-		String sql="SELECT distinct parola " +
-			"FROM notizie_posizione_parole a " +
-			"WHERE a.id_classe="+id_classe+" and a.posizione_parola=0 " +
-			"and parola>='"+from_parola+"' " +
-			"ORDER BY parola " +
-			"LIMIT 10";
-		
-		desc(myConnection,sql);
-		
-		try {
-	        Statement stmt=myConnection.createStatement();
-	        ResultSet rs=stmt.executeQuery(sql);
-	        
-	        while(rs.next()) {
-	        	r.addElement(rs.getString("parola"));
-	        }
-	        
-	        rs.close();
-	        stmt.close();
-	      }
-	      catch (Exception e) {
-	        e.printStackTrace();
-	      }
-		return r;
-	}
 	
 	/**
      * esegue una query e restituisce tabella HTML
