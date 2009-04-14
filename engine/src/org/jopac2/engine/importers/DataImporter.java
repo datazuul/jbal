@@ -99,8 +99,8 @@ public class DataImporter extends Thread {
         ld.destroy();
     }
 	
-	public void run() {
-        tempDir=System.getProperty("java.io.tmpdir");
+    public void doJob() {
+    	tempDir=System.getProperty("java.io.tmpdir");
         
         if(tempDir!=null) {
             System.out.println("Uso tempdir="+tempDir);
@@ -168,5 +168,9 @@ public class DataImporter extends Thread {
 				e.printStackTrace();
 			}
         }
+    }
+    
+	public void run() {
+        doJob();
 	}
 }

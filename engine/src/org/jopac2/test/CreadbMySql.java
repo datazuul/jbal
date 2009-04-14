@@ -8,7 +8,7 @@ public class CreadbMySql {
 	private static String _classDriver = "com.mysql.jdbc.Driver";
 	private static String _dbMasterUrl = "jdbc:mysql://localhost/";	
 	private static String _dbUser = "root";
-	private static String _dbPass = "%op01rt!";
+	private static String _dbPass = "";
 	private static Connection conn = null;
 	
 	public static Connection CreaConnessione(String _dbName) {

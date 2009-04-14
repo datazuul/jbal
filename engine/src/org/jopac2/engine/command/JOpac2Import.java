@@ -43,9 +43,32 @@ public class JOpac2Import {
 		}
 	}
 	
+	public JOpac2Import(InputStream in, String filetype, String JOpac2confdir, String dbUrl, String dbUser, String dbPassword, boolean clearDatabase) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+		this.inputFile=in;
+		this.JOpac2confdir=JOpac2confdir;
+		this.filetype=filetype;
+		conns=new Connection[max_conn];
+		String driver=_classMySQLDriver;
+		if(dbUrl.contains(":hsqldb:")) driver=_classHSQLDBDriver;
+		if(dbUrl.contains(":derby:")) driver=_classDerbyDriver;
+		
+		Class.forName(driver).newInstance();
+		
+		for(int i=0;i<conns.length;i++) {
+			conns[i] = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+		}
+	}
+	
 	public void doJob() {
+		doJob(true);
+	}
+	
+	public void doJob(boolean background) {
 		DataImporter dataimporter=new DataImporter(inputFile,filetype,JOpac2confdir, conns, clearDatabase);
-		dataimporter.start();
+		if(background)
+			dataimporter.start();
+		else
+			dataimporter.doJob();
 	}
 
 	public void destroy(String dbUrl) throws SQLException, IOException {
