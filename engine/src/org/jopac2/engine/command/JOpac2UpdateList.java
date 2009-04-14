@@ -9,14 +9,14 @@ import java.sql.SQLException;
 import org.jopac2.engine.dbGateway.DbGateway;
 
 
-public class JOpac2CreateList {
+public class JOpac2UpdateList {
 	Connection[] conns;
 	int max_conn=5;
 	
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
 	private static String _classHSQLDBDriver = "org.hsqldb.jdbcDriver";
 	
-	public JOpac2CreateList(String dbUrl, String dbUser, String dbPassword) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+	public JOpac2UpdateList(String dbUrl, String dbUser, String dbPassword) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		conns=new Connection[max_conn];
 		String driver=_classMySQLDriver;
 		if(dbUrl.contains(":hsqldb:")) driver=_classHSQLDBDriver;
@@ -53,7 +53,7 @@ public class JOpac2CreateList {
 		String dbUser="root";
 		String dbPassword="";
 		
-		JOpac2CreateList ji=new JOpac2CreateList(dbUrl,dbUser,dbPassword);
+		JOpac2UpdateList ji=new JOpac2UpdateList(dbUrl,dbUser,dbPassword);
 		ji.doJob();
 		
 		ji.destroy();
