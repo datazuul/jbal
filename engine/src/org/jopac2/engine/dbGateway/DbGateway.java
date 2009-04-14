@@ -54,7 +54,7 @@ import org.jopac2.utils.ZipUnzip;
 
 
 public abstract class DbGateway {
-	  /** @todo  le costanti vanno messe in file di configurazione!!!*/
+	  /** @todo  le costanti vanno messe in file di configurazione!!! */
 	
 	// 18.07.2006 RT tolto * da SEPARATORI PAROLE per usarlo come inizio parole da indicizzare
 	  public static final String SEPARATORI_PAROLE=" ,.;()/-'\\:=@%$&!?[]#<>\016\017\n\t";
