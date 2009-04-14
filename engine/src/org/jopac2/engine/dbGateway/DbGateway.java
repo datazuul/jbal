@@ -617,6 +617,10 @@ public abstract class DbGateway {
 		System.out.println(current+" record reimportati");
 	}
 	
+	/**
+	 * @param valore
+	 * @return
+	 */
 	public static StringTokenizer paroleTokenizer(String valore) {
 		return  new StringTokenizer(processaMarcatori(valore),SEPARATORI_PAROLE);
 	}
@@ -686,7 +690,6 @@ public abstract class DbGateway {
 	
 	  // determina se eliminare parole (inizia per ESC+H e ESC+I o *)
 	  /**
-	   * @deprecated
 	   * TODO: dovrebbe essere in MARC o ISO2709 piuttosto?
 	   * 07/03/2003 - R.T.
 	   *      Cambiato: ai fini dell'indicizzazione vanno inserite anche le
@@ -999,7 +1002,7 @@ public abstract class DbGateway {
 		}
 	}
 	
-	public static int salvaNotizieId(Connection myConnection, String id, SearchResultSet result) throws SQLException {
+	public static int saveQuery(Connection myConnection, String id, SearchResultSet result) throws SQLException {
 		System.out.println("Session JID="+id);
 		PreparedStatement stmt=myConnection.prepareStatement("insert into ricerche (jsession_id,testo_ricerca) values(?,?)");
 		stmt.setString(1, id);
