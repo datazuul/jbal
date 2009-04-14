@@ -180,6 +180,8 @@ public class mysql extends DbGateway {
 		stmt.execute(sql1);
 		stmt.execute(sql2);
 		stmt.close();
+		
+		createIndex(conn,"ricerche_dettaglio_idx1", "ricerche_dettaglio", "id_ricerca");		
 	}
     
     /**
