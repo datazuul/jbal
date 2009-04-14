@@ -16,13 +16,27 @@ public class EncodeUtil {
 	 */
 	public static void main(String[] args) throws IOException {
 		String filename="/java_jopac2/engine/data/demo_Sebina.uni";
+		int i=20;
+		
+		System.out.println("--- INIZIO ---");
 		
 		Reader in = new InputStreamReader(new FileInputStream(filename), "UTF-8");
 		BufferedReader br=new BufferedReader(in);
 		
-		String line=br.readLine();
-		String encoded=Base64.encode(line.getBytes());
+		String line="";
+		
+		String o="";
+		
+		while(i>0) {
+			line=br.readLine();
+			o+=line+"\n";
+			
+			i--;
+		}
+		
+		String encoded=Base64.encode(o.getBytes());
 		System.out.println(encoded);
+		
 		br.close();
 	}
 
