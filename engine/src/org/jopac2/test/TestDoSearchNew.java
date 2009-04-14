@@ -51,7 +51,7 @@ public class TestDoSearchNew {
 	private static String _dbMasterUrl = "jdbc:mysql://localhost/";	
 	private static String _dbUser = "root";
 	private static String _dbPass = "";
-	private static String _dbName = "eut"; //"dbsebina"; 
+	private static String _dbName = "dbsebina"; 
 	private static Connection conn = null;
 	
 	private static DoSearchNew doSearchNew;
@@ -241,7 +241,7 @@ public class TestDoSearchNew {
 	public static void main(String[] args) throws ExpressionException, SQLException {
 		Init();	
 		
-		TestClasseNew("AUT=Andreozzi, Daniele a cura di");
+		TestClasseNew("TIT=grammar");
 		
 		//testListe();
 		/*

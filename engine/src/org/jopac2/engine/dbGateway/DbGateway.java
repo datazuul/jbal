@@ -1045,6 +1045,24 @@ public abstract class DbGateway {
 		stmt.execute("delete from ricerche where jsession_id='"+sessionId+"'");
 		stmt.close();
 	}
+	
+	public static void orderBy(Connection conn,String classe,SearchResultSet rset) throws SQLException{
+		String sql="select n.id,t.testo from notizie n,ricerche_dettaglio rd,"+nomeTableListe(classe)+" t " +
+		           "where rd.id_ricerca=? and " +
+		           "      n.id = rd.id_notizia and " +
+		           "      t.id_notizia = n.id " + 
+		           "order by t.testo";
+		PreparedStatement stmt=conn.prepareStatement(sql);
+		stmt.setLong(1, rset.getQueryID());
+		ResultSet rs=stmt.executeQuery();
+		Vector<Long> rid =rset.getRecordIDs();
+		rid.clear();
+		while(rs.next()){
+			rid.addElement(new Long(rs.getLong(1)));
+		}
+		rs.close();
+		stmt.close();
+	}
 
 	public static DbGateway getInstance(String string) {
 		if(string.contains("mysql")) return new mysql();

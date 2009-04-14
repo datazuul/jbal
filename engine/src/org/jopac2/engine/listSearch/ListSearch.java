@@ -38,7 +38,6 @@ public class ListSearch {
 		}
 		rs.close();
 		stmt.close();
-		conn.close();
 		SearchResultSet result=new SearchResultSet();
 		result.setRecordIDs(listResult);
 		return result;
