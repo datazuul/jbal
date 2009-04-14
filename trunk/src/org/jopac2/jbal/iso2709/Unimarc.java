@@ -123,8 +123,11 @@ public void initLinkUp() {
     String k="";
     if(v.size()>0) {
       for(int i=0;i<v.size();i++) {
-        k=v.elementAt(i).getField("a").getContent();
-        k+=" "+v.elementAt(i).getField("b").getContent();
+    	  k="";
+    	k+=Utils.ifExists("", v.elementAt(i).getField("a"));
+        //k=v.elementAt(i).getField("a").getContent();
+        k+=Utils.ifExists(" ", v.elementAt(i).getField("b"));
+        //k+=" "+v.elementAt(i).getField("b").getContent();
         if(!r.contains(k)) r.addElement(k);
       }
     }
