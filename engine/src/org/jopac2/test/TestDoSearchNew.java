@@ -30,6 +30,7 @@ import java.util.SortedMap;
 import java.util.Vector;
 
 import org.jopac2.engine.NewSearch.DoSearchNew;
+import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.dbGateway.StaticDataComponent;
 import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
 import org.jopac2.engine.utils.MyTimer;
@@ -95,53 +96,28 @@ public class TestDoSearchNew {
 		}
 	}
 
-	private static RecordInterface getNotizia(String n) {
-		String textOut = new String();
-		ResultSet rs = null;
-		RecordInterface ma = null;
-		try {
-			Statement stmt = conn.createStatement();
-			rs = stmt
-					.executeQuery("select * from notizie,tipi_notizie where notizie.id='"
-							+ n + "' and tipi_notizie.id=notizie.id_tipo");
-			//Vector v;
-			long idDTipo = 0;
-			while (rs.next()) {
-				String tipo = rs.getString("nome");
-				//idDTipo=((Long)tipi.get(tipo)).longValue();
-				//crea notizia padre con livello=0
-				ma=RecordFactory.buildRecord(rs.getLong("notizie.id"), rs.getString("notizia"), tipo, 0);
-				//ma = ISO2709.creaNotizia(rs.getLong("notizie.id"), rs
-				//		.getString("notizia"), tipo, 0);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			ma = null;
-		} finally {
-			try {
-				rs.close();
-			} catch (Exception e) {
-			}
+	private static void dumpSearchResultSet(SearchResultSet rs){
+		Vector<Long> v = rs.getRecordIDs();
+		System.out.println(v);
+		for (int i = 0; i < v.size(); i++) {
+			RecordInterface m = DbGateway.getNotiziaByJID(conn, v.elementAt(i).toString());			
+			System.out.println(m.getTitle());
 		}
-		return ma;
 	}
-
-	private static void TestClasseNew(String str) throws ExpressionException {		
+	
+	private static void TestClasseNew(String str) throws ExpressionException, SQLException {		
 		MyTimer t=new MyTimer(new String[] {"NEW","esecuzione"});
 		t.Start();
 		SearchResultSet rs = doSearchNew.executeSearch(str, false);
 		t.SaveTimer("time:"+rs.getQueryTime()+"#rec:"+rs.getQueryCount());
 		t.Stop();
 		System.out.println(rs.getQuery() + "\n[optimized:" + rs.getOptimizedQuery() + "]");
-		System.out.println(t);		
+		System.out.println(t);
+		
+		dumpSearchResultSet(rs);
+		DbGateway.orderBy(conn, "TIT", rs);
+		dumpSearchResultSet(rs);
 		/*		 
-		Vector v = rs.getRecordIDs();
-		System.out.println(v);
-		for (int i = 0; i < v.size(); i++) {
-			ISO2709 m = getNotizia(v.elementAt(i).toString());
-			Pregresso p = (Pregresso) m;			
-			System.out.println(p.getTitle());
-		}
 		*/		
 	}
 	
