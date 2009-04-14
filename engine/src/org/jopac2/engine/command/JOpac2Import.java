@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.importers.DataImporter;
 
 
@@ -81,13 +82,7 @@ public class JOpac2Import {
 		}
 	}
 	
-	/**
-	 * @param args file, formato, databaseurl, append
-	 * @throws SQLException 
-	 * @throws IOException 
-	 * @throws InterruptedException 
-	 */
-	public static void main(String[] args) throws Exception {
+	private static void testMac() throws Exception {
 		//JOpac2Import ji=new JOpac2Import(args[0],args[1],args[2],args[3],args[4],args[5],true);
 		//String webcontentdir="/java_source/keiko/WebContent";
 		String sitename="sebina";
@@ -103,6 +98,28 @@ public class JOpac2Import {
 		ji.doJob();
 		ji.wait();
 		ji.destroy(dbUrl);
+	}
+	
+	private static void testWin() throws Exception {
+		String sitename="sebina";
+		String filename="D:/Dev/workspace/engine/data/demo_Sebina.uni";
+		String filetype="sebina";
+		String JOpac2confdir="D:/Dev/workspace/engine/src/org/jopac2/conf";
+		//String dbUrl = "jdbc:derby:db"+sitename+";create=true";
+		String dbUrl="jdbc:mysql://localhost/db"+sitename;
+		String dbUser="root";
+		String dbPassword="";
+		
+		//DbGateway.createDB(conn, dbName)		
+		JOpac2Import ji=new JOpac2Import(filename,filetype,JOpac2confdir,dbUrl,dbUser,dbPassword,true);
+		ji.doJob();
+		ji.wait();
+		ji.destroy(dbUrl);
+	}
+	
+	public static void main(String[] args) throws Exception {
+		//testMac();
+		testWin();
 	}
 
 
