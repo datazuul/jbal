@@ -21,6 +21,7 @@ package org.jopac2.engine.NewSearch;
 *
 *******************************************************************************/
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Vector;
 
 import org.jopac2.engine.NewSearch.parser.QuerySearch;
@@ -69,6 +70,12 @@ public class DoSearchNew {
 		result.setQueryTime(t);
 		result.setQueryCount(resultSet.size());
 		result.setRecordIDs(resultSet);
+		try {
+			int idQ=DbGateway.saveQuery(conn, "", result);
+			result.setQueryID(idQ);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return result;
 	}
 
