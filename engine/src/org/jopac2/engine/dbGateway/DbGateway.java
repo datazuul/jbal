@@ -52,8 +52,6 @@ import org.jopac2.utils.TokenWord;
 import org.jopac2.utils.Utils;
 import org.jopac2.utils.ZipUnzip;
 
-import com.ibm.icu.util.Calendar;
-
 
 public abstract class DbGateway {
 	  /** @todo  le costanti vanno messe in file di configurazione!!!*/
