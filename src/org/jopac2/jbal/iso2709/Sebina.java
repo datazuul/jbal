@@ -106,7 +106,7 @@ public class Sebina extends Unimarc {
           /* 950^f contiene il codice Sebina solo se i dati vengono dal Pregresso
            * altrimenti e' i primi due caratteri dell'inventario
            */
-          String codBib=v.elementAt(i).getField("f").getContent();
+          String codBib=Utils.ifExists("", v.elementAt(i).getField("f"));
           
           
           try {
