@@ -40,6 +40,7 @@ import org.jopac2.engine.dbGateway.derby.derby;
 import org.jopac2.engine.dbGateway.hsqldb.hsqldb;
 import org.jopac2.engine.dbGateway.mysql.mysql;
 import org.jopac2.engine.importers.LoadClasses;
+import org.jopac2.engine.utils.SearchResultSet;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.xmlHandlers.ClassItem;
@@ -50,6 +51,8 @@ import org.jopac2.utils.ObjectPair;
 import org.jopac2.utils.TokenWord;
 import org.jopac2.utils.Utils;
 import org.jopac2.utils.ZipUnzip;
+
+import com.ibm.icu.util.Calendar;
 
 
 public abstract class DbGateway {
@@ -227,7 +230,6 @@ public abstract class DbGateway {
     	createIndex(conn,"classi_dettaglio_id_classe", "classi_dettaglio", "id_classe");
     	createIndex(conn,"classi_dettaglio_id_tag", "classi_dettaglio", "tag");
     	createIndex(conn,"classi_dettaglio_id_de", "classi_dettaglio", "data_element");
-    	//DbGateway.createIndex(conn,"intSearchProp", "intSearch", "proprietario");
     	createIndex(conn,"temp_3", "temp_lcpn", "id_parola,id_classe");
     	
     }
@@ -997,6 +999,37 @@ public abstract class DbGateway {
 		for(int i=0;testi!=null && i<testi.size();i++) {
 			DbGateway.updateTableListe(conn, classe, jid, testi.elementAt(i));
 		}
+	}
+	
+	public static int salvaNotizieId(Connection myConnection, String id, SearchResultSet result) throws SQLException {
+		System.out.println("Session JID="+id);
+		PreparedStatement stmt=myConnection.prepareStatement("insert into ricerche (jsession_id,testo_ricerca) values(?,?)");
+		stmt.setString(1, id);
+		stmt.setString(2, result.getOptimizedQuery());
+		stmt.execute();
+		String sql;
+		if(myConnection.toString().contains("mysql")) {
+    		sql="select last_insert_id()";
+    	}
+		else {
+			sql="select max(id) from ricerche where jsession_id='"+id+"'";
+		}
+		int newId=-1;
+		ResultSet rs=stmt.executeQuery(sql);
+		if (rs.next())
+			newId=rs.getInt(1);
+		rs.close();
+		stmt=myConnection.prepareStatement("insert into ricerche_dettaglio values(?,?)");
+		Enumeration<Long> e=result.getRecordIDs().elements();
+		long l;
+		stmt.setInt(2, newId);
+		while(e.hasMoreElements()){
+			l=e.nextElement().longValue();
+			stmt.setLong(1, l);
+			stmt.execute();
+		}
+		stmt.close();
+		return newId;
 	}
 
 	public static void cleanUpRicerche(Connection conn, String sessionId) throws SQLException {

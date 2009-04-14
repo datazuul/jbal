@@ -40,14 +40,10 @@ public class DoSearchNew {
 	private Vector<Long> resultSet;
 	private Connection conn = null;
 	protected StaticDataComponent staticdata;
-	//private Hashtable classi;
-	//private Hashtable valori;
 	
 	public DoSearchNew(Connection c, StaticDataComponent d) {
 		this.conn = c;
 		this.staticdata = d;
-		//this.classi = (Hashtable) d.getClassi();
-		//this.valori = (Hashtable) d.getValori();
 		this.resultSet = new Vector<Long>();
 	}
 	

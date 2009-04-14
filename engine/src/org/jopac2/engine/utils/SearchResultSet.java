@@ -62,6 +62,8 @@ public class SearchResultSet {
     private long queryCount;
     private double queryTime;
     private boolean stemmer=false;
+    private String order="";
+    private int queryID=-1;
     
     public void setQuery(String query) {this.query=query;}
     public void setOptimizedQuery(String optimizedQuery) {this.optimizedQuery=optimizedQuery;}
@@ -70,6 +72,8 @@ public class SearchResultSet {
     public void setQueryCount(long queryCount) {this.queryCount=queryCount;}
     public void setQueryTime(double queryTime) {this.queryTime=queryTime;}
     public void setStemmer(boolean stemmerStatus) {this.stemmer=stemmerStatus;}
+    public void setOrder(String order) {this.order=order;}
+	public void setQueryID(int queryID) {this.queryID = queryID;}
     
     public String getQuery() {return query;}
     public String getOptimizedQuery() {return optimizedQuery;}
@@ -78,4 +82,6 @@ public class SearchResultSet {
     public long getQueryCount() {return queryCount;}
     public double getQueryTime() {return queryTime;}
     public boolean getStemmer() {return stemmer;}
+    public String getOrder() {return order;}
+	public int getQueryID() {return queryID;}
 }

@@ -24,8 +24,6 @@ public class mysql extends DbGateway {
     	dropTable(conn,"classi");
     	dropTable(conn,"classi_dettaglio");
     	dropTable(conn,"tipi_notizie");
-    	dropTable(conn,"intSearchKeys");
-    	dropTable(conn,"intSearch");
     	dropTable(conn,"temp_lcpn");
     	dropTable(conn,"hash");
     	dropTable(conn, "ricerche_dettaglio");
@@ -51,13 +49,6 @@ public class mysql extends DbGateway {
 	        "tag char(50),data_element char(1) ,primary key(id))"+mysql);
 	    DbGateway.execute(conn,"create table tipi_notizie ("+
 	        "ID int not null "+autoincrement+", nome text,primary key(id))"+mysql);
-	    DbGateway.execute(conn,"create table intSearchKeys ("+
-	        "ID int not null "+autoincrement+", id_intSearch int, "+
-	        "id_notizia int, primary key(ID))"+mysql);
-	    DbGateway.execute(conn,"create table intSearch (ID int not null "+autoincrement+", "+
-	        "data_estrazione datetime, nome_ricerca varchar(50), "+
-	        "proprietario varchar(32), n_notizie int, sql_cmd longtext, "+
-	        "primary key(ID))"+mysql);
 	    DbGateway.execute(conn,"create table temp_lcpn "+
             "(id_notizia int,id_parola int,id_classe int " +
 //            ", primary key(id_notizia,id_parola,id_classe) "+

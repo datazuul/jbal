@@ -25,8 +25,6 @@ public class hsqldb extends DbGateway {
     	dropTable(conn,"classi");
     	dropTable(conn,"classi_dettaglio");
     	dropTable(conn,"tipi_notizie");
-    	dropTable(conn,"intSearchKeys");
-    	dropTable(conn,"intSearch");
     	dropTable(conn,"temp_lcpn");
     	dropTable(conn,"hash");
     	dropTable(conn, "ricerche_dettaglio");
@@ -48,11 +46,6 @@ public class hsqldb extends DbGateway {
 	        "tag char(50),data_element char(1))");
 	    DbGateway.execute(conn,"create table tipi_notizie ("+
 	        "ID int not null identity primary key, nome varchar)");
-	    DbGateway.execute(conn,"create table intSearchKeys ("+
-	        "ID int not null identity primary key, id_intSearch int, id_notizia int)");
-	    DbGateway.execute(conn,"create table intSearch (ID int not null identity primary key, "+
-	        "data_estrazione datetime, nome_ricerca varchar(50), "+
-	        "proprietario varchar(32), n_notizie int, sql_cmd varchar)");
 	    DbGateway.execute(conn,"create table temp_lcpn "+
             "(id_notizia int,id_parola int,id_classe int)");
 	    

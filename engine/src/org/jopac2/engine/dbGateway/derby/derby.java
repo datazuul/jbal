@@ -26,8 +26,6 @@ public class derby extends DbGateway {
     	dropTable(conn,"classi");
     	dropTable(conn,"classi_dettaglio");
     	dropTable(conn,"tipi_notizie");
-    	dropTable(conn,"intSearchKeys");
-    	dropTable(conn,"intSearch");
     	dropTable(conn,"temp_lcpn");
     	dropTable(conn,"hash");
     	dropTable(conn, "ricerche_dettaglio");
@@ -50,12 +48,6 @@ public class derby extends DbGateway {
 	        "tag char(50),data_element char(1) ,primary key(id))"); //,primary key(id)
 	    DbGateway.execute(conn,"create table tipi_notizie ("+
 	        "ID int not null "+autoincrement1+", nome varchar(20),primary key(id))"); //,primary key(id)
-	    DbGateway.execute(conn,"create table intSearchKeys ("+
-	        "ID int not null "+autoincrement+", id_intSearch int, "+
-	        "id_notizia int,primary key(id))"); // , primary key(ID)
-	    DbGateway.execute(conn,"create table intSearch (ID int not null "+autoincrement+", "+
-	        "data_estrazione timestamp, nome_ricerca varchar(50), "+
-	        "proprietario varchar(32), n_notizie int, sql_cmd varchar(50) ,primary key(id))"); //, primary key(ID)
 	    DbGateway.execute(conn,"create table temp_lcpn "+
             "(id_notizia int,id_parola int,id_classe int " +
 //            ", primary key(id_notizia,id_parola,id_classe) "+
