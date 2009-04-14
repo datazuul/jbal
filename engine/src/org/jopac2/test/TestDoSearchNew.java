@@ -116,82 +116,9 @@ public class TestDoSearchNew {
 		
 		dumpSearchResultSet(rs);
 		DbGateway.orderBy(conn, "TIT", rs);
-		dumpSearchResultSet(rs);
-		/*		 
-		*/		
+		dumpSearchResultSet(rs);	
 	}
 	
-	public static void testListe() throws SQLException {
-		String id_classe="2";
-		String from_parola="grammar";
-		
-		Hashtable<String,Integer> h=new Hashtable<String,Integer>();
-		String sql="SELECT distinct id_parola,posizione_parola,parola " +
-			"FROM notizie_posizione_parole a, anagrafe_parole p " +
-			"WHERE a.id_parola=p.id and a.id_classe="+id_classe+" and a.posizione_parola=0 " +
-			"and parola>='"+from_parola+"' " +
-			"ORDER BY p.parola " +
-			"LIMIT 100";
-
-	
-			Statement stmt=conn.createStatement();
-			ResultSet rs=stmt.executeQuery(sql);
-			while(rs.next()) {
-				String sql0="SELECT  b.id_notizia, b.id_sequenza_tag "+
-							"FROM notizie_posizione_parole b " +
-							"WHERE " +
-							"b.id_parola=" + rs.getInt("id_parola") +
-							" and b.id_classe=" + id_classe + 
-							" and b.posizione_parola=0";
-				
-				Statement stmt0=conn.createStatement();
-				ResultSet rs0=stmt0.executeQuery(sql0);
-				while(rs0.next()) {
-					int id_notizia=rs0.getInt("id_notizia");
-					int id_sequenza_tag=rs0.getInt("id_sequenza_tag");
-
-					String sql1="SELECT b.id_sequenza_tag,b.id_parola,b.posizione_parola,p.parola " +
-								"FROM notizie_posizione_parole b, anagrafe_parole p " +
-								"WHERE  b.id_parola=p.id and b.id_notizia=" + id_notizia + " " +
-								"and b.id_classe=" + id_classe + " " +
-								"and b.id_sequenza_tag="+id_sequenza_tag +" " +
-								"order by id_notizia, posizione_parola";
-					Statement stmt1=conn.createStatement();
-					ResultSet rs1=stmt1.executeQuery(sql1);
-					//int cur_id_notizia=0;
-					String cur_name="";
-
-					while(rs1.next()) {
-						cur_name+=rs1.getString("parola")+" ";
-					}
-					cur_name=cur_name.trim();
-					//System.out.println(cur_name);
-					if(h.containsKey(cur_name)) {
-						h.put(cur_name, new Integer(h.get(cur_name).intValue()+1));
-					}
-					else {
-						h.put(cur_name, new Integer(1));
-					}
-					rs1.close();
-					stmt1.close();
-				}
-				rs0.close();
-				stmt0.close();
-		}
-		rs.close();
-		stmt.close();
-		conn.close();
-		Vector<String> v=new Vector<String>(h.keySet());
-		Collections.sort(v);
-		for(int i=0;i<v.size();i++) {
-			String c=v.elementAt(i);
-			System.out.println(c+": "+h.get(c));
-		}
-		/*Vector v=DbGateway.listRecords(conn, 1, "altan");
-		for (int i=0;i<v.size();i++)
-			System.out.println(v.elementAt(i));
-		*/
-	}
 	
 	private static void execute(String sql) {
         try {
