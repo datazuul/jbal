@@ -10,10 +10,12 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 
 import org.apache.xerces.impl.dv.util.Base64;
+import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.abstractStructure.Field;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.JOpac2Exception;
+import org.jopac2.utils.Utils;
 
 public class Eutmarc extends Unimarc {
 	
@@ -40,7 +42,7 @@ public class Eutmarc extends Unimarc {
 //            F = fascicolo
 //            S = spoglio (articolo)
         
-        public void setPublicationType(String type){
+        public void setPublicationNature(String type){
         	try {
 				removeTags("901");
 			} catch (JOpac2Exception e) { }
@@ -49,7 +51,7 @@ public class Eutmarc extends Unimarc {
         	addTag(t);
         }
         
-        public String getPublicationType(){
+        public String getPublicationNature(){
         	String s = null;
         	Field a = null;
         	Tag t=getFirstTag("901");
@@ -147,6 +149,25 @@ public class Eutmarc extends Unimarc {
     			addTag(a);
     	}
     	
+    	public String getPrezzoNote(){
+    		String r = null;
+    		Tag t = getFirstTag("904");
+    		if(t!=null){
+	    		Field f = t.getField("n");
+	    		if(f!=null)
+	    			r = f.getContent();
+    		}
+    		return r;
+    	}
+    	
+    	public String getPrezzo(){
+    		Tag t = getFirstTag("904");
+    		Field f = t.getField("p");
+    		String r = f.getContent();
+    		if(r==null)r ="";
+    		return r;
+    	}
+    	
 
 		@Override
 		public void setDescription(String description) throws JOpac2Exception {
@@ -176,7 +197,7 @@ public class Eutmarc extends Unimarc {
 			}
 		}
 
-		public void setCollana(String collana, String collanaN) {
+		public void setSeriesTitle(String collana, String collanaN) {
 			Tag t = new Tag("225",'|',' ');
 			if(collana != null && collana.length()>0){
 				t.addField(new Field("a",collana));
@@ -194,6 +215,24 @@ public class Eutmarc extends Unimarc {
 			
 			
 		}
+		
+		public String getTitle() {
+		    String r=null;
+		    Tag tag=getFirstTag("200");
+		    Vector<Field> a=tag.getFields("a");
+		    r=a.elementAt(0).getContent();
+		    for(int i=1;i<a.size();i++) r+=" ; "+a.elementAt(i).getContent();
+//		    r+=Utils.ifExists(" [] ",tag.getField("b"));
+//		    r+=Utils.ifExists(" . ",tag.getField("c"));
+//		    r+=Utils.ifExists(" = ",tag.getField("d"));
+//		    r+=Utils.ifExists(" : ",tag.getField("e"));
+//		    r+=Utils.ifExists(" / ",tag.getField("f"));
+//		    r+=Utils.ifExists(" ; ",tag.getField("g"));
+//		    r+=Utils.ifExists(" . ",tag.getField("h"));
+//		    r+=Utils.ifExists(" , ",tag.getField("i"));
+
+		    return r;
+		  }
 		
     	
     	
