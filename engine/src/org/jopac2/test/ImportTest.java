@@ -83,7 +83,7 @@ public class ImportTest extends TestCase {
 		return rs;	
 	}
 
-	public void testSearch() throws Exception {
+	public void testSearchOrder() throws Exception {
 		SearchResultSet rs = TestClasseNew("(TIT=in)|(TIT=der)");
 		
 		long[] unordered={1, 3, 6, 7, 9, 10};
