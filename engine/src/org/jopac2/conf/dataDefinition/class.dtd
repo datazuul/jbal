@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!ELEMENT class (xmlmapping?,description)>
-<!ELEMENT description (filter?,AUT?,TIT?,NUM?,LAN?,MAT?,DTE?,SBJ?,BIB?,INV?,CLL?,ANY?,ABS?)>
+<!ELEMENT description (filter?,AUT?,TIT?,NUM?,LAN?,MAT?,DTE?,SBJ?,BIB?,INV?,CLL?,ANY?,ABS?,NAT?)>
 <!ELEMENT element EMPTY>
 <!ATTLIST class name CDATA #REQUIRED>
 <!ATTLIST element tag CDATA #REQUIRED
@@ -26,3 +26,4 @@
 <!ELEMENT CLL (element*)>
 <!ELEMENT ANY (element*)>
 <!ELEMENT ABS (element*)>
+<!ELEMENT NAT (element*)>

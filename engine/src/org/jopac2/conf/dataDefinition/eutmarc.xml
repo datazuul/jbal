@@ -10,7 +10,7 @@
         Purpose of the document follows.
 -->
 
-<class  name="Eutmarc">
+<class name="Eutmarc">
 <description>
 	<AUT>
             <element tag="200" field="f" comment="ciao" />
@@ -67,5 +67,8 @@
 	<CLL>
             <element tag="410" field="a" />
 	</CLL>
+	<NAT>
+			<element tag="901" field="a" />
+	</NAT>
 </description>
 </class>
