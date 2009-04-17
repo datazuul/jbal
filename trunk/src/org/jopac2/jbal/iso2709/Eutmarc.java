@@ -206,6 +206,11 @@ public class Eutmarc extends Unimarc {
 				addTag(t);
 			}
 		}
+		
+		public String getSeriesTitle() {
+			Tag tag=getFirstTag("225");
+			return Utils.ifExists("",tag.getField("a"));
+		}
 
 		public void setEditor() {
 
@@ -235,7 +240,33 @@ public class Eutmarc extends Unimarc {
 		  }
 		
     	
-    	
+		public void setLink(String link, String tipo) {
+//			903 ^a tipo link ^l link
+//	        C = catalogo opac
+//	        A = OpenstarTS (archivio)
+//	        B = biobibliografia
+			Tag t = new Tag("903",' ',' ');
+			if(tipo != null && tipo.length()>0){
+				t.addField(new Field("a",tipo));
+				if(link != null && link.length()>0)
+					t.addField(new Field("l",link));
+				addTag(t);
+			}
+		}
+		
+		public String getLink() {
+			Tag tag=getFirstTag("903");
+			return Utils.ifExists("",tag.getField("l"));
+		}
+		
+		public String getTipoLink() {
+//	        C = catalogo opac
+//	        A = OpenstarTS (archivio)
+//	        B = biobibliografia
+			Tag tag=getFirstTag("903");
+			return Utils.ifExists("",tag.getField("a"));
+		}
+		
 
 }
 
