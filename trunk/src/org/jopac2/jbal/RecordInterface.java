@@ -201,6 +201,8 @@ public interface RecordInterface {
 	public String toString();
 	
 	public String toReadableString();
+	
+	public String toEncapsulatedRecordFormat();
 
 	/**
 	 * Restituisce un vettore di autori
