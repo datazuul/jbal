@@ -58,7 +58,7 @@ public final class StaticDataComponent { //, Contextualizable, ThreadSafe {
    
    // ANY ripetuto due volte per mettere in posizione 0 qualche cosa e mantenere compatibilita' con i db esistenti
    // SE SI AGGIUNGE CANALI CONTROLLARE DbGateway.rebuildList(Connection conn, String classe)
-   public static String[] channels={"ANY","AUT","TIT","NUM","LAN","MAT","DTE","SBJ","BIB","INV","CLL","ANY","JID","ABS"};
+   public static String[] channels={"ANY","AUT","TIT","NUM","LAN","MAT","DTE","SBJ","BIB","INV","CLL","ANY","JID","ABS","NAT"};
    
    public StopWordRecognizer getStopWordRecognizer() {
    		return stopword;
