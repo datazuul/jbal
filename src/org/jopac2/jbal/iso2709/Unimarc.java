@@ -519,8 +519,27 @@ public void initLinkUp() {
 		throw new JOpac2Exception("No such method defined!");
 	}
 
+	/**
+	 * http://www.ifla.org/VI/3/p1996-1/uni4.htm#410
+	 * EX 1 Embedded fields technique
+	 * 225 0#$aLetters from China
+	 * 410 #0$12001#$aLetters from China$1700#1$aStrong,$bAnna Louise,$f1885-1970 
+	 */
 	public void addSerie(RecordInterface serie)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
+		if(serie!=null) {
+			Tag tag225=new Tag("225",' ','0');
+			Vector<Tag> tit=serie.getTags("200");
+			if(tit!=null && tit.size()>0) {
+				Field t=tit.elementAt(0).getField("a");
+				if(t!=null) {
+					tag225.addField(new Field("a",t.getContent()));
+				}
+				addTag(tag225);
+			}
+			Tag tag410=new Tag("410");
+			tag410.setRawContent(serie.toEncapsulatedRecordFormat());
+			addTag(tag410);
+		}
 	}
 
 	public void addSubject(SubjectInterface subject)  throws JOpac2Exception {
