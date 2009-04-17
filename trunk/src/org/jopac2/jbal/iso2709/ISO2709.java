@@ -608,35 +608,27 @@ public Vector<Tag> getTags(String tag) {
   }
 
   /**
-   * Object not=ISO2709.creaNotizia(id,contenuto,tipo,livelloPadre);
-   * @deprecated
+   * http://www.ifla.org/VI/3/p1996-1/uni4.htm
+   * Indicator 1: blank (not defined)
+   * Indicator 2: Note Indicator (0 default)
+   * 
+   * Codes only with Embedded fields technique
+   * 
    */
-  /*public static ISO2709 creaNotizia(long ID,String notizia,String tipo,int livello) {
-    ISO2709 ma;
-    try {
-    	Class iso;
-    	try {
-    		iso=Class.forName("JOpac2.dataModules."+tipo);
-    	}
-    	catch (Exception e){
-    		String fl=tipo.substring(0,1).toUpperCase();
-    		tipo=fl+tipo.substring(1);
-    		iso=Class.forName("JOpac2.dataModules."+tipo);
-    	}
-      //attenzione: si prende sempre il costruttore 1 quello definito per primo
-//      java.lang.reflect.Constructor c=iso.getConstructors()[1];
-      java.lang.reflect.Constructor c=iso.getConstructor(new Class[] {String.class, String.class, String.class });
-      ma=(ISO2709)c.newInstance(new Object[] {notizia,tipo,Integer.toString(livello)});
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      ma=new ISO2709Impl(notizia,tipo);
-    }
-    ma.setJOpacID(ID);
-    return ma;
+  public String toEncapsulatedRecordFormat() {
+	  StringBuffer r=new StringBuffer();
+	  
+	  r.append(" 0"); // indicators with no note default
+	  for(int i=0;dati!=null && i<dati.size();i++) {
+		  Tag tag=dati.elementAt(i);
+		  if(tag!=null) {
+			  r.append(dl+"1"+tag.toString());
+		  }
+	  }
+	  
+	  return r.toString();
   }
-*/
-
+  
   /**
    * 01/10/2003 - RT 
    *            Prende una istanza ISO2709 e la salva in formato ISO2709 restituendo una stringa
