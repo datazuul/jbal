@@ -99,7 +99,7 @@ public class DataImporter extends Thread {
         ld.destroy();
     }
 	
-    public void doJob() {
+    public synchronized void doJob() {
     	tempDir=System.getProperty("java.io.tmpdir");
         
         if(tempDir!=null) {

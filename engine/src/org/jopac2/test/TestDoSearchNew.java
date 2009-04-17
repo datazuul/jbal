@@ -52,7 +52,7 @@ public class TestDoSearchNew {
 	private static String _dbMasterUrl = "jdbc:mysql://localhost/";	
 	private static String _dbUser = "root";
 	private static String _dbPass = "";
-	private static String _dbName = "dbsebina"; 
+	private static String _dbName = "dbtest"; 
 	private static Connection conn = null;
 	
 	private static DoSearchNew doSearchNew;

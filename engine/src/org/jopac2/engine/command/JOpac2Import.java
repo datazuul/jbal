@@ -23,7 +23,6 @@ public class JOpac2Import {
 	
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
 	private static String _classHSQLDBDriver = "org.hsqldb.jdbcDriver";
-	
     private static String _classDerbyDriver = "org.apache.derby.jdbc.EmbeddedDriver";
     
 	

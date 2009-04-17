@@ -116,7 +116,7 @@ public class QuerySearch {
 				// nel ciclo for aggiungo 2 nodi: un sinistro e un and
 				for(int i=1;i<numeroParole-1;i++){					
 					Nodo nsx=new Nodo(classe+"="+stPar.nextToken());
-					Nodo nroot=new Nodo(nsx,null,null);  // il nodo dx non è ancora fissato					
+					Nodo nroot=new Nodo(nsx,null,null);  // il nodo dx non ï¿½ ancora fissato					
 					nroot.setAND();
 					currNode.setDestro(nroot);
 					currNode=nroot;
@@ -212,7 +212,7 @@ public class QuerySearch {
 				return n.getCardinality();
 			}
 		} else {
-			// qui tree.getValore() non è mai nullo
+			// qui tree.getValore() non e' mai nullo
 			// ramo gia' parserizzato
 			return ((NewItemCardinality) tree.getValore()).getCardinality();
 		}
@@ -232,7 +232,7 @@ public class QuerySearch {
 	}
 
 	/**
-	 * popola il vettore con le cardinalità dei vari elementi della query
+	 * popola il vettore con le cardinalitï¿½ dei vari elementi della query
 	 * per ora restituisce il vettore vuoto 
 	 * @return
 	 */
