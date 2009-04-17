@@ -256,10 +256,11 @@ public class Eutmarc extends Unimarc {
 		
 		public String getLink() {
 			Tag tag=getFirstTag("903");
+			if(tag == null) return null;
 			return Utils.ifExists("",tag.getField("l"));
 		}
 		
-		public String getTipoLink() {
+		public String getLinkType() {
 //	        C = catalogo opac
 //	        A = OpenstarTS (archivio)
 //	        B = biobibliografia
