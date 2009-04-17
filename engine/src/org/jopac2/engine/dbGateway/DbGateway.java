@@ -259,7 +259,9 @@ public abstract class DbGateway {
 	}
 	
 	public static RecordInterface getNotiziaByJID(Connection conn, long jid) {
-		return getNotiziaByJID(conn,Long.toString(jid));
+		RecordInterface ma = getNotiziaByJID(conn,Long.toString(jid));
+		if(ma.getJOpacID() != jid)ma.setJOpacID(jid);
+		return  ma;
 	}
 	
 	public static String getNotiziaTypeByJID(Connection conn, String jid) throws SQLException {
