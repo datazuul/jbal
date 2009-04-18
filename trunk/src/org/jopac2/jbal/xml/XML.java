@@ -421,5 +421,8 @@ public abstract class XML implements RecordInterface {
 	public void setStandardNumber(String standardNumber, String codeSystem) throws JOpac2Exception {
 		throw new JOpac2Exception("No such method defined!");
 	}
-
+	
+	public String toEncapsulatedRecordFormat() {		
+		return toString();
+	}
 }
