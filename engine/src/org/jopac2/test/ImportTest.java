@@ -26,7 +26,7 @@ public class ImportTest extends TestCase {
 	private static String sitename="test";
 	private InputStream in=null;
 	private static String filetype="sebina";
-	private static String JOpac2confdir="/java_jopac2/engine/src/org/jopac2/conf";
+	private static String JOpac2confdir="src/org/jopac2/conf";
 	//String dbUrl = "jdbc:derby:db"+sitename+";create=true";
 	private static String dbUrl="jdbc:mysql://localhost/db"+sitename;
 	private static String dbUser="root";
@@ -52,7 +52,7 @@ public class ImportTest extends TestCase {
 		ji.destroy(dbUrl);
 		
 		StaticDataComponent sd = new StaticDataComponent();
-		sd.init("/java_jopac2/engine/src/org/jopac2/conf/commons/");
+		sd.init("src/org/jopac2/conf/commons/");
 		conn=CreaConnessione();
 		doSearchNew = new DoSearchNew(conn,sd);
 	}
