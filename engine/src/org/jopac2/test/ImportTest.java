@@ -39,6 +39,29 @@ public class ImportTest extends TestCase {
     
 	private Connection conn;
 	
+	public Connection CreaConnessione() throws SQLException {
+		Connection conn=null;
+		String driver=_classMySQLDriver;
+		if(dbUrl.contains(":hsqldb:")) driver=_classHSQLDBDriver;
+		if(dbUrl.contains(":derby:")) driver=_classDerbyDriver;
+		
+		boolean inizializzato = false;
+		if (!inizializzato) {
+			inizializzato = true;
+			try {
+				Class.forName(driver).newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("getting conn....");
+		conn = DriverManager.getConnection(dbUrl, dbUser,
+				dbPassword);
+		System.out.println("presa");
+
+		return conn;
+	}
+	
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -72,7 +95,7 @@ public class ImportTest extends TestCase {
 		}
 	}
 	
-	private SearchResultSet TestClasseNew(String str) throws ExpressionException, SQLException {		
+	private SearchResultSet doSearch(String str) throws ExpressionException, SQLException {		
 		MyTimer t=new MyTimer(new String[] {"NEW","esecuzione"});
 		t.Start();
 		SearchResultSet rs = doSearchNew.executeSearch(str, false);
@@ -82,25 +105,6 @@ public class ImportTest extends TestCase {
 		System.out.println(t);
 		return rs;	
 	}
-
-	public void testSearchOrder() throws Exception {
-		SearchResultSet rs = TestClasseNew("(TIT=in)|(TIT=der)");
-		
-		long[] unordered={1, 3, 6, 7, 9, 10};
-		long[] ordered={7, 6, 1, 10, 3, 9};
-		
-		boolean r1=checkIdSequence(rs.getRecordIDs(),unordered);
-		
-		dumpSearchResultSet(rs);
-		
-		DbGateway.orderBy(conn, "TIT", rs);
-		
-		dumpSearchResultSet(rs);
-		
-		boolean r2=checkIdSequence(rs.getRecordIDs(),ordered);
-		
-		assertTrue("Done " ,r1 && r2);
-	}	
 
 	private boolean checkIdSequence(Vector<Long> recordIDs, long[] a) {
 		boolean r=false;
@@ -115,27 +119,21 @@ public class ImportTest extends TestCase {
 		}
 		return r;
 	}
+	
+	//**** inizio test ***//
+	
+	public void testSearchOrder() throws Exception {
+		SearchResultSet rs = doSearch("(TIT=in)|(TIT=der)");
+		long[] unordered={1, 3, 6, 7, 9, 10};
+		long[] ordered={7, 6, 1, 10, 3, 9};
+		boolean r1=checkIdSequence(rs.getRecordIDs(),unordered);
+		dumpSearchResultSet(rs);
+		DbGateway.orderBy(conn, "TIT", rs);
+		dumpSearchResultSet(rs);
+		boolean r2=checkIdSequence(rs.getRecordIDs(),ordered);
+		assertTrue("Done " ,r1 && r2);
+	}	
 
-	public Connection CreaConnessione() throws SQLException {
-		Connection conn=null;
-		String driver=_classMySQLDriver;
-		if(dbUrl.contains(":hsqldb:")) driver=_classHSQLDBDriver;
-		if(dbUrl.contains(":derby:")) driver=_classDerbyDriver;
-		
-		boolean inizializzato = false;
-		if (!inizializzato) {
-			inizializzato = true;
-			try {
-				Class.forName(driver).newInstance();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		System.out.println("getting conn....");
-		conn = DriverManager.getConnection(dbUrl, dbUser,
-				dbPassword);
-		System.out.println("presa");
 
-		return conn;
-	}
+
 }
