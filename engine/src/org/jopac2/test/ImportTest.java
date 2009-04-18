@@ -11,6 +11,7 @@ import org.jopac2.engine.NewSearch.DoSearchNew;
 import org.jopac2.engine.command.JOpac2Import;
 import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.dbGateway.StaticDataComponent;
+import org.jopac2.engine.listSearch.ListSearch;
 import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
 import org.jopac2.engine.utils.MyTimer;
 import org.jopac2.engine.utils.SearchResultSet;
@@ -127,13 +128,19 @@ public class ImportTest extends TestCase {
 		long[] unordered={1, 3, 6, 7, 9, 10};
 		long[] ordered={7, 6, 1, 10, 3, 9};
 		boolean r1=checkIdSequence(rs.getRecordIDs(),unordered);
-		dumpSearchResultSet(rs);
+		//dumpSearchResultSet(rs);
 		DbGateway.orderBy(conn, "TIT", rs);
-		dumpSearchResultSet(rs);
+		//dumpSearchResultSet(rs);
 		boolean r2=checkIdSequence(rs.getRecordIDs(),ordered);
 		assertTrue("Done " ,r1 && r2);
 	}	
 
-
+	public void testList()  throws Exception {
+		SearchResultSet rs = ListSearch.listSearch(conn, "TIT", "English grammar in use", 100);
+		long[] listres={1, 10, 2, 11, 17, 8, 5, 3, 4, 18, 9};		
+		//dumpSearchResultSet(rs);
+		boolean r1=checkIdSequence(rs.getRecordIDs(),listres);
+		assertTrue("Done " ,r1);
+	}
 
 }
