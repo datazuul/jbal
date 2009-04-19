@@ -29,8 +29,8 @@ public class ClasseDettaglio implements Comparable<Object> {
 		this.id=id;
 		this.idTipo=idTipo;
 		this.idClasse=idClasse;
-		this.tag=tag;
-		this.dataElement=dataElement;
+		this.tag=tag.trim();
+		this.dataElement=dataElement.trim();
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class ClasseDettaglio implements Comparable<Object> {
 	 * @param dataElement The dataElement to set.
 	 */
 	public void setDataElement(String dataElement) {
-		this.dataElement = dataElement;
+		this.dataElement = dataElement.trim();
 	}
 
 	/**
@@ -100,11 +100,11 @@ public class ClasseDettaglio implements Comparable<Object> {
 	 * @param tag The tag to set.
 	 */
 	public void setTag(String tag) {
-		this.tag = tag;
+		this.tag = tag.trim();
 	}
 
 	/**
-	 * Comìnfronta l'oggetto o con l'istanza e restistuisce l'ordine dell'ID
+	 * Confronta l'oggetto o con l'istanza e restistuisce l'ordine dell'ID
 	 * @param o
 	 * @return
 	 */
