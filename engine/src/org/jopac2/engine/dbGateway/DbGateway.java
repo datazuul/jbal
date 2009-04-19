@@ -312,7 +312,7 @@ public abstract class DbGateway {
     	try {
             Statement stmt=conn.createStatement();
             String sql="select notizie.id as id, notizie.notizia as notizia, tipi_notizie.nome as nome " +
-    			"from notizie,tipi_notizie where notizie.id='"+jid+"' and tipi_notizie.id=notizie.id_tipo";
+    			"from notizie,tipi_notizie where notizie.id="+jid+" and tipi_notizie.id=notizie.id_tipo";
             ResultSet rs=stmt.executeQuery(sql);
             
 //            boolean rep=false;
@@ -396,7 +396,7 @@ public abstract class DbGateway {
     public static long getMaxIdTable(Connection conn, String tableName) throws SQLException {
     	long id_nz=0;
         Statement stmt=conn.createStatement();
-        ResultSet rs=stmt.executeQuery("SELECT Max("+tableName+".id) AS MaxOfid FROM "+tableName+";");
+        ResultSet rs=stmt.executeQuery("SELECT Max("+tableName+".id) AS MaxOfid FROM "+tableName);
         if(rs.next()) {
           id_nz=rs.getLong(1);
         }
@@ -798,6 +798,50 @@ public abstract class DbGateway {
 		return r;
 	}
 	
+	public static Vector<String> dumpTable(Connection conn,String tableName) {
+        String r="";
+        Statement stm=null;
+        ResultSet rs=null;
+        ResultSetMetaData rsmd=null;
+        Vector<String> vr=new Vector<String>();
+        
+        try {
+            stm=conn.createStatement();
+            rs=stm.executeQuery("select * from "+tableName);
+            rsmd= rs.getMetaData();
+
+            while(rs.next()) {
+                for(int i=1;i<=rsmd.getColumnCount();i++) {
+                    r+=rs.getString(i)+",";
+                }
+                r=r.substring(0, r.lastIndexOf(","));
+                vr.addElement(r);
+                r="";
+            }
+            
+        }
+        catch(SQLException e) {
+            r=e.getMessage();
+        }
+        finally {
+            // Always make sure result sets and statements are closed,
+            // and the connection is returned to the pool
+            if (rs != null) {
+                try { rs.close(); } catch (SQLException e) { ; }
+                rs = null;
+            }
+            if (stm != null) {
+                try { stm.close(); } catch (SQLException e) { ; }
+                stm = null;
+            }
+            if (conn != null) {
+                try { conn.close(); } catch (SQLException e) { ; }
+                conn = null;
+            }
+        }
+        return vr;
+    }
+	
 	
 	/**
      * esegue una query e restituisce tabella HTML
@@ -925,23 +969,15 @@ public abstract class DbGateway {
 		return classe+"_NDX";
 	}
 	
-	public void createTableListe(Connection conn,String classe) throws SQLException {//CR_LISTE
-		dropTable(conn, nomeTableListe(classe));
-		String sql1="CREATE TABLE "+nomeTableListe(classe)+" (id INT NOT NULL auto_increment, id_notizia INT NOT NULL,testo varchar(50)," +
-				    "PRIMARY KEY(id)) ENGINE = MYISAM CHARACTER SET utf8";
-		Statement stmt=conn.createStatement();
-		stmt.execute(sql1);
-		stmt.close();
-    	createIndex(conn,nomeTableListe(classe)+"_x1", nomeTableListe(classe), "testo(50)", false);//CR_LISTE
-
-	}
+	public abstract void createTableListe(Connection conn,String classe) throws SQLException;
 	
 	public static void updateTableListe(Connection conn, String classe, int id_notizia, String testo) throws SQLException {//CR_LISTE
 		if(testo!=null) {
 			String tab=nomeTableListe(classe);
 			String dl=String.valueOf((char)0x1b);
 			
-			String sql="INSERT INTO "+tab+" SET id_notizia=?, testo=?";
+			//String sql="INSERT INTO "+tab+" SET id_notizia=?, testo=?";
+			String sql="INSERT INTO "+tab+" (id_notizia, testo) values (?,?)"; // qs sintassi per compatibilita' derby
 			PreparedStatement pst=conn.prepareStatement(sql);
 			pst.setInt(1, id_notizia);
 			testo=testo.replaceAll(dl+"I", ""); // rimuove delimitatori asterisco
@@ -1008,6 +1044,7 @@ public abstract class DbGateway {
 	public static int saveQuery(Connection myConnection, String id, SearchResultSet result) throws SQLException {
 		System.out.println("Session JID="+id);
 		PreparedStatement stmt=myConnection.prepareStatement("insert into ricerche (jsession_id,testo_ricerca) values(?,?)");
+		Statement st=myConnection.createStatement();
 		stmt.setString(1, id);
 		stmt.setString(2, result.getOptimizedQuery());
 		stmt.execute();
@@ -1019,10 +1056,11 @@ public abstract class DbGateway {
 			sql="select max(id) from ricerche where jsession_id='"+id+"'";
 		}
 		int newId=-1;
-		ResultSet rs=stmt.executeQuery(sql);
+		ResultSet rs=st.executeQuery(sql);
 		if (rs.next())
 			newId=rs.getInt(1);
 		rs.close();
+		st.close();
 		stmt=myConnection.prepareStatement("insert into ricerche_dettaglio values(?,?)");
 		Enumeration<Long> e=result.getRecordIDs().elements();
 		long l;
@@ -1073,4 +1111,7 @@ public abstract class DbGateway {
 		else if(string.contains("derby")) return new derby();
 		return null;
 	}
+
+	public abstract SearchResultSet listSearch(Connection conn, String classe,
+			String parole, int limit) throws SQLException;
 }

@@ -44,9 +44,12 @@
 
 package org.jopac2.engine.utils;
 
+import java.sql.Connection;
 import java.util.Vector;
 
 import org.jopac2.engine.NewSearch.NewItemCardinality;
+import org.jopac2.engine.dbGateway.DbGateway;
+import org.jopac2.jbal.RecordInterface;
 
 //import org.xml.sax.*;
 
@@ -84,4 +87,13 @@ public class SearchResultSet {
     public boolean getStemmer() {return stemmer;}
     public String getOrder() {return order;}
 	public int getQueryID() {return queryID;}
+	
+	public static void dumpSearchResultSet(Connection conn, SearchResultSet rs){
+		Vector<Long> v = rs.getRecordIDs();
+		System.out.println(v);
+		for (int i = 0; i < v.size(); i++) {
+			RecordInterface m = DbGateway.getNotiziaByJID(conn, v.elementAt(i).toString());			
+			System.out.println(m.getTitle());
+		}
+	}
 }

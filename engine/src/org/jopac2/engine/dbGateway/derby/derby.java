@@ -1,11 +1,14 @@
 package org.jopac2.engine.dbGateway.derby;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Vector;
 
 import org.jopac2.engine.dbGateway.DbGateway;
+import org.jopac2.engine.utils.SearchResultSet;
 
 public class derby extends DbGateway {    	
 	String autoincrement=""; // "GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)";
@@ -67,7 +70,7 @@ public class derby extends DbGateway {
 
 
 		String sql2="CREATE TABLE ricerche (" +
-				  "id INT NOT NULL "+autoincrement+", " +
+				  "id INT NOT NULL "+autoincrement1+", " +
 				  "jsession_id varchar(100) NOT NULL, " +
 				  "testo_ricerca clob, " +
 				  "PRIMARY KEY(id)" +
@@ -94,6 +97,8 @@ public class derby extends DbGateway {
 	 */
     public long getIDwhere(Connection conn, String tableName, String fieldName, String fieldValue) {
         long currentID=-1;
+        
+        fieldValue=fieldValue.toLowerCase();
         
         try {
             Statement stmt=conn.createStatement();
@@ -128,7 +133,7 @@ public class derby extends DbGateway {
         
 
         execute(conn, "create table l_classi_parole ("+
-            "ID int not null ,id_parola int,id_classe int,"+ // auto_increment
+            "ID int not null "+autoincrement1+",id_parola int,id_classe int,"+ // auto_increment
             "n_notizie int ,primary key(id)) ");
 
         execute(conn, "create index l_classi_parole_idx1 on l_classi_parole (id_parola)");
@@ -223,4 +228,55 @@ public class derby extends DbGateway {
     	String sql="create " + isUnique + " index " + indexName + " on " + tableName + " (" + keys + ")";
     	execute(conn, sql);
     }
+    
+	public void createTableListe(Connection conn,String classe) throws SQLException {//CR_LISTE
+		dropTable(conn, nomeTableListe(classe));
+		String sql1="CREATE TABLE "+nomeTableListe(classe)+" (id INT NOT NULL "+autoincrement1+", id_notizia INT NOT NULL,testo varchar(50)," +
+				    "PRIMARY KEY(id))";
+		Statement stmt=conn.createStatement();
+		stmt.execute(sql1);
+		stmt.close();
+    	createIndex(conn,nomeTableListe(classe)+"_x1", nomeTableListe(classe), "testo(50)", false);//CR_LISTE
+
+	}
+	
+	public SearchResultSet listSearch(Connection conn,String classe,String parole,int limit) throws SQLException {
+		Vector<Long> listResult=new Vector<Long>();
+		
+		/**
+		 * SELECT * FROM (
+		 *	    SELECT ROW_NUMBER() OVER() AS rownum, myLargeTable.*
+		 *	    FROM myLargeTable
+		 *	) AS tmp
+		 *	WHERE rownum <= 5; 
+		 */
+		
+		String sql="select * " +
+				"from "+DbGateway.nomeTableListe(classe)+" b, "+
+					"(" +
+						"select * " +
+						"from " +
+						"(SELECT distinct testo, ROW_NUMBER() OVER() AS rownum " +
+							"FROM "+DbGateway.nomeTableListe(classe)+" a "+
+							"where testo >= ?  " +
+						") as tmp where rownum <= ?" +
+					") c "+ //order by testo limit ?
+					"where b.testo=c.testo " +
+					"order by b.testo";
+
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setString(1, parole);
+		stmt.setLong(2, limit);
+		ResultSet rs = stmt.executeQuery();
+		int id_notizia;
+		while (rs.next()) {
+			id_notizia = rs.getInt("id_notizia");
+			listResult.addElement(new Long(id_notizia));
+		}
+		rs.close();
+		stmt.close();
+		SearchResultSet result=new SearchResultSet();
+		result.setRecordIDs(listResult);
+		return result;
+	}
 }

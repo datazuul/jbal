@@ -258,12 +258,13 @@ public class NewItemCardinality {
 	 * 
 	 * @param parola
 	 * @return bitarray di id_notizie
+	 * @throws SQLException 
 	 */
-	public BitSet doRicercaBitArrayAny(Connection conn, boolean useStemmer) {
+	public BitSet doRicercaBitArrayAny(Connection conn, boolean useStemmer) throws SQLException {
 		BitSet b = new BitSet();
 		long now = System.currentTimeMillis();
 		this.queryTime = -1;
-		try {
+		//try {
 			String sql;
 			if(useStemmer) 
 				sql = "SELECT DISTINCT lcpn.id_notizia "
@@ -296,9 +297,9 @@ public class NewItemCardinality {
 
 			this.cardinality = b.cardinality();
 			this.id_lcp = -1;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
 		this.queryTime = System.currentTimeMillis() - now;
 		return b;
 	}
@@ -308,12 +309,13 @@ public class NewItemCardinality {
 	 * 
 	 * @param parola
 	 * @return bitarray di id_notizie
+	 * @throws SQLException 
 	 */
-	public BitSet doRicercaBitArrayJolly(Connection conn, boolean useStemmer) {
+	public BitSet doRicercaBitArrayJolly(Connection conn, boolean useStemmer) throws SQLException {
 		BitSet b = new BitSet();
 		long now = System.currentTimeMillis();
 		this.queryTime = -1;
-		try {
+		//try {
 			String sql;
 			if(useStemmer) 
 				sql= "SELECT DISTINCT lcpn.id_notizia "
@@ -351,9 +353,9 @@ public class NewItemCardinality {
 			this.id_lcp = -1;
 			rs.close();
 			stmt.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
 		this.queryTime = System.currentTimeMillis() - now;
 		return b;
 	}

@@ -1,6 +1,7 @@
 package org.jopac2.test;
 
 import java.sql.*;
+
 import junit.framework.TestCase;
 
 import org.jopac2.engine.NewSearch.DoSearchNew;
@@ -28,7 +29,7 @@ public class MainDoSearch extends TestCase {
 	}
 
 	// la ricerca di una stringa con uno spazio deve generare un and delle parole
-	public void testR3() throws ExpressionException {
+	public void testR3() throws ExpressionException, SQLException {
 		String str="ANY=opera omnia&ANY=opera";
 		DoSearchNew doSearchNew=DBUtils.InitDoSearch(conn);
 		SearchResultSet rs = doSearchNew.executeSearch(str, false);
@@ -38,7 +39,7 @@ public class MainDoSearch extends TestCase {
 	}
 	
 	// la ricerca di una stringa con uno spazio deve generare un and delle parole
-	public void testR3a2() throws ExpressionException {
+	public void testR3a2() throws ExpressionException, SQLException {
 		String str="ANY=opera omnia decem tomos&ANY=opera";
 		DoSearchNew doSearchNew=DBUtils.InitDoSearch(conn);
 		SearchResultSet rs = doSearchNew.executeSearch(str, false);
@@ -48,7 +49,7 @@ public class MainDoSearch extends TestCase {
 	}
 	
 	// la ricerca di una stringa con uno spazio deve generare un and delle parole
-	public void testR3b() throws ExpressionException {
+	public void testR3b() throws ExpressionException, SQLException {
 		String str="ANY=opera omnia@distribuita &ANY=opera";
 		DoSearchNew doSearchNew=DBUtils.InitDoSearch(conn);
 		SearchResultSet rs = doSearchNew.executeSearch(str, false);
@@ -57,7 +58,7 @@ public class MainDoSearch extends TestCase {
 		assertTrue(str+ " count:"+rs.getQueryCount() ,rs.getQueryCount()==18);  
 	}
 
-	public void testR1() throws ExpressionException {
+	public void testR1() throws ExpressionException, SQLException {
 		String str="ANY=omnia&ANY=opera";
 		DoSearchNew doSearchNew=DBUtils.InitDoSearch(conn);
 		SearchResultSet rs = doSearchNew.executeSearch(str, false);
@@ -66,7 +67,7 @@ public class MainDoSearch extends TestCase {
 		assertTrue(str + " count:"+rs.getQueryCount(),rs.getQueryCount()==64);
 	}
 	
-	public void testR1b() throws ExpressionException {
+	public void testR1b() throws ExpressionException, SQLException {
 		String str="ANY = omnia   &   ANY=opera";
 		DoSearchNew doSearchNew=DBUtils.InitDoSearch(conn);
 		SearchResultSet rs = doSearchNew.executeSearch(str, false);
@@ -76,7 +77,7 @@ public class MainDoSearch extends TestCase {
 	}
 	
 	// la parola fratis non e' presente in nessuna notizia?
-	public void testR2() throws ExpressionException {
+	public void testR2() throws ExpressionException, SQLException {
 		String str="ANY=fratis";
 		DoSearchNew doSearchNew=DBUtils.InitDoSearch(conn);
 		SearchResultSet rs = doSearchNew.executeSearch(str, false);
@@ -86,7 +87,7 @@ public class MainDoSearch extends TestCase {
 	}	
 	
 	// la ricerca di una stringa senza classi impostale classi a ANY
-	public void testR4() throws ExpressionException {
+	public void testR4() throws ExpressionException, SQLException {
 		String str="opera & omnia";
 		DoSearchNew doSearchNew=DBUtils.InitDoSearch(conn);
 		SearchResultSet rs = doSearchNew.executeSearch(str, false);
@@ -96,7 +97,7 @@ public class MainDoSearch extends TestCase {
 	}	
 	
 	// classe non esistente restituisce ANY
-	public void testR3a() throws ExpressionException {
+	public void testR3a() throws ExpressionException, SQLException {
 		String str="PIPPO=opera&ANY=opera";
 		DoSearchNew doSearchNew=DBUtils.InitDoSearch(conn);
 		SearchResultSet rs = doSearchNew.executeSearch(str, false);

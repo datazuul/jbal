@@ -48,7 +48,7 @@ public class DoSearchNew {
 		this.resultSet = new Vector<Long>();
 	}
 	
-	public SearchResultSet executeSearch(String query, boolean useStemmer) throws ExpressionException {
+	public SearchResultSet executeSearch(String query, boolean useStemmer) throws ExpressionException, SQLException {
 		SearchResultSet result = new SearchResultSet();
 		result.setStemmer(useStemmer);
 		long start_time = System.currentTimeMillis();

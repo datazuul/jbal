@@ -104,26 +104,10 @@ public class DataImporter extends Thread {
         
         if(tempDir!=null) {
             System.out.println("Uso tempdir="+tempDir);
-            //JOpac2DBmanager manager; //usa parametri di connessione da Cocoon
 			try {
 				int max_conn=5;
-/*				if(datasource!=null) {
-					Connection tc=datasource.getConnection();
-					
-					if(tc.toString().contains("hsqldb")) {
-						max_conn=5;
-					}
-					tc.close();
-					
-					conn=new Connection[max_conn];
-					for(int i=0;i<max_conn;i++) {
-						conn[i]=datasource.getConnection();
-					}
-				}*/
 				
-				//manager = new JOpac2DBmanager(conn);
 				if(clearDatabase) inizializeDB(conn[0]);
-				//long now=System.currentTimeMillis();
 				
 				System.out.println("Loading data");
 				
@@ -158,16 +142,13 @@ public class DataImporter extends Thread {
 	    		dbGateway.rebuildList(conn[0]);
 	            
 	            System.out.println("End of process: OK");
-	            //System.out.println("Total time: "+((System.currentTimeMillis()-now)/60000)+" minutes.");
-				
-	            // chiude sempre le connessioni
+
 	            for(int i=0;i<max_conn;i++) {
 					conn[i].close();
 				}
 
 	            this.notifyAll();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         }

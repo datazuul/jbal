@@ -1,11 +1,14 @@
 package org.jopac2.engine.dbGateway.mysql;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Vector;
 
 import org.jopac2.engine.dbGateway.DbGateway;
+import org.jopac2.engine.utils.SearchResultSet;
 
 public class mysql extends DbGateway {
 
@@ -68,7 +71,7 @@ public class mysql extends DbGateway {
 	 */
     public long getIDwhere(Connection conn, String tableName, String fieldName, String fieldValue) {
         long currentID=-1;
-        
+        fieldValue=fieldValue.toLowerCase();
         try {
             Statement stmt=conn.createStatement();
 
@@ -210,5 +213,40 @@ public class mysql extends DbGateway {
     	String sql="create " + isUnique + " index " + indexName + " on " + tableName + " (" + keys + ")";
     	execute(conn, sql);
     }
+    
+	public void createTableListe(Connection conn,String classe) throws SQLException {//CR_LISTE
+		dropTable(conn, nomeTableListe(classe));
+		String sql1="CREATE TABLE "+nomeTableListe(classe)+" (id INT NOT NULL auto_increment, id_notizia INT NOT NULL,testo varchar(50)," +
+				    "PRIMARY KEY(id)) ENGINE = MYISAM CHARACTER SET utf8";
+		Statement stmt=conn.createStatement();
+		stmt.execute(sql1);
+		stmt.close();
+    	createIndex(conn,nomeTableListe(classe)+"_x1", nomeTableListe(classe), "testo(50)", false);//CR_LISTE
 
+	}
+
+	@Override
+	public SearchResultSet listSearch(Connection conn,String classe,String parole,int limit) throws SQLException {
+		Vector<Long> listResult=new Vector<Long>();		
+		
+		String sql="select * from "+DbGateway.nomeTableListe(classe)+" b, "+
+			"(SELECT distinct testo FROM "+DbGateway.nomeTableListe(classe)+" a "+
+			"where testo >= ?  order by testo limit ?) c "+ 
+			"where b.testo=c.testo order by b.testo";
+
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setString(1, parole);
+		stmt.setLong(2, limit);
+		ResultSet rs = stmt.executeQuery();
+		int id_notizia;
+		while (rs.next()) {
+			id_notizia = rs.getInt("id_notizia");
+			listResult.addElement(new Long(id_notizia));
+		}
+		rs.close();
+		stmt.close();
+		SearchResultSet result=new SearchResultSet();
+		result.setRecordIDs(listResult);
+		return result;
+	}
 }

@@ -77,7 +77,10 @@ public class JOpac2Import {
 			conns[i].close();
 		}
 		if(dbUrl.contains(":derby:")) {
-			DriverManager.getConnection("jdbc:derby:;shutdown=true");
+			try {
+				DriverManager.getConnection("jdbc:derby:;shutdown=true");
+			} catch (Exception e) {
+			}
 		}
 	}
 	

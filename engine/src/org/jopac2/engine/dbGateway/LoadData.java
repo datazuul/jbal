@@ -354,7 +354,8 @@ public void init(String outDir,long idTipo) {
   	  /**
   	   * TODO: hsqldb non consente inserimenti multipli 
   	   */
-  	  if(conn[0].toString().contains("hsqldb")) maxValues4prepared=1;
+  	  if(conn[0].toString().contains("hsqldb")||
+  			conn[0].toString().contains("derby")) maxValues4prepared=1;
   	  
   	  arTempLCP=new mySet[maxValues4prepared];
   	  

@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import java.util.BitSet;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.jopac2.engine.NewSearch.BitSetUtils;
 import org.jopac2.engine.NewSearch.NewItemCardinality;
@@ -116,7 +117,7 @@ public class QuerySearch {
 				// nel ciclo for aggiungo 2 nodi: un sinistro e un and
 				for(int i=1;i<numeroParole-1;i++){					
 					Nodo nsx=new Nodo(classe+"="+stPar.nextToken());
-					Nodo nroot=new Nodo(nsx,null,null);  // il nodo dx non � ancora fissato					
+					Nodo nroot=new Nodo(nsx,null,null);  // il nodo dx non e' ancora fissato					
 					nroot.setAND();
 					currNode.setDestro(nroot);
 					currNode=nroot;
@@ -135,9 +136,10 @@ public class QuerySearch {
 	/**
 	 * ottimizza la query eliminando i termini in and con cardinalita' nulla
 	 * popola le foglie con NewItemCardinality
+	 * @throws SQLException 
 	 * 
 	 */
-	public void optimize(boolean useStemmer) {
+	public void optimize(boolean useStemmer) throws SQLException {
 		sopTree.normalizza();
 		//System.out.println(DisegnaAlbero.stampaAlbero(sopTree));
 		// TODO: contare il tempo totale del walktree
@@ -156,7 +158,7 @@ public class QuerySearch {
 	// volte le stesse parti dell'albero
 	// va quindi testato il caso e non va sostituito l'oggetto originario con un
 	// nuovo oggetto MyItemCardinality
-	public long walkTree(Nodo tree, boolean useStemmer) {
+	public long walkTree(Nodo tree, boolean useStemmer) throws SQLException {
 		// TODO: commentare questa istruzione  
 		if (tree.getValore()== null
 				|| !tree.getValore().getClass().getName().equals(
@@ -232,7 +234,7 @@ public class QuerySearch {
 	}
 
 	/**
-	 * popola il vettore con le cardinalit� dei vari elementi della query
+	 * popola il vettore con le cardinalita' dei vari elementi della query
 	 * per ora restituisce il vettore vuoto 
 	 * @return
 	 */
