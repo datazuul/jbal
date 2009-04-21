@@ -31,7 +31,7 @@ import JSites.utils.Util;
 public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 	
 	String catalogConnection = null;
-	StringBuffer sb = new StringBuffer();;
+	StringBuffer sb = new StringBuffer();
 	
 	boolean readCatalogConnection = false;
 	//boolean readLinks = false;
@@ -122,12 +122,6 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		String listTit=o.getParameter("listTIT");
 		if(listTit!=null && listTit.length()>0) {
 			result=ListSearch.listSearch(conn, "TIT", listTit, 100);
-			throwResults(conn, catalogQuery, result);
-		}
-		
-		String listAut=o.getParameter("listAUT");
-		if(listAut!=null && listAut.length()>0) {
-			result=ListSearch.listSearch(conn, "AUT", listAut, 100);
 			throwResults(conn, catalogQuery, result);
 		}
 		
@@ -230,11 +224,5 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 	}
 
 
-	private void throwField(String name, String value) throws SAXException{
-		if(value != null && value.length()>0){
-			contentHandler.startElement("", name, name, emptyAttrs);
-			contentHandler.characters(value.toCharArray(), 0, value.length());
-			contentHandler.endElement("", name, name);
-		}
-	}
+	
 }
