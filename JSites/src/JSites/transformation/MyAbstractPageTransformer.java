@@ -1,13 +1,14 @@
 package JSites.transformation;
 
-/**
- * 
- */
-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.activity.Disposable;
@@ -25,6 +26,7 @@ import org.apache.avalon.framework.parameters.Parameters;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.apache.cocoon.xml.AttributesImpl;
+import org.jopac2.jbal.iso2709.Eutmarc;
 
 public abstract class MyAbstractPageTransformer extends AbstractTransformer implements Composable, Disposable {
 	
@@ -59,4 +61,35 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
     public Connection getConnection(String db) throws ComponentException, SQLException {
     	return ((DataSourceComponent)dbselector.select(db)).getConnection();
     }
+    
+    protected String saveImgFile(Eutmarc ma2) {
+		
+		if(ma2.getImage()==null)return "images/pubimages/NS.jpg";
+		
+		File dir = new File(this.o.getParameter("datadir") + "/images/pubimages");
+		if(!dir.exists())dir.mkdirs();
+		String imgstr = this.o.getParameter("datadir") + "/images/pubimages/eut" + ma2.getJOpacID() + ".jpg";
+		try {
+			FileOutputStream imgfile = new FileOutputStream(imgstr);
+			ImageIO.write(ma2.getImage(), "jpeg", imgfile);
+			imgfile.flush();
+			imgfile.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "images/pubimages/eut" + ma2.getBid() + ".jpg";
+		
+	}
+    
+    protected void throwField(String name, String value) throws SAXException{
+		if(value != null && value.length()>0){
+			contentHandler.startElement("", name, name, emptyAttrs);
+			contentHandler.characters(value.toCharArray(), 0, value.length());
+			contentHandler.endElement("", name, name);
+		}
+	}
 }
