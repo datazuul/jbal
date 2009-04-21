@@ -1,0 +1,73 @@
+/*
+Sbn
+sbn CSS
+$Revision: 1.1 $
+*/
+/*
+	Modifiche SBA/SBN (siti clone)
+	Sotituire immagini "logo.jpg e header_background:gif 
+	Commentare div mainbar e div lingue
+	Togliere img in div_scritta e inserire testo "Servizio Bibliotecario Nazionale"
+	Togliere la map e inserire l'alt e il collegamento all'home page in logo
+	Linkare il sbn.css senza usare inport
+*/
+/*da Global.css*/
+h1,h2,h3,h4 
+	{
+	color: #8F3E3D;
+	}
+
+/*da Header.css*/
+#header 
+	{
+	background-image: url(../images/header_background.gif);
+	}
+
+#scritta_sba 
+	{
+	top: 70px;
+	width: 300px;
+	font-size: 20px;
+	color: #8F3E3D;
+	font-weight: bold;
+	}
+
+/* da Sidebar.css */
+#etichetta 
+	{
+	background: #8F3E3D;
+	}
+
+.navbar1lev:hover, 
+.navbar1levhover, a.navbarhover1lev:link, a.navbarhover1lev:visited, a.navbarhover1lev:visited, a.navbarhover1lev:hover
+	{
+	background: #BB6060;
+	}
+
+.navbar1lev, a.navbar1lev:link, a.navbar1lev:visited, a.navbar1lev:active 
+	{
+	background: #8F3E3D;
+	}
+
+a.navbar2lev:hover, 
+.navbarhover2lev, a.navbarhover2lev:link, a.navbarhover2lev:visited, a.navbarhover2lev:hover, a.navbarhover2lev:active
+	{
+	background: #F0DBDB;
+	}
+	
+a.navbar3lev:hover,
+.navbarhover3lev, a.navbarhover3lev:link, a.navbarhover3lev:visited, a.navbarhover3lev:active, a.navbarhover3lev:hover 
+	{
+	background: #F0DBDB;
+	}
+a.navbar4lev:hover, 
+.navbarhover4lev, a.navbarhover4lev:link, a.navbarhover4lev:visited, a.navbarhover4lev:hover, a.navbarhover4lev:active 
+	{
+	background: #F0DBDB;
+	}
+
+/* da Tabella.css */
+.tabella_titolo 
+	{
+	color: #8F3E3D;
+	}

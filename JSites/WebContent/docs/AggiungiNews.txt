@@ -1,0 +1,11 @@
+CREATE TABLE tblnews (
+  `CID` INT NOT NULL,
+  `startdate` VARCHAR(8) NOT NULL,
+  `enddate` VARCHAR(8) NOT NULL,
+  `list` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`CID`),
+  INDEX sdate_ndx(`startdate`),
+  INDEX edate_ndx(`enddate`),
+  INDEX list_ndx(`list`)
+)
+CHARACTER SET utf8;

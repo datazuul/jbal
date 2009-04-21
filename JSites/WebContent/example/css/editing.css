@@ -1,0 +1,111 @@
+/*
+Sba
+Editing CSS
+$Revision: 1.2 $
+*/
+
+.passato {
+	position: relative;
+	padding: 10px;
+	background-color: #e1e1e1;
+}
+.presente {
+	position: relative;
+	background-color: #ffffff;
+}
+.futuro {
+	position: relative;
+	padding: 10px;
+	background-color: #d9e7f2;
+}
+.strafuturo {
+	position: relative;
+	padding: 10px;
+	background-color: #8BB6D8;
+}
+
+.new_component {
+	background-color: #F3F9FC;
+	/*
+	border-top-width: 1px;
+	border-top-color: #8EDBDB;
+	border-top-style: dotted;
+	border-bottom-width: 1px;
+	border-bottom-color: #8EDBDB;
+	border-bottom-style: dotted;
+	height : 30px;
+	*/
+}
+
+#inviaRichiesta {
+	clear: left;
+	float: left;
+	width: 500px;
+	padding-top: 10px;
+}
+
+#radios {
+	float: left;
+	width: 270px;
+	text-align: lwft;
+}
+
+#stateSubmit {
+	clear: left;
+	float: left;
+	/*width: 130px;*/
+	padding: 5px 0px 10px 19px;
+}
+.help {
+	clear: left;
+	float: left;
+	width: 70%;
+	text-align: left;
+	font-family: "Courier New", Courier, mono;
+	font-size: 90%;
+	border: 1px solid #666666;
+	background-color: #EEEEEE;
+	margin-top: 10px;
+	padding: 10px;
+	/*font-weight: bold;*/
+}
+#help {
+	clear: left;
+	float: left;
+	width: 70%;
+	text-align: left;
+	font-family: "Courier New", Courier, mono;
+	font-size: 90%;
+	border: 1px solid #666666;
+	background-color: #EEEEEE;
+	margin-top: 10px;
+	padding: 10px;
+	/*font-weight: bold;*/
+}
+.edittextarea {
+	width : 85%;
+	/*font-size: 11px;*/
+}
+
+
+.modifica a {
+	color: #005fa9;
+	text-decoration: none;
+}
+
+.buttonright{
+	float: left;
+}
+
+.tabella_voci_sx a{
+	text-decoration: none;
+}
+
+#stateSubmit input{
+	width: 100px;
+}
+
+.nome_campo {
+	width: 200px;
+	display: block;
+}

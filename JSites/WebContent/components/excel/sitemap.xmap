@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+	
+
+	<map:components>
+		
+        <map:transformers default="xslt">	
+       		<map:transformer name="upload-parser" src="JSites.transformation.uploadparsing.ExcelUploadParser"/>
+        </map:transformers>
+        
+	</map:components>
+	
+	<map:pipelines>
+	
+		<map:pipeline internal-only="true"> 
+	            
+	            <map:match pattern="view">
+	                <map:act type="request">
+	                    <map:parameter name="parameters" value="true"/>
+	                    <map:generate src="{request-param:datadir}/data/excel{cid}.xml"/>
+	                    <map:transform src="excel.xslt">
+	                        <map:parameter name="use-request-parameters" value="true"/>
+	                    </map:transform>
+	                    <map:transform type="wikitrans" />
+	                    <map:serialize type="xml"/>
+	                </map:act>
+	            </map:match>
+	            
+	            <map:match pattern="edit">
+	                <map:act type="request">
+	                	<map:parameter name="parameters" value="true"/>
+	                    <map:generate src="{request-param:datadir}/data/excel{cid}.xml"/>
+	                    <map:transform src="exceledit.xslt">
+	                    	<map:parameter name="use-request-parameters" value="true"/>
+	                    </map:transform>
+	                    <map:serialize type="xml"/>
+	                </map:act>
+	            </map:match>
+	            
+	            <map:match pattern="save">
+	            	<map:act type="request">
+						<map:generate type="internalSave"/>
+						<map:transform type="upload-parser"/>
+						
+						<map:transform src="excelsave.xslt" type="xsltc">
+							<map:parameter name="use-request-parameters" value="true"/>
+						</map:transform>
+						<map:transform type="write-source"/>
+						<map:transform type="xslt" src="result.xslt">
+							<map:parameter name="use-request-parameters" value="true"/>
+						</map:transform>
+						<map:transform type="wikitrans"/>
+						<map:transform type="cinclude"/>
+						<map:serialize type="xml"/>
+					</map:act>
+				</map:match>
+				
+				<map:match pattern="order">
+				 	<map:act type="request">
+	                    <map:parameter name="parameters" value="true"/>
+	                    <map:generate src="{request-param:datadir}/data/excel{cid}.xml" label="edit"/>
+	                    <map:transform src="excelorder.xslt">
+	                    	<map:parameter name="use-request-parameters" value="true"/>
+	                    </map:transform>
+	                    <map:transform src="excel.xslt">
+	                        <map:parameter name="use-request-parameters" value="true"/>
+	                    </map:transform>
+	                    <map:transform type="wikitrans" />
+	                    <map:serialize type="xml" />
+	                </map:act>
+				</map:match>
+				
+				<map:handle-errors>
+					<map:select type="exception">
+                        <map:when test="file-not-found">
+							<map:generate type="timeGenerator"/>
+                            <map:serialize type="xml"/>
+                        </map:when>
+					</map:select>
+				</map:handle-errors>
+
+		</map:pipeline>
+		
+	</map:pipelines>
+	
+</map:sitemap>

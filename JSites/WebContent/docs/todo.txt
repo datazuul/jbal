@@ -1,0 +1,104 @@
+PAGESAVER ? ? ? ? ? ! ! ! ! ! ! !
+Pulire le sitemap di alto livello
+Generalizzare le sitemap dei singoli siti
+FileUploader
+Pipeline "csscontent" (proprio merda)
+L'ultima roba da guardare - FillBill.
+
+-dal diario del giovane programmatore, venerdì 10/11/2006
+Bisogna pensare alla generalizzazione della sidebar. Definire cosa può
+configurare l'utente e in che modo. Ora come ora è impossibile unificare
+la sidebar di SBA ed EUT se non con un futtiz nel dbeut. Ma quando
+si vuole risolvere un problema, il futtiz non è il modo adatto.
+Ne consegue il problema delle "aree" e delle "etichette": sono 
+concetti generali o sono nati dal SitoSBA come conseguenza della
+struttura delle pagine e/o dell'organigramma di SBA??? In questo
+caso i due concetti dovrebbero sparire dal codice...
+
+
+Glossario
+
+PID = Page ID
+CID = Component ID
+PaPID = Parent Page ID
+PaCID = Parent Component ID
+PCode = Page Code
+
+
+----- MODIFICHE AL DB
+ALTER TABLE `dbjopac2sito`.`tblpagine` CHANGE COLUMN `ID` `PID` INTEGER UNSIGNED NOT NULL DEFAULT NULL AUTO_INCREMENT,
+ CHANGE COLUMN `ParentID` `PaPID` INTEGER UNSIGNED DEFAULT 0,
+ CHANGE COLUMN `Codice` `PCode` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+ DROP PRIMARY KEY,
+ ADD PRIMARY KEY(`PID`),
+ DROP INDEX `Codice`,
+ ADD UNIQUE `Codice` USING BTREE(`PCode`),
+ DROP INDEX `Index_2`,
+ ADD INDEX `Index_2` USING BTREE(`PaPID`)
+, ENGINE = MyISAM;
+
+ALTER TABLE `dbjopac2sito`.`tblstrutture` CHANGE COLUMN `IDPagina` `PID` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+ CHANGE COLUMN `IDComponente` `CID` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+ DROP INDEX `Index_3`,
+ ADD UNIQUE `Index_3` USING BTREE(`PID`, `CID`),
+ DROP INDEX `Index_1`,
+ ADD INDEX `Index_1` USING BTREE(`PID`),
+ DROP INDEX `Index_2`,
+ ADD INDEX `Index_2` USING BTREE(`CID`)
+, ENGINE = MyISAM;
+
+ALTER TABLE `dbjopac2sito`.`tblcontenuti` CHANGE COLUMN `ParentID` `PaCID` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+ CHANGE COLUMN `ChildID` `CID` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+ CHANGE COLUMN `IDStato` `StateID` INTEGER UNSIGNED NOT NULL DEFAULT 3,
+ DROP INDEX `Index_4`,
+ ADD UNIQUE `Index_4` USING BTREE(`PaCID`, `CID`),
+ DROP INDEX `Index_1`,
+ ADD INDEX `Index_1` USING BTREE(`PaCID`),
+ DROP INDEX `Index_2`,
+ ADD INDEX `Index_2` USING BTREE(`CID`),
+ DROP INDEX `FK_tblcontenuti_3`,
+ ADD INDEX `FK_tblcontenuti_3` USING BTREE(`StateID`)
+, ENGINE = MyISAM;
+
+ALTER TABLE `dbjopac2sito`.`info` CHANGE COLUMN `codice` `PCode` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+ CHANGE COLUMN `parentcodice` `PaPCode` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+, ENGINE = MyISAM;
+
+ALTER TABLE `dbjopac2sito`.`tblcomponenti` CHANGE COLUMN `ID` `CID` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+ DROP PRIMARY KEY,
+ ADD PRIMARY KEY(`CID`)
+, ENGINE = MyISAM;
+
+ALTER TABLE `dbjopac2sito`.`tblpagine` CHANGE COLUMN `ID` `PID` INTEGER UNSIGNED NOT NULL DEFAULT NULL AUTO_INCREMENT,
+ DROP PRIMARY KEY,
+ ADD PRIMARY KEY(`PID`)
+, ENGINE = MyISAM;
+
+ALTER TABLE `dbjopac2sito`.`tblredirects` CHANGE COLUMN `pid` `PID` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+ CHANGE COLUMN `url` `Url` TEXT CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+ DROP INDEX `Index_1`,
+ ADD INDEX `Index_1` USING BTREE(`PID`)
+, ENGINE = MyISAM;
+
+ALTER TABLE `dbjopac2sito`.`tblstati` CHANGE COLUMN `ID` `StateID` INTEGER UNSIGNED NOT NULL DEFAULT NULL AUTO_INCREMENT,
+ CHANGE COLUMN `NomeStato` `StateName` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+ CHANGE COLUMN `Uso` `Scope` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+ DROP PRIMARY KEY,
+ ADD PRIMARY KEY(`StateID`),
+ DROP INDEX `Index_3`,
+ ADD INDEX `Index_3` USING BTREE(`Scope`)
+, ENGINE = MyISAM;
+
+ALTER TABLE `dbjopac2sito`.`utente_ruolo` CHANGE COLUMN `utente` `User` VARCHAR(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+ CHANGE COLUMN `permissioncode` `PermissionCode` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+ CHANGE COLUMN `pid` `PID` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+ DROP PRIMARY KEY,
+ ADD PRIMARY KEY(`User`, `PID`),
+ DROP INDEX `Index_3`,
+ ADD INDEX `Index_3` USING BTREE(`User`)
+, ENGINE = MyISAM;
+
+ALTER TABLE `dbjopac2sito`.`utente_ruolo` RENAME TO `dbjopac2sito`.`tblroles`
+, ENGINE = MyISAM;
+
+

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+	
+	<map:components>
+        <map:generators default="file">
+            <map:generator name="navbarGenerator" src="JSites.generation.NavbarGenerator"/>
+        </map:generators>        
+	</map:components>
+		
+	<map:pipelines>	
+		<map:pipeline internal-only="*">
+				<map:match pattern="view">
+					<map:generate type="navbarGenerator">
+						<!--map:parameter name="startLevel" value="2"/-->
+					</map:generate>
+
+                    <map:transform src="sidebar2xhtml.xslt">
+                    	<map:parameter name="use-request-parameters" value="true"/>
+                    </map:transform>
+					<map:serialize type="xml"/>
+				</map:match> 
+		</map:pipeline>		
+	</map:pipelines>
+	
+</map:sitemap>

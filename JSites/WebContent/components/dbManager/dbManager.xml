@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dbManager>
+	<pageTitle>
+		<sql:execute-query xmlns:sql="http://apache.org/cocoon/SQL/2.0">
+			<sql:query>select Name,PCode from tblpagine where PID=<pid /></sql:query>
+		</sql:execute-query>
+	</pageTitle>
+	<permissions>
+		<sql:execute-query xmlns:sql="http://apache.org/cocoon/SQL/2.0">
+			<sql:query>select User, PermissionCode from tblroles where PID=<pid /></sql:query>
+		</sql:execute-query>
+	</permissions>
+</dbManager>

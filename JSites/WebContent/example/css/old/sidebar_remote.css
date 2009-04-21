@@ -1,0 +1,115 @@
+/*
+Sba
+Sidebar CSS
+$Revision: 1.1 $
+*/
+
+#sidebar {
+position:absolute; 
+top:0px; 
+left:10px; 
+width:159px;
+}
+
+/*
+#sidebar {
+	float: left;
+	margin-left: -1px;
+	width:159px;
+	padding-left: 15px;
+}
+*/
+
+#immagine_tab {
+
+		}
+	#navbar {
+
+	}
+		/* primo livello menu navbar (esempio polo principale) */
+		a.navbar1lev:link, a.navbar1lev:visited, a.navbar1lev:active {
+	display: block;
+	padding-left: 6px;
+	
+	background:  url(../images/menu_bg2.png) no-repeat;
+	vertical-align: middle;
+	width: 100%;
+	COLOR: #ffffff;
+	padding-top: 0px;
+	text-align: left;
+	text-decoration: none;
+		}
+		a.navbar1lev:hover, .navbarhover1lev, a.navbarhover1lev:visited {
+	display: block;
+	padding-left: 6px;
+	
+	background:  url(../images/menu_bg2.png) no-repeat;
+	vertical-align: middle;
+	width: 100%;
+	COLOR: #ffffff;
+	padding-top: 0px;
+	text-align: left;
+	background-position: 0px -30px;
+	color: #ffffff;
+	text-decoration: none;
+		}
+				
+		/* secondo livello menu sidebar (esempio economia) */
+		a.navbar2lev:link, a.navbar2lev:visited, a.navbar2lev:active {
+	display: block;
+	padding-left: 12px;
+	
+	background: url(../images/menu_bg3.png) no-repeat;
+	vertical-align: text-bottom;
+	width: 100%;
+	COLOR: #000000;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	text-align: left;
+	text-decoration: none;
+		}
+		a.navbar2lev:hover, .navbarhover2lev, a.navbarhover2lev:visited {
+	display: block;
+	padding-left: 12px;
+	
+	background: url(../images/menu_bg3.png) no-repeat;
+	vertical-align: text-bottom;
+	width: 100%;
+	COLOR: #333333;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	text-align: left;
+	background-position: 0px -42px;
+	color: #333333;
+	text-decoration: none;
+		}
+				
+		/* terzo livello menu sidebar (esempio economia e tecnica aziendale) */
+		a.navbar3lev:link, a.navbar3lev:visited, a.navbar3lev:active  {
+	display: block;
+	padding-left: 24px;
+	
+	background: url(../images/menu_bg4.png) no-repeat;
+	vertical-align: middle;
+	width: 100%;
+	COLOR: #000000;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	text-align: left;
+	text-decoration: none;
+		}
+		a.navbar3lev:hover, .navbarhover3lev, a.navbarhover3lev:visited {
+	display: block;
+	padding-left: 24px;
+	
+	background: url(../images/menu_bg4.png) no-repeat;
+	vertical-align: middle;
+	width: 100%;
+	COLOR: #333333;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	text-align: left;
+	background-position: 0px -42px;
+	color: #333333;
+	text-decoration: none;
+		}

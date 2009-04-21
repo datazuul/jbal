@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map:sitemap [
+<!ENTITY generalComponentPipeline SYSTEM "../generalComponentPipeline.dat">
+]>
+
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+	
+	<map:components>
+        <map:transformers>
+            <map:transformer name="catalogSearch" label="content" pool-max="16" src="JSites.transformation.catalogSearch.CatalogSearchTransformer"/>
+            <map:transformer name="markWord" label="content" pool-max="16" src="JSites.transformation.catalogSearch.MarkWord"/>
+            <map:transformer name="createLink" label="content" pool-max="16" src="JSites.transformation.catalogSearch.CreateLink"/>
+            <map:transformer name="record2display" label="content" pool-max="16" src="JSites.transformation.catalogSearch.Record2display"/>
+        </map:transformers>
+	</map:components>
+	
+	<map:pipelines>
+			<map:component-configurations>
+				<global-variables>
+					<component-name>catalogSearch</component-name>
+				</global-variables>
+			</map:component-configurations>
+			
+			<map:pipeline internal-only="false">
+
+				<map:match pattern="view">
+	                <map:act type="request">
+	                    <map:parameter name="parameters" value="true" />
+	                    <map:generate src="{request-param:datadir}/data/catalogSearch{cid}.xml"/>
+	                    <map:transform type="catalogSearch"/>
+	                    
+	                    <map:transform type="record2display"/>
+	                    <map:transform type="createLink"/>
+      					<map:transform type="markWord"/>
+	                    <map:transform src="catalogSearch.xslt">
+	                    	<map:parameter name="use-request-parameters" value="true"/>
+	                    </map:transform>
+	                    
+	                    <map:transform type="wikitrans"/>
+	                    <map:serialize type="xml"/>
+	                </map:act>
+	            </map:match>
+	            
+	            <map:match pattern="save">
+					<map:generate type="internalSave"/>
+					<map:transform src="catalogSearchsave.xslt">
+						<map:parameter name="use-request-parameters" value="true"/>
+					</map:transform>			
+					<map:transform type="write-source"/>
+					<map:transform src="../section/saving.xslt">
+						<map:parameter name="use-request-parameters" value="true"/>
+	                </map:transform>
+	                <map:serialize type="xml"/>
+				</map:match>
+	            
+				<map:match pattern="order">
+				 	<map:act type="request">
+	                    <map:parameter name="parameters" value="true"/>
+	                    <map:generate src="/sito_components/data/externalLink.xml" label="edit"/>
+	                    
+	                    <map:transform src="../section/sectionorder.xslt">
+	                    	<map:parameter name="use-request-parameters" value="true"/>
+	                    </map:transform>
+	                    
+	                    <map:transform src="../section/section.xslt">
+	                        <map:parameter name="use-request-parameters" value="true"/>
+	                    </map:transform>
+	                    
+	                    <map:transform type="wikitrans"/>
+	                    <map:serialize type="xhtml" />
+	                </map:act>
+				</map:match>
+				
+		</map:pipeline>
+		
+		&generalComponentPipeline;
+		
+	</map:pipelines>
+	
+</map:sitemap>
