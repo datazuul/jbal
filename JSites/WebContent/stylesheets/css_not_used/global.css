@@ -1,0 +1,99 @@
+/* 
+Sba 
+global CSS
+$Revision: 1.1 $ 
+*/
+
+body, document {
+	color: #4b4b4b;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 75%;
+	}
+
+body {
+	background-image: url(../images/sfondo.jpg);
+	background-color: #dfdfdf;
+	margin-top: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	background-repeat: repeat-x;
+}
+
+a img{
+  border: 0px;
+}
+
+
+/* il testo viene viene sempre racchiuso all'interno di p */
+p {
+		margin-top: 0px;
+		margin-bottom: 4px;
+	}
+/* gli elementi h1 h2 h3 vengono utilizzati in ordine di importanza decrescente per i titoli */
+
+h1,h2,h3,h4 {
+	color: #2979AF;
+	font-weight: bold;
+	margin-top: 0px;
+	margin-bottom: 2px;
+}
+
+/* per differenziare h1,2,3,4 associare una class */
+
+/* per il titolo ad inizio pagina */
+h1 {
+	
+	font-size: 130%;
+	
+}
+
+/* per i titoli interni */
+h2 {
+	font-size: 120%;
+	
+}
+
+/* per i titoli di un livello inferiore */
+h3 {
+	font-size: 110%;
+	
+}
+
+/* per i titoli di un ulteriore livello inferiore */
+h4 {
+	font-size: 120%;
+}
+
+/* vanno definite le caratteristiche dei font per gli elementi successivi solo se differiscono dalla base */
+	/* usare la virgola per definire allo stesso modo pi classi es. body,td, {font-size: 85%;color: #4b4b4b;} */
+		/* se tutti gli stati di a sono uguali si possono omettere le definizioni successive alla prima */
+a {
+	color: #005fa9
+}
+a:link {
+	color: #005fa9
+}
+	/* a:visited {
+	color: #666666
+	}*/
+
+a:hover {
+	color: #33A4FF
+}
+a:active {
+	color: #33A4FF
+}
+
+/* -------------------- struttura della pagina -------------------- */
+
+/* header */
+/* corpo */
+	/* sidebar */
+	/* contenuto */
+				/* sezione */
+				/* tabella */
+				/* mappa  */
+				/* form  */
+				/* ricerca  */						
+/* footer */

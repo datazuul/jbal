@@ -1,0 +1,9 @@
+	<map:pipeline internal-only="true">
+        <!-- This is the authentication resource -->
+        <map:match pattern="authenticate">
+            <map:generate type="authgenerator">
+            	<map:parameter name="db" value="{global:db}"/>
+            </map:generate>
+            <map:serialize type="xml"/>
+        </map:match>
+    </map:pipeline>

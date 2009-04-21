@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map:selector name="host" logger="sitemap.selector.host" src="org.apache.cocoon.selection.HostSelector">
+	<host name="sba" value="www.biblio.units.it" />
+	<host name="sba" value="www.biblio.univ.trieste.it" />
+	<host name="sba" value="www.biblio.univ.ts.it" />
+	
+	<host name="polotsa" value="polotsa.units.it" />
+	<host name="polotsa" value="polotsa.univ.trieste.it" />
+	<host name="polotsa" value="polotsa.univ.ts.it" />
+	
+	<host name="eut" value="eut.units.it" />
+	<host name="eut" value="eut.univ.trieste.it" />
+	<host name="eut" value="eut.univ.ts.it" />
+	
+	<host name="crut" value="crut.units.it" />
+	<host name="crut" value="crut.univ.trieste.it" />
+	<host name="crut" value="crut.univ.ts.it" />
+	
+	<host name="sba" value="*" />
+</map:selector>

@@ -1,0 +1,348 @@
+<map:pipeline internal-only="false">
+  
+	<!-- ========================================= -->
+    <!--    MATCH PRINCIPALE CON AUTENTICAZIONE    -->
+    
+    <map:match pattern="pageview">
+	    <map:redirect-to uri="cocoon:/doview?db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/>
+	</map:match>
+
+	<map:match pattern="page*">
+		<map:act type="auth-protect">
+			<map:parameter name="handler" value="JSitesHandler"/>
+			<map:redirect-to uri="cocoon:/do{../1}?db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/>
+	    </map:act>
+        <!-- something was wrong, redirect to login page -->
+        <map:redirect-to uri="login"/>
+	</map:match>
+	
+	<!--           FINE MATCH PRINCIPALE           -->
+	<!-- ========================================= -->
+	
+    
+<!--+ 
+    | Match per le Actions
+    +-->
+    
+    <map:match pattern="activate*">
+    	<map:act type="activate-page">
+    		<map:parameter name="containerType" value="{1}"/>
+    	</map:act>
+        <map:redirect-to uri="view{1}"/>
+    </map:match>
+    
+    <map:match pattern="delete*">
+    	<map:act type="delete-component">
+    		<map:parameter name="containerType" value="{1}"/>
+    	</map:act>
+        <map:redirect-to uri="view{1}"/>
+    </map:match>
+    
+    <map:match pattern="ordersave*">
+    	<map:act type="save-order">
+    		<map:parameter name="containerType" value="{1}"/>
+    	</map:act>
+        <map:redirect-to uri="view{1}"/>
+    </map:match>
+    
+    <map:match pattern="disable*">
+    	<map:act type="disable-page">
+    		<map:parameter name="containerType" value="{1}"/>
+    	</map:act>
+        <map:redirect-to uri="view{1}"/>
+    </map:match>
+
+    <map:match pattern="erase*">
+    	<map:act type="erase-page">
+    		<map:parameter name="containerType" value="{1}"/>
+    	</map:act>
+        <map:redirect-to uri="view{1}"/>
+    </map:match>
+    
+    <map:match pattern="insidebar*">
+    	<map:act type="page-in-sidebar">
+    		<map:parameter name="containerType" value="{1}"/>
+    	</map:act>
+        <map:redirect-to uri="view{1}"/>
+    </map:match>
+    
+    <map:match pattern="managedb*">
+    	<map:act type="manage-users">
+    		<map:parameter name="containerType" value="{1}"/>
+    	</map:act>
+        <map:redirect-to uri="cocoon:/view{1}"/>
+    </map:match>
+    
+  </map:pipeline>
+
+    <!-- =========================================== -->
+    <!--   MATCHES PRINCIPALE SENZA AUTENTICAZIONE   -->
+    <!-- =========================================== -->
+	
+	
+	<map:pipeline>
+		<map:match pattern="test">
+			<map:generate type="timeGenerator" />
+			<map:serialize type="html" />
+		</map:match>
+		
+		
+	    <map:match pattern="biblioteche/biblioteca.asp">
+	        <map:redirect-to uri="../pageview?pcode={request-param:sbn}"/>
+	    </map:match>
+	    
+	    
+	</map:pipeline>
+    
+    
+  <map:pipeline internal-only="false">  
+  
+  
+<!--+ 
+    | Match che visualizza i componenti di livello 1
+    +-->
+    
+    <map:match pattern="view*">  
+        <map:generate type="pageviewer">
+            <map:parameter name="containerType" value="{1}"/>
+            <map:parameter name="dbaddedIztok" value="{global:showAreasInFirstLevelPages}"/>
+        </map:generate>
+        <map:parameter name="parameters" value="true"/>
+        <map:transform type="fillBill">
+        	<map:parameter name="pid" value="{request-param:pid}"/>
+        </map:transform>
+		
+        <map:transform type="cinclude"/>
+
+        <map:act type="auth-loggedIn">
+        	<map:parameter name="handler" value="JSitesHandler"/>
+	        <map:act type="auth-protect">
+		        <map:parameter name="handler" value="JSitesHandler"/>
+		        <map:transform src="../stylesheets/xslt/addForm.xslt">
+			        <map:parameter name="use-request-parameters" value="true"/>
+			    </map:transform>
+		    </map:act>
+		</map:act>
+		
+        <map:serialize type="xml"/>
+    </map:match>
+    
+  
+<!--+ 
+    | Match che modifica il contenuto dei componenti di livello 1
+    +-->
+
+    <map:match pattern="edit*">
+        <map:generate type="pageeditor">
+            <map:parameter name="containerType" value="{1}"/>
+            
+        </map:generate>
+
+        <map:parameter name="parameters" value="true"/>
+        <map:transform type="fillBill">
+        	<map:parameter name="pid" value="{request-param:pid}"/>
+        </map:transform>
+
+        <map:transform type="cinclude"/>
+        <map:serialize type="xml"/>
+    </map:match>
+    
+    
+<!--+ 
+    | Match che salva e salva il contenuto dei componenti di livello 1
+    +-->
+    
+    <map:match pattern="save*">
+    
+    	<map:generate type="pagesaver">
+            <map:parameter name="containerType" value="{1}"/>
+            
+        </map:generate>
+
+        <map:transform type="fillBill">
+        	<map:parameter name="pid" value="{request-param:pid}"/>
+        </map:transform>
+        
+        <map:transform type="cinclude">
+	        <map:parameter name="use-request-parameters" value="true"/>
+	    </map:transform>
+
+	    <map:act type="auth-loggedIn">
+        	<map:parameter name="handler" value="JSitesHandler"/>
+	        <map:act type="auth-protect">
+		        <map:parameter name="handler" value="JSitesHandler"/>
+		        <map:transform src="../stylesheets/xslt/addForm.xslt">
+			        <map:parameter name="use-request-parameters" value="true"/>
+			    </map:transform>
+		    </map:act>
+		</map:act>
+	    <map:transform type="wikitrans" />
+        <map:serialize type="xml"/>
+    </map:match>
+    
+
+<!--+ 
+    | Match che crea nuove pagine o pagine di redirect a siti esterni
+    +-->
+    
+    <map:match pattern="create*">
+        <map:generate type="pagecreator">
+            <map:parameter name="containerType" value="{1}"/>
+        </map:generate>
+
+        <map:parameter name="parameters" value="true"/>
+        <map:transform type="fillBill">
+        	<map:parameter name="pid" value="{request-param:pid}"/>
+        	
+        </map:transform>
+
+        <map:transform type="cinclude"/>		
+        <map:serialize type="xml"/>
+    </map:match>
+    
+    
+<!--+ 
+    | Match di ordinamento dei componenti in una pagina
+    +-->
+    
+    <map:match pattern="order*">
+    	<map:generate type="pageorderer">
+            <map:parameter name="containerType" value="{1}"/>
+        </map:generate>
+
+	        <map:parameter name="parameters" value="true"/>
+	        <map:transform type="fillBill">
+	        	<map:parameter name="pid" value="{request-param:pid}"/>
+	        	
+	        </map:transform>
+
+		<map:transform type="cinclude">
+	        <map:parameter name="use-request-parameters" value="true"/>
+	    </map:transform>
+	    
+	    <map:act type="auth-loggedIn">
+        	<map:parameter name="handler" value="JSitesHandler"/>
+	        <map:act type="auth-protect">
+		        <map:parameter name="handler" value="JSitesHandler"/>
+		        <map:transform src="../stylesheets/xslt/addForm.xslt">
+			        <map:parameter name="use-request-parameters" value="true"/>
+			    </map:transform>
+		    </map:act>
+		</map:act>
+	    
+	    <!--map:transform type="wikitrans" /-->
+	    <map:serialize type="xml"/>
+    </map:match>
+    
+  </map:pipeline>
+  
+  
+      <map:pipeline internal-only="true">
+    
+    	<!-- fornisce una lista di immagini contenute in "images" secondo i parametri
+    	specificati
+    	
+    	* maxsize (Dimensione File Massima)
+    	* minwidth (Minima larghezza)
+    	* minheight (Minima altezza)
+    	* maxwidth (Massima larghezza)
+    	* maxheight (Massima altezza)
+    	
+    	END-->
+    	
+    	<map:match pattern="imagecontent">
+		 	<map:generate type="imagedirectory" src="{request-param:datadir}/images/contentimg/">
+		   		<map:parameter name="depth" value="1"/>
+		 	</map:generate>
+		 	
+		 	<map:transform type="imagefilter" />
+		 	<map:serialize type="xml" />
+		</map:match>
+		
+		<!-- genera una lista di css presenti nella relativa cartella -->
+		
+		<map:match pattern="csscontent">
+	 		
+	 		<map:generate type="directory" src="css">
+	   			<map:parameter name="depth" value="1"/>
+	   			<map:parameter name="include" value="import.css"/>
+	 		</map:generate>
+	 		<map:transform type="xslt" src="../stylesheets/xslt/listcss.xslt"/>
+	 		<map:transform type="redirectNonAccessible">
+	 			<map:parameter name="db" value="{global:db}"/>
+	 		</map:transform>
+	 		<map:serialize type="xml"/>
+		</map:match>
+		
+		<map:match pattern="imageeditcomponent">
+			<map:act type="request">
+				<map:generate src="cocoon:/imagecontent" />
+				
+				<map:transform src="../stylesheets/xslt/imageedit.xslt">
+					<map:parameter name="use-request-parameters" value="true"/>
+				</map:transform>
+				<map:serialize type="xml" />
+			</map:act>
+		</map:match>
+
+	</map:pipeline>
+  
+  	<!--+ 
+     | Pipeline che aggrega i componenti di livello 1
+     +-->
+    <!-- Pipeline per la semplice visualizzazione di una pagina -->
+    <map:pipeline internal-only="true">    	
+	    <map:match pattern="do*">
+	        <map:aggregate element="page">
+	        	 <map:part src="cocoon:/csscontent?action={1}"/>
+	        	 <map:part src="cocoon:/viewheader">
+	                 <map:parameter name="use-request-parameters" value="true"/>
+	             </map:part>
+	             <map:part src="cocoon:/{1}navbar">
+	                 <map:parameter name="use-request-parameters" value="true"/>
+	             </map:part>
+	             <map:part src="cocoon:/{1}content">
+	                 <map:parameter name="use-request-parameters" value="true"/>
+	             </map:part>
+	             <map:part src="cocoon:/viewfooter">
+	                 <map:parameter name="use-request-parameters" value="true"/>
+	             </map:part>
+	        </map:aggregate>
+	        <map:transform type="xslt" src="xslt/xml2xhtml.xslt">
+	        	<map:parameter name="pid" value="{request-param:pid}"/>
+	        </map:transform>
+	        <map:serialize type="html"/> 
+	    </map:match>
+	    
+	    <map:match pattern="getlistpages">
+			<map:generate src="ListPagesQuery.xml"/>
+			<map:transform type="sql">
+				<map:parameter name="use-connection" value="{request-param:db}"/>
+			</map:transform>
+			<map:transform src="../stylesheets/xslt/sqlListPages.xslt"/>
+	        <map:serialize type="xml"/>
+	    </map:match>
+	    
+	    <map:match pattern="get*">
+	        <map:aggregate element="page">
+	             <map:part src="cocoon:/view{1}">
+	                 <map:parameter name="use-request-parameters" value="true"/>
+	             </map:part>
+	        </map:aggregate>
+	        <map:serialize type="xml"/>
+	    </map:match>
+	    
+	<map:handle-errors>
+      <map:select type="exception">
+        <map:when test="invalid-continuation">
+          <map:generate src="documents/invalidContinuation.html"/>
+          <map:serialize type="xhtml"/>
+        </map:when>
+        <map:when test="file-not-found">
+          <map:generate src="not-found.xml"/>
+          <map:serialize type="xhtml"/>
+        </map:when>
+      </map:select>
+    </map:handle-errors>
+		
+	</map:pipeline>
