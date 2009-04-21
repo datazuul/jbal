@@ -1,0 +1,3 @@
+TODO
+1. upload immagini e galleria e explorer
+2. wysiwyg editor per le sezioni
