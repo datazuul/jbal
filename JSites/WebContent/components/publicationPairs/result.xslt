@@ -8,18 +8,17 @@
 	<xsl:param name="state" />
 	
 	<xsl:template match="/">
-	
 		<xsl:variable name="state"><xsl:value-of select="$state"/></xsl:variable>
 		<xsl:if test="$state = 'WRK'">
-			<c:include src="cocoon://components/excel/view?cid={$cid}&amp;pid={$pid}&amp;time=strafuturo&amp;editing=true"/>	
+			<c:include src="cocoon://components/publicationPairs/view?cid={$cid}&amp;pid={$pid}&amp;time=strafuturo&amp;editing=true"/>	
 		</xsl:if>
 		<xsl:if test="$state = 'PND'">
-			<c:include src="cocoon://components/excel/view?cid={$cid}&amp;pid={$pid}&amp;time=futuro&amp;editing=true"/>	
+			<c:include src="cocoon://components/publicationPairs/view?cid={$cid}&amp;pid={$pid}&amp;time=futuro&amp;editing=true"/>	
 		</xsl:if>
 		
-	<!--<div>
+		<!--  div>
 			<xsl:apply-templates/>
-		</div>-->
+		</div-->
 	</xsl:template>
 	
 	<xsl:template match="//sourceResult/execution/text()">

@@ -21,6 +21,19 @@
       </DIV>
    </xsl:template>
    
+   <xsl:template match="title">
+      <h1>
+        <xsl:value-of select="."/>
+      </h1>
+   </xsl:template>
+   
+   <xsl:template match="image">
+      <DIV class="img">
+      	<img src="{.}"/>
+      </DIV>
+   </xsl:template>
+   
+   
    <xsl:template match="item">
       <DIV class="item">
    	    <xsl:if test="@key">
@@ -96,14 +109,31 @@
       </DIV>
    </xsl:template>
  
-   <xsl:template match="id">
-      <DIV class="id">
+ 
+	 <xsl:template match="buy">
+	      <DIV class="id">
+			<xsl:if test="@key">
+			   <A>
+			      <xsl:attribute name="href">
+	        	      <xsl:value-of select="@key" />
+	          	  </xsl:attribute>
+		   	  	  Acquista<!-- xsl:apply-templates /--><br />
+		   	   </A>
+			</xsl:if>
+			<xsl:if test="string-length(@key)=0">
+				<xsl:apply-templates /><br />
+			</xsl:if>
+	   	  </DIV>
+	   </xsl:template>
+ 
+   <xsl:template match="bid">
+      <DIV class="bid">
 		<xsl:if test="@key">
 		   <A>
 		      <xsl:attribute name="href">
         	      <xsl:value-of select="@key" />
           	  </xsl:attribute>
-	   	  	  <xsl:apply-templates /><br />
+	   	  	  Dettagli<!-- xsl:apply-templates /--><br />
 	   	   </A>
 		</xsl:if>
 		<xsl:if test="string-length(@key)=0">
@@ -112,8 +142,8 @@
    	  </DIV>
    </xsl:template> 
    
-   <xsl:template match="bid">
-      <DIV class="BID">
+   <xsl:template match="id">
+      <!--  DIV class="BID">
               	 <xsl:if test="@key">
 		   <A>
 		      <xsl:attribute name="href">
@@ -125,7 +155,7 @@
 		<xsl:if test="string-length(@key)=0">
 			<xsl:apply-templates /><br />
 		</xsl:if>
-      </DIV>
+      </DIV-->
    </xsl:template>   
 
 	<xsl:template match="abstract">
@@ -219,6 +249,9 @@
      </DIV>
    </xsl:template>
    
+   <xsl:template match="db">
+   </xsl:template>
+   
    <xsl:template match="subjects">
      <DIV class="titoletto">
         Soggetti:
@@ -260,5 +293,19 @@
         </xsl:for-each>
       </DIV>
    </xsl:template>   
+   
+   <xsl:template match="standardNumber">
+		Standard number: <xsl:value-of select="."/><br/>
+   </xsl:template>
+   <xsl:template match="publicationDate">
+		Data pubblicazione: <xsl:value-of select="."/><br/>
+   </xsl:template>
+   <xsl:template match="prezzo">
+		Prezzo: <xsl:value-of select="."/>
+   </xsl:template>
+   
+   
+   
+   
       
 </xsl:stylesheet>

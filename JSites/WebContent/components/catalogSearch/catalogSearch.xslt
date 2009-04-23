@@ -3,7 +3,7 @@
 							xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:include href="../../stylesheets/xslt/editlinks.xslt" />
-    <xsl:include href="jo2xhtml.xslt" />
+    <xsl:include href="jo2section.xslt" />
     <!-- Questo include serve pei link de modifica, elimina e (dis)attiva 
 		 ma anca per le combo de ordinamento  -->
                               
@@ -17,6 +17,8 @@
     <xsl:param name="time"/>
     <xsl:param name="extra" />
     <xsl:param name="type" />
+    <xsl:param name="query" />
+    <xsl:param name="page" />
     
     
 	<xsl:template match="/">
@@ -44,30 +46,26 @@
 				]]>
 				</script> 
 				
-				<form method="get" action="pageview" onsubmit="readParam()" id="catalogForm">
+				<form method="get" action="pageview" onsubmit="readParam()" id="catalogForm" style="float: left;">
 					<input name="pid" id="pid" type="hidden" value="{$pid}"/>
 				    <input name="query" id="query" type="hidden" value=""/>
-				    Autore: <input id="AUT" type="text"/>&#160;Titolo: <input id="TIT" type="text"/><br/><br/>
-				    Page: <input id="page" name="page" type="text"/><br/><br/>
-				    <input type="submit"/>
+				    <input id="page" name="page" type="hidden" value="0"/>
+				    Autore: <input id="AUT" type="text"/>&#160;Titolo: <input id="TIT" type="text"/>&#160;<input type="submit" value="Cerca"/>
 				</form>
+				<div class="clearer">&#160;</div>
+ 				<xsl:call-template name="nav"/>
 				
-				<form method="post" action="pageview?pid={$pid}">
+				<!-- form method="post" action="pageview?pid={$pid}">
 				    Titolo: <input name="listTIT" type="text"/>&#160;&#160;
 				    <input type="submit" value="List" />
-				</form>
-				
-				<form method="post" action="pageview?pid={$pid}">
-				    Autore: <input name="listAUT" type="text"/>&#160;&#160;
-				    <input type="submit" value="List" />
-				</form>
-				
-				<a href="pageview?pid={$pid}">Order tit</a></br>
-								
+				</form-->
 				
 				<!--  <xsl:apply-templates select="section/lang[@code=$lang]"/> -->
-				<xsl:apply-templates />
+				<div id="risultati">
+					<xsl:apply-templates />
+				</div>
 				<div class="clearer">&#160;</div>
+				<xsl:call-template name="nav"/>
 			</div>
 		</div>
 		
@@ -79,6 +77,25 @@
 			
 	<xsl:template match="catalogSearch">
 		<xsl:apply-templates />
+	</xsl:template>
+	
+	<xsl:template name="nav">
+		<xsl:if test="string-length($page) > 0">
+					<div class="ricerca_nav" style="text-align: center;">
+	 					<xsl:variable name="count"><xsl:value-of select="root/queryData/queryCount"/></xsl:variable>
+	 				
+						<xsl:if test="$page > 0">
+							<a href="pageview?pid={$pid}&amp;query={$query}&amp;page={$page+(-1)}">&lt;&lt; Indietro</a>
+						</xsl:if>
+						&#160;pagina&#160;<xsl:value-of select="$page +1"/>&#160;di&#160;<xsl:value-of select="floor($count div 10)+1"/>&#160;
+						<xsl:if test="(($page+1) * 10) &lt; $count ">
+							<a href="pageview?pid={$pid}&amp;query={$query}&amp;page={$page+1}">Avanti &gt;&gt;</a>
+						</xsl:if>
+						
+						<br/>
+					</div>
+					<div class="clearer">&#160;</div>
+				</xsl:if>
 	</xsl:template>
 
 </xsl:stylesheet>

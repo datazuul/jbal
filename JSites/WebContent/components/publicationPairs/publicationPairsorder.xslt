@@ -6,10 +6,10 @@
 	<xsl:param name="maxn" />
 	<xsl:param name="time"/>
 		
-	<xsl:template match="/section">
-		<section>
+	<xsl:template match="/box">
+		<box>
 			<xsl:copy-of select="*" />
-		</section>
+		</box>
 		<order>
 				<elementnumber><xsl:value-of select="$maxn"/></elementnumber>
 				<selected><xsl:value-of select="$order"/></selected>
