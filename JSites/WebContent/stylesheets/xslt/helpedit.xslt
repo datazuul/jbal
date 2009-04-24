@@ -14,14 +14,16 @@
 				<input value="Salva" type="submit" id="submit"/>
 			</div>
 		</div>
+		<!-- 
 		<div id="help">
 			<b style="color:red; font-size:20px;">Link con target:</b> [_blank>>http://www.miosito.it/tuapagina>Titolo]<br />
 			<b>Link:</b> [http://www.miosito.it/tuapagina>Titolo]<br />
 			<b>Immagini:</b> [img:http://www.miosito.it/tuafoto.jpg>Alt text]<br />
-			<b>Font monospaced:</b> --Monospaced--<br />
+			<b>Font monospaced:</b> - -Monospaced- -<br />
 			<b>Font corsivo:</b> ''Corsivo''<br />
 			<b>Font grassetto:</b> __Grassetto__<br />
 		</div>
+		-->
 		<div class="clearer">&#160;</div>
 	</xsl:template>
 
