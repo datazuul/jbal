@@ -80,7 +80,6 @@ import java.sql.*;
 
 import javax.imageio.ImageIO;
 
-
 public class EutRecord2display extends MyAbstractPageTransformer implements Composable, Disposable //, CacheableProcessingComponent
 {
     private boolean isRecord=false,debug=false,isCatalogConnection=false;
