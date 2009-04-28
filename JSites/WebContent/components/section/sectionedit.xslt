@@ -111,21 +111,24 @@
 
 	tinyMCE.init({
 		// General options
+		file_browser_callback : MadFileBrowser,
 		mode : "exact",
 		elements : "elm2",
 		theme : "advanced",
 		//theme : "simple",
 		skin : "o2k7",
-		//plugins : "safari,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,insertdatetime,preview,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,inlinepopups",
-		//plugins : "style,advimage,advlink,preview,print,paste,fullscreen",
+		plugins : "safari,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,insertdatetime,preview,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,inlinepopups",
+		plugins : "style,advimage,advlink,preview,print,paste,fullscreen",
 		language : "it",
 		entity_encoding : "numeric",
 		
 		// Theme options
 		theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect",
-		theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor",
-		theme_advanced_buttons3 : "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr,|,print,|,ltr,rtl,|,fullscreen",
-		theme_advanced_buttons4 : "insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,pagebreak",
+		// help,code,
+		theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,|,insertdate,inserttime,preview,|,forecolor,backcolor",
+		// tablecontrols,|,
+		theme_advanced_buttons3 : "hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr,|,print,|,ltr,rtl,|,fullscreen",
+		//theme_advanced_buttons4 : "insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,pagebreak",
 		theme_advanced_toolbar_location : "top",
 		theme_advanced_toolbar_align : "left",
 		theme_advanced_statusbar_location : "bottom",
@@ -211,9 +214,28 @@
 	            }//end function(ed,e)
 	        );//end ed.onKeyUp.add
 	    }//end setup : function(ed)
+	    
+	    
+	    
 	});
 	
 
+	function MadFileBrowser(field_name, url, type, win) {
+	  tinyMCE.activeEditor.windowManager.open({
+	      file : "../../../../fileManager?field=" + field_name + "&url=" + url + "",
+	      title : 'File Manager',
+	      width : 640,
+	      height : 450,
+	      resizable : "no",
+	      inline : "yes",
+	      close_previous : "no"
+	  }, {
+	      window : win,
+	      input : field_name
+	  });
+	  return false;
+	}
+	
 	
 	]]>
 		</script>

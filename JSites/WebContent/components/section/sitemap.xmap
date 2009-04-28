@@ -7,8 +7,7 @@
 
 	<map:pipelines>
 		
-		<map:pipeline internal-only="false"> 
-			            
+		<map:pipeline internal-only="false">			            
 	            <map:match pattern="view">
 	                <map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>

@@ -17,6 +17,57 @@
 		<map:redirect-to uri="cocoon://getlistpages?db={global:db}"/>
 	</map:match>
 -->
+	<map:match pattern="fileManager">
+		<map:act type="auth-protect">
+        	<map:parameter name="handler" value="JSitesHandler"/>
+        
+        	<map:act type="authorize-users">
+        		<map:parameter name="db" value="{global:db}"/>
+        		<map:parameter name="pid" value="0"/>
+				<map:generate type="fileManager" src="{global:data-directory}/images/{../../1}">
+					<map:parameter name="db" value="{global:db}"/>
+				</map:generate>
+				<!--
+				<map:act type="request">
+					<map:transform src="context://stylesheets/xslt/dir2page.xslt">
+						<map:parameter name="parameters" value="true"/>
+						<map:parameter name="permissionCode" value="{../permissionCode}"/>
+						<map:parameter name="base" value="images/{../../../1}"/>
+						<map:parameter name="context" value="{context}"/>
+					</map:transform>
+				</map:act>
+				-->
+			</map:act>	
+			
+			<map:serialize type="xml" />
+		</map:act>
+	
+	</map:match>
+	
+		<map:match pattern="dir/**">
+        <map:act type="auth-protect">
+        	<map:parameter name="handler" value="JSitesHandler"/>
+        
+        	<map:act type="authorize-users">
+        		<map:parameter name="db" value="{global:db}"/>
+        		<map:parameter name="pid" value="0"/>
+				<map:generate type="directory" src="{global:data-directory}/images/{../../1}">
+					<map:parameter name="depth" value="1"/>
+					<map:parameter name="sort" value="directory"/>
+				</map:generate>
+				<map:act type="request">
+					<map:transform src="context://stylesheets/xslt/dir2page.xslt">
+						<map:parameter name="parameters" value="true"/>
+						<map:parameter name="permissionCode" value="{../permissionCode}"/>
+						<map:parameter name="base" value="images/{../../../1}"/>
+						<map:parameter name="context" value="{context}"/>
+					</map:transform>
+				</map:act>
+			</map:act>	
+			
+			<map:serialize type="xhtml" />
+		</map:act>
+	</map:match>
 
 	  <map:match pattern="**/upload">
 		<map:act type="auth-loggedIn">
@@ -40,31 +91,6 @@
 				<map:serialize type="xhtml"/>
 			</map:act>
 		</map:act>
-	</map:match>
-
-	<map:match pattern="dir/**">
-	        <map:act type="auth-protect">
-	        <map:parameter name="handler" value="JSitesHandler"/>
-	        
-	        	<map:act type="authorize-users">
-	        		<map:parameter name="db" value="{global:db}"/>
-	        		<map:parameter name="pid" value="0"/>
-					<map:generate type="directory" src="{global:data-directory}/images/{../../1}">
-						<map:parameter name="depth" value="1"/>
-						<map:parameter name="sort" value="directory"/>
-					</map:generate>
-					<map:act type="request">
-						<map:transform src="context://stylesheets/xslt/dir2page.xslt">
-							<map:parameter name="parameters" value="true"/>
-							<map:parameter name="permissionCode" value="{../permissionCode}"/>
-							<map:parameter name="base" value="images/{../../../1}"/>
-							<map:parameter name="context" value="{context}"/>
-						</map:transform>
-					</map:act>
-				</map:act>	
-				
-				<map:serialize type="xhtml" />
-			</map:act>
 	</map:match>
 
     <map:match pattern="images/jopac.jpg">
@@ -96,15 +122,20 @@
        	<map:read mime-type="text/css" src="css/{1}.css" />
    	</map:match>
 
-
+<!--
    	<map:match pattern="js/*.js">
        	<map:read mime-type="text/js" src="../js/{1}.js" />
    	</map:match>
 
+
    	<map:match pattern="js/**/*.*">
        	<map:read src="../js/{1}/{2}.{3}" />
    	</map:match>
-	
+-->
+	<map:match pattern="js/**">
+       	<map:read src="../js/{1}" />
+   	</map:match>
+
 	<map:match pattern="">
 		<map:redirect-to uri="cocoon:/pageview?pid=1&amp;lang=it" />
     </map:match>

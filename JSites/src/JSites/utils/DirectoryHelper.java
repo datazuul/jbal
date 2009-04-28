@@ -29,8 +29,16 @@ import java.net.URL;
 public class DirectoryHelper {
 	private static final DirectoryHelper dh=new DirectoryHelper();
 	
-	public static String[] getFileList(String file) {
-		return null;
+	public static boolean deleteDir(String path) {
+		File dir = new File(path);
+		boolean r=true;
+		try {
+			dir.delete();
+		}
+		catch (Exception e) {
+			r=false;
+		}
+		return r;
 	}
 	
 	public static File[] processFiles(String path) {

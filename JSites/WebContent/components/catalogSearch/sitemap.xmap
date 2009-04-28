@@ -10,7 +10,7 @@
             <map:transformer name="catalogSearch" label="content" pool-max="16" src="JSites.transformation.catalogSearch.CatalogSearchTransformer"/>
             <map:transformer name="markWord" label="content" pool-max="16" src="JSites.transformation.catalogSearch.MarkWord"/>
             <map:transformer name="createLink" label="content" pool-max="16" src="JSites.transformation.catalogSearch.CreateLink"/>
-            <map:transformer name="record2display" label="content" pool-max="16" src="JSites.transformation.catalogSearch.EutRecord2display"/>
+            <map:transformer name="record2display" label="content" pool-max="16" src="JSites.transformation.catalogSearch.Record2display"/>
         </map:transformers>
 	</map:components>
 	

@@ -344,4 +344,14 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 	public void dispose() {
 		this.manager.release(dbselector);
 	}
+	
+	public void sendElement(String element, String content) throws SAXException {
+		sendElement(element,content, emptyAttrs);
+	}
+	
+	public void sendElement(String element, String content, AttributesImpl attr) throws SAXException {
+		contentHandler.startElement("",element,element, attr);
+		contentHandler.characters(content.toCharArray(), 0, content.length());
+		contentHandler.endElement("",element,element);
+	}
 }

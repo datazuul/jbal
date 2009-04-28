@@ -60,5 +60,5 @@
 	<map:generator name="internalSave" src="JSites.generation.InternalSave"/>
 	<map:generator name="timeGenerator" src="JSites.utils.TimeGenerator" />
 	<map:generator name="newsListGenerator" src="JSites.generation.NewsListGenerator" />
-
+	<map:generator name="fileManager" src="JSites.fileManager.FileManager"/>	
 </map:generators>
