@@ -141,48 +141,6 @@ public class FileManager extends MyAbstractPageGenerator {
 	//show file list of given directory
 	private void print_files(String dir) throws SAXException {
 		print_tree(dir);
-
-//	  while($f = readdir($d)) {
-//	    if(strpos($f, '.') === 0) continue;
-//	    $ff = $c . '/' . $f;
-//	    $ext = strtolower(substr(strrchr($f, '.'), 1));
-//	    if(!is_dir($ff)) {
-//		    echo '<tr' . ($i%2 ? ' class="light"' : ' class="dark"') .'>';
-//		    //show preview and different icon, if file is image
-//		    $imageinfo = @getimagesize($ff);
-//		    if($imageinfo && $imageinfo[2] > 0 && $imageinfo[2]< 4) {
-//		    	$resize = '';
-//		    	if($imageinfo[0] > $thmb_size or $imageinfo[1] > $thmb_size) {
-//			    	if($imageinfo[0] > $imageinfo[1]) {
-//							$resize = ' style="width: ' . $thmb_size . 'px;"';
-//						} else {
-//							$resize = ' style="height: ' . $thmb_size . 'px;"';
-//						}
-//					}
-//					if ($imageinfo[2] == 1) {
-//						$imagetype = "image_gif";
-//					} elseif ($imageinfo[2] == 2) {
-//						$imagetype = "image_jpg";
-//					} elseif ($imageinfo[2] == 3) {
-//						$imagetype = "image_jpg";
-//					} else {
-//						$imagetype = "image";
-//					}
-//					echo '<td><a class="file thumbnail ' . $imagetype . '" href="#" onclick="submit_url(\'' . $root_path . '/' . $ff . '\');">' . $f . '<span><img' . $resize . ' src="' . $root_path . '/' . $ff . '" /></span></a>'; echo '</td>';
-//				//known file types
-//				} elseif(in_array($ext,$file_class)) {
-//					echo '<td><a class="file file_' . $ext . '" href="#" onclick="submit_url(\'' . $root_path . '/' . $ff . '\');">' . $f . '</a>'; echo '</td>';
-//				//all other files
-//				} else {
-//					echo '<td><a class="file unknown" href="#" onclick="submit_url(\'' . $root_path . '/' . $ff . '\');">' . $f . '</a>'; echo '</td>';
-//		    }
-//				echo '<td>' . byte_convert(filesize($ff)) . '</td>';
-//				echo '<td class="delete"><a href="#" title="' . $lng['delete_title'] . '" onclick="delete_file(\'' . $c . '\',\'' . $f . '\');">' . $lng['delete'] . '</a></td>';
-//		    echo '</tr>';
-//		    $i++;
-//	    }
-//	  }
-//	  echo('</table>');
 	}
 
 	private String delete_directory(String dirname) {
