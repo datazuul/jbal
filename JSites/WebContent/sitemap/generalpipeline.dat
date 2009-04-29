@@ -24,22 +24,23 @@
         	<map:act type="authorize-users">
         		<map:parameter name="db" value="{global:db}"/>
         		<map:parameter name="pid" value="0"/>
-				<map:generate type="fileManager" src="{global:data-directory}/images/{../../1}">
+				<map:generate type="fileManager" src="{global:data-directory}/images/">
 					<map:parameter name="db" value="{global:db}"/>
 				</map:generate>
-				<!--
+				<map:transform src="context://stylesheets/xslt/fileManager.xslt" />
+<!--
 				<map:act type="request">
-					<map:transform src="context://stylesheets/xslt/dir2page.xslt">
+					<map:transform src="context://stylesheets/xslt/fileManager.xslt">
 						<map:parameter name="parameters" value="true"/>
 						<map:parameter name="permissionCode" value="{../permissionCode}"/>
 						<map:parameter name="base" value="images/{../../../1}"/>
 						<map:parameter name="context" value="{context}"/>
 					</map:transform>
 				</map:act>
-				-->
+-->
 			</map:act>	
 			
-			<map:serialize type="xml" />
+			<map:serialize type="xhtml" />
 		</map:act>
 	
 	</map:match>

@@ -111,7 +111,7 @@
 
 	tinyMCE.init({
 		// General options
-		file_browser_callback : MadFileBrowser,
+		file_browser_callback : "MadFileBrowser",
 		mode : "exact",
 		elements : "elm2",
 		theme : "advanced",
@@ -222,7 +222,7 @@
 
 	function MadFileBrowser(field_name, url, type, win) {
 	  tinyMCE.activeEditor.windowManager.open({
-	      file : "../../../../fileManager?field=" + field_name + "&url=" + url + "",
+	      file : "../../../../fileManager?field=" + field_name + "&url=" + url + "&pid=]]><xsl:value-of select="$pid" /><![CDATA[",
 	      title : 'File Manager',
 	      width : 640,
 	      height : 450,
@@ -238,6 +238,9 @@
 	
 	
 	]]>
+	
+	
+	
 		</script>
 	
 		<b>Descrizione:</b>

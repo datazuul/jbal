@@ -10,7 +10,7 @@ import JSites.utils.DirectoryHelper;
 
 public class FileManager extends MyAbstractPageGenerator {
 	/*************************************************************************
-			Program: Mad File anager for TinyMCE 3.
+			Program: Mad File Manager for TinyMCE 3.
 			Version: 0.1a
 			Author: Mad182
 			E-mail: Mad182@gmail.com
@@ -185,25 +185,27 @@ public class FileManager extends MyAbstractPageGenerator {
 //	  echo('</table>');
 	}
 
-	private int delete_directory(String dirname) {
-		int r=6;
+	private String delete_directory(String dirname) {
+		String r="6";
 		if(dirname!=null) {
-			r=5;
+			r="5";
 			boolean k=DirectoryHelper.deleteDir(dirname);
-			if(k) r=4;
+			if(k) r="4";
 		}
 		return r;
 	}
 	
 	
 	public void generate() throws SAXException {
-		String output="";
-		root_path=this.source;
-		int uploadstatus = 0;
+		String pid=request.getParameter("pid");
+		root_path=this.source+"/page"+pid+"/";
+		File p=new File (root_path);
+		if(!p.exists()) p.mkdirs();
+		String uploadstatus = "0";
 		String t=request.getParameter("status");
 		
 		if(t!=null) {
-			uploadstatus=Integer.parseInt(t);
+			uploadstatus=t;
 		}
 		
 		contentHandler.startDocument();
@@ -268,71 +270,12 @@ public class FileManager extends MyAbstractPageGenerator {
 		//display file list for dynamic requests
 		t=request.getParameter("viewdir");
 		if(t!=null) {
-//					<ul id="browser-toolbar">
-//						<li class="file-new">
-//							<a href="#" title="<?php echo $lng['new_file_title']; ?>" onclick="toggle_visibility('load-file'); return false;">
-//								<?php echo $lng['new_file']; ?>
-//							</a>
-//						</li>
-//						<li class="folder-new">
-//							<a href="#" title="<?php echo $lng['new_folder_title']; ?>" onclick="create_folder('<?php echo $_GET['viewdir']; ?>'); return false;">
-//								<?php echo $lng['new_folder']; ?>
-//							</a>
-//						</li>
-//		   				<li class="folder-delete">
-//							<a href="#" title="<?php echo $lng['delete_folder_title']; ?>" onclick="delete_folder('<?php echo $_GET['viewdir']; ?>');">
-//								<?php echo $lng['delete_folder']; ?>
-//							</a>
-//						</li>
-//						<li class="file-refresh">
-//							<a href="#" title="<?php echo $lng['refresh_files_title']; ?>" 
-//									onclick="load('mfm.php?viewdir=<?php echo $_GET['viewdir']; ?>','view-files'); return false;">
-//								<?php echo $lng['refresh']; ?>
-//							</a>
-//						</li>
-//					</ul>
-//					
-//					<div id="current-loction">
-//					  <?php echo htmlspecialchars($root_path . '/' . $_GET['viewdir'] . '/'); ?>
-//					</div>
-//					
-//					<form style="display: none;" id="load-file" action="" class="load-file" method="post" enctype="multipart/form-data">
-//
-//						<fieldset>
-//						  <legend><?php echo $lng['new_file_title']; ?></legend>
-//							<input type="hidden" value="<?php echo $_GET['viewdir']; ?>" name="return" />
-//							<label><?php echo $lng['form_file']; ?><input type="file" name="new_file" /></label>
-//						</fieldset>
-//						
-//						<fieldset>
-//						  <legend><?php echo $lng['new_file_manipulations']; ?></legend>
-//						  <table>
-//								<tr>
-//									<td><label for="new_resize"><?php echo $lng['form_width']; ?></label></td>
-//									<td><input type="text" class="number" maxlength="4" id="new_resize" name="new_resize" value="" /> px</td>
-//								</tr>
-//								<tr>
-//									<td><label for="new_rotate"><?php echo $lng['form_rotate']; ?></label></td>
-//									<td>
-//										<select id="new_rotate" name="new_rotate">
-//										  <option value="0"></option>
-//										  <option value="90">90</option>
-//										  <option value="180">180</option>
-//										  <option value="270">270</option>
-//										</select>
-//									</td>
-//								</tr>
-//								<tr>
-//									<td></td>
-//									<td><input type="checkbox" class="checkbox" id="new_greyscale" name="new_greyscale" /><label for="new_greyscale"><?php echo $lng['form_greyscale']; ?></label></td>
-//								</tr>
-//						  </table>
-//						</fieldset>
-//						
-//						<input type="submit" id="insert" value="<?php echo $lng['form_submit']; ?>" />
-//						
-//					</form>
+
 		}
+		else {
+			t="";
+		}
+		sendElement("viewdir",t);
 
 		//create directory and show results
 		t=request.getParameter("newdir");
@@ -370,158 +313,35 @@ public class FileManager extends MyAbstractPageGenerator {
 			
 		//show status messages by code
 		t=request.getParameter("status");
-		if(t!=null) {
-			int tv=Integer.parseInt(t);
-		  //upload file
-			if(tv == 1) {
-				output= "<p class=\"successful\">File uploaded!</p>";
-			} else if(tv == 2) {
-				output="<p class=\"failed\">Upload failed</p>";
-			} else if(tv == 3) {
-				output="<p class=\"failed\">Wrong folder</p>";
-			//remove directory
-			} else if(tv == 4) {
-				output="<p class=\"successful\">Folder deleted</p>";
-			} else if(tv == 5) {
-				output="<p class=\"failed\">Folder cannot be deleted</p>";
-			} else if(tv == 6) {
-				output="<p class=\"failed\">Folder doesn't exist</p>";
-			}
-		}
+		sendElement("status",t);
+//		if(t!=null) {
+//			int tv=Integer.parseInt(t);
+//		  //upload file
+//			if(tv == 1) {
+//				output= "<p class=\"successful\">File uploaded!</p>";
+//			} else if(tv == 2) {
+//				output="<p class=\"failed\">Upload failed</p>";
+//			} else if(tv == 3) {
+//				output="<p class=\"failed\">Wrong folder</p>";
+//			//remove directory
+//			} else if(tv == 4) {
+//				output="<p class=\"successful\">Folder deleted</p>";
+//			} else if(tv == 5) {
+//				output="<p class=\"failed\">Folder cannot be deleted</p>";
+//			} else if(tv == 6) {
+//				output="<p class=\"failed\">Folder doesn't exist</p>";
+//			}
+//		}
+
+		sendElement("uploadstatus",uploadstatus);
 
 		//finally show file list
 		print_files(request.getParameter("viewdir"));
+		
+
 		
 		contentHandler.endElement("","root","root");
 		contentHandler.endDocument();
 
 	}
-
-			
-
-
-/*
-			<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-			<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
-			<head>
-			  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-			  <meta http-equiv="content-language" content="en" />
-			  <title><?php echo $lng['window_title']; ?></title>
-			  <link rel="stylesheet" href="mfm/style.css" type="text/css" />
-			  <link rel="stylesheet" href="<?php echo $root_path; ?>/tiny_mce/themes/advanced/skins/default/dialog.css" type="text/css" />
-			  <script type="text/javascript" src="<?php echo $root_path; ?>/tiny_mce/tiny_mce_popup.js"></script>
-				<script type="text/javascript">
-					//<![CDATA[
-					
-					//load content using AHAH (asynchronous HTML and HTTP)
-			  	function ahah(url, target) {
-						document.getElementById(target).innerHTML = '<img src="mfm/loading.gif" alt="" /> <?php echo $lng['loading']; ?>';
-						if (window.XMLHttpRequest) {
-							req = new XMLHttpRequest();
-						} else if (window.ActiveXObject) {
-							req = new ActiveXObject("Microsoft.XMLHTTP");
-						}
-						if (req != undefined) {
-							req.onreadystatechange = function() {ahahDone(url, target);};
-							req.open("GET", url, true);
-							req.send("");
-						}
-					}
-						
-					function ahahDone(url, target) {
-						if (req.readyState == 4) {
-							if (req.status == 200) {
-								document.getElementById(target).innerHTML = req.responseText;
-							} else {
-							document.getElementById(target).innerHTML=" AHAH Error:\n"+ req.status + "\n" +req.statusText;
-							}
-						}
-					}
-						
-					function load(name, div) {
-						ahah(name,div);
-						return false;
-					}
-				
-				  //ask for folder title and request it's creation
-					function create_folder(viewdir) {
-						var name=prompt("<?php echo $lng['ask_folder_title']; ?>","<?php echo $lng['default_folder']; ?>");
-						if (name!=null && name!=""){
-					  	load('mfm.php?viewdir=' + viewdir + '&newdir=' + name + '','view-files');
-					  }
-					}
-
-					<?php
-						//first one for inserting file name into given field, second for working as tinyMCE plugin
-						if ($mode == 'standalone' && isset($_GET['field'])) {
-					?>
-			    function submit_url(URL) {
-			      window.opener.document.getElementById('<?php echo $_GET['field']; ?>').value = URL;
-						self.close();
-			    }
-					<?php
-						} else {
-					?>
-			    function submit_url(URL) {
-			      var win = tinyMCEPopup.getWindowArg("window");
-			      win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = URL;
-			      if (win.ImageDialog.getImageData) win.ImageDialog.getImageData();
-			      if (win.ImageDialog.showPreviewImage) win.ImageDialog.showPreviewImage(URL);
-			      tinyMCEPopup.close();
-			    }
-			    <?php } ?>
-			    
-			    //confirm and delete file
-			    function delete_file(dir,file) {
-						var answer = confirm("<?php echo $lng['ask_really_delete']; ?>");
-						if (answer){
-					  	load('mfm.php?viewdir=' + dir + '&deletefile=' + file,'view-files');
-						} 
-					}
-
-			    //confirm and delete folder
-			    function delete_folder(dir) {
-						var answer = confirm("<?php echo $lng['ask_really_delete']; ?>");
-						if (answer){
-					  	location.href = 'mfm.php?deletefolder=' + dir;
-						}
-					}
-
-					//show/hide element (for file upload form)
-					function toggle_visibility(id) {
-						var e = document.getElementById(id);
-						if(e != null) {
-							if(e.style.display == 'none') {
-								e.style.display = 'block';
-							} else {
-								e.style.display = 'none';
-							}
-						}
-					}
-					//]]>
-				</script>
-			</head>
-
-			<?php
-				$return = $file_root;
-				if(isset($_REQUEST['return'])) {$return = $_REQUEST['return'];}
-			?>
-
-			<body onload="load('mfm.php?status=<?php echo $uploadstatus; ?>&amp;viewdir=<?php echo $return; ?>','view-files');">
-				<div id="browser-wrapper">
-			    <div id="view-tree">
-						<ul class="dirlist">
-							<li><a href="<?php echo $root_path . '/' . $file_root; ?>/" onclick="load('mfm.php?viewdir=<?php echo $file_root; ?>','view-files'); return false;"><?php echo $file_root; ?></a> <a href="#" title="<?php echo $lng['refresh_tree_title']; ?>" onclick="load('mfm.php?viewtree=true','view-tree'); return false;" id="refresh-tree"><?php echo $lng['refresh']; ?></a>
-							  <?php print_tree($file_root); ?>
-							</li>
-						</ul>
-					</div>
-			    <div id="view-files"></div>
-			  </div>
-
-			</body>
-
-			</html>
-			*/
 }

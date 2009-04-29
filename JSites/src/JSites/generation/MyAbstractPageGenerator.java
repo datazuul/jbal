@@ -350,8 +350,10 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 	}
 	
 	public void sendElement(String element, String content, AttributesImpl attr) throws SAXException {
+		if(content==null || content.length()==0) content="null";
 		contentHandler.startElement("",element,element, attr);
-		contentHandler.characters(content.toCharArray(), 0, content.length());
+		if(content.length()>0)
+			contentHandler.characters(content.toCharArray(), 0, content.length());
 		contentHandler.endElement("",element,element);
 	}
 }
