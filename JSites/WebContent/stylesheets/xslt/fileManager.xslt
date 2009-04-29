@@ -23,9 +23,66 @@
     <xsl:variable name="fileroot"><xsl:value-of select="/root/fileroot"/></xsl:variable>
     
     
+    <xsl:template match="item">
+     <!-- 	  while($f = readdir($d)) {
+//	    if(strpos($f, '.') === 0) continue;
+//	    $ff = $c . '/' . $f;
+//	    $ext = strtolower(substr(strrchr($f, '.'), 1));
+//	    if(!is_dir($ff)) {
+ -->
+		<tr class="light">
+	<!-- show preview and different icon, if file is image  -->
+	<!-- 
+//		    $imageinfo = @getimagesize($ff);
+//		    if($imageinfo && $imageinfo[2] > 0 && $imageinfo[2]< 4) {
+//		    	$resize = '';
+//		    	if($imageinfo[0] > $thmb_size or $imageinfo[1] > $thmb_size) {
+//			    	if($imageinfo[0] > $imageinfo[1]) {
+//							$resize = ' style="width: ' . $thmb_size . 'px;"';
+//						} else {
+//							$resize = ' style="height: ' . $thmb_size . 'px;"';
+//						}
+//					}
+//					if ($imageinfo[2] == 1) {
+//						$imagetype = "image_gif";
+//					} elseif ($imageinfo[2] == 2) {
+//						$imagetype = "image_jpg";
+//					} elseif ($imageinfo[2] == 3) {
+//						$imagetype = "image_jpg";
+//					} else {
+//						$imagetype = "image";
+//					}
+//					echo '<td><a class="file thumbnail ' . $imagetype . '" href="#" onclick="submit_url(\'' . $root_path . '/' . $ff . '\');">' . $f . '<span><img' . $resize . ' src="' . $root_path . '/' . $ff . '" /></span></a>'; echo '</td>';
+//				//known file types
+//				} elseif(in_array($ext,$file_class)) {
+//					echo '<td><a class="file file_' . $ext . '" href="#" onclick="submit_url(\'' . $root_path . '/' . $ff . '\');">' . $f . '</a>'; echo '</td>';
+//				//all other files
+//				} else {
+ -->
+			<td>
+				<a class="file unknown" href="#" onclick="submit_url(\'' . $root_path . '/' . $ff . '\');">
+					<xsl:value-of select="." />
+				</a>
+			</td>
+			<td>
+				<xsl:value-of select="@size" />
+			</td>
+			<td class="delete">
+				<a href="#" title="' . $lng['delete_title'] . '" onclick="delete_file(\'' . $c . '\',\'' . $f . '\');">
+					Delete
+				</a>
+			</td>
+		</tr>
+    </xsl:template>
+    
+    <xsl:template match="dirlist">
+    	<table>
+    		<xsl:apply-templates />
+    	</table>
+    </xsl:template>
+    
+    
     <xsl:template match="viewdir">
-    	<ul>cucu</ul>
-    <!-- 
  		<ul id="browser-toolbar">
 			<li class="file-new">
 				<a href="#" title="New file title" onclick="toggle_visibility('load-file'); return false;">
@@ -93,12 +150,11 @@
 			<input type="submit" id="insert" value="Submit" />
 			
 		</form>
-		 -->
     </xsl:template>
     
     
-	<xsl:template match="/">
-		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<xsl:template match="root">
+		<html>
 
 			<head>
 			  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
@@ -217,7 +273,7 @@
 									Refresh
 								</a>
 								
-								<ul>cucu</ul>
+								<xsl:apply-templates />
 							  <!--  <?php print_tree($file_root); ?>  -->
 							</li>
 						</ul>
