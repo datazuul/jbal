@@ -1,15 +1,27 @@
 package JSites.fileManager;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.avalon.framework.component.ComponentException;
+import org.apache.avalon.framework.component.ComponentManager;
 import org.apache.avalon.framework.parameters.ParameterException;
+import org.apache.cocoon.environment.ObjectModelHelper;
+import org.apache.cocoon.environment.Request;
+import org.apache.cocoon.servlet.multipart.Part;
 import org.apache.cocoon.xml.AttributesImpl;
 import org.xml.sax.SAXException;
 
+import JSites.components.FileUploadManager;
 import JSites.generation.MyAbstractPageGenerator;
 import JSites.utils.DirectoryHelper;
 
 public class FileManager extends MyAbstractPageGenerator {
+    private FileUploadManager upload_manager;
+    private Part part;
+    
 	String root_path="";
 	String file_root="";
 	String context=null;
@@ -17,19 +29,13 @@ public class FileManager extends MyAbstractPageGenerator {
 	String[] file_type = {"File","Image","Flash","Media"};
 
 	String[] file_class = {
-	                "swf",
+	                "jpg",
 	                "txt",
-	                "htm",
-	                "html",
 	                "zip",
 	                "gz",
 	                "rar",
-	                "cab",
 	                "tar",
 	                "7z",
-	                "deb",
-	                "rpm",
-	                "php",
 	                "mp3",
 	                "ogg",
 	                "mid",
@@ -38,8 +44,7 @@ public class FileManager extends MyAbstractPageGenerator {
 	                "flv",
 	                "mpeg",
 	                "pdf",
-	                "ttf",
-	                "exe"
+	                "jpeg"
 	};
 	
 	private String format_filename(String filename) {
@@ -151,6 +156,60 @@ public class FileManager extends MyAbstractPageGenerator {
 		}
 	}
 	
+	private void fileUpload(String resourceType, String currentFolder) throws SAXException, IOException {
+		Request request = ObjectModelHelper.getRequest(objectModel);
+    	ObjectModelHelper.getContext(objectModel).getAttributeNames().nextElement();
+        part = (Part) request.get("NewFile");        
+        	
+        InputStream in = null;
+        FileOutputStream out = null;
+        
+        try {
+        	String fileName=part.getFileName();
+        	String extension=null;
+        	if(fileName.contains(".")) {
+        		extension=fileName.substring(fileName.indexOf(".")+1);
+        	}
+        	if(extension==null || inArray(extension,file_class)) {
+				String path = root_path+"/" + currentFolder + "/"+ fileName;
+				File destination = new File(path);
+	    		byte[] readchar = new byte[20480];
+	    		in = part.getInputStream();
+				out = new FileOutputStream(destination);
+				
+	    		int c = 0;
+	    		while ((c = in.read(readchar)) != -1) {
+	    			out.write(readchar, 0, c);
+	    		}
+	    		
+	    		AttributesImpl ok=new AttributesImpl();
+	    		ok.addCDATAAttribute("type", "text/javascript");
+	    		String js="window.parent.frames[\"frmUpload\"].OnUploadCompleted('0','"+fileName+"');";
+	    		sendElement("script", js, ok);
+        	}
+        	else {
+        		sendError(202,"");
+        	}
+
+//			sendElement("status","ok");
+//	        sendElement("filename",part.getFileName());
+//	        sendElement("mimetype",part.getMimeType());
+//	        sendElement("uploadname",part.getUploadName());
+//	        sendElement("size",String.valueOf(part.getSize()));
+//	        sendElement("uploadfolder",upload_manager.getUploadFolder());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			String message="error";
+			sendError(202,message);
+		}
+		finally {
+			in.close();
+			out.close();
+		}
+		
+	}
+	
 	
 	public void generate() throws SAXException {
 		String pid=request.getParameter("pid");
@@ -158,7 +217,6 @@ public class FileManager extends MyAbstractPageGenerator {
 		File p=new File (root_path);
 		if(!p.exists()) p.mkdirs();
 		
-		AttributesImpl startAttr=new AttributesImpl();
 		
 		String sCommand=request.getParameter("Command");
 		String sResourceType=request.getParameter("Type");
@@ -170,31 +228,44 @@ public class FileManager extends MyAbstractPageGenerator {
 			e.printStackTrace();
 		}
 		
-		startAttr.addCDATAAttribute("command", sCommand);
-		startAttr.addCDATAAttribute("resourceType", sResourceType);
-		
 		contentHandler.startDocument();
-		contentHandler.startElement("","Connector","Connector", startAttr);
 		
-		AttributesImpl cf=new AttributesImpl();
-		cf.addCDATAAttribute("path", sCurrentFolder);
-		cf.addCDATAAttribute("url", getUrlFromPath(sResourceType,sCurrentFolder));
-		
-		sendElement("CurrentFolder","",cf);
-
-		if(inArray(sResourceType,file_type)) {
-			// TODO: Check current foldere syntax
-			if(sCurrentFolder!=null && sCommand!=null && !sCurrentFolder.contains("..")) {
-				if(sCommand.equals("GetFolders")) getFolders(sResourceType, sCurrentFolder);
-				else if(sCommand.equals("GetFoldersAndFiles")) getFoldersAndFiles(sResourceType, sCurrentFolder);
-				else if(sCommand.equals("CreateFolder")) createFolder(sResourceType, sCurrentFolder);
-			}
-			else {
+		if(sCommand!=null && sCommand.equals("FileUpload")) {
+			try {
+				fileUpload(sResourceType,sCurrentFolder);
+			} catch (IOException e) {
 				sendError(102,"");
 			}
 		}
+		else {
+			AttributesImpl startAttr=new AttributesImpl();
+
 		
-		contentHandler.endElement("","Connector","Connector");
+			startAttr.addCDATAAttribute("command", sCommand);
+			startAttr.addCDATAAttribute("resourceType", sResourceType);
+			
+			contentHandler.startElement("","Connector","Connector", startAttr);
+			
+			AttributesImpl cf=new AttributesImpl();
+			cf.addCDATAAttribute("path", sCurrentFolder);
+			cf.addCDATAAttribute("url", getUrlFromPath(sResourceType,sCurrentFolder));
+			
+			sendElement("CurrentFolder","",cf);
+	
+			if(inArray(sResourceType,file_type)) {
+				// TODO: Check current foldere syntax
+				if(sCurrentFolder!=null && sCommand!=null && !sCurrentFolder.contains("..")) {
+					if(sCommand.equals("GetFolders")) getFolders(sResourceType, sCurrentFolder);
+					else if(sCommand.equals("GetFoldersAndFiles")) getFoldersAndFiles(sResourceType, sCurrentFolder);
+					else if(sCommand.equals("CreateFolder")) createFolder(sResourceType, sCurrentFolder);
+				}
+				else {
+					sendError(102,"");
+				}
+			}
+			
+			contentHandler.endElement("","Connector","Connector");
+		}
 		contentHandler.endDocument();
 
 	}
@@ -202,7 +273,7 @@ public class FileManager extends MyAbstractPageGenerator {
 	private boolean inArray(String item, String[] array) {
 		boolean r=false;
 		for(int i=0;item!=null && array!=null && i<array.length;i++) {
-			if(item.equals(array[i])) {
+			if(item.equalsIgnoreCase(array[i])) {
 				r=true;
 				break;
 			}
@@ -213,4 +284,9 @@ public class FileManager extends MyAbstractPageGenerator {
 	private String getUrlFromPath(String resourceType, String currentFolder) {
 		return context+"/images/"+currentFolder;
 	}
+	
+    public void compose(ComponentManager manager) throws ComponentException {
+    	super.compose(manager);
+        upload_manager = (FileUploadManager) manager.lookup(FileUploadManager.ROLE);
+    }
 }
