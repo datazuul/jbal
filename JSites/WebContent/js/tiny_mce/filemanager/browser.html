@@ -39,6 +39,7 @@ var oConnector = new Object() ;
 oConnector.CurrentFolder	= '/' ;
 
 var sConnUrl = GetUrlParam( 'Connector' ) ;
+var pid = GetUrlParam( 'pid' ) ;
 
 // Gecko has some problems when using relative URLs (not starting with slash).
 if ( sConnUrl.substr(0,1) != '/' && sConnUrl.indexOf( '://' ) < 0 ){
@@ -63,6 +64,7 @@ oConnector.SendCommand = function( command, params, callBackFunction )
 	var sUrl = this.ConnectorUrl + 'Command=' + command ;
 	sUrl += '&Type=' + this.ResourceType ;
 	sUrl += '&CurrentFolder=' + escape( this.CurrentFolder ) ;
+	sUrl += '&pid=' + pid ;
 	
 	if ( params ) sUrl += '&' + params ;
 

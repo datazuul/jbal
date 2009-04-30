@@ -30,6 +30,7 @@
 	            <map:match pattern="edit">
 	                <map:act type="request">
 	                	<map:parameter name="parameters" value="true"/>
+	                	
 	             		<map:generate src="{request-param:datadir}/data/section{cid}.xml"/>
 	             		<map:transform src="preparenewsedit.xslt">
 	             			<map:parameter name="use-request-parameters" value="true"/>
@@ -40,6 +41,7 @@
 						<map:transform type="wikitrans"/>
 	                    <map:transform src="sectionedit.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
+	                    	<map:parameter name="context" value="{context}"/>
 	                    </map:transform>
 	                    <map:transform type="cinclude" />
 	                    <map:serialize type="xml"/>

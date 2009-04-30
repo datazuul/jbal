@@ -20,15 +20,19 @@
 	<map:match pattern="fileManager">
 		<map:act type="auth-protect">
         	<map:parameter name="handler" value="JSitesHandler"/>
-        
+        	
         	<map:act type="authorize-users">
         		<map:parameter name="db" value="{global:db}"/>
         		<map:parameter name="pid" value="0"/>
-				<map:generate type="fileManager" src="{global:data-directory}/images/">
-					<map:parameter name="db" value="{global:db}"/>
-				</map:generate>
-				<map:transform src="context://stylesheets/xslt/fileManager.xslt" />
+        		<map:act type="request">
+					<map:generate type="fileManager" src="{global:data-directory}/images/">
+						<map:parameter name="db" value="{global:db}"/>
+						<map:parameter name="context" value="{context}"/>
+					</map:generate>
+				</map:act>
 <!--
+				<map:transform src="context://stylesheets/xslt/fileManager.xslt" />
+
 				<map:act type="request">
 					<map:transform src="context://stylesheets/xslt/fileManager.xslt">
 						<map:parameter name="parameters" value="true"/>
@@ -40,7 +44,7 @@
 -->
 			</map:act>	
 			
-			<map:serialize type="xhtml" />
+			<map:serialize type="xml" />
 		</map:act>
 	
 	</map:match>
