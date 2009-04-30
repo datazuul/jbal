@@ -25,6 +25,7 @@ public class FileManager extends MyAbstractPageGenerator {
 	String root_path="";
 	String file_root="";
 	String context=null;
+	String pid=null;
 	
 	String[] file_type = {"File","Image","Flash","Media"};
 
@@ -41,7 +42,6 @@ public class FileManager extends MyAbstractPageGenerator {
 	                "mid",
 	                "avi",
 	                "mpg",
-	                "flv",
 	                "mpeg",
 	                "pdf",
 	                "jpeg"
@@ -212,7 +212,7 @@ public class FileManager extends MyAbstractPageGenerator {
 	
 	
 	public void generate() throws SAXException {
-		String pid=request.getParameter("pid");
+		pid=request.getParameter("pid");
 		root_path=this.source+"/page"+pid+"/";
 		File p=new File (root_path);
 		if(!p.exists()) p.mkdirs();
@@ -282,7 +282,7 @@ public class FileManager extends MyAbstractPageGenerator {
 	}
 
 	private String getUrlFromPath(String resourceType, String currentFolder) {
-		return context+"/images/"+currentFolder;
+		return "./images/page"+pid+currentFolder;
 	}
 	
     public void compose(ComponentManager manager) throws ComponentException {
