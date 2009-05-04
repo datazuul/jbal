@@ -18,8 +18,15 @@
 	<xsl:template match="catalogSearch">
 		<div class="{$time}">
 			<div class="sezione">
-				<xsl:apply-templates select="catalogName" />
-				<xsl:apply-templates select="catalogConnection" />
+				<fieldset>
+					<legend>Catalogo</legend>
+					<table border="0" class="noc" id="noc">
+					<xsl:apply-templates select="catalogName" />
+					<xsl:apply-templates select="catalogConnection" />
+					<xsl:apply-templates select="catalogFormat" />
+					<xsl:apply-templates select="catalogFile" />
+					</table>
+				</fieldset>
 				
 				<fieldset>
 				 <legend>Canali ricerca attivati</legend>
@@ -52,22 +59,33 @@
 		</div>
 	</xsl:template>
 
+	<xsl:template match="catalogFormat">
+		<tr>
+		<td><label class="cat_data_label">Formato catalogo</label></td>
+		<td><input type="text" size="40" name="catalogFormat" value="{text()}" /></td>
+		</tr>
+	</xsl:template>
+	
+	<xsl:template match="catalogFile">
+		<tr>
+		<td><label class="cat_data_label">File da caricare</label></td>
+		<td><input type="text" size="40" name="catalogFile" value="{text()}" /></td>
+		</tr>
+	</xsl:template>
 
 	<xsl:template match="catalogName">
-		<fieldset>
-			<legend>Nome catalogo</legend>
-			<input type="text" size="40" name="catalogName" value="{text()}" />
-			<br />
-		</fieldset>
+		<tr>
+		<td><label class="cat_data_label">Nome catalogo</label></td>
+		<td><input type="text" size="40" name="catalogName" value="{text()}" /></td>
+		</tr>
 	</xsl:template>
 
 
 	<xsl:template match="catalogConnection">
-		<fieldset>
-			<legend>Nome connessione</legend>
-			<input type="text" size="40" name="catalogConnection" value="{text()}" />
-			<br />
-		</fieldset>
+		<tr>
+		<td><label class="cat_data_label">Nome connessione</label></td>
+		<td><input type="text" size="40" name="catalogConnection" value="{text()}" /></td>
+		</tr>
 	</xsl:template>
 	
 	<xsl:template match="links">
