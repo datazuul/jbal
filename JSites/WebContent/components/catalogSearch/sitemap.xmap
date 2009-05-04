@@ -8,6 +8,7 @@
 	<map:components>
         <map:transformers>
             <map:transformer name="catalogSearch" label="content" pool-max="16" src="JSites.transformation.catalogSearch.CatalogSearchTransformer"/>
+            <map:transformer name="catalogSearchSave" label="content" pool-max="16" src="JSites.transformation.catalogSearch.CatalogSearchSaveTransformer"/>
             <map:transformer name="markWord" label="content" pool-max="16" src="JSites.transformation.catalogSearch.MarkWord"/>
             <map:transformer name="createLink" label="content" pool-max="16" src="JSites.transformation.catalogSearch.CreateLink"/>
             <map:transformer name="record2display" label="content" pool-max="16" src="JSites.transformation.catalogSearch.Record2display"/>
@@ -42,10 +43,19 @@
 	            </map:match>
 	            
 	            <map:match pattern="save">
-					<map:generate type="internalSave"/>
-					<map:transform src="catalogSearchsave.xslt">
-						<map:parameter name="use-request-parameters" value="true"/>
-					</map:transform>			
+	            	<map:generate src="{request-param:datadir}/data/catalogSearch0.xml"/>
+					<map:transform type="catalogSearchSave"/>
+					
+					<map:transform type="tutil" src="/t/catalogSave" />
+					<map:act type="request">
+						<map:transform src="catalogSearchsave.xslt">
+							<map:parameter name="datadir" value="{request-param:datadir}/data/catalogSearch{request-param:cid}.xml"/>
+						</map:transform>
+					</map:act>
+					
+					<map:transform type="tutil" src="/t/catalogSaved" />
+					
+								
 					<map:transform type="write-source"/>
 					<map:transform src="../section/saving.xslt">
 						<map:parameter name="use-request-parameters" value="true"/>

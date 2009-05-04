@@ -20,27 +20,54 @@
 			<div class="sezione">
 				<xsl:apply-templates select="catalogName" />
 				<xsl:apply-templates select="catalogConnection" />
+				
+				<fieldset>
+				 <legend>Canali ricerca attivati</legend>
+				 	<xsl:for-each select="search">
+				 		<input type="checkbox" name="search-{@name}" value="true">
+				 			<xsl:if test="string-length(@checked) != 0">
+				 				<xsl:attribute name="checked">checked</xsl:attribute>
+				 			</xsl:if>
+				 		</input>
+				 		<xsl:value-of select="@desc" />
+				 		<br/>
+				 	</xsl:for-each>
+				</fieldset>
+				
+				<fieldset>
+				 <legend>Canali liste attivati</legend>
+					 <xsl:for-each select="list">
+				 		<input type="checkbox" name="list-{@name}" value="true">
+				 			<xsl:if test="string-length(@checked) != 0">
+				 				<xsl:attribute name="checked">checked</xsl:attribute>
+				 			</xsl:if>
+				 		</input>
+				 		<xsl:value-of select="@desc" />
+				 		<br/>
+				 	</xsl:for-each>
+				</fieldset>
+				
 				<xsl:apply-templates select="links" />
 			</div>		
 		</div>
 	</xsl:template>
-	
+
 
 	<xsl:template match="catalogName">
-	
-		<b>Nome catalogo:</b>
-		<br />
-		<input type="text" size="40" name="catalogName" value="{text()}" />
-		<br />
-
+		<fieldset>
+			<legend>Nome catalogo</legend>
+			<input type="text" size="40" name="catalogName" value="{text()}" />
+			<br />
+		</fieldset>
 	</xsl:template>
 
 
 	<xsl:template match="catalogConnection">
-		<b>Nome connessione:</b>
-		<br />
-		<input type="text" size="40" name="catalogConnection" value="{text()}" />
-		<br />
+		<fieldset>
+			<legend>Nome connessione</legend>
+			<input type="text" size="40" name="catalogConnection" value="{text()}" />
+			<br />
+		</fieldset>
 	</xsl:template>
 	
 	<xsl:template match="links">
