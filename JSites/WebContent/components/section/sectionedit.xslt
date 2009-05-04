@@ -26,7 +26,7 @@
 		<div class="{$time}">
 			<div class="sezione">
 				<div class="sezione_immagine">
-					<xsl:apply-templates select="img" />
+					<xsl:apply-templates select="image" />
 				</div>
 				<div class="sezione_contenuto">
 					<xsl:call-template name="news"/>
@@ -62,7 +62,7 @@
 
 	<!--  IMMAGINE (PIPELINE INSERIMENTO IMMAGINE CHIAMATA CON CINCLUDE) -->
 
-	<xsl:template match="img">
+	<xsl:template match="image">
 		<xsl:variable name="url">
 			<xsl:value-of select="text()" />
 		</xsl:variable>

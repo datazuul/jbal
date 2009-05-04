@@ -53,9 +53,9 @@
 	
 		<!--  IMMAGINE -->
 
-		<xsl:variable name="url"><xsl:value-of select="img/text()"/></xsl:variable>
+		<xsl:variable name="url"><xsl:value-of select="image/text()"/></xsl:variable>
 		<xsl:variable name="titolo"><xsl:value-of select="titolo/text()"/></xsl:variable>
-		<xsl:variable name="link"><xsl:value-of select="img/@link"/></xsl:variable>
+		<xsl:variable name="link"><xsl:value-of select="image/@link"/></xsl:variable>
 		<xsl:if test="$url != 'images/contentimg/no_image'">
 			<div class="sezione_immagine">
 				<xsl:if test="string-length(normalize-space($link)) > 0">

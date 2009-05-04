@@ -21,7 +21,11 @@
 			<xsl:apply-templates select="@*|node()|text()|*" />
 		</xsl:copy>
 	</xsl:template>
-
 	
+	<xsl:template match="img">
+		<image>
+			<xsl:value-of select="."/>
+		</image>
+	</xsl:template>
 
 </xsl:stylesheet>
