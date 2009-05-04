@@ -75,7 +75,6 @@
 		<input name="imglink" type="text" size="6" value="{@link}"/>
 	</xsl:template>
 
-	<!--  TESTO -->
 
 	<xsl:template match="testo">
 		<script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
@@ -85,8 +84,11 @@
 	tinyMCE.init({
 		file_browser_callback : "fileBrowserCallBack",
 		// General options
-		mode : "textareas",
+		// mode : "textareas",
+		mode : "exact",
+		elements : "elm2",
 		theme : "advanced",
+		entity_encoding : "numeric",		
 		plugins : "safari,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template",
 
 		// Theme options
@@ -115,32 +117,7 @@
 		}
 	});
 	
-	function myMaxLength(){
-        // variable declaration; You must change this value for your use.
-        /*
-        !! ATTENTION !!
-        in purpose to not lose the HTML balise in the 'TinyMCE Editor' (like: <p></p>)
-        this value will be used to save the visible char AND the HTML balise
-        that mean :
-            var mytext = '<p>123</p>';
-            alert(mytext.length);
-            //10
-        */
-        return CantWriteMoreThan = 9999; //Maxlength
-        /*
-        Post Scriptum:
-        You can use the 'replace' function (thanks to lorenzocampanis at users.sourceforge.net)if you want to count ONLY visible char
-        that mean :
-            var mytext = '<p>123</p>';
-            alert(mytext.length.replace(/<\/?[^>]+(>|$)/g, ""));
-            //3
-        */
-    };
-   
-    function the_HTML_id_Of_My_TextArea(){
-        //variable declaration; You must change this value for your use
-        return 'elm2';
-    };
+
 	
 function fileBrowserCallBack(field_name, url, type, win) {
 	var connector = "../../filemanager/browser.html?Connector=]]><xsl:value-of select="$context" /><![CDATA[/fileManager&pid=]]><xsl:value-of select="$pid" /><![CDATA[";
@@ -169,145 +146,7 @@ function fileBrowserCallBack(field_name, url, type, win) {
 	window.open(connector, "tinyfck", "modal,width=600,height=400");
 }
 		]]>
-		
-<!-- 
-	// O2k7 skin
-	
-
-
-	tinyMCE.init({
-		// General options
-		file_browser_callback : "fileBrowserCallBack",
-		mode : "exact",
-		elements : "elm2",
-		theme : "advanced",
-		//theme : "simple",
-		skin : "o2k7",
-		plugins : "safari,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,insertdatetime,preview,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,inlinepopups",
-		plugins : "style,advimage,advlink,preview,print,paste,fullscreen",
-		language : "it",
-		entity_encoding : "numeric",
-		
-		// Theme options
-		theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect",
-		// help,code,
-		theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,|,insertdate,inserttime,preview,|,forecolor,backcolor",
-		// tablecontrols,|,
-		theme_advanced_buttons3 : "hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr,|,print,|,ltr,rtl,|,fullscreen",
-		//theme_advanced_buttons4 : "insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,pagebreak",
-		theme_advanced_toolbar_location : "top",
-		theme_advanced_toolbar_align : "left",
-		theme_advanced_statusbar_location : "bottom",
-		theme_advanced_resizing : true,
-
-		// Example content CSS (should be your site CSS)
-		content_css : "css/content.css",
-
-		// Drop lists for link/image/media/template dialogs
-		template_external_list_url : "lists/template_list.js",
-		external_link_list_url : "lists/link_list.js",
-		external_image_list_url : "lists/image_list.js",
-		media_external_list_url : "lists/media_list.js",
-		
-		// Replace values for the template plugin
-		template_replace_values : {
-			username : "Some User",
-			staffid : "991234"
-		},
-		
-		setup : function(ed) {
-	        ed.onKeyDown.add(
-	            function(ed, e) {
-	                //variable declaration; No change needed.
-	                var CantWriteMoreThan = myMaxLength();/* if you want to change the 'Max number of char allowed' you can change this value in a unique location. See the above myMaxLength() function. */
-	                var Authorized_theTextAreaContent = tinyMCE.get(the_HTML_id_Of_My_TextArea()).getContent();    //is the 'undo-text'
-	                var theTextAreaContent = tinyMCE.get(the_HTML_id_Of_My_TextArea()).getContent(); //Content of the TextArea
-	                var theTextAreaContentLength = tinyMCE.get(the_HTML_id_Of_My_TextArea()).getContent().replace(/<\/?[^>]+(>|$)/g, "").length; //Length of the Content of the TextArea
-	                //alert('OnKeyDown Event : '+ CantWriteMoreThan);
-	                //alert('OnKeyDown Event : '+ theTextAreaContent);
-	                //alert('OnKeyDown Event : '+ theTextAreaContentLength);
-	                if (theTextAreaContentLength <= CantWriteMoreThan){
-	                    //Set 'HTML hidden input' with the value got from the 'TinyMCE Editor'.
-	                    document.getElementById('UndoText').value = Authorized_theTextAreaContent;
-	                }//endif
-	                else{
-	                    //Set the 'TinyMCE Editor' Editor with the value got from the 'HTML hidden input'.
-	                    tinyMCE.get(the_HTML_id_Of_My_TextArea()).setContent(document.getElementById('UndoText').value);
-	                    alert("Numero massimo di caratteri: "+myMaxLength());
-	                }//end if
-	            }//end function(ed,e)
-	        );//end ed.onKeyDown.add
-	       
-	        ed.onChange.add(function(ed, e) {
-	                //variable declaration; No change needed.
-	                var CantWriteMoreThan = myMaxLength();/* if you want to change the 'Max number of char allowed' you can change this value in a unique location. See the above myMaxLength() function. */
-	                var Authorized_theTextAreaContent = tinyMCE.get(the_HTML_id_Of_My_TextArea()).getContent();    //is the 'undo-text'
-	                var theTextAreaContent = tinyMCE.get(the_HTML_id_Of_My_TextArea()).getContent(); //Content of the TextArea
-	                var theTextAreaContentLength = tinyMCE.get(the_HTML_id_Of_My_TextArea()).getContent().replace(/<\/?[^>]+(>|$)/g, "").length; //Length of the Content of the TextArea
-	                //alert('OnChange Event : '+ CantWriteMoreThan);
-	                //alert('OnChange Event : '+ theTextAreaContent);
-	                //alert('OnChange Event : '+ theTextAreaContentLength);
-	                if (theTextAreaContentLength <= CantWriteMoreThan){
-	                    //Set 'HTML hidden input' with the value got from the 'TinyMCE Editor'.
-	                    document.getElementById('UndoText').value = Authorized_theTextAreaContent;
-	                }//endif
-	                else{
-	                    //Set the 'TinyMCE Editor' Editor with the value got from the 'HTML hidden input'.
-	                    tinyMCE.get(the_HTML_id_Of_My_TextArea()).setContent(document.getElementById('UndoText').value);
-	                    alert("Numero massimo di caratteri: "+myMaxLength());
-	                }//end if
-	            }//end function(ed,e)
-	        );//end ed.onChange.add
-	       
-	        ed.onKeyUp.add(function(ed, e) {
-	                //variable declaration; No change needed.
-	                var CantWriteMoreThan = myMaxLength();/* if you want to change the 'Max number of char allowed' you can change this value in a unique location. See the above myMaxLength() function. */
-	                var Authorized_theTextAreaContent = tinyMCE.get(the_HTML_id_Of_My_TextArea()).getContent();    //is the 'undo-text'
-	                var theTextAreaContent = tinyMCE.get(the_HTML_id_Of_My_TextArea()).getContent(); //Content of the TextArea
-	                var theTextAreaContentLength = tinyMCE.get(the_HTML_id_Of_My_TextArea()).getContent().replace(/<\/?[^>]+(>|$)/g, "").length; //Length of the Content of the TextArea
-	                //alert('OnKeyUp Event : '+ CantWriteMoreThan);
-	                //alert('OnKeyUp Event : '+ theTextAreaContent);
-	                //alert('OnKeyUp Event : '+ theTextAreaContentLength);
-	                if (theTextAreaContentLength <= CantWriteMoreThan){
-	                    //Set 'HTML hidden input' with the value got from the 'TinyMCE Editor'.
-	                    document.getElementById('UndoText').value = Authorized_theTextAreaContent;
-	                }//endif
-	                else{
-	                    //Set the 'TinyMCE Editor' Editor with the value got from the 'HTML hidden input'.
-	                    tinyMCE.get(the_HTML_id_Of_My_TextArea()).setContent(document.getElementById('UndoText').value);
-	                    alert("Numero massimo di caratteri: "+myMaxLength());
-	                }//end if
-	            }//end function(ed,e)
-	        );//end ed.onKeyUp.add
-	    }//end setup : function(ed)
-	    
-	    
-	    
-	});
-		
-
-
-	function MadFileBrowser(field_name, url, type, win) {
-	  tinyMCE.activeEditor.windowManager.open({
-	      file : "../../../../fileManager?field=" + field_name + "&url=" + url + "&pid=]]><xsl:value-of select="$pid" /><![CDATA[",
-	      title : 'File Manager',
-	      width : 640,
-	      height : 450,
-	      resizable : "no",
-	      inline : "yes",
-	      close_previous : "no"
-	  }, {
-	      window : win,
-	      input : field_name
-	  });
-	  return false;
-	}
-	
-	
-	]]>
-	 -->
-	
-	
+			
 		</script>
 	
 		<b>Descrizione:</b>
