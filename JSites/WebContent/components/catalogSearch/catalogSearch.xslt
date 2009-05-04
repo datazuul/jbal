@@ -44,16 +44,40 @@
 				  
 				}
 				]]>
-				</script> 
-				
-				<form method="get" action="pageview" onsubmit="readParam()" id="catalogForm" style="float: left;">
-					<input name="pid" id="pid" type="hidden" value="{$pid}"/>
-				    <input name="query" id="query" type="hidden" value=""/>
-				    <input id="page" name="page" type="hidden" value="0"/>
-				    Autore: <input id="AUT" type="text"/>&#160;Titolo: <input id="TIT" type="text"/>&#160;<input type="submit" value="Cerca"/>
-				</form>
-				<div class="clearer">&#160;</div>
- 				<xsl:call-template name="nav"/>
+				</script>
+				<table border="0" class="searchtableform">
+					<tr>
+					<td>
+						<form method="post" action="pageview?pid={$pid}" onsubmit="readParam()" id="catalogForm" style="float: left;">
+							<!-- <input name="pid" id="pid" type="hidden" value="{$pid}"/>  -->
+						    <input name="query" id="query" type="hidden" value=""/>
+						    <input id="page" name="page" type="hidden" value="0"/>
+						    
+						    <fieldset>
+						    <legend>Search</legend>
+						    <xsl:for-each select="//search">
+						    	<label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label><input id="{@name}" type="text" /><br/>
+						    </xsl:for-each>
+						    <input type="submit" value="Cerca"/>
+						    </fieldset>
+						</form>
+						</td>
+						<td>
+						<!-- 
+						<div class="clearer">&#160;</div>
+		 				<xsl:call-template name="nav"/>
+						 -->
+						<xsl:for-each select="//list">
+							<form method="post" action="pageview?pid={$pid}">
+								<!--  <input name="pid" id="pid" type="hidden" value="{$pid}"/> -->
+						    	<label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label>
+						    	<input name="list{@name}" type="text" />
+						    	<input type="submit" value="List" />
+					    	</form>
+					    </xsl:for-each>
+					    </td>
+				    </tr>
+			    </table>
 				
 				<!-- form method="post" action="pageview?pid={$pid}">
 				    Titolo: <input name="listTIT" type="text"/>&#160;&#160;
@@ -74,10 +98,15 @@
 		<xsl:call-template name="editlinks" />
 		<xsl:apply-templates select="order" />
 	</xsl:template>
+	
+	<xsl:template match="search">
+	    
+	    <!-- Autore: <input id="AUT" type="text"/>&#160;Titolo: <input id="TIT" type="text"/>&#160; -->
+	</xsl:template>			    
 			
-	<xsl:template match="catalogSearch">
+<!-- 	<xsl:template match="catalogSearch">
 		<xsl:apply-templates />
-	</xsl:template>
+	</xsl:template> -->
 	
 	<xsl:template name="nav">
 		<xsl:if test="string-length($page) > 0">
