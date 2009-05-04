@@ -37,6 +37,11 @@ $Revision: 1.2 $
 	*/
 }
 
+.noc, .noc td {
+	border: 0;
+	font-size: 100%;
+}
+
 #inviaRichiesta {
 	clear: left;
 	float: left;
