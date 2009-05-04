@@ -88,44 +88,76 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		SearchResultSet result=null;
 		
 		String catalogQuery = getQuery(o);
-		if(catalogQuery == null || catalogQuery.length() < 1) return;
-		catalogQuery = catalogQuery.replaceAll("\\(.*\\)", "").trim();
 		
-		if(catalogQuery!=null && catalogQuery.length()>0) {
-			
-			if(catalogQuery.toLowerCase().startsWith("jid=")){
-				int e = catalogQuery.indexOf("&");
-				if(e<0)e=catalogQuery.length();
-				
-				long id = Long.parseLong( catalogQuery.substring(4, e) );
-				result = new SearchResultSet();
-				Vector<Long> recordIDs = new Vector<Long>();
-				recordIDs.add(id);
-				result.setRecordIDs(recordIDs);
+		if(checkListParameter()) {
+			String[] list=getListParameter();
+			if(list[1]!=null && list[1].length()>0) {
+				result=ListSearch.listSearch(conn, list[0], list[1], 100);
+				throwResults(conn, catalogQuery, result);
 			}
-			else{
-				StaticDataComponent sd = new StaticDataComponent();
-				
-				sd.init(JSites.utils.DirectoryHelper.getPath()+"/WEB-INF/conf/");
-				DoSearchNew doSearchNew = new DoSearchNew(conn,sd);
-				boolean useStemmer=false;
-	
-				try {
-					result = doSearchNew.executeSearch(catalogQuery, useStemmer);
-				} catch (ExpressionException e1) {
-					e1.printStackTrace();
+		}
+		else if(catalogQuery!=null && catalogQuery.length()>0) {
+				catalogQuery = catalogQuery.replaceAll("\\(.*\\)", "").trim();
+				if(catalogQuery.toLowerCase().startsWith("jid=")){
+					int e = catalogQuery.indexOf("&");
+					if(e<0)e=catalogQuery.length();
+					
+					long id = Long.parseLong( catalogQuery.substring(4, e) );
+					result = new SearchResultSet();
+					Vector<Long> recordIDs = new Vector<Long>();
+					recordIDs.add(id);
+					result.setRecordIDs(recordIDs);
 				}
+				else{
+					StaticDataComponent sd = new StaticDataComponent();
+					
+					sd.init(JSites.utils.DirectoryHelper.getPath()+"/WEB-INF/conf/");
+					DoSearchNew doSearchNew = new DoSearchNew(conn,sd);
+					boolean useStemmer=false;
+		
+					try {
+						result = doSearchNew.executeSearch(catalogQuery, useStemmer);
+					} catch (ExpressionException e1) {
+						e1.printStackTrace();
+					}
+				}
+				throwResults(conn, catalogQuery, result);
 			}
-			throwResults(conn, catalogQuery, result);
-		}
-		
-		String listTit=o.getParameter("listTIT");
-		if(listTit!=null && listTit.length()>0) {
-			result=ListSearch.listSearch(conn, "TIT", listTit, 100);
-			throwResults(conn, catalogQuery, result);
-		}
-		
+
+	
 		conn.close();
+
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	private String[] getListParameter() {
+		String[] r=new String[2];
+		Enumeration<String> e=o.getParameterNames();
+		while(e.hasMoreElements()) {
+			String n=e.nextElement();
+			if(n.startsWith("list")) {
+				r[0]=n.substring(4);
+				r[1]=o.getParameter(n);
+				break;
+			}
+		}
+		return r;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	private boolean checkListParameter() {
+		boolean r=false;
+		Enumeration<String> e=o.getParameterNames();
+		while(e.hasMoreElements()) {
+			String n=e.nextElement();
+			if(n.startsWith("list")) {
+				r=true;
+				break;
+			}
+		}
+		return r;
 	}
 
 
