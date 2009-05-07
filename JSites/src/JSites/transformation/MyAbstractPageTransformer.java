@@ -26,6 +26,7 @@ import org.apache.avalon.framework.parameters.Parameters;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.apache.cocoon.xml.AttributesImpl;
+import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.iso2709.Eutmarc;
 
 public abstract class MyAbstractPageTransformer extends AbstractTransformer implements Composable, Disposable {
@@ -62,16 +63,16 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
     	return ((DataSourceComponent)dbselector.select(db)).getConnection();
     }
     
-    protected String saveImgFile(Eutmarc ma2) {
+    protected String saveImgFile(RecordInterface ri) {
 		
-		if(ma2.getImage()==null)return "images/pubimages/NS.jpg";
+		if(ri.getImage()==null)return "images/pubimages/NS.jpg";
 		
 		File dir = new File(this.o.getParameter("datadir") + "/images/pubimages");
 		if(!dir.exists())dir.mkdirs();
-		String imgstr = this.o.getParameter("datadir") + "/images/pubimages/eut" + ma2.getJOpacID() + ".jpg";
+		String imgstr = this.o.getParameter("datadir") + "/images/pubimages/eut" + ri.getJOpacID() + ".jpg";
 		try {
 			FileOutputStream imgfile = new FileOutputStream(imgstr);
-			ImageIO.write(ma2.getImage(), "jpeg", imgfile);
+			ImageIO.write(ri.getImage(), "jpeg", imgfile);
 			imgfile.flush();
 			imgfile.close();
 		} catch (FileNotFoundException e) {
@@ -81,7 +82,7 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "images/pubimages/eut" + ma2.getBid() + ".jpg";
+		return "images/pubimages/eut" + ri.getBid() + ".jpg";
 		
 	}
     
