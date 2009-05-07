@@ -42,7 +42,6 @@ package JSites.transformation.catalogSearch;
 * Corretto bug sulle connessioni e aggiunto dispose: se la variabile di tipo 
 * Connection e' globale allora non viene rilasciata e il pool si satura.
 */
-import org.apache.cocoon.transformation.AbstractTransformer;
 
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.ProcessingException;
@@ -50,13 +49,11 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.AttributesImpl;
+import org.apache.cocoon.xml.AttributesImpl;
 
 import java.util.Map;
 import java.util.Vector;
-//import java.lang.Long;
 import java.io.IOException;
-
 
 import org.apache.avalon.framework.activity.Disposable;
 import org.apache.avalon.framework.component.ComponentManager;
@@ -64,14 +61,20 @@ import org.apache.avalon.framework.component.ComponentSelector;
 import org.apache.avalon.framework.component.ComponentException;
 import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.component.Composable;
+import org.jopac2.engine.NewSearch.DoSearchNew;
 import org.jopac2.engine.dbGateway.DbGateway;
+import org.jopac2.engine.dbGateway.StaticDataComponent;
+import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
+import org.jopac2.engine.utils.SearchResultSet;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.utils.BookSignature;
+
+import JSites.transformation.MyAbstractPageTransformer;
 
 import java.sql.*;
 
 
-public class Record2display extends AbstractTransformer implements Composable, Disposable //, CacheableProcessingComponent
+public class Record2display extends MyAbstractPageTransformer implements Composable, Disposable //, CacheableProcessingComponent
 {
     private boolean isRecord=false,debug=false,isCatalogConnection=false;
     //private DataSourceComponent datasource;
@@ -82,6 +85,7 @@ public class Record2display extends AbstractTransformer implements Composable, D
     private BookSignature b;
     private StringBuffer buffer=null;
     protected String db;
+    int querycount = 0;
     
     public void sendElement(String element,String value) throws SAXException {
     	if(value!=null) {
@@ -102,6 +106,7 @@ public class Record2display extends AbstractTransformer implements Composable, D
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par)
             throws ProcessingException, SAXException, IOException
     {
+    	super.setup(resolver, objectModel, src, par);
     	debug=false;isRecord=false;
     	if(buffer!=null) {
     		buffer.delete(0, buffer.length());
@@ -143,25 +148,35 @@ public class Record2display extends AbstractTransformer implements Composable, D
     
     
     private void sendIso(RecordInterface ma2) throws SAXException {
+    	
+    	//Qui si puo utilizzare if(queryCount>1) per selezionare quali info mandare avanti
+    	
     	Vector<String> v=null;
     	Vector<RecordInterface> vma=null;
     	Vector<BookSignature> vbs=null;
     	String tempString;
     	
-        sendElement("type",ma2.getTipo());
-        
+    	sendElement("type",ma2.getTipo());
         
         try {
-        	tempString=ma2.getBid();
-        	if(tempString!=null) {
-        		sendElement("bid",tempString);
-            }
+    		String file = saveImgFile(ma2);
+    		AttributesImpl a = new AttributesImpl();
+    		
+    		String nat = ma2.getPublicationNature();
+    		if(nat != null & nat.length()==1)
+    			a.addCDATAAttribute("nature", nat);
+    		
+    		contentHandler.startElement("","image","image",a);
+	        contentHandler.characters(file.toCharArray(), 0, file.length());
+	        contentHandler.endElement("","image","image");
         	
         	if(debug) {
         		System.out.println(ma2.toString());
         	}
         	
-            v=ma2.getAuthors();
+        	sendElement("title",ma2.getTitle());
+        	
+        	v=ma2.getAuthors();
             if(v.size()>0) {
                 super.startElement("","authors","authors",new AttributesImpl());
                 for(int i=0;i<v.size();i++) {
@@ -246,7 +261,7 @@ public class Record2display extends AbstractTransformer implements Composable, D
             if(vma!=null) {vma.clear();vma=null;}
         }
         
-        
+
         tempString=ma2.getAbstract();
         if(tempString!=null) {
         	sendElement("abstract",tempString);
@@ -260,6 +275,7 @@ public class Record2display extends AbstractTransformer implements Composable, D
         catch(Exception e) {
         	// ignora eventuali errori nella decodifica delle signature
         }
+
         if((vbs!=null)&&(vbs.size()>0)) {
             super.startElement("","signatures","signatures",new AttributesImpl());
             try {
@@ -284,8 +300,17 @@ public class Record2display extends AbstractTransformer implements Composable, D
             super.endElement("","signatures","signatures");
             vbs.clear();vbs=null;
         }
+       
+    	String p = ma2.getPrice();
+    	if(p!=null) sendElement("prezzo", p);
+
+        tempString=ma2.getBid();
+    	if(tempString!=null) sendElement("bid",tempString);
+    	
+    	sendElement("jid", String.valueOf(ma2.getJOpacID()));
 	}
 
+	
 	public void startElement(String namespaceURI, String localName, String qName,
             Attributes attributes) throws SAXException
     {
@@ -307,6 +332,11 @@ public class Record2display extends AbstractTransformer implements Composable, D
     		isCatalogConnection=false;
     		return;
     	}
+    	if (namespaceURI.equals("") && localName.equals("queryCount")) {
+    		String qcs = buffer.toString().replaceAll("[\n\r]", "").trim();
+    		if(qcs != null && qcs.length() > 0)
+    			querycount = Integer.parseInt(qcs);
+    	}
         if (namespaceURI.equals("") && localName.equals("record")) {
         	String id=buffer.toString().replaceAll("[\n\r]", "").trim();
             if(isRecord) {
@@ -316,10 +346,14 @@ public class Record2display extends AbstractTransformer implements Composable, D
             	Connection myConnection;
     			try {
     				myConnection = getConnection(db);
-    	            RecordInterface ma=DbGateway.getNotiziaByJID(myConnection,id);
+    	            RecordInterface ma = DbGateway.getNotiziaByJID(myConnection,id);
     	            myConnection.close();
-    	            if(ma!=null) {
+    	            if(ma!=null) { 
+    	            	ma.setJOpacID(Long.parseLong(id));
     	            	sendIso(ma);
+    	            	if(ma.getPublicationNature().equals("P")){
+    	            		viewFascicoli(ma);
+    	            	}
     	            	ma.destroy();
     	            }
     	            else {
@@ -343,7 +377,9 @@ public class Record2display extends AbstractTransformer implements Composable, D
         super.endElement(namespaceURI, localName, qName);
     }
     
-    private void dispatch() throws SAXException {
+
+
+	private void dispatch() throws SAXException {
     	super.characters(buffer.toString().toCharArray(), 0, buffer.length());
     	buffer.delete(0, buffer.length());
     }
@@ -384,6 +420,22 @@ public class Record2display extends AbstractTransformer implements Composable, D
 			return null;
 		}
 	}*/
+    
+    private void viewFascicoli(RecordInterface ma) {
+    	try {
+	    	String tit = ma.getTitle();
+			StaticDataComponent sd = new StaticDataComponent();
+			sd.init(JSites.utils.DirectoryHelper.getPath()+"/WEB-INF/conf/");
+			DoSearchNew doSearchNew = new DoSearchNew(getConnection(db),sd);
+			SearchResultSet result = doSearchNew.executeSearch("CLL="+tit, false);
+			
+			
+		} catch (ExpressionException e1) { e1.printStackTrace();
+		} catch (ComponentException e) { e.printStackTrace();
+		} catch (SQLException e) { e.printStackTrace();
+		}
+		
+	}
 
 
 }
