@@ -36,6 +36,7 @@ package org.jopac2.jbal.xml;
 /**
  * TODO: tutto da rifare
  */
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -499,5 +500,10 @@ public void setTitle(String title, boolean significant) throws JOpac2Exception {
 public void addPublisher(String publisher) throws JOpac2Exception {
 	// TODO Auto-generated method stub
 	
+}
+
+public BufferedImage getImage() {
+	// TODO Auto-generated method stub
+	return null;
 }
 }

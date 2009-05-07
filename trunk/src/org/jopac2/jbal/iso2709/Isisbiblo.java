@@ -42,6 +42,7 @@ package org.jopac2.jbal.iso2709;
  */
 
 
+import java.awt.image.BufferedImage;
 import java.util.*;
 //import java.lang.*;
 //import java.sql.*;
@@ -481,5 +482,10 @@ public void setTitle(String title, boolean significant) throws JOpac2Exception {
 public void addPublisher(String publisher) throws JOpac2Exception {
 	// TODO Auto-generated method stub
 	
+}
+
+public BufferedImage getImage() {
+	// TODO Auto-generated method stub
+	return null;
 }
 }
