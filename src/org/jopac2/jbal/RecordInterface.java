@@ -27,6 +27,7 @@ package org.jopac2.jbal;
  * @version 05/06/2006
  */
 
+import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -476,6 +477,8 @@ public interface RecordInterface {
 	 * Verifica se nella notizia c'e' la stringa nel tag e nel campo indicato
 	 */
 	public boolean contains(String tag, String field, String s);
+	
+	public BufferedImage getImage();
 	
 	/**
 	 * Verifica la coerenza NSB - NSE per ogni campo in tutti i tag indicati.

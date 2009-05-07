@@ -1,5 +1,6 @@
 package org.jopac2.jbal.iso2709;
 
+import java.awt.image.BufferedImage;
 import java.util.Vector;
 
 import org.jopac2.jbal.RecordInterface;
@@ -278,5 +279,10 @@ public class Marc21 extends ISO2709Impl {
 	public void addPublisher(String publisher) throws JOpac2Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public BufferedImage getImage() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

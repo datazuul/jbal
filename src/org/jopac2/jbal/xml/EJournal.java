@@ -22,6 +22,7 @@ package org.jopac2.jbal.xml;
 *
 *******************************************************************************/
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -178,6 +179,11 @@ public class EJournal extends XML {
 	}
 
 	public Vector<Tag> getTags(String tag) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public BufferedImage getImage() {
 		// TODO Auto-generated method stub
 		return null;
 	}

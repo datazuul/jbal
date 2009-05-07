@@ -37,6 +37,7 @@ package org.jopac2.jbal.iso2709;
 
 
 
+import java.awt.image.BufferedImage;
 import java.util.*;
 
 import org.jopac2.jbal.abstractStructure.Field;
@@ -115,6 +116,11 @@ public class SBNUnix extends Unimarc {
 public void addSignature(BookSignature signature) throws JOpac2Exception {
 	// TODO Auto-generated method stub
 	
+}
+
+public BufferedImage getImage() {
+	// TODO Auto-generated method stub
+	return null;
 }
   
  

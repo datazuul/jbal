@@ -40,6 +40,7 @@ package org.jopac2.jbal.iso2709;
  * 
  */
 
+import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
@@ -149,6 +150,11 @@ public class Bibliowin4 extends Unimarc {
 	
 	protected String toISO2709() throws Exception {
 		return rawRecord;
+	}
+
+	public BufferedImage getImage() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
 

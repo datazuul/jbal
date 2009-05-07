@@ -36,6 +36,7 @@ package org.jopac2.jbal.iso2709;
  */
 
 
+import java.awt.image.BufferedImage;
 import java.util.*;
 
 import org.jopac2.jbal.abstractStructure.Field;
@@ -162,6 +163,11 @@ public class Sebina extends Unimarc {
       }
       return res;
     }
+
+public BufferedImage getImage() {
+	// TODO Auto-generated method stub
+	return null;
+}
     
     
     
