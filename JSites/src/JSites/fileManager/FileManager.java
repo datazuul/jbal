@@ -181,6 +181,8 @@ public class FileManager extends MyAbstractPageGenerator {
 	    		while ((c = in.read(readchar)) != -1) {
 	    			out.write(readchar, 0, c);
 	    		}
+	    		out.close();
+	    		in.close();
 	    		
 	    		AttributesImpl ok=new AttributesImpl();
 	    		ok.addCDATAAttribute("type", "text/javascript");
