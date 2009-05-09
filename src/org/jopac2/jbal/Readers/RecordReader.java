@@ -29,6 +29,8 @@ import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.ibm.icu.text.Transliterator;
+
 public abstract  class RecordReader extends BufferedReader {
 	protected String tipoNotizia;
 	protected long idTipo;
