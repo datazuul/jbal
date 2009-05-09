@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Map;
@@ -24,16 +25,18 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.apache.cocoon.xml.AttributesImpl;
 
+import JSites.generation.ImportCatalog;
 import JSites.transformation.MyAbstractPageTransformer;
 import JSites.utils.Util;
 
 
 public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 	
-	String catalogConnection = null;
+	String catalogConnection = null, dbType=null;
 	StringBuffer sb = new StringBuffer();
+	String dbUrl=null;
 	
-	boolean readCatalogConnection = false;
+	boolean readCatalogConnection = false, readDbType = false;
 	//boolean readLinks = false;
 	
 	@SuppressWarnings("unchecked")
@@ -49,6 +52,9 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		if(loc.equals("catalogConnection")){
 			readCatalogConnection = true;
 		}
+		else if(loc.equals("dbType")){
+			readDbType = true;
+		}
 		else if(loc.equals("catalogSearch"))
 			super.startElement("", "root", "root", a);
 		else
@@ -57,7 +63,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 
 	@Override
 	public void characters(char[] c, int start, int len) throws SAXException {
-		if(readCatalogConnection)
+		if(readCatalogConnection || readDbType)
 			sb.append(c,start,len);
 		else
 			super.characters(c, start, len);
@@ -69,30 +75,50 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 			readCatalogConnection = false;
 			catalogConnection = sb.toString().trim();
 			sb.delete(0, sb.length());
-			
+		}
+		else if(loc.equals("dbType")){
+			readDbType = false;
+			dbType = sb.toString().trim();
+			sb.delete(0, sb.length());
+		}
+		else if(loc.equals("catalogSearch")) {
 			try {
 				throwResults();
-			} catch (ComponentException e) { e.printStackTrace();
-			} catch (SQLException e) { e.printStackTrace();
-			}	
-		}
-		else if(loc.equals("catalogSearch"))
+			} 
+			catch (Exception e) { e.printStackTrace();} 
 			super.endElement("", "root", "root");
-		else
+		}
+		else {
 			super.endElement(uri, loc, raw);
+		}
 	}
 
-	private void throwResults() throws ComponentException, SQLException, SAXException {
-		
-		Connection conn = getConnection(catalogConnection);
+	private void throwResults() throws ComponentException, SQLException, SAXException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+		Connection conn=null;
+		if(dbType != null && dbType.equalsIgnoreCase("derby")) {
+			String driver=ImportCatalog._classDerbyDriver;
+			dbUrl = "jdbc:derby:"+o.getParameter("datadir")+"/catalogs/"+catalogConnection+";create=true";
+			
+			Class.forName(driver).newInstance();
+			
+			conn = DriverManager.getConnection(dbUrl, "", "");
+		}
+		else {
+			conn = getConnection(catalogConnection);
+		}
 		SearchResultSet result=null;
 		
 		String catalogQuery = getQuery(o);
-		if(catalogQuery == null || catalogQuery.length() < 1) return;
-		catalogQuery = catalogQuery.replaceAll("\\(.*\\)", "").trim();
 		
-		if(catalogQuery!=null && catalogQuery.length()>0) {
-			
+		if(checkListParameter()) {
+			String[] list=getListParameter();
+			if(list[1]!=null && list[1].length()>0) {
+				result=ListSearch.listSearch(conn, list[0], list[1], 100);
+				throwResults(conn, catalogQuery, result);
+			}
+		}
+		else if(catalogQuery!=null && catalogQuery.length()>0) {
+			catalogQuery = catalogQuery.replaceAll("\\(.*\\)", "").trim();
 			if(catalogQuery.toLowerCase().startsWith("jid=")){
 				int e = catalogQuery.indexOf("&");
 				if(e<0)e=catalogQuery.length();
@@ -118,14 +144,38 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 			}
 			throwResults(conn, catalogQuery, result);
 		}
-		
-		String listTit=o.getParameter("listTIT");
-		if(listTit!=null && listTit.length()>0) {
-			result=ListSearch.listSearch(conn, "TIT", listTit, 100);
-			throwResults(conn, catalogQuery, result);
-		}
-		
+
 		conn.close();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private String[] getListParameter() {
+		String[] r=new String[2];
+		Enumeration<String> e=o.getParameterNames();
+		while(e.hasMoreElements()) {
+			String n=e.nextElement();
+			if(n.startsWith("list")) {
+				r[0]=n.substring(4);
+				r[1]=o.getParameter(n);
+				break;
+			}
+		}
+		return r;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	private boolean checkListParameter() {
+		boolean r=false;
+		Enumeration<String> e=o.getParameterNames();
+		while(e.hasMoreElements()) {
+			String n=e.nextElement();
+			if(n.startsWith("list")) {
+				r=true;
+				break;
+			}
+		}
+		return r;
 	}
 
 
@@ -143,6 +193,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		boolean useStemmer=result.getStemmer();
 			
         throwField("catalogConnection",catalogConnection);
+        throwField("dbType",dbType);
         throwQueryData(catalogQuery,result,useStemmer);
         throwSearchData(result);
 		
