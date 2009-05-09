@@ -34,6 +34,10 @@ public class DBUtils {
 
 	}
 	
+	/**
+	 * @deprecated
+	 * @throws FileNotFoundException
+	 */
 	public static void CaricaDati() throws FileNotFoundException{
 		FileInputStream is =new FileInputStream(new File(PATH+"docs/DBTest/kp.iso"));
 		String ft="Isisbiblo";
@@ -42,7 +46,7 @@ public class DBUtils {
 		for(int i=0;i<NUM_CONNESSIONI;i++)
 			connessioni[i]=CreadbMySql.CreaConnessione(DBNAME);
 		
-		DataImporter d = new DataImporter(is,ft,PATH+"WebContent/WEB-INF/conf",connessioni,true);
+		DataImporter d = new DataImporter(is,ft,PATH+"WebContent/WEB-INF/conf",connessioni,true,null,null);
 		System.out.println("caricamento dati...");
 		d.start();
 		try {
