@@ -30,24 +30,35 @@
 						<map:parameter name="context" value="{context}"/>
 					</map:generate>
 				</map:act>
-<!--
-				<map:transform src="context://stylesheets/xslt/fileManager.xslt" />
 
-				<map:act type="request">
-					<map:transform src="context://stylesheets/xslt/fileManager.xslt">
-						<map:parameter name="parameters" value="true"/>
-						<map:parameter name="permissionCode" value="{../permissionCode}"/>
-						<map:parameter name="base" value="images/{../../../1}"/>
-						<map:parameter name="context" value="{context}"/>
-					</map:transform>
-				</map:act>
--->
 			</map:act>	
 			
 			<map:serialize type="xml" />
 		</map:act>
 	
 	</map:match>
+	
+	<map:match pattern="importCatalog">
+		<map:act type="auth-protect">
+        	<map:parameter name="handler" value="JSitesHandler"/>
+        	
+        	<map:act type="authorize-users">
+        		<map:parameter name="db" value="{global:db}"/>
+        		<map:parameter name="pid" value="0"/>
+        		<map:act type="request">
+					<map:generate type="importCatalog" src="{global:data-directory}/catalogs/">
+						<map:parameter name="db" value="{global:db}"/>
+						<map:parameter name="context" value="{context}"/>
+					</map:generate>
+				</map:act>
+				<map:transform src="context://stylesheets/xslt/importCatalog.xslt" />
+			</map:act>	
+			
+			<map:serialize type="xhtml" />
+		</map:act>
+	
+	</map:match>
+	
 	
 		<map:match pattern="dir/**">
         <map:act type="auth-protect">
