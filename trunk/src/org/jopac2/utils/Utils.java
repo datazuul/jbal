@@ -97,6 +97,7 @@ public class Utils {
     return query.replaceAll("%26", "&").replaceAll("&amp;", "&");
   }
   
+  
   // IMPORTANTE: non usare un'istanza statica perché va in errore Cocoon
   //static final Transliterator accentsconverter = Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
   
@@ -106,6 +107,10 @@ public class Utils {
 	   if(accentsconverter==null) accentsconverter = Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
 		return accentsconverter.transliterate(s);
 	}
+  
+  public static void setTransliterator(Transliterator t) {
+	  accentsconverter=t;
+  }
   
   
   /**
