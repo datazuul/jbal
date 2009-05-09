@@ -28,7 +28,8 @@
 	                <map:act type="request">
 	                    <map:parameter name="parameters" value="true" />
 	                    <map:generate src="{request-param:datadir}/data/catalogSearch{cid}.xml"/>
-	                    <map:transform type="catalogSearch"/>
+	                    <map:transform type="catalogSearch" />
+	                    <!-- map:transform type="tutil" src="/t/record2display" / -->
 	                    
 	                    <map:transform type="record2display"/>
 	                    <map:transform type="createLink"/>
