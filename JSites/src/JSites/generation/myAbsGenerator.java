@@ -62,7 +62,8 @@ public abstract class myAbsGenerator extends AbstractGenerator implements Compos
     
     public void sendElement(String element,String value) throws SAXException {
     	contentHandler.startElement("",element,element,new AttributesImpl());
-        contentHandler.characters(value.toCharArray(), 0, value.length());
+    	if(value!=null && value.length()>0)
+    		contentHandler.characters(value.toCharArray(), 0, value.length());
         contentHandler.endElement("",element,element);
     }
     
