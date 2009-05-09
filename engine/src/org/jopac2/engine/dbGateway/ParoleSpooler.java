@@ -38,7 +38,7 @@ import org.jopac2.utils.Utils;
 
 import com.whirlycott.cache.Cache;
 import com.whirlycott.cache.CacheConfiguration;
-import com.whirlycott.cache.CacheException;
+//import com.whirlycott.cache.CacheException;
 import com.whirlycott.cache.CacheManager;
 
 public class ParoleSpooler implements ParoleSpoolerInterface {
@@ -54,10 +54,10 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 	private PreparedStatement preparedSelectID;
 	private Radice stemmer=null;
 
-	public ParoleSpooler(Connection[] conn, int nvalues) {
-		super();
+	public ParoleSpooler(Connection[] conn, int nvalues, Cache cache) {
+		//super();
 		this.nvalues=nvalues;
-		
+		this.cache=cache;
 		preparedParole = new PreparedStatement[conn.length];
 		for(int i=0;i<nvalues-1;i++) {
 			prepared+=",(?,?,?)";
@@ -72,24 +72,6 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 			e.printStackTrace();
 		}
 		buffer=new Hashtable<String,Long>();
-
-		
-		
-//		Use the cache manager to create the default cache
-		try {
-			CacheConfiguration cacheConf=new CacheConfiguration();
-			cacheConf.setTunerSleepTime(10);
-			cacheConf.setBackend("com.whirlycott.cache.impl.ConcurrentHashMapImpl");
-			cacheConf.setMaxSize(100000);
-			cacheConf.setPolicy("com.whirlycott.cache.policy.LFUMaintenancePolicy");
-			cacheConf.setName("JOpac2cache");
-			cache= CacheManager.getInstance().createCache(cacheConf);
-			//cache = CacheManager.getInstance().getCache();
-			
-		} catch (CacheException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		stemmer=new StemmerItv2();
 	}
@@ -193,13 +175,6 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 			buffer.clear();
 			buffer=null;
 			System.gc();
-		}
-//		Shut down the cache manager
-		try {
-			CacheManager.getInstance().destroy("JOpac2cache");
-			CacheManager.getInstance().shutdown();
-		} catch (CacheException e) {
-			e.printStackTrace();
 		}
 	}
 

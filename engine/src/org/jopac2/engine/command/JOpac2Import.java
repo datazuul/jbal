@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.importers.DataImporter;
 
+import com.ibm.icu.text.Transliterator;
+
 
 public class JOpac2Import {
 	InputStream inputFile;
@@ -64,7 +66,9 @@ public class JOpac2Import {
 	}
 	
 	public void doJob(boolean background) {
-		DataImporter dataimporter=new DataImporter(inputFile,filetype,JOpac2confdir, conns, clearDatabase);
+		Transliterator t=Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
+
+		DataImporter dataimporter=new DataImporter(inputFile,filetype,JOpac2confdir, conns, clearDatabase,DbGateway.getCache(),t);
 		if(background)
 			dataimporter.start();
 		else
@@ -91,8 +95,8 @@ public class JOpac2Import {
 		String filename="/java_jopac2/engine/data/demo_Sebina.uni";
 		String filetype="sebina";
 		String JOpac2confdir="/java_jopac2/engine/src/org/jopac2/conf";
-		//String dbUrl = "jdbc:derby:db"+sitename+";create=true";
-		String dbUrl="jdbc:mysql://localhost/db"+sitename;
+		String dbUrl = "jdbc:derby:/t/db"+sitename+";create=true";
+		//String dbUrl="jdbc:mysql://localhost/db"+sitename;
 		String dbUser="root";
 		String dbPassword="";
 		
@@ -120,8 +124,8 @@ public class JOpac2Import {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		//testMac();
-		testWin();
+		testMac();
+		//testWin();
 	}
 
 

@@ -52,6 +52,10 @@ import org.jopac2.utils.TokenWord;
 import org.jopac2.utils.Utils;
 import org.jopac2.utils.ZipUnzip;
 
+import com.whirlycott.cache.Cache;
+import com.whirlycott.cache.CacheConfiguration;
+import com.whirlycott.cache.CacheManager;
+
 
 public abstract class DbGateway {
 	  /** @todo  le costanti vanno messe in file di configurazione!!! */
@@ -438,9 +442,12 @@ public abstract class DbGateway {
 	    	insertHashNotizia(conn,notizia, jid);
 	    	
 	    	Connection c[]={conn};
-	    	ParoleSpooler paroleSpooler=new ParoleSpooler(c,c.length);
+	    	Cache cache=getCache();
+	    	ParoleSpooler paroleSpooler=new ParoleSpooler(c,c.length,cache);
 	    	
 	    	insertNotizia(c,notizia,idTipo,jid,paroleSpooler);
+	    	
+	    	paroleSpooler.destroy();
     	}
     }
     
@@ -599,7 +606,9 @@ public abstract class DbGateway {
 		
 		long current=0;
 		
-    	ParoleSpooler paroleSpooler=new ParoleSpooler(conn,conn.length);
+		Cache cache=getCache();
+		
+    	ParoleSpooler paroleSpooler=new ParoleSpooler(conn,conn.length,cache);
 		
 		rs=stmt.executeQuery("select * from notizie");
 		while(rs.next()) {
@@ -617,9 +626,33 @@ public abstract class DbGateway {
 		}
 		rs.close();
 		stmt.close();
+		paroleSpooler.destroy();
 		System.out.println(current+" record reimportati");
 	}
 	
+	private static Cache cache=null;
+	
+	public static Cache getCache() {
+		if(cache==null) {
+	//		Use the cache manager to create the default cache
+			try {
+				CacheConfiguration cacheConf=new CacheConfiguration();
+				cacheConf.setTunerSleepTime(10);
+				cacheConf.setBackend("com.whirlycott.cache.impl.ConcurrentHashMapImpl");
+				cacheConf.setMaxSize(100000);
+				cacheConf.setPolicy("com.whirlycott.cache.policy.LFUMaintenancePolicy");
+				cacheConf.setName("JOpac2cache");
+				cache= CacheManager.getInstance().createCache(cacheConf);
+				//cache = CacheManager.getInstance().getCache();
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return cache;
+	}
+
 	/**
 	 * @param valore
 	 * @return

@@ -48,20 +48,26 @@ import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.dbGateway.LoadData;
 import org.jopac2.jbal.Readers.XsltTransformer;
 
+import com.ibm.icu.text.Transliterator;
+import com.whirlycott.cache.Cache;
+
 public class DataImporter extends Thread {
 	private InputStream f;
 	private String filetype,tempDir,confdir;
 	Connection[] conn=null;
 	boolean clearDatabase=true;
 	DbGateway dbGateway=null;
+	Cache cache=null;
+	Transliterator t=null;
 	
-	public DataImporter(InputStream f,String filetype,String JOpac2confdir,Connection[] conns, boolean clearDatabase) {
+	public DataImporter(InputStream f,String filetype,String JOpac2confdir,Connection[] conns, boolean clearDatabase, Cache cache, Transliterator t) {
 		this.f=f;
 		this.filetype=filetype;
 		confdir=JOpac2confdir;
 		this.conn=conns;
 		this.clearDatabase=clearDatabase;
 		dbGateway=DbGateway.getInstance(conns[0].toString());
+		this.cache=cache;
 	}
 	
 	private void inizializeDB(Connection conn) throws SQLException {
@@ -95,7 +101,7 @@ public class DataImporter extends Thread {
     private void loadData(InputStream f,String dbType, String temporaryDir) {
     	DbGateway.commitAll(conn);
         LoadData ld=new LoadData(conn);
-        ld.doJob(f,dbType,temporaryDir,dbGateway.getClassID(conn[0], dbType));
+        ld.doJob(f,dbType,temporaryDir,dbGateway.getClassID(conn[0], dbType),cache,t);
         ld.destroy();
     }
 	

@@ -45,6 +45,9 @@ import org.jopac2.utils.ClasseDettaglio;
 import org.jopac2.utils.TokenWord;
 import org.jopac2.utils.ZipUnzip;
 
+import com.ibm.icu.text.Transliterator;
+import com.whirlycott.cache.Cache;
+
 
 /** @todo
  *
@@ -67,6 +70,7 @@ public class LoadData implements LoadDataInterface {
   private int maxValues4prepared=100;
 
   private Vector<ClasseDettaglio> cl_dettaglio;
+  private static Transliterator t;
   //private String dl;
   //private String ft;
   //private String rt;
@@ -204,7 +208,7 @@ public void init(String outDir,long idTipo) {
   public long InsertParola(String parola, ParoleSpoolerInterface paroleSpooler) {
 	  long r=-1;
       parola=DbGateway.pulisciParola(parola);
-      
+      //parola=t.transliterate(parola);
       r=paroleSpooler.getParola(parola);
 	  if(r==-1) {
     	  id_ap_f++;
@@ -296,8 +300,11 @@ public void init(String outDir,long idTipo) {
   
 
   
-  public void doJob(InputStream dataFile,String dbType,String temporaryDir,long classID) {
-	  ParoleSpoolerInterface paroleSpooler=new ParoleSpooler(conn,maxValues4prepared);
+  public void doJob(InputStream dataFile,String dbType,String temporaryDir,
+		  long classID, Cache cache, Transliterator t) {
+	  this.t=t;
+	  //Cache cache=DbGateway.getCache();
+	  ParoleSpoolerInterface paroleSpooler=new ParoleSpooler(conn,maxValues4prepared,cache);
     
 	  long start_time=System.currentTimeMillis();
 
