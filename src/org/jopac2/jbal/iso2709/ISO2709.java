@@ -755,4 +755,7 @@ public Vector<Tag> getTags(String tag) {
 
 		return tw.elements();
 	}
+  
+  public String getPublicationNature(){ return  null;}
+
 }

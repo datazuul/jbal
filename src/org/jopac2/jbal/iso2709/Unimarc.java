@@ -677,4 +677,17 @@ public void initLinkUp() {
     this.marcCostruttore(stringa,dTipo,Integer.parseInt(livello));
   }
 
+	public String getPrice() {
+		String ret = null;
+		Tag tag = getFirstTag("010");
+		if(tag!=null){
+			Field f = tag.getField("d");
+			if(f!=null)
+				ret = f.getContent();
+		}
+		return null;
+	}
+  
+  
+
 }
