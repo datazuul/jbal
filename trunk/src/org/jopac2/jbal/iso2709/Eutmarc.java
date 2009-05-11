@@ -149,7 +149,16 @@ public class Eutmarc extends Unimarc {
     			addTag(a);
     	}
     	
-    	public String getPrezzoNote(){
+    	
+    	public String getPrezzo(){
+    		Tag t = getFirstTag("904");
+    		Field f = t.getField("p");
+    		String r = f.getContent();
+    		if(r==null)r ="";
+    		return r;
+    	}
+    	
+    	public String getPrice() {
     		String r = null;
     		Tag t = getFirstTag("904");
     		if(t!=null){
@@ -157,14 +166,6 @@ public class Eutmarc extends Unimarc {
 	    		if(f!=null)
 	    			r = f.getContent();
     		}
-    		return r;
-    	}
-    	
-    	public String getPrezzo(){
-    		Tag t = getFirstTag("904");
-    		Field f = t.getField("p");
-    		String r = f.getContent();
-    		if(r==null)r ="";
     		return r;
     	}
     	
@@ -216,7 +217,7 @@ public class Eutmarc extends Unimarc {
 
 			Tag t = new Tag("210",' ',' ');
 			t.addField(new Field("a","Trieste"));
-			t.addField(new Field("c","Edizioni Università"));
+			t.addField(new Field("c","Edizioni Universitï¿½"));
 			
 			
 		}
