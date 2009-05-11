@@ -54,6 +54,7 @@ import org.xml.sax.SAXException;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.jbal.abstractStructure.Field;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.iso2709.ISO2709Impl;
@@ -424,5 +425,11 @@ public abstract class XML implements RecordInterface {
 	
 	public String toEncapsulatedRecordFormat() {		
 		return toString();
+	}
+	
+	public String getPublicationNature(){ return  null;}
+	
+	public String getPrice() {
+		return null;
 	}
 }
