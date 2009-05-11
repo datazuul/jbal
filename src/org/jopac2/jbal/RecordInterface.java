@@ -479,6 +479,10 @@ public interface RecordInterface {
 	public boolean contains(String tag, String field, String s);
 	
 	public BufferedImage getImage();
+
+	public String getPublicationNature();
+	
+	public String getPrice();
 	
 	/**
 	 * Verifica la coerenza NSB - NSE per ogni campo in tutti i tag indicati.
