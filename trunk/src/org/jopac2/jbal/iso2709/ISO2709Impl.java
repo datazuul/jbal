@@ -47,6 +47,7 @@ import java.util.*;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.Readers.IsoRecordReader;
 import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.jbal.abstractStructure.Field;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.SimilarityHelp;
@@ -213,6 +214,17 @@ public abstract class ISO2709Impl extends ISO2709 {
 				dati.removeElementAt(i);
 			}
 		}
+	}
+	
+	public String getPrice() {
+		String ret = null;
+		Tag tag = getFirstTag("010");
+		if(tag!=null){
+			Field f = tag.getField("d");
+			if(f!=null)
+				ret = f.getContent();
+		}
+		return null;
 	}
 
 	/*
