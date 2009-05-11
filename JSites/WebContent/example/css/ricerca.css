@@ -18,6 +18,15 @@ $Revision: 1.1 $
 	
 }
 
+.searchlabel {
+	width: 100px;
+	float: left;
+}
+
+.searchtableform {
+	font-size: 100%;
+}
+
 /* soggetto della ricerca */
 .item {
 	
