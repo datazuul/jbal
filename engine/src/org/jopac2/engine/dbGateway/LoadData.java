@@ -213,7 +213,7 @@ public void init(String outDir,long idTipo) {
 	  if(r==-1) {
     	  id_ap_f++;
     	  r=id_ap_f;
-    	  paroleSpooler.insertParola(id_ap_f,parola);
+    	  if(parola.length()<50) paroleSpooler.insertParola(id_ap_f,parola);
       }
       return r;
   }
