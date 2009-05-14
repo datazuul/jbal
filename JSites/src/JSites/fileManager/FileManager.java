@@ -114,21 +114,47 @@ public class FileManager extends MyAbstractPageGenerator {
 		getFiles(sResourceType,sCurrentFolder);
 	}
 
-	private String delete_directory(String dirname) {
-		String r="6";
-		if(dirname!=null) {
-			r="5";
-			boolean k=DirectoryHelper.deleteDir(dirname);
-			if(k) r="4";
-		}
-		return r;
+	private void deleteFile(String sResourceType,String sCurrentFolder) throws SAXException {
+	    String sErrorNumber = "0" ;
+	    String sErrorMsg = "" ;
+
+	    String fileName=request.getParameter("FileName");
+	    if(fileName!=null) {
+	        // Map the virtual path to the local server path.
+	    	if(!root_path.endsWith("/")) root_path+="/";
+	        if (fileName.contains("..")) {
+	        	sErrorNumber = "102" ; // Invalid file name.
+	            sErrorMsg = "Invalid file name";
+	        } else {
+		    	File f=new File(root_path+sCurrentFolder+"/"+fileName);
+
+	            if (f.delete()) {
+	                sErrorNumber = "0" ; // deleted
+	            } else {
+	                sErrorNumber = "103" ; // not deleted
+	                sErrorMsg = "Could not delete file "+root_path+sCurrentFolder+"/"+fileName;
+	            }
+	        }
+	    } else {
+	        sErrorNumber = "102" ; // no file set
+	        sErrorMsg = "No file specified";
+	    }
+	    // Create the "Error" node.
+
+	    sendError(sErrorNumber, sErrorMsg);
+
+	}
+
+	
+	private void sendError(String number, String text) throws SAXException {
+		AttributesImpl errorAttr=new AttributesImpl();
+		errorAttr.addCDATAAttribute("number", number);
+		errorAttr.addCDATAAttribute("text", text);
+		sendElement("Error","",errorAttr);
 	}
 	
 	private void sendError(int number, String text) throws SAXException {
-		AttributesImpl errorAttr=new AttributesImpl();
-		errorAttr.addCDATAAttribute("number", Integer.toString(number));
-		errorAttr.addCDATAAttribute("text", text);
-		sendElement("Error","",errorAttr);
+		sendError(Integer.toString(number),text);
 	}
 	
 	private void createFolder(String resourceType, String currentFolder) throws SAXException {
@@ -260,6 +286,7 @@ public class FileManager extends MyAbstractPageGenerator {
 					if(sCommand.equals("GetFolders")) getFolders(sResourceType, sCurrentFolder);
 					else if(sCommand.equals("GetFoldersAndFiles")) getFoldersAndFiles(sResourceType, sCurrentFolder);
 					else if(sCommand.equals("CreateFolder")) createFolder(sResourceType, sCurrentFolder);
+					else if(sCommand.equals("DeleteFile")) deleteFile(sResourceType, sCurrentFolder);
 				}
 				else {
 					sendError(102,"");
