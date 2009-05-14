@@ -1,0 +1,37 @@
+MONOGRAFIA																PERIODICO
+
+
+TITOLO																	TITOLO PERIODICO
+AUTORE (ripetibile)			
+ISBN																	ISSN
+COLLAZIONE (FORMATO, NUMERO PAGINE, ILLUSTRAZIONI)						FORMATO
+COLLANA
+AREA DISCIPLINARE (MACROSOGGETTO)
+PREZZO																	PREZZO ABBONAMENTO
+
+ABSTRACT/SINTESI														ABSTRACT/SINTESI DEL PERIODICO NEL SUO INSIEME
+BIOBIBLIOGRAFIA AUTORE
+IMMAGINE COPERTINA														IMMAGINE COPERTINA
+
+FULL TEXT DSPACE														COLLEZIONE DSPACE
+DESCRIZIONE BIBLIOGRAFICA OPAC SBN LOCALE								DESCRIZIONE BIBLIOGRAFICA SBN POLO LOCALE
+CARRELLO DELLA SPESA													CARRELLO DELLA SPESA
+
+																		il TITOLO PERIODICO dovrebbe essere legato a:
+																		FASCICOLO (DISTINTO DA NUMERO O TITOLO MONOGRAFICO) 
+																		
+																		legato a sua volta a:
+																		
+																		IMMAGINE COPERTINA FASCICOLO
+																		
+																		e ai contenuti fascicolo, ovvero:
+																		
+																		TITOLO ARTICOLO - AUTORE ARTICOLO - PAGINE ARTICOLO FASCICOLO
+																		
+																		il titolo articolo dovrebbe essere linkato a:
+																		
+																		FULL TEXT DSPACE
+
+																		
+COLLANA:
+Titolo, luogo, editore, (anno inizio)

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><module>
+    <!-- Inherit the core Web Toolkit stuff.                        -->
+    <inherits name="com.google.gwt.user.User"/>
+    <inherits name="com.smartgwt.SmartGwt"/>
+
+    <entry-point class="org.jopac2.jcat.client.JCat"/>
+
+    <stylesheet src="JCat.css"/>
+  
+  	<inherits name="com.google.gwt.user.theme.standard.Standard"/>
+  	<!-- inherits name="at.bestsolution.gwt.util.impl.DynamicCallbackForm"/ -->
+  	<!-- <inherits name="com.google.gwt.user.theme.chrome.Chrome"/> -->
+  	<!-- <inherits name="com.google.gwt.user.theme.dark.Dark"/> -->
+<servlet class="org.jopac2.jcat.server.UploadFileServlet" path="/UploadFileServlet"/>
+<servlet class="org.jopac2.jcat.server.JcatServerImpl" path="/jcat"/>
+
+</module>

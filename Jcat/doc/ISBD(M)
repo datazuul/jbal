@@ -1,0 +1,44 @@
+AREA 1
+Titolo proprio
+= eventuale titolo parallelo
+: complemento del titolo
+/ formulazione di responsabilitˆ ; successive formulazioni di responsabilitˆ
+
+
+AREA 2
+. - Formulazione di edizione
+/ formulazione di responsabilitˆ relativa all'edizione ; successiva formulazione di responsabilitˆ
+
+AREA 3 Peculiaritˆ del materiale o del tipo di pubblicazione (ISBD(G))
+
+AREA 4
+. - Luogo di pubblicazione ; altro luogo di pubblicazione
+: nome dell'editore
+(oppure:  luogo : editore ; altro luogo : altro editore)
+. data di pubblicazione
+
+AREA 5
+. - Indicazione specifica del materiale ed estensione
+: indicazione di illustrazioni
+; dimensioni
++ materiale allegato
+
+AREA 6
+. - Titolo della collana
+. Titolo proprio della sottocollana
+/ formulazioni di responsabilitˆ relative alla collana
+, ISSN
+; numerazione all'interno della collana
+
+AREA 7
+. - Note
+
+AREA 8
+. - ISBN
+
+
+-----------------------------------------
+NUMERAZIONE PERIODICI
+
+AREA 3
+. - 
