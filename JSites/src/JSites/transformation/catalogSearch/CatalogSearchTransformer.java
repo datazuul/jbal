@@ -5,7 +5,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
@@ -113,6 +115,13 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		if(checkListParameter()) {
 			String[] list=getListParameter();
 			if(list[1]!=null && list[1].length()>0) {
+//				Statement stmt=conn.createStatement();
+//				ResultSet ts=stmt.executeQuery("select * from "+list[0]+"_NDX");
+//				while(ts.next()) {
+//					System.out.println(ts.getString("testo"));
+//				}
+//				ts.close();
+//				stmt.close();
 				result=ListSearch.listSearch(conn, list[0], list[1], 100);
 				throwResults(conn, catalogQuery, result);
 			}
