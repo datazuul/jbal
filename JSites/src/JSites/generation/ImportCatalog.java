@@ -125,6 +125,11 @@ public class ImportCatalog extends myAbsGenerator {
 						conns[i] = DriverManager.getConnection(dbUrl, "", "");
 					}
 				}
+				else {
+					for(int i=0;i<conns.length;i++) {
+						conns[i] = this.getConnection(con);
+					}
+				}
 				
 				Cache cache=null;
 				
