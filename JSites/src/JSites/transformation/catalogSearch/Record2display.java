@@ -376,7 +376,8 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
     	            if(ma!=null) { 
     	            	ma.setJOpacID(Long.parseLong(id));
     	            	sendIso(ma);
-    	            	if(ma.getPublicationNature().equals("P")){
+    	            	String nature=ma.getPublicationNature();
+    	            	if(nature!=null && nature.equals("P")){
     	            		viewFascicoli(ma);
     	            	}
     	            	ma.destroy();
