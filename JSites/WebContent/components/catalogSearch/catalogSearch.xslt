@@ -56,7 +56,9 @@
 						    <fieldset>
 						    <legend>Search</legend>
 						    <xsl:for-each select="//search">
-						    	<label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label><input id="{@name}" type="text" /><br/>
+						    	<xsl:if test="string-length(@checked)>0">
+						    		<label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label><input id="{@name}" type="text" /><br/>
+						    	</xsl:if>
 						    </xsl:for-each>
 						    <input type="submit" value="Cerca"/>
 						    </fieldset>
@@ -68,12 +70,14 @@
 		 				<xsl:call-template name="nav"/>
 						 -->
 						<xsl:for-each select="//list">
-							<form method="post" action="pageview?pid={$pid}">
-								<!--  <input name="pid" id="pid" type="hidden" value="{$pid}"/> -->
-						    	<label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label>
-						    	<input name="list{@name}" type="text" />
-						    	<input type="submit" value="List" />
-					    	</form>
+							<xsl:if test="string-length(@checked)>0">
+								<form method="post" action="pageview?pid={$pid}">
+									<!--  <input name="pid" id="pid" type="hidden" value="{$pid}"/> -->
+							    	<label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label>
+							    	<input name="list{@name}" type="text" />
+							    	<input type="submit" value="List" />
+						    	</form>
+						    </xsl:if>
 					    </xsl:for-each>
 					    </td>
 				    </tr>

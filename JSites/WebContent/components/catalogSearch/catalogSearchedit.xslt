@@ -25,7 +25,7 @@
 					<xsl:apply-templates select="catalogName" />
 					<xsl:apply-templates select="catalogConnection" />
 					<xsl:apply-templates select="dbType" />
-					
+					</table>
 					<script type="text/javascript" wiki="false">
 					<![CDATA[
 
@@ -35,20 +35,26 @@
 						   var connessione = document.getElementById("catalogConnection").value;
 						   var dbtype = "";
 
-							for( i = 0; i < document.editform.dbtype.length; i++ ) {
-							if( document.editform.dbtype[i].checked == true )
-								dbtype = document.editform.dbtype[i].value;
-								break;
+							for( i = 0; i < document.editform.dbType.length; i++ ) {
+								if( document.editform.dbType[i].checked == true ) {
+									dbtype = document.editform.dbType[i].value;
+									break;
+								}
 							}
 
 						   var testo = window.open("importCatalog?pid=]]><xsl:value-of select="$pid" /><![CDATA[&cid=]]><xsl:value-of select="$cid" /><![CDATA[&conn="+connessione+"&dbtype="+dbtype, nomecatalogo, stili);
 						 }
 
 					]]>
+					<!-- 
+					for( i = 0; i < document.editform.dbType.length; i++ ) {
+							if( document.editform.dbType[i].checked == true )
+								dbtype = document.editform.dbType[i].value;
+								break;
+							}
+					 -->
 					</script>
-
-					</table>
-					<button onClick="autoPopup();return false;">Load data</button>
+					<button onClick="javascript:autoPopup();return false;">Load data</button>
 				</fieldset>
 				
 				<fieldset>
@@ -92,10 +98,18 @@
 	<xsl:template match="dbType">
 		<tr>
 		<td>
-			<input type="radio" name="dbtype" value="derby" checked="true" /> Derby
+			<input type="radio" name="dbType" value="derby">
+				<xsl:if test="text() = 'derby'">
+	 				<xsl:attribute name="checked">checked</xsl:attribute>
+				</xsl:if>
+			</input> Derby
 		</td>
 		<td>
-			<input type="radio" name="dbtype" value="mysql" /> Mysql
+			<input type="radio" name="dbType" value="mysql">
+				<xsl:if test="text() = 'mysql'">
+	 				<xsl:attribute name="checked">checked</xsl:attribute>
+				</xsl:if>
+			</input> Mysql
 		</td>
 		</tr>
 	</xsl:template>
