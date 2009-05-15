@@ -24,6 +24,7 @@
 	            <map:transform src="{global:component-name}{../../1}.xslt">
 	                <map:parameter name="use-request-parameters" value="true"/>
 	                <map:parameter name="permissionCode" value="{permissionCode}"/>
+	                <map:parameter name="context" value="{context}"/>
 	            </map:transform>
 	        </map:act>
             <map:act type="auth-loggedIn">
