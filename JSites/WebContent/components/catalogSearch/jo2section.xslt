@@ -114,10 +114,14 @@
       <!-- DIV class="resultSet"-->
         <xsl:for-each select="record">
             <DIV class="sezione">
+            <!-- 
                 <xsl:apply-templates select="image"/>
                 <div class="sezionericerca_contenuto">
                 	<xsl:apply-templates select="*[not(local-name() = 'image')]" />
                 </div>
+            -->
+  				<div class="sezione_testo"><xsl:value-of disable-output-escaping="yes" select="text()"/></div>
+            
                 <div class="clearer">&#160;</div>
                 <hr/>
             </DIV>
@@ -125,7 +129,7 @@
       <!-- /DIV-->
    </xsl:template>
  
- 
+<!--  
 	 <xsl:template match="buy">
 	      <DIV class="id">
 	      	<br/>
@@ -148,7 +152,7 @@
 			</xsl:if>
 	   	  </DIV>
 	   </xsl:template>
- 
+  -->
    <xsl:template match="bid">
       <!-- DIV class="bid">
 		<xsl:if test="@key">
@@ -318,15 +322,23 @@
    </xsl:template>   
    
    <xsl:template match="standardNumber">
-		<b>Standard number:</b>&#160;<xsl:value-of select="."/><br/>
+		<br/><b>Standard number:</b>&#160;<xsl:value-of select="."/>
    </xsl:template>
    <xsl:template match="publicationDate">
-		<b>Data pubblicazione:</b>&#160;<xsl:value-of select="."/><br/>
+		<br/><b>Data pubblicazione:</b>&#160;<xsl:value-of select="."/>
+   </xsl:template>
+   <xsl:template match="publicationPlace">
+		<br/><b>Luogo pubblicazione:</b>&#160;<xsl:value-of select="."/>
+   </xsl:template>
+   <xsl:template match="editor">
+		<br/><b>Editore:</b>&#160;<xsl:value-of select="."/>
    </xsl:template>
    <xsl:template match="prezzo">
 		<br/><b>Prezzo:</b>&#160;<xsl:value-of select="."/>
    </xsl:template>
-   
+   <xsl:template match="jid">
+		<!-- <br/><b>JID:</b>&#160;<xsl:value-of select="."/>  -->
+   </xsl:template>
    
    
    
