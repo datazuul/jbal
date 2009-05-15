@@ -12,6 +12,7 @@
             <map:transformer name="markWord" label="content" pool-max="16" src="JSites.transformation.catalogSearch.MarkWord"/>
             <map:transformer name="createLink" label="content" pool-max="16" src="JSites.transformation.catalogSearch.CreateLink"/>
             <map:transformer name="record2display" label="content" pool-max="16" src="JSites.transformation.catalogSearch.Record2display"/>
+            <map:transformer name="catalogTemplator" label="content" pool-max="16" src="JSites.transformation.catalogSearch.Templator"/>
         </map:transformers>
 	</map:components>
 	
@@ -29,11 +30,16 @@
 	                    <map:parameter name="parameters" value="true" />
 	                    <map:generate src="{request-param:datadir}/data/catalogSearch{cid}.xml"/>
 	                    <map:transform type="catalogSearch" />
-	                    <!-- map:transform type="tutil" src="/t/record2display" / -->
 	                    
 	                    <map:transform type="record2display"/>
-	                    <map:transform type="createLink"/>
-      					<map:transform type="markWord"/>
+	                    <!-- map:transform type="tutil" src="/t/template" / -->
+	                    <map:transform type="catalogTemplator"/>
+	                    
+	                    
+	                    <!-- <map:transform type="createLink"/> -->
+      					<!-- <map:transform type="markWord"/> -->
+      					
+
 	                    <map:transform src="catalogSearch.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
