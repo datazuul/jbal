@@ -236,7 +236,8 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
 				blocks[i]=blocks[i].substring(p+2);
 				NodeList ce=document2.getElementsByTagName(nodeName);
 				Element e=(Element) ce.item(0);
-				String value=e.getTextContent();
+				String value="";
+				if(e!=null) value=e.getTextContent();
 				output+=value;
 			}
 			output+=blocks[i];
