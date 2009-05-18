@@ -89,7 +89,7 @@
 				</form-->
 				
 				<!--  <xsl:apply-templates select="section/lang[@code=$lang]"/> -->
-				<div id="risultati">
+				<div id="resultSet">
 					<xsl:apply-templates />
 				</div>
 				<div class="clearer">&#160;</div>

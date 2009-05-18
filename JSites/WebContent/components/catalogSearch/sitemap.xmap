@@ -9,8 +9,6 @@
         <map:transformers>
             <map:transformer name="catalogSearch" label="content" pool-max="16" src="JSites.transformation.catalogSearch.CatalogSearchTransformer"/>
             <map:transformer name="catalogSearchSave" label="content" pool-max="16" src="JSites.transformation.catalogSearch.CatalogSearchSaveTransformer"/>
-            <map:transformer name="markWord" label="content" pool-max="16" src="JSites.transformation.catalogSearch.MarkWord"/>
-            <map:transformer name="createLink" label="content" pool-max="16" src="JSites.transformation.catalogSearch.CreateLink"/>
             <map:transformer name="record2display" label="content" pool-max="16" src="JSites.transformation.catalogSearch.Record2display"/>
             <map:transformer name="catalogTemplator" label="content" pool-max="16" src="JSites.transformation.catalogSearch.Templator"/>
         </map:transformers>
@@ -35,9 +33,8 @@
 	                    <!-- map:transform type="tutil" src="/t/template" / -->
 	                    <map:transform type="catalogTemplator"/>
 	                    
+	                    <!-- map:transform type="tutil" src="/t/templated" / -->
 	                    
-	                    <!-- <map:transform type="createLink"/> -->
-      					<!-- <map:transform type="markWord"/> -->
       					
 
 	                    <map:transform src="catalogSearch.xslt">
