@@ -55,7 +55,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
 import org.apache.cocoon.xml.AttributesImpl;
 
+import java.util.Hashtable;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -81,6 +83,8 @@ import javax.xml.transform.stream.StreamResult;
 public class Templator extends MyAbstractPageTransformer implements Composable, Disposable //, CacheableProcessingComponent
 {
     private boolean isRecord=false,debug=false;
+    private boolean isOptimizedQuery=false;
+
     private Document document=null;
     private Element currentElement=null;
 
@@ -89,6 +93,8 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
     //private RecordInterface ma;
     private StringBuffer buffer=null;
     private String template="";
+    private Hashtable<String,Boolean> v;
+
     
     public void sendElement(String element,String value) throws SAXException {
     	if(value!=null) {
@@ -138,6 +144,12 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
 	public void startElement(String namespaceURI, String localName, String qName,
             Attributes attributes) throws SAXException
     {
+		if (namespaceURI.equals("") && localName.equals("root")) {
+			v.clear();buffer.delete(0, buffer.length());
+		}
+		else if (namespaceURI.equals("") && localName.equals("optimizedQuery")) {
+			isOptimizedQuery=true;
+		}
         if (namespaceURI.equals("") && localName.equals("template")) {
 //            isTemplate=true;
         }
@@ -167,7 +179,13 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
 	public void endElement(String namespaceURI, String localName, String qName)
             throws SAXException
     {
-    	if (namespaceURI.equals("") && localName.equals("template")) {
+        if (namespaceURI.equals("") && localName.equals("optimizedQuery")) {
+        	populateHashParole();
+        	super.characters(buffer.toString().toCharArray(),0,buffer.length());
+        	super.endElement(namespaceURI, localName, qName);
+        	isOptimizedQuery=false;
+        }
+        else if (namespaceURI.equals("") && localName.equals("template")) {
 //    		isTemplate=false;
     		template=buffer.toString(); //.replaceAll("[\n\r]", "").trim();
     		buffer.delete(0, buffer.length());
@@ -238,12 +256,77 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
 				Element e=(Element) ce.item(0);
 				String value="";
 				if(e!=null) value=e.getTextContent();
+				value=markWord(value);
 				output+=value;
 			}
 			output+=blocks[i];
 		}
 		return output;
 	}
+	
+	private String markWord(String value) {
+		String left="", right="", r="";
+        StringTokenizer tk=new StringTokenizer(value," ,.;()/-'\\:=@%$&!?[]#*<>\016\017",true);
+        while(tk.hasMoreTokens()) {
+            right=tk.nextToken();
+            if(isParola(right.toLowerCase())) {
+            	right+=" ";
+            	r+=left;
+            	r+="<div class=\"match\">"+right+"</div>";
+//                super.startElement("","text","text",new AttributesImpl());
+//                super.characters(left.toCharArray(),0,left.length());
+//                super.endElement("","text","text");
+//                super.startElement("","match","match",new AttributesImpl());
+//                super.characters(right.toCharArray(),0,right.length());
+//                super.endElement("","match","match");
+                left="";
+            }
+            else {
+                left+=right;
+            }
+        }
+        if(left.length()>0) {
+        	r+=left;
+//            super.startElement("","text","text",new AttributesImpl());
+//            super.characters(left.toCharArray(),0,left.length());
+//            super.endElement("","text","text");
+        }
+		return r;
+	}
+	
+    private boolean isParola(String parola) {
+        return v.containsKey(quota(parola));
+    }
+
+	private String quota(String parola) {
+    	parola = parola.toLowerCase();
+		parola = parola.replaceAll("\u010d","c");
+		parola = parola.replaceAll("�","s");
+		parola = parola.replaceAll("�","z");//
+		parola = parola.replaceAll("\u0107","c");
+		parola = parola.replaceAll("\u0111","d");
+		parola = parola.replaceAll("dj","d");
+		return parola;
+	}
+	
+    private void populateHashParole() {
+    	/*
+    	 * optimizedQuery e' della forma:
+    	 * 
+    	 *      [Ritter(6:0ms,qry:123ms,op:0ms)](2:0ms,qry:0ms,op:0ms)AND[Alexander(9:0ms,qry:76ms,op:0ms)]
+    	 *      
+    	 * Le parole cercate sono sempre comprese tra [......(
+    	 */
+    	String[] parole=buffer.toString().split("\\[");
+    	for(int i=0;i<parole.length;i++) {
+    		int k=parole[i].indexOf('(');
+    		if(k>1) {
+    			v.put(quota(parole[i].substring(0,k)), new Boolean(true));
+    		}
+    	}
+    	//v.put(quota(new String(ch,start,len).toLowerCase()),new Boolean(true));
+//      System.out.println("Got: "+new String(ch,start,len));
+    }
 
 	private void dispatch() throws SAXException {
     	super.characters(buffer.toString().toCharArray(), 0, buffer.length());
@@ -256,6 +339,8 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
     
     public void compose(ComponentManager manager) throws ComponentException {
     	this.manager=manager;
+        v=new Hashtable<String,Boolean>();
+
         dbselector =
             (ComponentSelector) manager.lookup(DataSourceComponent.ROLE + "Selector");
     }
