@@ -156,74 +156,62 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
         sendElement("type",ma2.getTipo());
         
         
-        try {
-    		String file = saveImgFile(ma2);
-    		AttributesImpl a = new AttributesImpl();
-    		
-    		String nat = ma2.getPublicationNature();
-    		if(nat != null & nat.length()==1)
-    			a.addCDATAAttribute("nature", nat);
-    		
-    		contentHandler.startElement("","image","image",a);
-	        contentHandler.characters(file.toCharArray(), 0, file.length());
-	        contentHandler.endElement("","image","image");
-        	
-        	if(debug) {
-        		System.out.println(ma2.toString());
-        	}
-        	
-        	sendElement("title",ma2.getTitle());
-        	
-        	v=ma2.getAuthors();
-            if(v.size()>0) {
-                super.startElement("","authors","authors",new AttributesImpl());
-                for(int i=0;i<v.size();i++) {
-                	sendElement("author",(String)v.elementAt(i));
-                }
-                super.endElement("","authors","authors");
+
+		String file = saveImgFile(ma2);
+		AttributesImpl a = new AttributesImpl();
+		
+		String nat = ma2.getPublicationNature();
+		if(nat != null && nat.length()==1)
+			a.addCDATAAttribute("nature", nat);
+		
+		contentHandler.startElement("","image","image",a);
+        contentHandler.characters(file.toCharArray(), 0, file.length());
+        contentHandler.endElement("","image","image");
+    	
+    	if(debug) {
+    		System.out.println(ma2.toString());
+    	}
+    	
+    	sendElement("title",ma2.getTitle());
+    	
+    	v=ma2.getAuthors();
+        if(v!=null && v.size()>0) {
+            super.startElement("","authors","authors",new AttributesImpl());
+            for(int i=0;i<v.size();i++) {
+            	sendElement("author",(String)v.elementAt(i));
             }
-            v.clear();v=null;
+            super.endElement("","authors","authors");
+            v.clear();
         }
-        catch(NullPointerException e) {}
+        v=null;
+
         
         sendElement("ISBD",ma2.getISBD());
         
         super.startElement("","editors","editors",new AttributesImpl());
-        try {
-            v=ma2.getEditors();
-            for(int i=0;i<v.size();i++) {
-            	sendElement("editor",(String)v.elementAt(i));
-            }
-            v.clear();v=null;
+        v=ma2.getEditors();
+        if(v!=null) {
+	        for(int i=0;i<v.size();i++) {
+	        	sendElement("editor",(String)v.elementAt(i));
+	        }
+	        v.clear();
         }
-        catch(NullPointerException e) {}
+        v=null;
         super.endElement("","editors","editors");
         
-        tempString=ma2.getStandardNumber();
-        if(tempString!=null) {
-        	sendElement("standardNumber",tempString);
-        }
-        
-        tempString=ma2.getPublicationPlace();
-        if(tempString!=null) {
-        	sendElement("publicationPlace",tempString);
-        }
-        
-        tempString=ma2.getPublicationDate();
-        if(tempString!=null) {
-        	sendElement("publicationDate",tempString);
-        }
+    	sendElement("standardNumber",ma2.getStandardNumber());
+    	sendElement("publicationPlace",ma2.getPublicationPlace());
+    	sendElement("publicationDate",ma2.getPublicationDate());
+
         
         v=ma2.getSubjects();
         if((v!=null)&&(v.size()>0)) {
             super.startElement("","subjects","subjects",new AttributesImpl());
 
-            try {
-                for(int i=0;i<v.size();i++) {
-                	sendElement("subject",(String)v.elementAt(i));
-                }
+            for(int i=0;i<v.size();i++) {
+            	sendElement("subject",(String)v.elementAt(i));
             }
-            catch(NullPointerException e) {}
+
             super.endElement("","subjects","subjects");
             v.clear();v=null;
         }
@@ -231,12 +219,11 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
         v=ma2.getClassifications();
         if((v!=null)&&(v.size()>0)) {
             super.startElement("","classifications","classifications",new AttributesImpl());
-            try {
-                for(int i=0;i<v.size();i++) {
-                	sendElement("classification",(String)v.elementAt(i));
-                }
+
+            for(int i=0;i<v.size();i++) {
+            	sendElement("classification",(String)v.elementAt(i));
             }
-            catch(NullPointerException e) {}
+
             super.endElement("","classifications","classifications");
             v.clear();v=null;
         }
@@ -258,12 +245,8 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
             includeData(vma,"serie","isbdserie");
             if(vma!=null) {vma.clear();vma=null;}
         }
-        
 
-        tempString=ma2.getAbstract();
-        if(tempString!=null) {
-        	sendElement("abstract",tempString);
-        }
+    	sendElement("abstract",ma2.getAbstract());
         
         try {
         	if(v!=null) v.clear();
@@ -299,12 +282,8 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
             vbs.clear();vbs=null;
         }
        
-    	String p = ma2.getPrice();
-    	if(p!=null) sendElement("prezzo", p);
-
-        tempString=ma2.getBid();
-    	if(tempString!=null) sendElement("bid",tempString);
-    	
+        sendElement("prezzo", ma2.getPrice());
+        sendElement("bid",ma2.getBid());
     	sendElement("jid", String.valueOf(ma2.getJOpacID()));
 	}
 
