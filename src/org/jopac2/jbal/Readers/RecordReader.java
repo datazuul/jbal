@@ -76,7 +76,7 @@ public abstract  class RecordReader extends BufferedReader {
             linea=this.readRecord();
 
 			try {
-				data.process(linea,tipoNotizia,idTipo,paroleSpooler);
+				data.process(linea,paroleSpooler); //tipoNotizia,idTipo,
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
