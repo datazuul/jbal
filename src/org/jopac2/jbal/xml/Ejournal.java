@@ -37,7 +37,7 @@ import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.Utils;
 
-public class EJournal extends XML {
+public class Ejournal extends XML {
 	
 	/**
 <record>
@@ -64,12 +64,12 @@ public class EJournal extends XML {
 </record>
 	 */
 	
-	public EJournal(String notizia, String dTipo, String livello)
+	public Ejournal(String notizia, String dTipo, String livello)
 			throws NumberFormatException, SAXException, IOException {
 		this.XMLCostruttore(notizia, dTipo, Integer.parseInt(livello));
 	}
 
-	public EJournal(String notizia, String dTipo) throws SAXException, IOException {
+	public Ejournal(String notizia, String dTipo) throws SAXException, IOException {
 		this.XMLCostruttore(notizia, dTipo, 0);
 	}
 
