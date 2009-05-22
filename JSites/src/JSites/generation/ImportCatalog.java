@@ -147,9 +147,9 @@ public class ImportCatalog extends myAbsGenerator {
 					e.printStackTrace();
 				}
 				
-				Transliterator t=Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
+				//Transliterator t=Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
 				
-				DataImporter dataimporter=new DataImporter(in,format,JOpac2confdir, conns, true,cache,t);
+				DataImporter dataimporter=new DataImporter(in,format,JOpac2confdir, conns, true,cache); //,t);
 				if(background) {
 					dataimporter.start();
 				}
