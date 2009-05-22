@@ -97,7 +97,7 @@ public class LoadClasses {
         return SQLInstructions;
     }
     
-	public void doJob() {
+	public void doJob(String[] channels) {
         Vector<DataType> v=getTypes();
         Iterator<DataType> i=v.iterator();
         
@@ -114,6 +114,19 @@ public class LoadClasses {
             catch (Exception e) {
                 System.err.println("No data for class: "+currentName);
             }
+        }
+        
+        // aggiunta per Mdb
+        for(int j=0;j<SQLInstructions.size();j++) {
+        	String cl=SQLInstructions.elementAt(j).getClassName();
+        	for(int z=0;z<channels.length;z++) {
+        		if(channels[z].equals(cl)) {
+        			channels[z]="";
+        		}
+        	}
+        }
+        for(int j=0;j<channels.length;j++) {
+        	if(channels[j].length()>0) SQLInstructions.addElement(new ClassItem("Mdb", channels[j], channels[j], ""));
         }
     }
 }

@@ -46,6 +46,8 @@ import java.sql.SQLException;
 
 import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.dbGateway.LoadData;
+import org.jopac2.jbal.RecordFactory;
+import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.Readers.XsltTransformer;
 
 import com.ibm.icu.text.Transliterator;
@@ -58,9 +60,10 @@ public class DataImporter extends Thread {
 	boolean clearDatabase=true;
 	DbGateway dbGateway=null;
 	Cache cache=null;
-	Transliterator t=null;
+	//Transliterator t=null;
+	String[] channels=null;
 	
-	public DataImporter(InputStream f,String filetype,String JOpac2confdir,Connection[] conns, boolean clearDatabase, Cache cache, Transliterator t) {
+	public DataImporter(InputStream f,String filetype,String JOpac2confdir,Connection[] conns, boolean clearDatabase, Cache cache) { //, Transliterator t) {
 		this.f=f;
 		this.filetype=filetype;
 		confdir=JOpac2confdir;
@@ -70,25 +73,7 @@ public class DataImporter extends Thread {
 		this.cache=cache;
 	}
 	
-	private void inizializeDB(Connection conn) throws SQLException {
-		System.out.println("Creating tables");
-		dbGateway.createAllTables(conn);
-		System.out.println("Importing data types");
-		/*try {
-			DbGateway.createClasses(conn);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}*/
-		dbGateway.importClassiDettaglio(conn,confdir+"/dataDefinition/DataType.xml");
-		
-//		System.out.println("Droping db indexes");
-//		manager.dropDBindexes();
-		
-		System.out.println("Create DB 1st index");
-		dbGateway.create1stIndex(conn);
-//        System.out.println("Create DB indexes");
-//		manager.commitAll();
-	}
+
 	
 	public void consolidateDB(Connection conn) throws SQLException {
 
@@ -100,8 +85,8 @@ public class DataImporter extends Thread {
 	
     private void loadData(InputStream f,String dbType, String temporaryDir) {
     	DbGateway.commitAll(conn);
-        LoadData ld=new LoadData(conn);
-        ld.doJob(f,dbType,temporaryDir,dbGateway.getClassID(conn[0], dbType),cache,t);
+        LoadData ld=new LoadData(conn,clearDatabase,confdir);
+        ld.doJob(f,dbType,temporaryDir,cache); //,t);
         ld.destroy();
     }
 	
@@ -113,7 +98,7 @@ public class DataImporter extends Thread {
 			try {
 				int max_conn=5;
 				
-				if(clearDatabase) inizializeDB(conn[0]);
+				
 				
 				System.out.println("Loading data");
 				
