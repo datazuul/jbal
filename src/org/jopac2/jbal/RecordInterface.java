@@ -41,7 +41,7 @@ import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.JOpac2Exception;
 import org.jopac2.utils.TokenWord;
 
-public interface RecordInterface {
+public interface RecordInterface {	
 	/** clona il record, restituendone una nuova istanza
 	 * 
 	 * @return RecordInterface
@@ -483,6 +483,14 @@ public interface RecordInterface {
 	public String getPublicationNature();
 	
 	public String getPrice();
+	
+	public String getField(String field);
+	
+	/**
+	 * Restituisce un array di canali che devono essere indicizzati
+	 * @return
+	 */
+	public String[] getChannels();
 	
 	/**
 	 * Verifica la coerenza NSB - NSE per ogni campo in tutti i tag indicati.
