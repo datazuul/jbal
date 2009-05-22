@@ -66,9 +66,9 @@ public class JOpac2Import {
 	}
 	
 	public void doJob(boolean background) {
-		Transliterator t=Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
+		//Transliterator t=Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
 
-		DataImporter dataimporter=new DataImporter(inputFile,filetype,JOpac2confdir, conns, clearDatabase,DbGateway.getCache(),t);
+		DataImporter dataimporter=new DataImporter(inputFile,filetype,JOpac2confdir, conns, clearDatabase,DbGateway.getCache()); //,t);
 		if(background)
 			dataimporter.start();
 		else
