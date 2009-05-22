@@ -272,7 +272,7 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
             if(isParola(right.toLowerCase())) {
             	right+=" ";
             	r+=left;
-            	r+="<div class=\"match\">"+right+"</div>";
+            	r+="<span class=\"match\">"+right+"</span>";
 //                super.startElement("","text","text",new AttributesImpl());
 //                super.characters(left.toCharArray(),0,left.length());
 //                super.endElement("","text","text");

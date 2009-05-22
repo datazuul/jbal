@@ -146,17 +146,26 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
     	buffer.append(ch, start, len);
     }
     
+    private void sendMdb(RecordInterface ma2) throws SAXException {
+    	String[] ch=ma2.getChannels();
+    	for(int i=0;i<ch.length;i++) {
+    		if(ch[i].startsWith("/")) {
+    			String name=ch[i].substring(ch[i].lastIndexOf("/")+1);
+    			String value=ma2.getField(name);
+    			sendElement(name,value);
+    		}
+    	}
+        sendElement("bid",ma2.getBid());
+    	sendElement("jid", String.valueOf(ma2.getJOpacID()));
+    }
     
     private void sendIso(RecordInterface ma2) throws SAXException {
     	Vector<String> v=null;
     	Vector<RecordInterface> vma=null;
     	Vector<BookSignature> vbs=null;
-    	String tempString;
     	
         sendElement("type",ma2.getTipo());
         
-        
-
 		String file = saveImgFile(ma2);
 		AttributesImpl a = new AttributesImpl();
 		
@@ -354,7 +363,12 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
     	            myConnection.close();
     	            if(ma!=null) { 
     	            	ma.setJOpacID(Long.parseLong(id));
-    	            	sendIso(ma);
+    	            	if(ma.getTipo().equals("mdb")) {
+    	            		sendMdb(ma);
+    	            	}
+    	            	else {
+    	            		sendIso(ma);
+    	            	}
     	            	String nature=ma.getPublicationNature();
     	            	if(nature!=null && nature.equals("P")){
     	            		viewFascicoli(ma);
