@@ -134,6 +134,10 @@ public abstract class ISO2709Impl extends ISO2709 {
 		
 		return output;
 	}
+	
+	public String[] getChannels() {
+		return channels;
+	}
 
 	// public abstract String getAuthors(String separator, boolean html) {return
 	// "Error: method getAuthors is by ISO2709";}

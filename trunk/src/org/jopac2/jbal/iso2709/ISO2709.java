@@ -54,6 +54,8 @@ import org.jopac2.utils.Utils;
 public abstract class ISO2709 implements RecordInterface {
   public Vector<Tag> dati;
   public Vector<TokenWord> tw;
+  public static String[] channels={"ANY","AUT","TIT","NUM","LAN","MAT","DTE","SBJ","BIB","INV","CLL","ANY","JID","ABS","NAT"};
+
 
   protected String rt=String.valueOf((char)0x1d);
   protected String ft=String.valueOf((char)0x1e);
@@ -757,5 +759,9 @@ public Vector<Tag> getTags(String tag) {
 	}
   
   public String getPublicationNature(){ return  null;}
+  
+	public String getField(String field) {
+		return null;
+	}
 
 }
