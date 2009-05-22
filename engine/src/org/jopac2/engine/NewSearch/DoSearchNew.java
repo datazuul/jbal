@@ -41,11 +41,15 @@ public class DoSearchNew {
 	private Vector<Long> resultSet;
 	private Connection conn = null;
 	protected StaticDataComponent staticdata;
+	private String[] channels=null;
 	
 	public DoSearchNew(Connection c, StaticDataComponent d) {
 		this.conn = c;
 		this.staticdata = d;
 		this.resultSet = new Vector<Long>();
+		RecordInterface ma=DbGateway.getNotiziaByJID(c, 1);
+		channels=ma.getChannels();
+		ma.destroy();
 	}
 	
 	public SearchResultSet executeSearch(String query, boolean useStemmer) throws ExpressionException, SQLException {
@@ -56,7 +60,7 @@ public class DoSearchNew {
 		result.setQuery(query);
 		
 		if(query!=null && query.length()>0) {
-			QuerySearch qs=new QuerySearch(query,this.conn); // this.staticdata
+			QuerySearch qs=new QuerySearch(query,this.conn,channels); // this.staticdata
 			qs.optimize(useStemmer);  // ottimizza ed esegue la query
 			result.setOptimizedQuery(qs.toString());
 			result.setItemCardinalities(qs.getQueryCardinality());				

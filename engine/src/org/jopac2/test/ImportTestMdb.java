@@ -1,6 +1,7 @@
 package org.jopac2.test;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,20 +16,18 @@ import org.jopac2.engine.listSearch.ListSearch;
 import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
 import org.jopac2.engine.utils.MyTimer;
 import org.jopac2.engine.utils.SearchResultSet;
-import org.jopac2.jbal.RecordInterface;
 import org.junit.After;
 import org.junit.Before;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 import junit.framework.TestCase;
 
-public class ImportTest extends TestCase {
+public class ImportTestMdb extends TestCase {
 	private static String sitename = "sebina";
 	private InputStream in = null;
-	private static String filetype = "sebina";
+	private static String filetype = "mdb";
 	private static String JOpac2confdir = "src/org/jopac2/conf";
-	//private static String dbUrl = "jdbc:derby:/siti/jopac2/catalogs/db" + sitename + ";create=true";
+	//private static String dbUrl = "jdbc:derby:db" + sitename + ";create=true";
 	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
 	private static String dbUser = "root";
 	private static String dbPassword = "";
@@ -68,12 +67,9 @@ public class ImportTest extends TestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		if (!ru) {
-			String inFile = new String(
-					Base64
-							.decode(org.jopac2.test.Base64DataExample.unimarcBase64DataExample),
-					"utf-8");
+			File f=new File("/Users/romano/Desktop/banche_dati.mdb");
 
-			in = new ByteArrayInputStream(inFile.getBytes());
+			in = new FileInputStream(f);
 
 			JOpac2Import ji = new JOpac2Import(in, filetype, JOpac2confdir,
 					dbUrl, dbUser, dbPassword, true);
@@ -154,7 +150,7 @@ public class ImportTest extends TestCase {
 
 		String[] tipi_notizie = { "1,sebina", "2,sosebi", "3,sbn-unix",
 				"4,isisbiblo", "5,easyweb", "6,bibliowin4", "7,pregresso",
-				"8,ejournal", "9,eut", "10,eutmarc" , "11,mdb"};
+				"8,ejournal", "9,eut", "10,eutmarc", "11,mdb" };
 
 		Vector<String> v1 = DbGateway.dumpTable(conn, "tipi_notizie");
 		boolean r1 = checkStringSequence(v1, tipi_notizie);
@@ -164,7 +160,7 @@ public class ImportTest extends TestCase {
 		assertTrue("Done ", r1);
 	}
 
-	public void testTblAnagrafeParole() throws Exception {
+/*	public void testTblAnagrafeParole() throws Exception {
 		String[] tipi_notizie = { "1,05,", "2,214,", "3,3680,", "4,x,x",
 				"5,eng,eng", "6,english,english", "7,grammar,gramm", "8,in,in",
 				"9,use,use", "10,a,a", "11,self,self", "12,study,study",
@@ -293,34 +289,26 @@ public class ImportTest extends TestCase {
 		}
 		assertTrue("Done ", r1);
 	}
+	*/
 
 	
 	  public void testSearchOrder() throws Exception {
-		SearchResultSet rs = doSearch("(TIT=in)|(TIT=der)");
-		long[] unordered = { 1, 3, 6, 7, 9, 10 };
-		long[] ordered = { 7, 6, 1, 10, 3, 9 };
+		SearchResultSet rs = doSearch("(NomeRisorsa=business)|(NomeRisorsa=stampa)");
+		long[] unordered = { 24, 25, 26, 27, 28, 29, 53, 59, 60 };
+		long[] ordered = { 53, 24, 25, 26, 28, 29, 27, 59, 60 };
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
-		//SearchResultSet.dumpSearchResultSet(conn, rs);
-		DbGateway.orderBy(conn, "TIT", rs);
-		//SearchResultSet.dumpSearchResultSet(conn, rs);
+		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
+		DbGateway.orderBy(conn, "NomeRisorsa", rs);
+		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
 		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
 		assertTrue("Done ", r1 && r2);
 	}
 
-	public void testListTIT() throws Exception {
+	public void econ() throws Exception {
 		SearchResultSet rs = ListSearch.listSearch(conn, "TIT",
 				"English grammar in use", 100);
 		long[] listres = { 1, 10, 2, 11, 17, 8, 5, 3, 4, 18, 9 };
 		//SearchResultSet.dumpSearchResultSet(conn, rs);
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
-		assertTrue("Done ", r1);
-	}
-	
-	public void testListAUT() throws Exception {
-		SearchResultSet rs = ListSearch.listSearch(conn, "AUT",
-				"a", 100);
-		long[] listres = { 17, 19, 6, 3, 8, 4, 11, 4, 9, 5, 7, 10, 15, 1, 15, 16, 2, 5, 8, 12, 10, 13, 10, 14, 7, 15, 6, 6 };
-		SearchResultSet.dumpSearchResultSet(conn, rs);
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
 		assertTrue("Done ", r1);
 	}

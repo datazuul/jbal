@@ -89,11 +89,18 @@ public class SearchResultSet {
 	public int getQueryID() {return queryID;}
 	
 	public static void dumpSearchResultSet(Connection conn, SearchResultSet rs){
+		dumpSearchResultSet(conn,rs,null);
+	}
+	
+	public static void dumpSearchResultSet(Connection conn, SearchResultSet rs, String f){
 		Vector<Long> v = rs.getRecordIDs();
 		System.out.println(v);
 		for (int i = 0; i < v.size(); i++) {
-			RecordInterface m = DbGateway.getNotiziaByJID(conn, v.elementAt(i).toString());			
-			System.out.println(m.getTitle());
+			RecordInterface m = DbGateway.getNotiziaByJID(conn, v.elementAt(i).toString());
+			String o=null;
+			if(f!=null) o=m.getField(f);
+			if(o==null) o=m.getTitle();
+			System.out.println(o);
 		}
 	}
 }

@@ -110,7 +110,7 @@ public class NewItemCardinality {
 	 * 
 	 * @param s
 	 */
-	public void setClasseParola(String s, StaticDataComponent sd) {
+	public void setClasseParola(String[] channels,String s, StaticDataComponent sd) {
 		if(s!=null && s.length()>0){
 			StringTokenizer st = new StringTokenizer(s, "=");			
 			String classe = st.nextToken().trim();
@@ -127,12 +127,12 @@ public class NewItemCardinality {
 				// decodifica nome classe
 				this.nomeClasse = classe;
 				try {
-					this.classe=StaticDataComponent.getChannelIndexbyName(classe);
+					this.classe=StaticDataComponent.getChannelIndexbyName(channels,classe);
 				}
 				catch(Exception e){
 					// se la classe non esiste viene usata ANY
 					this.nomeClasse="ANY";
-					this.classe=StaticDataComponent.getChannelIndexbyName(nomeClasse);
+					this.classe=StaticDataComponent.getChannelIndexbyName(channels,nomeClasse);
 				}
 			} else { 
 				// classe e' un numero
