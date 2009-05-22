@@ -77,6 +77,9 @@ public abstract class XML implements RecordInterface {
   
   private Vector<TokenWord> tw;
   
+  //public static String[] channels={"ANY","AUT","TIT","NUM","LAN","MAT","DTE","SBJ","BIB","INV","CLL","ANY","JID","ABS","NAT"};
+
+  
   public RecordInterface clone() {
 	  return RecordFactory.buildRecord(0, this.toString(), this.getTipo(), this.getLivello());
   }
@@ -431,5 +434,23 @@ public abstract class XML implements RecordInterface {
 	
 	public String getPrice() {
 		return null;
+	}
+	
+	public String getField(String field) {
+		/** TODO
+		 * modificare in modo che si possa specificare tutto il path
+		 */
+		if(field.contains("/")) field=field.substring(field.lastIndexOf("/")+1);
+		return getNodeContent(field);
+	}
+	
+	public String[] getChannels() {
+		Vector<TokenWord> v=XMLHelper.exploreData(document);
+		
+		String[] ch=new String[v.size()+ISO2709Impl.channels.length];
+		for(int i=0;i<ISO2709Impl.channels.length;i++) ch[i]=ISO2709Impl.channels[i];
+		for(int i=0;i<v.size();i++) ch[i+ISO2709Impl.channels.length]=v.elementAt(i).getTag();
+		ch[0]="ANY";
+		return ch;
 	}
 }
