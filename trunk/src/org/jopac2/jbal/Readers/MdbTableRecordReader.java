@@ -47,8 +47,15 @@ public class MdbTableRecordReader extends RecordReader {
 			Set<String> keys=row.keySet();
 			Iterator<String> i=keys.iterator();
 			while(i.hasNext()) {
-				String curKey=i.next();
-				record.append("<"+curKey+">"+row.get(curKey)+"</"+curKey+">\n");
+				String curKey=i.next().replaceAll(" ", "_");
+				curKey=curKey.replaceAll("/", "_");
+				Object curV=row.get(curKey);
+				if(curV!=null) {
+					String curValue=curV.toString();
+					curValue=curValue.replaceAll("<", "&lt;");
+					curValue=curValue.replaceAll(">", "&gt;");
+					record.append("<"+curKey+">"+curValue+"</"+curKey+">\n");
+				}
 			}
 			record.append("</record>");
 		}
