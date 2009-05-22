@@ -206,16 +206,16 @@ public abstract class DbGateway {
 			}
     }
     
-    public void importClassiDettaglio(Connection conn, String configFile) {
+    public void importClassiDettaglio(String[] channels,Connection conn, String configFile) {
         LoadClasses lClasses=new LoadClasses(configFile);
-        lClasses.doJob();
+        lClasses.doJob(channels);
         Vector<ClassItem> SQLInstructions=lClasses.getSQLInstructions();
         ClassItem currentItem;
         
         for(int i=0;i<SQLInstructions.size();i++) {
             currentItem=SQLInstructions.elementAt(i);
             try {
-				insertClassItem(conn, currentItem);
+				insertClassItem(channels,conn, currentItem);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -251,9 +251,9 @@ public abstract class DbGateway {
     }*/
     
 
-	public void insertClassItem(Connection conn, ClassItem currentItem) throws SQLException {
+	public void insertClassItem(String[] channels,Connection conn, ClassItem currentItem) throws SQLException {
         long currentClassID=getClassID(conn, currentItem.getClassName());
-        long currentElementID=StaticDataComponent.getChannelIndexbyName(currentItem.getElementName()); //DbGateway.getElementNameID(conn, currentItem.getElementName());
+        long currentElementID=StaticDataComponent.getChannelIndexbyName(channels,currentItem.getElementName()); //DbGateway.getElementNameID(conn, currentItem.getElementName());
         
         String sql="insert into classi_dettaglio (id_classe,id_tipo,tag,data_element) "+
         	"values ("+currentElementID+","+currentClassID+",'"+
@@ -999,6 +999,7 @@ public abstract class DbGateway {
 	
 	
 	public static String nomeTableListe(String classe){//CR_LISTE
+		if(classe.contains("/")) classe=classe.substring(classe.lastIndexOf("/")+1); // per Mdb
 		return classe+"_NDX";
 	}
 	
@@ -1024,14 +1025,17 @@ public abstract class DbGateway {
 	
 	public void rebuildList(Connection conn) {
 		String done="";
-		for(int i=0;i<StaticDataComponent.channels.length;i++) {
-			if(!done.contains("|"+StaticDataComponent.channels[i]+"|")) {
+		RecordInterface ma=DbGateway.getNotiziaByJID(conn, 1);
+		String[] channels=ma.getChannels();
+		ma.destroy();
+		for(int i=0;i<channels.length;i++) {
+			if(!done.contains("|"+channels[i]+"|")) {
 				try {
-					rebuildList(conn,StaticDataComponent.channels[i]);
+					rebuildList(conn,channels[i]);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-				done+="|"+StaticDataComponent.channels[i]+"|"; // semplice per non fare due volte lo stesso indice
+				done+="|"+channels[i]+"|"; // semplice per non fare due volte lo stesso indice
 			}
 		}
 	}
@@ -1057,6 +1061,7 @@ public abstract class DbGateway {
 					}
 				}
 				else {
+					DbGateway.updateTableListe(conn, classe, jid, ma.getField(classe)); // prova diretto per file Mdb
 					//System.out.println("LISTA NON IMPLEMENTATA PER: "+classe);
 				}
 				

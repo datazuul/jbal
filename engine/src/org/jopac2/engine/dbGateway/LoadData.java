@@ -68,9 +68,17 @@ public class LoadData implements LoadDataInterface {
   private int curPrepNz=0;
   
   private int maxValues4prepared=100;
+  
+  private DbGateway dbGateway=null;
 
   private Vector<ClasseDettaglio> cl_dettaglio;
-  private static Transliterator t;
+  
+  private String confDir=null;
+  private String dbType=null;
+  public String tipoNotizia="ISO2709";
+  public long idTipo=-1;
+  //private static Transliterator t;
+
   //private String dl;
   //private String ft;
   //private String rt;
@@ -103,16 +111,8 @@ public class LoadData implements LoadDataInterface {
       }
   }
 
-  public String tipoNotizia="ISO2709";
-  public long idTipo=0;
-
-  
-public void init(String outDir,long idTipo) {
-	cl_dettaglio=DbGateway.initClDettaglio(conn[0],idTipo);
-  }
-
   public void close() {
-	  // do nothing
+	  // do nothing 
   }
   
   private Hashtable<String,String> LCPbuffer=null;
@@ -133,9 +133,7 @@ public void init(String outDir,long idTipo) {
     	LCPbuffer=new Hashtable<String,String>();
     	currentIdNotizia=id_notizia;
     }
-    
-    long posizione_parola=0;
-    
+        
     while(tk.hasMoreTokens()) {
       parola=tk.nextToken().trim();
       
@@ -153,14 +151,6 @@ public void init(String outDir,long idTipo) {
 	    	  LCPbuffer.put(c,"ok");
 	      	  executePreparedTempLCP(id_notizia,id_parola,id_classe);
 	      }
-	      
-	      
-	      /*
-	      if(asterisco_trovato) {
-	    	  DbGateway.insertNotiziePosizioneParole(conn[0],id_notizia, idSequenzaTag, id_classe, id_parola, posizione_parola, parola);
-	    	  posizione_parola++;
-	      }
-	      */
       }
     }
   }
@@ -176,6 +166,7 @@ public void init(String outDir,long idTipo) {
   private int currentSegTempLCP=0;
   private int currentPrepTempLCP=0;
   private mySet[] arTempLCP;
+private boolean clearDatabase;
   
   public void executePreparedTempLCP(long id_notizia,long id_parola,long id_classe) throws SQLException {
 	  preparedTempLCP[currentPrepTempLCP].setLong(currentSegTempLCP*3+1,id_notizia);
@@ -233,15 +224,34 @@ public void init(String outDir,long idTipo) {
       catch(Exception e) {}
       return r;
   }
+  
+  private void inizializeDB(String[] channels,Connection conn) throws SQLException {
+		System.out.println("Creating tables");
+		dbGateway.createAllTables(conn);
+		System.out.println("Importing data types");
 
-  public void process(String stringa,String tipo,long idTipo, ParoleSpoolerInterface paroleSpooler) throws SQLException {
+		dbGateway.importClassiDettaglio(channels,conn,confDir+"/dataDefinition/DataType.xml");
+		
+		System.out.println("Create DB 1st index");
+		dbGateway.create1stIndex(conn);
+		idTipo=dbGateway.getClassID(conn, dbType);
+		cl_dettaglio=DbGateway.initClDettaglio(conn,idTipo);
+		appendNotizie();
+		
+	}
+
+  public void process(String stringa, ParoleSpoolerInterface paroleSpooler) throws SQLException {
 	  RecordInterface notizia;
 	  Enumeration<TokenWord> tags=null;
   
     //long id_notizia=0;
 
-	  notizia=RecordFactory.buildRecord(0,stringa,tipo,0);
+	  notizia=RecordFactory.buildRecord(0,stringa,dbType,0);
 	if(notizia.toString()!=null) {
+    	if(clearDatabase) {
+    		inizializeDB(notizia.getChannels(),conn[0]);
+    		clearDatabase=false;
+    	}
 
 	    long idSequenzaTag=0;
 	    String record = notizia.getBid();
@@ -301,8 +311,8 @@ public void init(String outDir,long idTipo) {
 
   
   public void doJob(InputStream dataFile,String dbType,String temporaryDir,
-		  long classID, Cache cache, Transliterator t) {
-	  this.t=t;
+		  Cache cache) { //, Transliterator t) {
+	  //this.t=t;
 	  //Cache cache=DbGateway.getCache();
 	  ParoleSpoolerInterface paroleSpooler=new ParoleSpooler(conn,maxValues4prepared,cache);
     
@@ -311,13 +321,14 @@ public void init(String outDir,long idTipo) {
       tipoNotizia=dbType;
       String outDir=temporaryDir;
 
-      idTipo=classID;
+      //idTipo=classID;
+      this.dbType=dbType;
 
       RecordInterface n=RecordFactory.buildRecord(0,"",tipoNotizia,0);
       //String terms=n.getTerminators();
-      if(idTipo>=0) {
-        init(outDir,idTipo);
-        appendNotizie();
+      if(dbType!=null && dbType.length()>0) {
+        
+        
         try {
           
           RecordReader bf=n.getRecordReader(dataFile);
@@ -355,8 +366,11 @@ public void init(String outDir,long idTipo) {
   }
 
 
-  public LoadData(Connection conn[]) {
+  public LoadData(Connection conn[],boolean clearDatabase, String confDir) {
   	  this.conn=conn;
+  	  this.clearDatabase=clearDatabase;
+  	  this.confDir=confDir;
+  	  dbGateway=DbGateway.getInstance(conn[0].toString());
   	  
   	  /**
   	   * TODO: hsqldb non consente inserimenti multipli 

@@ -32,14 +32,8 @@ package org.jopac2.engine.dbGateway;
 import org.jopac2.engine.Z3950.SBAInternalClient;
 import org.jopac2.utils.StopWordRecognizer;
 
-
-//import org.apache.cocoon.environment.*;
 import java.util.*;
 import java.io.File;
-import java.sql.*;
-//import javax.servlet.ServletConfig;
-
-//import javax.servlet.ServletConfig;
 
 /**
  * TODO questa classe e' da rivedere. O si fa singleton oppure deve prendere una connection e risolvere sul db.
@@ -58,7 +52,6 @@ public final class StaticDataComponent { //, Contextualizable, ThreadSafe {
    
    // ANY ripetuto due volte per mettere in posizione 0 qualche cosa e mantenere compatibilita' con i db esistenti
    // SE SI AGGIUNGE CANALI CONTROLLARE DbGateway.rebuildList(Connection conn, String classe)
-   public static String[] channels={"ANY","AUT","TIT","NUM","LAN","MAT","DTE","SBJ","BIB","INV","CLL","ANY","JID","ABS","NAT"};
    
    public StopWordRecognizer getStopWordRecognizer() {
    		return stopword;
@@ -90,18 +83,23 @@ public final class StaticDataComponent { //, Contextualizable, ThreadSafe {
 	    stopword.LoadList(new File(path+"stopwords.lst"));
    }
 
-	public static String getChannelNamebyIndex(String classe) {
+	public static String getChannelNamebyIndex(String[] channels,String classe) {
 		return channels[Integer.parseInt(classe)];
 	}
 
-	public static long getChannelIndexbyName(String channelName) {
+	public static long getChannelIndexbyName(String[] channels, String channelName) {
 		int r=-1;
+		String cn="/record/"+channelName; // workaround per Mdb nelle ricerche
+		int mdb=-1;
 		for(int i=0;i<channels.length;i++) {
 			if(channelName.equals(channels[i])) {
 				r=i;
 				break;
 			}
+			if(cn.equals(channels[i])) {
+				mdb=i;
+			}
 		}
-		return r;
+		return r==-1?mdb:r;
 	}
 }
