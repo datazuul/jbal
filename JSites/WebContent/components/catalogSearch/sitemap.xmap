@@ -50,7 +50,6 @@
 	            	<map:generate src="{request-param:datadir}/data/catalogSearch0.xml"/>
 					<map:transform type="catalogSearchSave"/>
 					
-					<!-- map:transform type="tutil" src="/t/catalogSave" / -->
 					<map:act type="request">
 						<map:transform src="catalogSearchsave.xslt">
 							<map:parameter name="datadir" value="{request-param:datadir}/data/catalogSearch{request-param:cid}.xml"/>
