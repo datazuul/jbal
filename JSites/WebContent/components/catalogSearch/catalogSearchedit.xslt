@@ -25,6 +25,7 @@
 					<table border="0" class="noc" id="noc">
 					<xsl:apply-templates select="catalogName" />
 					<xsl:apply-templates select="catalogConnection" />
+					<xsl:apply-templates select="catalogFormat" />
 					<xsl:apply-templates select="dbType" />
 					</table>
 					<script type="text/javascript" wiki="false">
