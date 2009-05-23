@@ -18,8 +18,19 @@
 	<xsl:template match="form">
 		<b>Importa catalogo</b>
 		<hr/>
+		
+		<script type="text/javascript">
+			<![CDATA[
+			function saveCatalogFormat()
+			{
+				opener.document.forms["editform"].catalogFormat.value=document.forms["upfrm"].format.value;
+			}		
 
-		<form id="upfrm" enctype="multipart/form-data" action="importCatalog?pid={pid}&amp;cid={cid}&amp;dbtype={dbtype}&amp;conn={conn}" method="post">
+			]]>
+		</script>
+
+		<form id="upfrm" enctype="multipart/form-data" action="importCatalog?pid={pid}&amp;cid={cid}&amp;dbtype={dbtype}&amp;conn={conn}" 
+			method="post" onSubmit="saveCatalogFormat();">
 			<!-- ?pid={pid}&amp;cid={cid}  -->
 			<fieldset>
 				<legend>File da importare</legend>
