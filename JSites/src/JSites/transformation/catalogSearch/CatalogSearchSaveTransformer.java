@@ -17,10 +17,12 @@ import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.SourceResolver;
 import org.jopac2.engine.NewSearch.DoSearchNew;
 import org.jopac2.engine.NewSearch.NewItemCardinality;
+import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.dbGateway.StaticDataComponent;
 import org.jopac2.engine.listSearch.ListSearch;
 import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
 import org.jopac2.engine.utils.SearchResultSet;
+import org.jopac2.jbal.RecordInterface;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.apache.cocoon.xml.AttributesImpl;
@@ -77,6 +79,31 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 	@Override
 	public void endElement(String uri, String loc, String raw) throws SAXException {
 		if(loc.equals("catalogSearch")) {
+			String[] chr=null;
+			String catalogFormat=o.getParameter("catalogFormat");
+			String catalogConnection=o.getParameter("catalogConnection");
+			if(catalogFormat.equalsIgnoreCase("mdb")) {
+				Connection conn;
+				try {
+					conn = getConnection(catalogConnection);
+					RecordInterface ma=DbGateway.getNotiziaByJID(conn, 1);
+					chr=ma.getChannels();
+					conn.close();
+				} catch (ComponentException e) {
+					e.printStackTrace();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			for(int k=0;chr!=null && k<chr.length;k++) {
+				if(chr[k].contains("/")) {
+					String tc=chr[k].substring(chr[k].lastIndexOf("/")+1);
+					if(!searchChannel.containsKey(tc)) searchChannel.put(tc, new Channel(tc,tc,""));
+					if(!listChannel.containsKey(tc)) listChannel.put(tc, new Channel(tc,tc,""));
+				}
+			}
+			
 			Enumeration<String> i=searchChannel.keys();
 			while(i.hasMoreElements()) {
 				String chn=i.nextElement();
@@ -85,6 +112,7 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 				if(t!=null && t.length()>0) ch.setChecked("true");
 				sendElement("search",ch);
 			}
+			
 			i=listChannel.keys();
 			while(i.hasMoreElements()) {
 				String chn=i.nextElement();
