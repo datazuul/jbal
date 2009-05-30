@@ -41,6 +41,7 @@ package org.jopac2.engine.importers;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -62,30 +63,32 @@ public class DataImporter extends Thread {
 	Cache cache=null;
 	//Transliterator t=null;
 	String[] channels=null;
+	PrintStream out=null;
 	
-	public DataImporter(InputStream f,String filetype,String JOpac2confdir,Connection[] conns, boolean clearDatabase, Cache cache) { //, Transliterator t) {
+	public DataImporter(InputStream f,String filetype,String JOpac2confdir,Connection[] conns, boolean clearDatabase, Cache cache, PrintStream console) { //, Transliterator t) {
 		this.f=f;
 		this.filetype=filetype;
 		confdir=JOpac2confdir;
 		this.conn=conns;
 		this.clearDatabase=clearDatabase;
-		dbGateway=DbGateway.getInstance(conns[0].toString());
+		dbGateway=DbGateway.getInstance(conns[0].toString(),console);
 		this.cache=cache;
+		this.out=console;
 	}
 	
 
 	
 	public void consolidateDB(Connection conn) throws SQLException {
 
-        System.out.println("Creating indexes");
+        out.println("Creating indexes");
         dbGateway.createDBindexes(conn);
-        System.out.println("Generating l_tables");
-        dbGateway.createDBl_tables(conn);
+        out.println("Generating l_tables");
+        dbGateway.createDBl_tables(conn,out);
 	}
 	
     private void loadData(InputStream f,String dbType, String temporaryDir) {
     	DbGateway.commitAll(conn);
-        LoadData ld=new LoadData(conn,clearDatabase,confdir);
+        LoadData ld=new LoadData(conn,clearDatabase,confdir,out);
         ld.doJob(f,dbType,temporaryDir,cache); //,t);
         ld.destroy();
     }
@@ -94,13 +97,13 @@ public class DataImporter extends Thread {
     	tempDir=System.getProperty("java.io.tmpdir");
         
         if(tempDir!=null) {
-            System.out.println("Uso tempdir="+tempDir);
+            out.println("Uso tempdir="+tempDir);
 			try {
 				int max_conn=5;
 				
 				
 				
-				System.out.println("Loading data");
+				out.println("Loading data");
 				
 				
 				/**
@@ -129,10 +132,10 @@ public class DataImporter extends Thread {
 				
 	            consolidateDB(conn[0]);
 	            
-	            DbGateway dbGateway=DbGateway.getInstance(conn[0].toString());
+	            DbGateway dbGateway=DbGateway.getInstance(conn[0].toString(),out);
 	    		dbGateway.rebuildList(conn[0]);
 	            
-	            System.out.println("End of process: OK");
+	            out.println("End of process: OK");
 
 	            for(int i=0;i<max_conn;i++) {
 					conn[i].close();
@@ -140,12 +143,17 @@ public class DataImporter extends Thread {
 
 	            this.notifyAll();
 			} catch (Exception e) {
-				e.printStackTrace();
+				e.printStackTrace(out);
 			}
         }
     }
     
 	public void run() {
-        doJob();
+		try {
+			doJob();
+		}
+		catch(Exception e) {
+			e.printStackTrace(out);
+		}
 	}
 }

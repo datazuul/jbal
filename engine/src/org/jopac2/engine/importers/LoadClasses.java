@@ -37,6 +37,7 @@ package org.jopac2.engine.importers;
 * @author	Romano Trampus
 * @version	05/02/2004
 */
+import java.io.PrintStream;
 import java.util.*;
 
 import org.jopac2.jbal.xmlHandlers.ClassHandlerImpl;
@@ -55,6 +56,7 @@ public class LoadClasses {
     private String configFile;
     private String configPath;
     private Vector<ClassItem> SQLInstructions;
+    private PrintStream out=null;
     
     public Vector<ClassItem> getSQLInstructions() {
         return SQLInstructions;
@@ -62,10 +64,11 @@ public class LoadClasses {
     
     
     /** Creates a new instance of LoadClasses */
-    public LoadClasses(String xmlConfFile) {
+    public LoadClasses(String xmlConfFile, PrintStream console) {
         configFile=xmlConfFile;
         configPath=xmlConfFile.substring(0,xmlConfFile.lastIndexOf('/'))+"/";
-        System.out.println("Uso CONFIGPATH: "+configPath);
+        out=console;
+        out.println("Uso CONFIGPATH: "+configPath);
     }
     
     private Vector<DataType> getTypes() {
@@ -77,7 +80,7 @@ public class LoadClasses {
             p.parse(i);
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
+            out.println(e.getMessage());
         }
         return dataHandler.getDataTypes();
     }
@@ -92,7 +95,7 @@ public class LoadClasses {
             SQLInstructions=p.getSQLInstructions();
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
+            out.println(e.getMessage());
         }
         return SQLInstructions;
     }

@@ -83,6 +83,8 @@ public class LoadData implements LoadDataInterface {
   //private String ft;
   //private String rt;
   
+  PrintStream out=null;
+  
   public void appendNotizie() {
     try {
       Statement stmt=conn[0].createStatement();
@@ -226,13 +228,13 @@ private boolean clearDatabase;
   }
   
   private void inizializeDB(String[] channels,Connection conn) throws SQLException {
-		System.out.println("Creating tables");
+		out.println("Creating tables");
 		dbGateway.createAllTables(conn);
-		System.out.println("Importing data types");
+		out.println("Importing data types");
 
-		dbGateway.importClassiDettaglio(channels,conn,confDir+"/dataDefinition/DataType.xml");
+		dbGateway.importClassiDettaglio(channels,conn,confDir+"/dataDefinition/DataType.xml",out);
 		
-		System.out.println("Create DB 1st index");
+		out.println("Create DB 1st index");
 		dbGateway.create1stIndex(conn);
 		idTipo=dbGateway.getClassID(conn, dbType);
 		cl_dettaglio=DbGateway.initClDettaglio(conn,idTipo);
@@ -314,12 +316,12 @@ private boolean clearDatabase;
 		  Cache cache) { //, Transliterator t) {
 	  //this.t=t;
 	  //Cache cache=DbGateway.getCache();
-	  ParoleSpoolerInterface paroleSpooler=new ParoleSpooler(conn,maxValues4prepared,cache);
+	  ParoleSpoolerInterface paroleSpooler=new ParoleSpooler(conn,maxValues4prepared,cache,out);
     
 	  long start_time=System.currentTimeMillis();
 
       tipoNotizia=dbType;
-      String outDir=temporaryDir;
+      //String outDir=temporaryDir;
 
       //idTipo=classID;
       this.dbType=dbType;
@@ -341,7 +343,7 @@ private boolean clearDatabase;
           /* R.T. 05/06/2006: ciclo di lettura spostato nel RecordReader per
            * facilitare l'uso di SAXParser per dati in formato XML
            */
-          bf.parse(bf,this);
+          bf.parse(bf,this,out);
           
           bf.destroy(conn[0]);
         }
@@ -350,7 +352,7 @@ private boolean clearDatabase;
         }
       }
       else {
-        System.out.println("Tipo "+tipoNotizia+" non trovato nella tabella tipi_notizie.");
+        out.println("Tipo "+tipoNotizia+" non trovato nella tabella tipi_notizie.");
       }
       
       close();
@@ -361,16 +363,17 @@ private boolean clearDatabase;
 		e.printStackTrace();
 	}
     
-    System.out.println("tempo totale minuti:"+(System.currentTimeMillis()-start_time)/(60000.0));
+    out.println("tempo totale minuti:"+(System.currentTimeMillis()-start_time)/(60000.0));
 
   }
 
 
-  public LoadData(Connection conn[],boolean clearDatabase, String confDir) {
+  public LoadData(Connection conn[],boolean clearDatabase, String confDir, PrintStream console) {
   	  this.conn=conn;
   	  this.clearDatabase=clearDatabase;
   	  this.confDir=confDir;
-  	  dbGateway=DbGateway.getInstance(conn[0].toString());
+  	  out=console;
+  	  dbGateway=DbGateway.getInstance(conn[0].toString(),console);
   	  
   	  /**
   	   * TODO: hsqldb non consente inserimenti multipli 

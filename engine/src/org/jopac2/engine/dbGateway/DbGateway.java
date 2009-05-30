@@ -22,6 +22,7 @@ package org.jopac2.engine.dbGateway;
 *
 *******************************************************************************/
 
+import java.io.PrintStream;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.sql.Connection;
@@ -64,10 +65,15 @@ public abstract class DbGateway {
 	  public static final String SEPARATORI_PAROLE=" ,.;()/-'\\:=@%$&!?[]#<>\016\017\n\t";
 	  static final int MAX_POSIZIONE_ASTERISCO=5;
 	  static final boolean DEBUG=true;
+	  private PrintStream out =null;
 	  /** @todo  doppio asterisco. che vuol dire?
 	   *   vul dire che le indicazioni di responsabilita' vengono indicizzate
 	   *   con al massimo fino a 4 parole chiave che
 	   *   vengono segnate dall'asterisco.*/
+	  
+	  public DbGateway(PrintStream console) {
+		  out=console;
+	  }
 
 
 	/**
@@ -114,6 +120,10 @@ public abstract class DbGateway {
 		return r;
 	}
 	
+    public static void execute(Connection conn, String sql, boolean timelog) throws SQLException {
+    	execute( conn,  sql,  timelog, null);
+    }
+
 	
 	/**
 	 * Execute <i>sql</i> query on connection <i>conn</i>
@@ -122,7 +132,7 @@ public abstract class DbGateway {
 	 * @param timelog, boolean if the execution has to be logged
 	 * @throws SQLException 
 	 */
-    public static void execute(Connection conn, String sql, boolean timelog) throws SQLException {
+    public static void execute(Connection conn, String sql, boolean timelog, PrintStream out) throws SQLException {
         	if(conn==null||conn.isClosed())System.out.println("Conn is closed");
         	
             Statement stmt=conn.createStatement();
@@ -130,7 +140,8 @@ public abstract class DbGateway {
             long now=System.currentTimeMillis();
             stmt.execute(sql);
             if(timelog){
-            	System.out.println("time :"+sql+" "+(System.currentTimeMillis()-now)+"ms");
+            	if(out==null) out=System.out;
+            	out.println("time :"+sql+" "+(System.currentTimeMillis()-now)+"ms");
             }
             stmt.close();
     }
@@ -206,8 +217,8 @@ public abstract class DbGateway {
 			}
     }
     
-    public void importClassiDettaglio(String[] channels,Connection conn, String configFile) {
-        LoadClasses lClasses=new LoadClasses(configFile);
+    public void importClassiDettaglio(String[] channels,Connection conn, String configFile, PrintStream console) {
+        LoadClasses lClasses=new LoadClasses(configFile, console);
         lClasses.doJob(channels);
         Vector<ClassItem> SQLInstructions=lClasses.getSQLInstructions();
         ClassItem currentItem;
@@ -239,7 +250,7 @@ public abstract class DbGateway {
     protected abstract void createHashTable(Connection conn) throws SQLException;
     public abstract void createAllTables(Connection conn) throws SQLException;
     public abstract long getIDwhere(Connection conn, String tableName, String fieldName, String fieldValue);
-    public abstract void createDBl_tables(Connection conn) throws SQLException;
+    public abstract void createDBl_tables(Connection conn, PrintStream console) throws SQLException;
     
     
     public long getClassID(Connection conn, String className) {
@@ -443,7 +454,7 @@ public abstract class DbGateway {
 	    	
 	    	Connection c[]={conn};
 	    	Cache cache=getCache();
-	    	ParoleSpooler paroleSpooler=new ParoleSpooler(c,c.length,cache);
+	    	ParoleSpooler paroleSpooler=new ParoleSpooler(c,c.length,cache,out);
 	    	
 	    	insertNotizia(c,notizia,idTipo,jid,paroleSpooler);
 	    	
@@ -585,7 +596,7 @@ public abstract class DbGateway {
 
 	}
 	
-	public static void rebuildDatabase(Connection[] conn) throws SQLException {
+	public static void rebuildDatabase(Connection[] conn, PrintStream console) throws SQLException {
 		Hashtable<Integer,String> tipiNotizie=new Hashtable<Integer,String>(); 
 
 		Statement stmt=conn[0].createStatement();
@@ -608,7 +619,7 @@ public abstract class DbGateway {
 		
 		Cache cache=getCache();
 		
-    	ParoleSpooler paroleSpooler=new ParoleSpooler(conn,conn.length,cache);
+    	ParoleSpooler paroleSpooler=new ParoleSpooler(conn,conn.length,cache,console);
 		
 		rs=stmt.executeQuery("select * from notizie");
 		while(rs.next()) {
@@ -619,7 +630,7 @@ public abstract class DbGateway {
 			insertNotizia(conn,ma,idTipo,rs.getLong("id"),paroleSpooler); //ISO2709 notizia, long idTipo, long jid
 			current++;
 			if(current%1000==0) {
-				System.out.println(current+" record reimportati");
+				console.println(current+" record reimportati");
 			}
 			ma.destroy();
 			ma=null;
@@ -627,7 +638,7 @@ public abstract class DbGateway {
 		rs.close();
 		stmt.close();
 		paroleSpooler.destroy();
-		System.out.println(current+" record reimportati");
+		console.println(current+" record reimportati");
 	}
 	
 	private static Cache cache=null;
@@ -1028,25 +1039,74 @@ public abstract class DbGateway {
 		RecordInterface ma=DbGateway.getNotiziaByJID(conn, 1);
 		String[] channels=ma.getChannels();
 		ma.destroy();
+		
+		try {
+			rebuildList(conn,channels);
+		} catch (SQLException e) {
+			if(out==null) out=System.out;
+			e.printStackTrace(out);
+		}
+		
+//		for(int i=0;i<channels.length;i++) {
+//			if(!done.contains("|"+channels[i]+"|")) {
+//				try {
+//					rebuildList(conn,channels[i]);
+//				} catch (SQLException e) {
+//					e.printStackTrace();
+//				}
+//				done+="|"+channels[i]+"|"; // semplice per non fare due volte lo stesso indice
+//			}
+//		}
+	}
+	
+	private void rebuildList(Connection conn, String[] channels) throws SQLException {
+		out.println("Indexing channels:");
 		for(int i=0;i<channels.length;i++) {
-			if(!done.contains("|"+channels[i]+"|")) {
-				try {
-					rebuildList(conn,channels[i]);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				done+="|"+channels[i]+"|"; // semplice per non fare due volte lo stesso indice
+			createTableListe(conn,channels[i]);
+			out.println("   "+channels[i]);
+		}
+		long maxid=DbGateway.getMaxIdTable(conn, "notizie");
+		long step=maxid/100;
+		for(int jid=0;jid<maxid;jid++) {
+			if(step==0 || jid % step == 0)
+				out.println("Rebuilding list indexes: "+Utils.percentuale(maxid,jid)+"%");
+			RecordInterface ma=DbGateway.getNotiziaByJID(conn, jid);
+			if(ma!=null) {
+				for(int i=0;i<channels.length;i++)
+					updateTableListe(conn,channels[i],jid,ma);
+				
 			}
 		}
 	}
-	
+
+
+	private void updateTableListe(Connection conn, String classe, int jid,
+			RecordInterface ma) throws SQLException {
+		if(classe.equals("TIT")) DbGateway.updateTableListe(conn, classe, jid, ma.getTitle()); //testo=ma.getTitle();
+		else if(classe.equals("NUM")) DbGateway.updateTableListe(conn, classe, jid, ma.getStandardNumber()); // testo=ma.getStandardNumber();
+		else if(classe.equals("DTE")) DbGateway.updateTableListe(conn, classe, jid, ma.getPublicationDate()); // testo=ma.getPublicationDate();
+		else if(classe.equals("AUT")) DbGateway.updateTableListe(conn, classe, jid, ma.getAuthors());
+		else if(classe.equals("SBJ")) DbGateway.updateTableListe(conn, classe, jid, ma.getSubjects());
+		else if(classe.equals("BIB")) {
+			Vector<BookSignature> signatures=ma.getSignatures();
+			for(int i=0;signatures!=null && i<signatures.size();i++) {
+				DbGateway.updateTableListe(conn, classe, jid, signatures.elementAt(i).getLibraryName());
+			}
+		}
+		else {
+			DbGateway.updateTableListe(conn, classe, jid, ma.getField(classe)); // prova diretto per file Mdb
+		}
+		
+	}
+
+
 	public void rebuildList(Connection conn, String classe) throws SQLException {
 		createTableListe(conn,classe);//CR_LISTE		
 		long maxid=DbGateway.getMaxIdTable(conn, "notizie");
 		long step=maxid/100;
 		for(int jid=0;jid<maxid;jid++) {
 			if(step==0 || jid % step == 0)
-				System.out.println("Rebuilding list index ("+nomeTableListe(classe)+"): "+Utils.percentuale(maxid,jid)+"%");
+				out.println("Rebuilding list index ("+nomeTableListe(classe)+"): "+Utils.percentuale(maxid,jid)+"%");
 			RecordInterface ma=DbGateway.getNotiziaByJID(conn, jid);
 			if(ma!=null) {
 				if(classe.equals("TIT")) DbGateway.updateTableListe(conn, classe, jid, ma.getTitle()); //testo=ma.getTitle();
@@ -1143,10 +1203,10 @@ public abstract class DbGateway {
 		stmt.close();
 	}
 
-	public static DbGateway getInstance(String string) {
-		if(string.contains("mysql")) return new mysql();
-		else if(string.contains("hsqldb")) return new hsqldb();
-		else if(string.contains("derby")) return new derby();
+	public static DbGateway getInstance(String string, PrintStream console) {
+		if(string.contains("mysql")) return new mysql(console);
+		else if(string.contains("hsqldb")) return new hsqldb(console);
+		else if(string.contains("derby")) return new derby(console);
 		return null;
 	}
 

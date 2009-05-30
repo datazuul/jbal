@@ -1,5 +1,6 @@
 package org.jopac2.engine.dbGateway.mysql;
 
+import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +12,10 @@ import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.utils.SearchResultSet;
 
 public class mysql extends DbGateway {
+
+	public mysql(PrintStream console) {
+		super(console);
+	}
 
 	protected void createHashTable(Connection conn) throws SQLException {
 		DbGateway.execute(conn,"create table hash (hash varchar(32) not null,"+
@@ -97,8 +102,8 @@ public class mysql extends DbGateway {
         return currentID;
     }
     
-    public void createDBl_tables(Connection conn) throws SQLException {
-        execute(conn, "drop table if exists l_classi_parole",true);
+    public void createDBl_tables(Connection conn, PrintStream console) throws SQLException {
+        execute(conn, "drop table if exists l_classi_parole",true, console);
         
         
         execute(conn, "create table l_classi_parole ("+
@@ -109,7 +114,7 @@ public class mysql extends DbGateway {
         execute(conn, "create index l_classi_parole_idx2 on l_classi_parole (id_classe)");
         execute(conn, "create index l_classi_parole_idx3 on l_classi_parole (id_parola,id_classe)");
 
-        execute(conn, "drop table if exists l_classi_parole_notizie",true);
+        execute(conn, "drop table if exists l_classi_parole_notizie",true, console);
         
         
         execute(conn, "create table l_classi_parole_notizie ("+
@@ -141,7 +146,7 @@ public class mysql extends DbGateway {
         execute(conn, "insert into l_classi_parole (id_parola,id_classe,n_notizie) "+
             "select id_parola,id_classe,count(*) as n_notizie "+
             "from temp_lcpn "+
-            "group by id_parola,id_classe",true);
+            "group by id_parola,id_classe",true, console);
 
         //--minuti: 16min, 6780360 (=temp_lcpn)
         
@@ -152,7 +157,7 @@ public class mysql extends DbGateway {
             "temp_lcpn force index (temp_3) "+
             "where "+
             "temp_lcpn.id_parola=lcp.id_parola and "+
-            "temp_lcpn.id_classe=lcp.id_classe",true);
+            "temp_lcpn.id_classe=lcp.id_classe",true, console);
 
 
 //        execute("drop table if exists temp_lcpn");

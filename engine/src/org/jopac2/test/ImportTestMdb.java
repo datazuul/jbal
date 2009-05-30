@@ -72,7 +72,7 @@ public class ImportTestMdb extends TestCase {
 			in = new FileInputStream(f);
 
 			JOpac2Import ji = new JOpac2Import(in, filetype, JOpac2confdir,
-					dbUrl, dbUser, dbPassword, true);
+					dbUrl, dbUser, dbPassword, true, System.out);
 			ji.doJob(false);
 			// ji.wait();
 			ji.destroy(dbUrl);

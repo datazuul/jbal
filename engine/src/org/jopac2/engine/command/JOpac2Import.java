@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -22,17 +23,20 @@ public class JOpac2Import {
 	Connection[] conns;
 	boolean clearDatabase=true;
 	int max_conn=5;
+	private PrintStream out=null;
 	
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
 	private static String _classHSQLDBDriver = "org.hsqldb.jdbcDriver";
     private static String _classDerbyDriver = "org.apache.derby.jdbc.EmbeddedDriver";
     
 	
-	public JOpac2Import(String inputFile, String filetype, String JOpac2confdir, String dbUrl, String dbUser, String dbPassword, boolean clearDatabase) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+	public JOpac2Import(String inputFile, String filetype, String JOpac2confdir, String dbUrl, String dbUser, 
+			String dbPassword, boolean clearDatabase,PrintStream console) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		File fi=new File(inputFile);
 		this.inputFile=new FileInputStream(fi);
 		this.JOpac2confdir=JOpac2confdir;
 		this.filetype=filetype;
+		out=console;
 		conns=new Connection[max_conn];
 		String driver=_classMySQLDriver;
 		if(dbUrl.contains(":hsqldb:")) driver=_classHSQLDBDriver;
@@ -45,10 +49,11 @@ public class JOpac2Import {
 		}
 	}
 	
-	public JOpac2Import(InputStream in, String filetype, String JOpac2confdir, String dbUrl, String dbUser, String dbPassword, boolean clearDatabase) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+	public JOpac2Import(InputStream in, String filetype, String JOpac2confdir, String dbUrl, String dbUser, String dbPassword, boolean clearDatabase, PrintStream console) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		this.inputFile=in;
 		this.JOpac2confdir=JOpac2confdir;
 		this.filetype=filetype;
+		out=console;
 		conns=new Connection[max_conn];
 		String driver=_classMySQLDriver;
 		if(dbUrl.contains(":hsqldb:")) driver=_classHSQLDBDriver;
@@ -68,7 +73,7 @@ public class JOpac2Import {
 	public void doJob(boolean background) {
 		//Transliterator t=Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
 
-		DataImporter dataimporter=new DataImporter(inputFile,filetype,JOpac2confdir, conns, clearDatabase,DbGateway.getCache()); //,t);
+		DataImporter dataimporter=new DataImporter(inputFile,filetype,JOpac2confdir, conns, clearDatabase,DbGateway.getCache(),out); //,t);
 		if(background)
 			dataimporter.start();
 		else
@@ -100,7 +105,7 @@ public class JOpac2Import {
 		String dbUser="root";
 		String dbPassword="";
 		
-		JOpac2Import ji=new JOpac2Import(filename,filetype,JOpac2confdir,dbUrl,dbUser,dbPassword,true);
+		JOpac2Import ji=new JOpac2Import(filename,filetype,JOpac2confdir,dbUrl,dbUser,dbPassword,true,System.out);
 		ji.doJob();
 		ji.wait();
 		ji.destroy(dbUrl);
@@ -117,7 +122,7 @@ public class JOpac2Import {
 		String dbPassword="";
 		
 		//DbGateway.createDB(conn, dbName)		
-		JOpac2Import ji=new JOpac2Import(filename,filetype,JOpac2confdir,dbUrl,dbUser,dbPassword,true);
+		JOpac2Import ji=new JOpac2Import(filename,filetype,JOpac2confdir,dbUrl,dbUser,dbPassword,true,System.out);
 		ji.doJob();
 		ji.wait();
 		ji.destroy(dbUrl);

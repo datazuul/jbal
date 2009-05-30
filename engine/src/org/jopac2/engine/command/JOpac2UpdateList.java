@@ -30,7 +30,7 @@ public class JOpac2UpdateList {
 	}
 	
 	private void doJob() {
-		DbGateway dbGateway=DbGateway.getInstance(conns[0].toString());
+		DbGateway dbGateway=DbGateway.getInstance(conns[0].toString(),System.out);
 		dbGateway.rebuildList(conns[0]);
 	}
 

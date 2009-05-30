@@ -91,7 +91,7 @@ public class RebuildDatabase {
 			conn6=CreaConnessione();
 			conn7=CreaConnessione();
 			Connection[] c={conn1,conn2,conn3,conn4,conn5,conn6,conn7};
-			DbGateway.rebuildDatabase(c);
+			DbGateway.rebuildDatabase(c,System.out);
 			conn7.close();
 			conn6.close();
 			conn5.close();

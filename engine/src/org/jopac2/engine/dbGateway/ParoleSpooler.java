@@ -22,6 +22,7 @@ package org.jopac2.engine.dbGateway;
 *
 *******************************************************************************/
 
+import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -53,11 +54,13 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 	private String selectID="select id from anagrafe_parole where parola = (?)";
 	private PreparedStatement preparedSelectID;
 	private Radice stemmer=null;
+	private PrintStream out=null;
 
-	public ParoleSpooler(Connection[] conn, int nvalues, Cache cache) {
+	public ParoleSpooler(Connection[] conn, int nvalues, Cache cache, PrintStream console) {
 		//super();
 		this.nvalues=nvalues;
 		this.cache=cache;
+		out=console;
 		preparedParole = new PreparedStatement[conn.length];
 		for(int i=0;i<nvalues-1;i++) {
 			prepared+=",(?,?,?)";
@@ -69,7 +72,7 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 			c=conn[0];
 			preparedSelectID=c.prepareStatement(selectID);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			e.printStackTrace(out);
 		}
 		buffer=new Hashtable<String,Long>();
 		
@@ -106,7 +109,9 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			out.println("WARN: "+e.getMessage());
+			out.println("WARN: l'errore sopra in genere si riferisce a campi che non sono canali di ricerca e puo' essere ignorato.");
+			//e.printStackTrace(out);
 		} 
 		
 	}
@@ -115,8 +120,9 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 		try {
 			preparedParole[currentStmt].execute();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			out.println("WARN: "+e.getMessage());
+			out.println("WARN: l'errore sopra in genere si riferisce a campi che non sono canali di ricerca e puo' essere ignorato.");
+			//e.printStackTrace(out);
 		}
 	}
 	
@@ -147,7 +153,7 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 //				stmt.close();
 				rs=null; //stmt=null;
 			} catch (SQLException e) {
-				e.printStackTrace();
+				e.printStackTrace(out);
 			}
 		}
 		return r==null?-1:r.longValue();

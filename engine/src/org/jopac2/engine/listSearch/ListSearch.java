@@ -13,7 +13,7 @@ public class ListSearch {
 	
 	
 	public static SearchResultSet listSearch(Connection conn,String classe,String parole,int limit) throws SQLException {
-		DbGateway db=DbGateway.getInstance(conn.toString());
+		DbGateway db=DbGateway.getInstance(conn.toString(),null);
 		return db.listSearch(conn,classe,parole,limit);
 	}
 }
