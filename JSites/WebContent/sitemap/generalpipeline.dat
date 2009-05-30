@@ -59,6 +59,21 @@
 	
 	</map:match>
 	
+	<map:match pattern="status*">
+		<map:act type="auth-protect">
+        	<map:parameter name="handler" value="JSitesHandler"/>
+        	
+        	<map:act type="authorize-users">
+        		<map:parameter name="db" value="{global:db}"/>
+        		<map:parameter name="pid" value="0"/>
+        		<map:generate type="logReader" src="{global:data-directory}/catalogs/status{../../1}" />
+			</map:act>	
+			
+			<map:serialize type="text" />
+		</map:act>
+	
+	</map:match>
+	
 	
 		<map:match pattern="dir/**">
         <map:act type="auth-protect">

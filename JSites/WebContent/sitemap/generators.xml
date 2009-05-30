@@ -62,5 +62,6 @@
 	<map:generator name="newsListGenerator" src="JSites.generation.NewsListGenerator" />
 	<map:generator name="fileManager" src="JSites.fileManager.FileManager"/>
 	<map:generator name="importCatalog" src="JSites.generation.ImportCatalog"/>	
+	<map:generator name="logReader" src="JSites.generation.LogReader"/>	
 	
 </map:generators>
