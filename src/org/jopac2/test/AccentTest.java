@@ -24,7 +24,7 @@ public class AccentTest extends TestCase {
 	
 	public void testIsisbiblo1() throws Exception {
 		String n1="àèéìòù";
-		String r=Utils.removeAccents(n1);
+		String r=null; //Utils.removeAccents(n1);
 		boolean m=r.equals("aeeiou");
 		if(!m) {
 			System.out.println(n1+"\n"+r);

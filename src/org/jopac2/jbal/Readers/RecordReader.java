@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
@@ -66,7 +67,7 @@ public abstract  class RecordReader extends BufferedReader {
 	public void setup(Connection conn) {}
 	public void destroy(Connection conn) {}
 	
-	public void parse(RecordReader f, LoadDataInterface data) throws IOException {
+	public void parse(RecordReader f, LoadDataInterface data, PrintStream console) throws IOException {
 		String linea="";
 		long start_time=System.currentTimeMillis();
 		long i=0;
@@ -78,14 +79,14 @@ public abstract  class RecordReader extends BufferedReader {
 			try {
 				data.process(linea,paroleSpooler); //tipoNotizia,idTipo,
 			} catch (SQLException e) {
-				e.printStackTrace();
+				e.printStackTrace(console);
 			}
 
             i++;
             
             if((i%1000)==0) {
               t=(System.currentTimeMillis()-start_time)/(60000.0);
-              System.out.println(i+" record in "+ t +" minuti (" + i/t + " R/m)");
+              console.println("Loading: "+i+" record in "+ t +" minuti (" + i/t + " R/m)");
               //System.gc();
             }
           }

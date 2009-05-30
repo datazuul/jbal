@@ -34,6 +34,7 @@ import org.xml.sax.SAXException;
 import org.jopac2.jbal.Readers.MdbTableRecordReader;
 import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.jbal.abstractStructure.Tag;
+import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.Utils;
 
@@ -86,7 +87,7 @@ public class Ejournal extends XML {
 	}
 
 	@Override
-	public Vector<String> getClassifications() {
+	public Vector<ClassificationInterface> getClassifications() {
 		// TODO Auto-generated method stub
 		return null;
 	}

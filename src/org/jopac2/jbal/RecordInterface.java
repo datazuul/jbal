@@ -234,7 +234,7 @@ public interface RecordInterface {
 	 * Restituisce un vettore di classificazioni
 	 * @return
 	 */
-	public Vector<String> getClassifications(); // Classificazioni
+	public Vector<ClassificationInterface> getClassifications(); // Classificazioni
 	
 	/**
 	 * Aggiunge una classificazione al record

@@ -43,6 +43,7 @@ import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.abstractStructure.Field;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
+import org.jopac2.jbal.classification.DDC;
 import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.*;
 
@@ -275,12 +276,14 @@ public void initLinkUp() {
 		return r;
 	}
 
-	public Vector<String> getClassifications() {
-		Vector<String> r=new Vector<String>();
+	public Vector<ClassificationInterface> getClassifications() {
+		Vector<ClassificationInterface> r=new Vector<ClassificationInterface>();
 		Vector<Tag> t=getTags("676");
 		for(int i=0;t!=null && i<t.size();i++) {
 			Field s=t.elementAt(i).getField("a");
-			if(s!=null) r.addElement(s.getContent());
+			if(s!=null) {
+				r.addElement(new DDC(s.getContent(),"",""));
+			}
 		}
 		return r;
 	}
@@ -369,6 +372,8 @@ public void initLinkUp() {
      * 200  $a ; $a [] $b . $c = $d : $e / $f ; $g . $h ,. $i
 	 */
 	public void setTitle(String title, boolean significant)  throws JOpac2Exception {
+		if(title==null) return;
+		
 		Field i=null, h=null, e=null, d=null, c=null, b=null; // a ripetibile, f+g ripetibile
 		Vector<Field> a=new Vector<Field>(), f=new Vector<Field>();
 		char s='1';
@@ -451,6 +456,7 @@ public void initLinkUp() {
          *            1 Name entered under surname (family name, patronymic, etc.)
 		 *  701 come 700 ma ripetibile
 		 */
+		if(author==null) return;
 		
 		// 1. determina se esiste 200^f. Se esiste aggiungi in ^g, altrimenti in ^f
 		Tag tag200=getFirstTag("200");
@@ -478,6 +484,8 @@ public void initLinkUp() {
 
 	
 	public void addClassification(ClassificationInterface data)  throws JOpac2Exception {
+		if(data==null) return;
+		
 		String tag="";
 		String classificationSchema=data.getClassificationName();
 		if(classificationSchema.equals("UDC")) tag="675";
@@ -496,6 +504,7 @@ public void initLinkUp() {
 	 * 300^a
 	 */
 	public void addComment(String comment)  throws JOpac2Exception {
+		if(comment==null) return;
 		Tag t=new Tag("300",' ',' ');
 		t.addField(new Field("a",comment.trim()));
 		addTag(t);
@@ -505,6 +514,8 @@ public void initLinkUp() {
 	 * 210^c (210 non ripetibile, esistente)
 	 */
 	public void addPublisher(String publisher)  throws JOpac2Exception {
+		if(publisher==null) return;
+		
 		Tag t=getFirstTag("210");
 		if(t==null) t=new Tag("210",' ',' ');
 		t.removeField("c");
@@ -543,6 +554,8 @@ public void initLinkUp() {
 	}
 
 	public void addSubject(SubjectInterface subject)  throws JOpac2Exception {
+		if(subject==null) return;
+		
 		String tag=subject.getTagIdentifier();
 		Tag t=new Tag(tag,' ',' ');
 		Vector<Field> d=subject.getData();
@@ -556,6 +569,8 @@ public void initLinkUp() {
 	 * 330^a
 	 */
 	public void setAbstract(String abstractText)  throws JOpac2Exception {
+		if(abstractText==null) return;
+		
 		Tag a=new Tag("330",' ',' ');
 		a.addField(new Field("a",abstractText));
 		addTag(a);
@@ -571,6 +586,8 @@ public void initLinkUp() {
      *
 	 */
 	public void setEdition(String edition)  throws JOpac2Exception {
+		if(edition==null) return;
+		
 		Tag e=new Tag("205",' ',' ');
 		Field a=null, d=null, f=null, g=null, b=null;
 		
@@ -616,6 +633,8 @@ public void initLinkUp() {
 	 * 210 $d
 	 */
 	public void setPublicationDate(String publicationDate)  throws JOpac2Exception {
+		if(publicationDate==null) return;
+		
 		Tag p=getFirstTag("210");
 		if(p==null) p=new Tag("210",' ',' ');
 		p.removeField("d");
@@ -628,6 +647,8 @@ public void initLinkUp() {
 	 * 210 $a
 	 */
 	public void setPublicationPlace(String publicationPlace)  throws JOpac2Exception {
+		if(publicationPlace==null) return;
+		
 		Tag p=getFirstTag("210");
 		if(p==null) p=new Tag("210",' ',' ');
 		p.removeField("a");
@@ -643,6 +664,8 @@ public void initLinkUp() {
 	 * @throws JOpac2Exception
 	 */
 	public void setStandardNumber(String standardNumber, String codeSystem) throws JOpac2Exception {
+		if(standardNumber==null || codeSystem==null) return;
+		
 		String tagName="035";
 		if(codeSystem.equals("ISBN")) tagName="010";
 		else if(codeSystem.equals("ISSN")) tagName="011";

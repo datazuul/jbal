@@ -344,7 +344,7 @@ public String getDescription() {
 }
 
 @Override
-public Vector<String> getClassifications() {
+public Vector<ClassificationInterface> getClassifications() {
 	// TODO Auto-generated method stub
 	return null;
 }

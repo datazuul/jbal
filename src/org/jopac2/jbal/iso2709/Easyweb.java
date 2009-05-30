@@ -55,6 +55,7 @@ import org.jopac2.jbal.Readers.IsoRecordReader;
 import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
+import org.jopac2.jbal.classification.DDC;
 import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.*;
 
@@ -105,9 +106,9 @@ public Vector<RecordInterface> getLink(String tag) {
           //not.dati=new Vector<String>();
           Tag title=v.elementAt(i);
           Tag n=new Tag("100",' ',' ');
-          n.setRawContent(title.getField("a").getContent());
+          n.setRawContent(Utils.ifExists("", title.getField("a")));
           not.dati.addElement(n);
-          not.setBid(title.getField("Z").getContent());
+          not.setBid(Utils.ifExists("", title.getField("Z")));
 //          ISO2709.creaNotizia(0,(String)v.elementAt(i),this.getTipo(),this.getLivello());
           r.addElement(not);
         }
@@ -148,7 +149,7 @@ public Vector<String> getAuthors() {
     Vector<String> r=new Vector<String>();
     if(v.size()>0) {
       for(int i=0;i<v.size();i++) {
-        r.addElement(v.elementAt(i).getField("a").getContent());
+        r.addElement(Utils.ifExists("", v.elementAt(i).getField("a")));
       }
     }
     return r;
@@ -182,13 +183,13 @@ public Vector<BookSignature> getSignatures() {
         String b="";
 
         try {
-            b=v.elementAt(i).getField("a").getContent();
-            codiceBib=v.elementAt(i).getField("b").getContent(); //.substring(0,2);
+            b=Utils.ifExists("", v.elementAt(i).getField("a"));
+            codiceBib=Utils.ifExists("", v.elementAt(i).getField("b")); //.substring(0,2);
         }
         catch (Exception e) {}
-        String col=v.elementAt(i).getField("c").getContent();
-        String inv=v.elementAt(i).getField("d").getContent();
-        String con=v.elementAt(i).getField("e").getContent();
+        String col=Utils.ifExists("", v.elementAt(i).getField("c"));
+        String inv=Utils.ifExists("", v.elementAt(i).getField("d"));
+        String con=Utils.ifExists("", v.elementAt(i).getField("e"));
 
         res.addElement(new BookSignature(codiceBib,b,inv,col,con));
       }
@@ -216,7 +217,7 @@ public String quote(String t) {
      * <...=.....> devo togliere le angolate e prendere solo la parte a sx dell'=
      * <....> ...... devo togliere le angolate e mettere l'asterisco
      * <....> / oppore un separatore devo togilere le angolate e basta
-     * <<....=....> .... >...... questo � un caso certo
+     * <<....=....> .... >...... questo e' un caso certo
      *
      * Questo caso va bene (mette solo gli *)
      * <... >..... = <... >......
@@ -331,11 +332,12 @@ public String quote(String t) {
       return r;
   }
 
-  public Vector<String> getClassifications() {
+  public Vector<ClassificationInterface> getClassifications() {
 	  Vector<Tag> v=getTags("740");
-	  Vector<String> r=new Vector<String>();
+	  Vector<ClassificationInterface> r=new Vector<ClassificationInterface>();
 	  for(int i=0;v!=null && i<v.size();i++) {
-		  r.addElement(v.elementAt(i).getField("a").getContent());
+		  r.addElement(new DDC(Utils.ifExists("", v.elementAt(i).getField("a")),"","ITA"));
+		  //r.addElement(Utils.ifExists("", v.elementAt(i).getField("a")));
 	  }
       return r;
   }
