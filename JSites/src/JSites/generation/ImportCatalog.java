@@ -101,19 +101,25 @@ public class ImportCatalog extends myAbsGenerator {
 	    		in.close();
 	    		
 	    		in=new FileInputStream(destination);
-	
+	    		contentHandler.startElement("","load","load",new AttributesImpl());
 				sendElement("status","ok");
+				sendElement("dir",dir);
 		        sendElement("filename",part.getFileName());
 		        sendElement("mimetype",part.getMimeType());
 		        sendElement("uploadname",part.getUploadName());
 		        sendElement("size",String.valueOf(part.getSize()));
+		        sendElement("cid",cid);
+	        	sendElement("pid",pid);
+	        	sendElement("conn",con);
+	        	sendElement("format",format);
+	        	sendElement("dbtype",dbtype);
+		        contentHandler.endElement("","load","load");
+
 		        
-		        /**
-		         * TODO: rendere ralitivo qs path
-		         */
-				String JOpac2confdir="/java_jopac2/engine/src/org/jopac2/conf";
+				String JOpac2confdir=getResource("/")+"WEB-INF/conf/engine/";
 				
-				boolean background=false;
+				boolean background=true;
+				
 				Connection[] conns=new Connection[max_conn];
 				String driver=_classDerbyDriver;
 				String dbUrl = "jdbc:derby:"+dir+con+";create=true";
@@ -149,7 +155,15 @@ public class ImportCatalog extends myAbsGenerator {
 				
 				//Transliterator t=Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
 				
-				DataImporter dataimporter=new DataImporter(in,format,JOpac2confdir, conns, true,cache); //,t);
+				PrintStream console=System.out;
+				try {
+					console=new PrintStream(dir+"/status"+cid);
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+				}
+				
+				DataImporter dataimporter=new DataImporter(in,format,JOpac2confdir, conns, true,cache, console); //,t);
 				if(background) {
 					dataimporter.start();
 				}

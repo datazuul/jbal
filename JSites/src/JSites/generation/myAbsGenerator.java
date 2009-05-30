@@ -59,6 +59,7 @@ public abstract class myAbsGenerator extends AbstractGenerator implements Compos
 	public ComponentManager manager;
     public ComponentSelector dbselector;
     protected Parameters par;
+    protected String _source="";
     
     public void sendElement(String element,String value) throws SAXException {
     	contentHandler.startElement("",element,element,new AttributesImpl());
@@ -88,6 +89,7 @@ public abstract class myAbsGenerator extends AbstractGenerator implements Compos
     @SuppressWarnings("unchecked")
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par) throws IOException, ProcessingException, SAXException {
     	this.par = par;
+    	this._source=src;
     	super.setup(resolver,objectModel,src,par);
     }
     

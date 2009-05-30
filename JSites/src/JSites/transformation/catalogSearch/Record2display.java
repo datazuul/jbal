@@ -67,6 +67,7 @@ import org.jopac2.engine.dbGateway.StaticDataComponent;
 import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
 import org.jopac2.engine.utils.SearchResultSet;
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.utils.BookSignature;
 
 import JSites.generation.ImportCatalog;
@@ -225,19 +226,17 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
             v.clear();v=null;
         }
         
-        v=ma2.getClassifications();
-        if((v!=null)&&(v.size()>0)) {
+        Vector<ClassificationInterface> vc=ma2.getClassifications();
+        if((vc!=null)&&(vc.size()>0)) {
             super.startElement("","classifications","classifications",new AttributesImpl());
 
-            for(int i=0;i<v.size();i++) {
-            	sendElement("classification",(String)v.elementAt(i));
+            for(int i=0;i<vc.size();i++) {
+            	sendElement("classification",(String)vc.elementAt(i).getClassificationName());
             }
 
             super.endElement("","classifications","classifications");
-            v.clear();v=null;
+            vc.clear();v=null;
         }
-        
-
         
         if(ma2.hasLinkUp()) {
             vma=ma2.getIsPartOf();

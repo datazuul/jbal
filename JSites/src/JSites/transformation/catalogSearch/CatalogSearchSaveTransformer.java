@@ -87,7 +87,7 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 				try {
 					conn = getConnection(catalogConnection);
 					RecordInterface ma=DbGateway.getNotiziaByJID(conn, 1);
-					chr=ma.getChannels();
+					if(ma!=null) chr=ma.getChannels();
 					conn.close();
 				} catch (ComponentException e) {
 					e.printStackTrace();

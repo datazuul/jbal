@@ -54,6 +54,7 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 	protected AttributesImpl emptyAttrs;
 	protected String dbname = "";
 	protected SitemapVariableHolder sitemapVariables = null;
+	protected String _source="";
     
 	public void compose(ComponentManager manager) throws ComponentException {
 		this.manager = manager;
@@ -170,6 +171,8 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par) throws ProcessingException, SAXException, IOException{
 		
 		super.setup(resolver, objectModel, src, par);
+		
+		_source=src;
 		
 		InputStream ins=new FileInputStream(new File(getResource("WEB-INF/logging.properties")));
     	LogManager.getLogManager().readConfiguration(ins);
