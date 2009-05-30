@@ -9,7 +9,10 @@ import java.util.Vector;
 import org.jopac2.jbal.Readers.MdbTableRecordReader;
 import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.jbal.abstractStructure.Tag;
+import org.jopac2.jbal.classification.ClassificationInterface;
+import org.jopac2.jbal.iso2709.ISO2709Impl;
 import org.jopac2.utils.BookSignature;
+import org.jopac2.utils.TokenWord;
 import org.xml.sax.SAXException;
 
 public class Mdb extends XML {
@@ -35,7 +38,7 @@ public class Mdb extends XML {
 	}
 
 	@Override
-	public Vector<String> getClassifications() {
+	public Vector<ClassificationInterface> getClassifications() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -122,6 +125,15 @@ public class Mdb extends XML {
 	public Vector<Tag> getTags(String tag) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public String[] getChannels() {
+		Vector<TokenWord> v=XMLHelper.exploreData(document);
+		
+		String[] ch=new String[v.size()+1];
+		for(int i=0;i<v.size();i++) ch[i+1]=v.elementAt(i).getTag();
+		ch[0]="ANY";
+		return ch;
 	}
 
 }

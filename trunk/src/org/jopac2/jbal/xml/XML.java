@@ -62,7 +62,7 @@ import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.*;
 
 public abstract class XML implements RecordInterface {
-  private Node document=null;
+  protected Node document=null;
 
   public static String cr=String.valueOf((char)13);
   public static String lf=String.valueOf((char)10);
@@ -179,7 +179,7 @@ public abstract class XML implements RecordInterface {
   /**
    * 13/2/2003 - R.T.
    *    Modificato, ritorna un vettore con i contenuti
-   *    invece degli html. Il resto verr� fatto fuori.
+   *    invece degli html. Il resto verra' fatto fuori.
    */
   public Vector<RecordInterface> getHasParts() {
     return linkDown;
@@ -245,7 +245,7 @@ public abstract class XML implements RecordInterface {
 
   public abstract Vector<String> getAuthors(); // Autori
   public abstract Vector<String> getSubjects(); // Soggetti
-  public abstract Vector<String> getClassifications(); // Classificazioni
+  public abstract Vector<ClassificationInterface> getClassifications(); // Classificazioni
   public abstract Vector<String> getEditors(); // Editori
   public abstract String getEdition(); //Edizione
   public abstract String getPublicationPlace(); // Luogo di pubblicazione
