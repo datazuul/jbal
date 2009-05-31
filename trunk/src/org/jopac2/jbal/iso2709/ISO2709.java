@@ -47,6 +47,7 @@ import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.jbal.abstractStructure.Delimiters;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
+import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.JOpac2Exception;
 import org.jopac2.utils.TokenWord;
@@ -406,6 +407,8 @@ public Vector<Tag> getTags(String tag) {
 	  r.append("Record biblio level: "+recordBiblioLevel+"\n");
 	  r.append("Record hierarchical level code: "+indicatorLength+"\n");
 	  
+	  Collections.sort(dati);
+	  
 	  for(int i=0;i<dati.size();i++) {
 		  if(!dl.equals("^"))
 			  r.append(dati.elementAt(i).toString().replaceAll("["+dl+"]", "^")+"\n");
@@ -417,7 +420,7 @@ public Vector<Tag> getTags(String tag) {
   
 
   public abstract Vector<String> getAuthors(); // Autori
-  public abstract Vector<String> getSubjects(); // Soggetti
+  public abstract Vector<SubjectInterface> getSubjects(); // Soggetti
   public abstract Vector<ClassificationInterface> getClassifications(); // Classificazioni
   public abstract Vector<String> getEditors(); // Editori
   public abstract String getEdition(); //Edizione
@@ -676,6 +679,7 @@ public Vector<Tag> getTags(String tag) {
 	    leader=leader.concat(directoryMap);                 // entry map
 	    
 	    Vector<Tag> t=this.getTags();
+	    Collections.sort(t);
 	
 	    ba+=this.getRows()*12;
 	    long c=0;

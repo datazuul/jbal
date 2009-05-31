@@ -45,6 +45,7 @@ import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.classification.DDC;
 import org.jopac2.jbal.subject.SubjectInterface;
+import org.jopac2.jbal.subject.UncontrolledSubjectTerms;
 import org.jopac2.utils.*;
 
 public abstract class Unimarc extends ISO2709Impl {
@@ -84,6 +85,19 @@ public void initLinkUp() {
 	} catch (JOpac2Exception e) {
 		e.printStackTrace();
 	}
+  }
+  
+  public void setBid(String bid)  {
+			if(bid==null || bid.length()==0) return;
+				  super.setBid(bid);
+				  try {
+				  removeTags("001");
+				  Tag t=new Tag("001");
+				  t.setRawContent(bid);
+				  addTag(t);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
   }
   
 
@@ -266,14 +280,18 @@ public void initLinkUp() {
   }
   
   
-	public Vector<String> getSubjects() {
-		Vector<String> r=new Vector<String>();
-		Vector<Tag> t=getTags("610");
-		for(int i=0;t!=null && i<t.size();i++) {
-			Field s=t.elementAt(i).getField("a");
-			if(s!=null) r.addElement(s.getContent());
-		}
-		return r;
+	public Vector<SubjectInterface> getSubjects() {
+		Vector<SubjectInterface> r=new Vector<SubjectInterface>();
+		Vector<Tag> v=getTags("610");
+		  for(int i=0;v!=null && i<v.size();i++) {
+			  UncontrolledSubjectTerms sub=new UncontrolledSubjectTerms('0');
+			  Vector<Field> s=v.elementAt(i).getFields("a");
+			  for(int j=0;s!=null && j<s.size();j++) {
+				  sub.setSubjectData(s.elementAt(j).getContent());
+			  }
+			  r.addElement(sub);
+		  }
+	      return r;
 	}
 
 	public Vector<ClassificationInterface> getClassifications() {
@@ -372,7 +390,7 @@ public void initLinkUp() {
      * 200  $a ; $a [] $b . $c = $d : $e / $f ; $g . $h ,. $i
 	 */
 	public void setTitle(String title, boolean significant)  throws JOpac2Exception {
-		if(title==null) return;
+		if(title==null || title.length()==0) return;
 		
 		Field i=null, h=null, e=null, d=null, c=null, b=null; // a ripetibile, f+g ripetibile
 		Vector<Field> a=new Vector<Field>(), f=new Vector<Field>();
@@ -456,18 +474,18 @@ public void initLinkUp() {
          *            1 Name entered under surname (family name, patronymic, etc.)
 		 *  701 come 700 ma ripetibile
 		 */
-		if(author==null) return;
+		if(author==null || author.length()==0) return;
 		
 		// 1. determina se esiste 200^f. Se esiste aggiungi in ^g, altrimenti in ^f
-		Tag tag200=getFirstTag("200");
-		Field auth=new Field("f",author);
-		Field mr=tag200.getField("f");
-		if(mr!=null) {
-			auth.setFieldCode("g");
-		}
-		tag200.addField(auth);
-		removeTags("200");
-		addTag(tag200);
+		//		Tag tag200=getFirstTag("200");
+		//		Field auth=new Field("f",author);
+		//		Field mr=tag200.getField("f");
+		//		if(mr!=null && !mr.getContent().equals(author)) {
+		//			auth.setFieldCode("g");
+		//			tag200.addField(auth);
+		//		}
+		//		removeTags("200");
+		//		addTag(tag200);
 		
 		// 2. determina se esiste già il campo 700. Se non esiste lo crea, altrimenti crea 701
 		Tag tag=getFirstTag("700");
@@ -504,22 +522,65 @@ public void initLinkUp() {
 	 * 300^a
 	 */
 	public void addComment(String comment)  throws JOpac2Exception {
-		if(comment==null) return;
+		if(comment==null || comment.length()==0) return;
 		Tag t=new Tag("300",' ',' ');
 		t.addField(new Field("a",comment.trim()));
 		addTag(t);
 	}
 
 	/**
-	 * 210^c (210 non ripetibile, esistente)
+	 * TODO questa implementazione e' scorretta e assume che il Manufacture non sia mai presente!
+	 *      (non riempie mai $e $f $g $h)
+	 * TODO sbaglia anche l'indirizzo ($b) perché in ISBD non c'e' un separatore :-(
+	 *      (codice commentato)
+	 * 210  $a ; $a $b : $c , $d  $e $e $f : $g , $h 
+	 * Indicators
+	 * 		Indicator 1: blank (not defined)
+	 * 		Indicator 2: blank (not defined)
+	 * $a Place of Publication, Distribution, etc.
+	 * $b Address of Publisher, Distributor, etc.
+	 * $c Name of Publisher, Distributor, etc.
+	 * $d Date of Publication, Distribution, etc.
+	 * 
+	 * $e Place of Manufacture (if present)
+	 * $f Address of Manufacturer (if present)
+	 * $g Name of Manufacturer (if present)
+	 * $h Date of Manufacture (if present)
 	 */
 	public void addPublisher(String publisher)  throws JOpac2Exception {
-		if(publisher==null) return;
+		if(publisher==null || publisher.length()==0) return;
+		removeTags("210");
+		String k=null;
+		Tag t=new Tag("210",' ',' ');
+		Field a=null, b=null, c=null, d=null;
+		if(publisher.contains(" , ")) {
+			int i=publisher.indexOf(" , ");
+			k=publisher.substring(i+3);
+			publisher=publisher.substring(0,i);
+			d=new Field("d",k);
+		}
+		if(publisher.contains(" : ")) {
+			int i=publisher.indexOf(" : ");
+			k=publisher.substring(i+3);
+			publisher=publisher.substring(0,i);
+			c=new Field("c",k);
+		}
+//		if(publisher.contains(" ; ")) {
+//			int i=publisher.indexOf(" ; ");
+//			k=publisher.substring(i+3);
+//			publisher=publisher.substring(0,i);
+//			b=new Field("b",k);
+//		}
+		String[] fa=publisher.split(" ; ");
 		
-		Tag t=getFirstTag("210");
-		if(t==null) t=new Tag("210",' ',' ');
-		t.removeField("c");
-		t.addField(new Field("c",publisher));
+		if(fa.length>0) {
+			for(int y=0;y<fa.length;y++) t.addField(new Field("a",fa[y]));
+		}
+		
+		if(b!=null) t.addField(b);
+		if(c!=null) t.addField(c);
+		if(d!=null) t.addField(d);
+		addTag(t);
 	}
 
 	public void addPart(RecordInterface part)  throws JOpac2Exception {
@@ -569,24 +630,70 @@ public void initLinkUp() {
 	 * 330^a
 	 */
 	public void setAbstract(String abstractText)  throws JOpac2Exception {
-		if(abstractText==null) return;
+		if(abstractText==null || abstractText.length()==0) return;
 		
 		Tag a=new Tag("330",' ',' ');
 		a.addField(new Field("a",abstractText));
 		addTag(a);
 	}
 
+	/**
+    * 215  ^a : ^c ; ^d + ^e
+    * Indicators
+    * 	Indicator 1: blank (not defined)
+    * 	Indicator 2: blank (not defined)
+    * $a Specific Material Designation and Extent of Item
+    * $c Other Physical Details
+    * $d Dimensions
+    * $e Accompanying Material
+    */
 	public void setDescription(String description)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
+		if(description==null || description.length()==0) return;
+		String k="";
+		Tag t=new Tag("215",' ',' ');
+		Field a=null, c=null, d=null, e=null;
+		if(description.contains(" + ")) {
+			int i=description.indexOf(" + ");
+			k=description.substring(i+3);
+			description=description.substring(0,i);
+			e=new Field("e",k);
+		}
+		if(description.contains(" ; ")) {
+			int i=description.indexOf(" ; ");
+			k=description.substring(i+3);
+			description=description.substring(0,i);
+			d=new Field("d",k);
+		}
+		if(description.contains(" : ")) {
+			int i=description.indexOf(" : ");
+			k=description.substring(i+3);
+			description=description.substring(0,i);
+			c=new Field("c",k);
+		}
+		a=new Field("a",description);
+		
+		if(a!=null) t.addField(a);
+		if(c!=null) t.addField(c);
+		if(d!=null) t.addField(d);
+		if(e!=null) t.addField(e);
+		addTag(t);
 	}
-
+	
 	/**
 	 * 
      * 205 $a = $d / $f ; $g , $b
+     * Indicators
+     * 		Indicator 1: blank (not defined)
+     * 		Indicator 2: blank (not defined)
+     * $a Edition Statement
+     * $b Issue Statement
+     * $d Parallel Edition Statement
+     * $f Statement of Responsibility Relating to Edition
+     * $g Subsequent Statement of Responsibility
      *
 	 */
 	public void setEdition(String edition)  throws JOpac2Exception {
-		if(edition==null) return;
+		if(edition==null || edition.length()==0) return;
 		
 		Tag e=new Tag("205",' ',' ');
 		Field a=null, d=null, f=null, g=null, b=null;
@@ -633,7 +740,7 @@ public void initLinkUp() {
 	 * 210 $d
 	 */
 	public void setPublicationDate(String publicationDate)  throws JOpac2Exception {
-		if(publicationDate==null) return;
+		if(publicationDate==null || publicationDate.length()==0) return;
 		
 		Tag p=getFirstTag("210");
 		if(p==null) p=new Tag("210",' ',' ');
@@ -647,7 +754,7 @@ public void initLinkUp() {
 	 * 210 $a
 	 */
 	public void setPublicationPlace(String publicationPlace)  throws JOpac2Exception {
-		if(publicationPlace==null) return;
+		if(publicationPlace==null || publicationPlace.length()==0) return;
 		
 		Tag p=getFirstTag("210");
 		if(p==null) p=new Tag("210",' ',' ');
@@ -664,7 +771,7 @@ public void initLinkUp() {
 	 * @throws JOpac2Exception
 	 */
 	public void setStandardNumber(String standardNumber, String codeSystem) throws JOpac2Exception {
-		if(standardNumber==null || codeSystem==null) return;
+		if(standardNumber==null || codeSystem==null || standardNumber.length()==0 || codeSystem.length()==0) return;
 		
 		String tagName="035";
 		if(codeSystem.equals("ISBN")) tagName="010";
@@ -677,6 +784,76 @@ public void initLinkUp() {
 		n.addField(new Field("a",standardNumber));
 
 		addTag(n);
+	}
+	
+	/**
+	 * 101 x$a$b$c$d$e$f$g$h$i$j
+	 * Indicators
+	 * 		Indicator 1: Translation indicator
+	 * 			0  Item is in the original language(s) of the work
+	 * 			1  Item is a translation of the original work or an intermediate work
+	 * 			2  Item contains translations other than translated summaries
+	 *		Indicator 2: blank (not defined)
+	 * $a Language of Text, Soundtrack etc. 
+	 * $b Language of Intermediate Text when Item is Not Translated from Original. 
+	 * $c Language of Original Work 
+	 * $d Language of Summary 
+	 * $e Language of Contents Page 
+	 * $f Language of Title Page if Different from Text 
+	 * $g Language of Title Proper if Not First Language of Text, Soundtrack, etc. 
+	 * $h Language of Libretto, etc. 
+	 * $i Language of Accompanying Material (Other than Summaries, Abstracts or Librettos) 
+	 * $j Language of Subtitles 
+	 */
+	public String getLanguage() {
+		String r="";
+		Tag t=getFirstTag("101");
+		r+=Utils.ifExists("", t.getField("a"));
+		r+=Utils.ifExists(" ", t.getField("b"));
+		r+=Utils.ifExists(" ", t.getField("c"));
+		r+=Utils.ifExists(" ", t.getField("d"));
+		r+=Utils.ifExists(" ", t.getField("e"));
+		r+=Utils.ifExists(" ", t.getField("f"));
+		r+=Utils.ifExists(" ", t.getField("g"));
+		r+=Utils.ifExists(" ", t.getField("h"));
+		r+=Utils.ifExists(" ", t.getField("i"));
+		r+=Utils.ifExists(" ", t.getField("j"));
+		return r;
+	}
+	
+	/**
+	 * Simply split codes and put
+	 * 101 x$a$b$c$d$e$f$g$h$i$j
+	 * Indicators
+	 * 		Indicator 1: Translation indicator
+	 * 			0  Item is in the original language(s) of the work
+	 * 			1  Item is a translation of the original work or an intermediate work
+	 * 			2  Item contains translations other than translated summaries
+	 *		Indicator 2: blank (not defined)
+	 * $a Language of Text, Soundtrack etc. 
+	 * $b Language of Intermediate Text when Item is Not Translated from Original. 
+	 * $c Language of Original Work 
+	 * $d Language of Summary 
+	 * $e Language of Contents Page 
+	 * $f Language of Title Page if Different from Text 
+	 * $g Language of Title Proper if Not First Language of Text, Soundtrack, etc. 
+	 * $h Language of Libretto, etc. 
+	 * $i Language of Accompanying Material (Other than Summaries, Abstracts or Librettos) 
+	 * $j Language of Subtitles 
+	 * @throws JOpac2Exception 
+	 */
+	public void setLanguage(String language) throws JOpac2Exception {
+		if(language==null || language.length()==0) return;
+		String[] l=language.split(" ");
+		removeTags("101");
+		Tag t=new Tag("101",' ',' ');
+		if(l.length>1) t.setModifier1('1'); // if more than 1 lang assume is translated
+		else t.setModifier1('0');
+		for(int i=0;i<l.length;i++) {
+			String f=Character.toString((char)(97+i)); // starting form 'a'
+			t.addField(new Field(f,l[i]));
+		}
+		addTag(t);
 	}
 
   private void marcCostruttore(String stringa,String dTipo,int livello) {

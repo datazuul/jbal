@@ -105,5 +105,14 @@ public class UncontrolledSubjectTerms implements SubjectInterface {
 	public String getTagIdentifier() {
 		return "610";
 	}
+	
+	public String toString() {
+		String r="";
+		for(int i=0;fields!=null && i<fields.size();i++) {
+			r+=" - "+fields.elementAt(i).getContent();
+		}
+		if(r.length()>3) r=r.substring(3);
+		return r;
+	}
 
 }

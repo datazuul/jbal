@@ -4,9 +4,11 @@ import java.awt.image.BufferedImage;
 import java.util.Vector;
 
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.abstractStructure.Field;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.subject.SubjectInterface;
+import org.jopac2.jbal.subject.UncontrolledSubjectTerms;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.JOpac2Exception;
 
@@ -123,13 +125,18 @@ public class Marc21 extends ISO2709Impl {
   public String getAbstract() {
   	return null;
   }
-  public Vector<String> getSubjects() {
-	  Vector<Tag> t=getTags("650");
-	  Vector<String> r=new Vector<String>();
-	  for(int i=0;t!=null && i<t.size();i++) {
-		  r.addElement(t.elementAt(i).getField("a").getContent());
-	  }
-  	return r;
+  public Vector<SubjectInterface> getSubjects() {
+	  Vector<SubjectInterface> r=new Vector<SubjectInterface>();
+		Vector<Tag> v=getTags("650");
+		  for(int i=0;v!=null && i<v.size();i++) {
+			  UncontrolledSubjectTerms sub=new UncontrolledSubjectTerms('0');
+			  Vector<Field> s=v.elementAt(i).getFields("a");
+			  for(int j=0;s!=null && j<s.size();j++) {
+				  sub.setSubjectData(s.elementAt(j).getContent());
+			  }
+			  r.addElement(sub);
+		  }
+	      return r;
   }
 
 
@@ -284,5 +291,15 @@ public class Marc21 extends ISO2709Impl {
 	public BufferedImage getImage() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public String getLanguage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setLanguage(String language) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
 	}
 }

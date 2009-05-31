@@ -53,10 +53,12 @@ import java.util.*;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.Readers.IsoRecordReader;
 import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.jbal.abstractStructure.Field;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.classification.DDC;
 import org.jopac2.jbal.subject.SubjectInterface;
+import org.jopac2.jbal.subject.UncontrolledSubjectTerms;
 import org.jopac2.utils.*;
 
 public class Easyweb extends ISO2709Impl {
@@ -78,6 +80,23 @@ public class Easyweb extends ISO2709Impl {
     initLinkDown();
     initLinkSerie();
   }
+  
+  public String getBid() {
+	  return Utils.ifExists("", getFirstTag("001"));
+  }
+  
+  public String getLanguage() {
+	String r=Utils.ifExists("", getFirstTag("030"));
+	if(r.length()>3) r=r.substring(0,3); // Prima lingua tipo ITA o ENG
+	return r;
+  }
+  
+  public String getType() {
+	  String t=Utils.ifExists("", getFirstTag("040"));
+	  if(t.length()>0) t=t.substring(0,1);
+	  return t;
+  }
+  
   
 	public RecordReader getRecordReader(InputStream dataFile) throws UnsupportedEncodingException {
 		return new IsoRecordReader(dataFile,ft,rt,"latin1");
@@ -121,11 +140,11 @@ public Vector<RecordInterface> getLink(String tag) {
   }
   
   public String getPublicationPlace() {
-      return getFirstTag("301").getRawContent();
+	  return Utils.ifExists("", getFirstTag("301"));
   }
   
   public String getPublicationDate() {
-      return getFirstTag("310").getRawContent();
+	  return Utils.ifExists("", getFirstTag("310"));
   }
 
   // TODO per questo tipo trovare l'abstract
@@ -158,11 +177,7 @@ public Vector<String> getAuthors() {
 /**
  * 13/2/2003 - R.T.
  * Input: null
- * Output: Vector di coppie. La coppia contiene nel primo elemento una Coppia con
- *         il codice della biblioteca e il nome della biblioteca
- *         e nel secondo elemento un Vector che contiene
- *         coppie (collocazione,inventario).
- *         Se serve anche il polo ci lo mettiamo nel codice della biblioteca?
+ * Output: 
  * 24/6/2003 - R.T.
  *         Deve trasportare anche la consistenza, nel caso sia un periodico.
  *         Ciascun elemento del vettore e' una coppia (biblioteca,dati).
@@ -294,20 +309,17 @@ public String quote(String t) {
   public String getTitle() {
     String r="";
     Tag tag=getFirstTag("100");
-    r=(tag.getRawContent());
+    if(tag!=null) r=(tag.getRawContent());
+    String nse=String.valueOf((char)0x1b)+"I";
+	String nsb=String.valueOf((char)0x1b)+"H";
+    r=r.replaceAll("<", nsb);
+    r=r.replaceAll(">", nse);
     return r;
   }
 
   public String getISBD() {
-    String r="";
+    String r=getTitle();
     
-    try {
-        Tag tag=getFirstTag("100");
-        r=(tag.getRawContent());
-    }
-    catch(Exception e) {
-        //r="Errore, 100 = "+getFirstTag("100");
-    }
     Tag t=getFirstTag("200");
     if(t!=null) {
       r+=Utils.ifExists(". - ",t.getRawContent());
@@ -323,11 +335,16 @@ public String quote(String t) {
     return quote(r);
   }
   
-  public Vector<String> getSubjects() {
+  public Vector<SubjectInterface> getSubjects() {
 	  Vector<Tag> v=getTags("730");
-	  Vector<String> r=new Vector<String>();
+	  Vector<SubjectInterface> r=new Vector<SubjectInterface>();
 	  for(int i=0;v!=null && i<v.size();i++) {
-		  r.addElement(v.elementAt(i).getField("a").getContent());
+		  UncontrolledSubjectTerms sub=new UncontrolledSubjectTerms('0');
+		  Vector<Field> s=v.elementAt(i).getFields("a");
+		  for(int j=0;s!=null && j<s.size();j++) {
+			  sub.setSubjectData(s.elementAt(j).getContent());
+		  }
+		  r.addElement(sub);
 	  }
       return r;
   }
@@ -342,7 +359,14 @@ public String quote(String t) {
       return r;
   }
   
-  public Vector<String> getEditors() {return null;}
+  public Vector<String> getEditors() {
+	  Vector<String> r=new Vector<String>();
+	  Vector<Tag> e=getTags("300");
+	  for(int i=0;e!=null && i<e.size();i++) {
+		  r.addElement(Utils.ifExists("", e.elementAt(i)));
+	  }
+	  return r;
+  }
   
   public Easyweb() {
 	  super();
@@ -350,8 +374,7 @@ public String quote(String t) {
 
 
 public String getDescription() {
-	// TODO Auto-generated method stub
-	return null;
+	return Utils.ifExists("", getFirstTag("320"));
 }
 
 @Override
@@ -406,8 +429,7 @@ public String getComments() {
 }
 
 public String getStandardNumber() {
-	// TODO Auto-generated method stub
-	return null;
+	return Utils.ifExists("", getFirstTag("510"));
 }
 
 public void setAbstract(String abstractText) throws JOpac2Exception {
@@ -440,6 +462,11 @@ public void setPublicationPlace(String publicationPlace) throws JOpac2Exception 
 	
 }
 
+public void setLanguage(String language) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
 public void setStandardNumber(String standardNumber, String codeSystem) throws JOpac2Exception {
 	// TODO Auto-generated method stub
 	
@@ -459,6 +486,8 @@ public void addPublisher(String publisher) throws JOpac2Exception {
 	// TODO Auto-generated method stub
 	
 }
+
+
 
 public BufferedImage getImage() {
 	// TODO Auto-generated method stub

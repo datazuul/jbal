@@ -244,7 +244,7 @@ public abstract class XML implements RecordInterface {
   }
 
   public abstract Vector<String> getAuthors(); // Autori
-  public abstract Vector<String> getSubjects(); // Soggetti
+  public abstract Vector<SubjectInterface> getSubjects(); // Soggetti
   public abstract Vector<ClassificationInterface> getClassifications(); // Classificazioni
   public abstract Vector<String> getEditors(); // Editori
   public abstract String getEdition(); //Edizione
@@ -452,5 +452,15 @@ public abstract class XML implements RecordInterface {
 		for(int i=0;i<v.size();i++) ch[i+ISO2709Impl.channels.length]=v.elementAt(i).getTag();
 		ch[0]="ANY";
 		return ch;
+	}
+	
+	public String getLanguage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setLanguage(String language) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
 	}
 }
