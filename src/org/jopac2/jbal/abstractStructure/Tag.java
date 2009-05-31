@@ -5,7 +5,7 @@ import java.util.Vector;
 
 import org.jopac2.utils.JOpac2Exception;
 
-public class Tag {
+public class Tag implements Comparable<Tag> {
 	String tagName;
 	char modifier1=0,modifier2=0;
 	Vector<Field> fields=null;
@@ -258,5 +258,9 @@ public class Tag {
 		String nse=String.valueOf((char)0x1b)+"I";
 		String nsb=String.valueOf((char)0x1b)+"H";
 		checkNSBNSE(nsb,nse);
+	}
+
+	public int compareTo(Tag arg0) {
+		return tagName.compareTo(arg0.getTagName());
 	}
 }

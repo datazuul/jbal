@@ -11,6 +11,7 @@ import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.iso2709.ISO2709Impl;
+import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.TokenWord;
 import org.xml.sax.SAXException;
@@ -91,7 +92,7 @@ public class Mdb extends XML {
 	}
 
 	@Override
-	public Vector<String> getSubjects() {
+	public Vector<SubjectInterface> getSubjects() {
 		// TODO Auto-generated method stub
 		return null;
 	}

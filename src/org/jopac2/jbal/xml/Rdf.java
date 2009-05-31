@@ -349,7 +349,7 @@ public class Rdf extends ISO2709Impl {
 
   public String getISBD() {return record.getISBD().size()>0?(String)record.getISBD().elementAt(0):null;}
 
-  public Vector getSubjects() {return record.getSubjects();}
+  public Vector<SubjectInterface> getSubjects() {return record.getSubjects();}
   public Vector getClassifications() {return record.getClassifications();}
   public Vector getEditors() {return record.getEditors();}
   public String getPublicationPlace() {return record.getPublicationPlace().size()>0?(String)record.getPublicationPlace().elementAt(0):null;}
@@ -505,5 +505,15 @@ public void addPublisher(String publisher) throws JOpac2Exception {
 public BufferedImage getImage() {
 	// TODO Auto-generated method stub
 	return null;
+}
+
+public String getLanguage() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public void setLanguage(String language) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
 }
 }

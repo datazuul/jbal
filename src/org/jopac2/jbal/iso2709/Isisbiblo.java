@@ -374,7 +374,7 @@ public String getPublicationPlace() {
 }
 
 @Override
-public Vector<String> getSubjects() {
+public Vector<SubjectInterface> getSubjects() {
 	// TODO Auto-generated method stub
 	return null;
 }
@@ -487,5 +487,15 @@ public void addPublisher(String publisher) throws JOpac2Exception {
 public BufferedImage getImage() {
 	// TODO Auto-generated method stub
 	return null;
+}
+
+public String getLanguage() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public void setLanguage(String language) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
 }
 }

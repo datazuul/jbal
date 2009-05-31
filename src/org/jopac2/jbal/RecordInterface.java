@@ -184,6 +184,19 @@ public interface RecordInterface {
 	 * Restituisce il codice univoco di identificazione del database JOpac2
 	 */
 	public long getJOpacID();
+	
+	/**
+	 * Restituisce la lingua
+	 * @return
+	 */
+	public String getLanguage();
+	
+	/**
+	 * Aggiunge lingue al record al record
+	 * @param language
+	 * @throws JOpac2Exception 
+	 */
+	public void setLanguage(String language) throws JOpac2Exception;
 
 	/**
 	 * Imposta un BID (identificativo bibliografico) per il record corrente
@@ -221,7 +234,7 @@ public interface RecordInterface {
 	 * Restituisce un vettore di soggetti
 	 * @return
 	 */
-	public Vector<String> getSubjects(); // Soggetti
+	public Vector<SubjectInterface> getSubjects(); // Soggetti
 	
 	/**
 	 * Aggiunge un subject al record
