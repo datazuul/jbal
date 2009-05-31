@@ -66,7 +66,10 @@
         	<map:act type="authorize-users">
         		<map:parameter name="db" value="{global:db}"/>
         		<map:parameter name="pid" value="0"/>
-        		<map:generate type="logReader" src="{global:data-directory}/catalogs/status{../../1}" />
+        		<map:generate type="logReader" src="{global:data-directory}/catalogs/status{../../1}">
+        			<map:parameter name="db" value="{global:db}"/>
+					<map:parameter name="context" value="{context}"/>
+				</map:generate>
 			</map:act>	
 			
 			<map:serialize type="text" />
