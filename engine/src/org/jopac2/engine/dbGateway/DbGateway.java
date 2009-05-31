@@ -44,6 +44,7 @@ import org.jopac2.engine.importers.LoadClasses;
 import org.jopac2.engine.utils.SearchResultSet;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.jbal.xmlHandlers.ClassItem;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.ClasseDettaglio;
@@ -1086,7 +1087,7 @@ public abstract class DbGateway {
 		else if(classe.equals("NUM")) DbGateway.updateTableListe(conn, classe, jid, ma.getStandardNumber()); // testo=ma.getStandardNumber();
 		else if(classe.equals("DTE")) DbGateway.updateTableListe(conn, classe, jid, ma.getPublicationDate()); // testo=ma.getPublicationDate();
 		else if(classe.equals("AUT")) DbGateway.updateTableListe(conn, classe, jid, ma.getAuthors());
-		else if(classe.equals("SBJ")) DbGateway.updateTableListe(conn, classe, jid, ma.getSubjects());
+		else if(classe.equals("SBJ")) DbGateway.updateTableListe(conn, classe, jid, subjectsToString(ma.getSubjects()));
 		else if(classe.equals("BIB")) {
 			Vector<BookSignature> signatures=ma.getSignatures();
 			for(int i=0;signatures!=null && i<signatures.size();i++) {
@@ -1113,7 +1114,7 @@ public abstract class DbGateway {
 				else if(classe.equals("NUM")) DbGateway.updateTableListe(conn, classe, jid, ma.getStandardNumber()); // testo=ma.getStandardNumber();
 				else if(classe.equals("DTE")) DbGateway.updateTableListe(conn, classe, jid, ma.getPublicationDate()); // testo=ma.getPublicationDate();
 				else if(classe.equals("AUT")) DbGateway.updateTableListe(conn, classe, jid, ma.getAuthors());
-				else if(classe.equals("SBJ")) DbGateway.updateTableListe(conn, classe, jid, ma.getSubjects());
+				else if(classe.equals("SBJ")) DbGateway.updateTableListe(conn, classe, jid, subjectsToString(ma.getSubjects()));
 				else if(classe.equals("BIB")) {
 					Vector<BookSignature> signatures=ma.getSignatures();
 					for(int i=0;signatures!=null && i<signatures.size();i++) {
@@ -1131,6 +1132,15 @@ public abstract class DbGateway {
 
 	}
 	
+
+	private Vector<String> subjectsToString(Vector<SubjectInterface> subjects) {
+		Vector<String> r=new Vector<String>();
+		for(int i=0;subjects!=null && i<subjects.size();i++) {
+			r.addElement(subjects.elementAt(i).toString());
+		}
+		return r;
+	}
+
 
 	private static void updateTableListe(Connection conn, String classe,
 			int jid, Vector<String> testi) throws SQLException {
