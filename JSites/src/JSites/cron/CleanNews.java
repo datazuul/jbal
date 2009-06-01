@@ -121,7 +121,9 @@ public class CleanNews extends ServiceableCronJob implements Configurable, Confi
 			stmt.close();
 		}
 		catch(Exception e) {
-			e.printStackTrace();
+			// TODO commentato perchè i cataloghi non hanno la tabella news. 
+			//      Da rivedere la selezione delle connessioni
+//			e.printStackTrace();
 		}
 		
 	}
