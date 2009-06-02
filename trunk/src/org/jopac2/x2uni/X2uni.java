@@ -1,10 +1,7 @@
 package org.jopac2.x2uni;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Vector;
 
@@ -33,20 +30,21 @@ public class X2uni {
 		String line=recordReader.readRecord();
 		while(line!=null) {
 			RecordInterface ma=RecordFactory.buildRecord(0, line, "easyweb", 0);
-			RecordInterface uni=record2Unimarc(ma);
+			RecordInterface uni=null;
 			
-			p.println(uni.toString());
-			System.out.println(ma.toReadableString());
-			System.out.println(uni.toReadableString());
+//			p.println(uni.toString());
+//			System.out.println(ma.toReadableString());
+//			System.out.println(uni.toReadableString());
 			
-//			Vector<BookSignature> vb=ma.getSignatures();
-//			for(int i=0;vb!=null && i<vb.size();i++) {
-//				if(vb.elementAt(i).getLibraryId().equals("BNP")) {
-//					output(ma,p);
-//					break;
-//				}
-//			}
-			uni.destroy();
+			Vector<BookSignature> vb=ma.getSignatures();
+			for(int i=0;vb!=null && i<vb.size();i++) {
+				if(vb.elementAt(i).getLibraryId().equals("BNP")) {
+					uni=record2Unimarc(ma);
+					p.println(uni.toString());
+					break;
+				}
+			}
+			if(uni!=null) uni.destroy();
 			ma.destroy();
 			line=recordReader.readRecord();
 		}
@@ -149,6 +147,24 @@ public class X2uni {
 		for(int i=0; se!=null && i<se.size();i++) {
 			try {
 				uni.addSerie(record2Unimarc(se.elementAt(i)));
+			} catch (JOpac2Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		Vector<RecordInterface> inf=ma.getHasParts();
+		for(int i=0; inf!=null && i<inf.size();i++) {
+			try {
+				uni.addPart(record2Unimarc(inf.elementAt(i)));
+			} catch (JOpac2Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		Vector<RecordInterface> sup=ma.getIsPartOf();
+		for(int i=0; sup!=null && i<sup.size();i++) {
+			try {
+				uni.addPartOf(record2Unimarc(sup.elementAt(i)));
 			} catch (JOpac2Exception e) {
 				e.printStackTrace();
 			}
