@@ -11,14 +11,14 @@ public class SimilarityHelp {
 		r*=intersectionFactor(ma.getISBD(),mb.getISBD());
 		
 		
-		t=intersectionFactor(cleanUncinate(ma.getAuthors()),cleanUncinate(mb.getAuthors()));
-		if(t!=-1) r*=t;
-		t=intersectionFactor(ma.getPublicationDate(),mb.getPublicationDate());
-		if(t!=-1) r*=t;
-		t=intersectionFactor(ma.getPublicationPlace(),mb.getPublicationPlace());
-		if(t!=-1) r*=t;
-		t=intersectionFactor(ma.getStandardNumber(),mb.getStandardNumber());
-		if(t!=-1) r*=t;
+//		t=intersectionFactor(cleanUncinate(ma.getAuthors()),cleanUncinate(mb.getAuthors()));
+//		if(t!=-1) r*=t;
+//		t=intersectionFactor(ma.getPublicationDate(),mb.getPublicationDate());
+//		if(t!=-1) r*=t;
+//		t=intersectionFactor(ma.getPublicationPlace(),mb.getPublicationPlace());
+//		if(t!=-1) r*=t;
+//		t=intersectionFactor(ma.getStandardNumber(),mb.getStandardNumber());
+//		if(t!=-1) r*=t;
 		return r;
 	}
 	
