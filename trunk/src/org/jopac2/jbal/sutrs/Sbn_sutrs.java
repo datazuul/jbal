@@ -226,7 +226,8 @@ public void init(String stringa) {
   		}
   		
   		else if(temp.contains("ICCU") && temp.contains("ident")){
-  			bid = temp;
+  			int g=temp.indexOf(":");
+  			bid = temp.substring(g+1);
   		}
   		else if(temp.startsWith("Localizzazioni:")) {
   			temp=temp.substring(15);

@@ -42,6 +42,7 @@ import org.jopac2.jbal.iso2709.ISO2709Impl;
 import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.JOpac2Exception;
+import org.jopac2.utils.Utils;
 
 public class Sutrs extends ISO2709Impl {
 
@@ -160,8 +161,22 @@ public int delimiterPosition=27;
 	}
   }
 	
-  	public Vector<String> getAuthors() {
-	    return null;
+  public Vector<String> getAuthors() {
+	    Vector<Tag> v=getTags("700");
+
+	    Vector<String> r=new Vector<String>();
+	    String k="";
+	    if(v.size()>0) {
+	      for(int i=0;i<v.size();i++) {
+	    	  k="";
+	    	k+=Utils.ifExists("", v.elementAt(i).getField("a"));
+	        //k=v.elementAt(i).getField("a").getContent();
+	        k+=Utils.ifExists(" ", v.elementAt(i).getField("b"));
+	        //k+=" "+v.elementAt(i).getField("b").getContent();
+	        if(!r.contains(k)) r.addElement(k);
+	      }
+	    }
+	    return r;
 	  }
 	
 	public String getEdition() {
@@ -177,11 +192,38 @@ return null;
 	}
 
 	public String getTitle() {
-return null;
+		Tag t=getFirstTag("200");
+		return t==null?"":Utils.ifExists("", t.getField("a"));
 	}
 	
 	public String getISBD() {
-	    return null;
+		Tag t=getFirstTag("200");
+		String r="";
+		if(t!=null) r+=Utils.ifExists("", t.getField("a"));
+		t=getFirstTag("210");
+		if(t!=null) {
+			r+=Utils.ifExists(". - ",t.getField("a"));
+			r+=Utils.ifExists(" : ",t.getField("c"));
+			r+=Utils.ifExists(" , ",t.getField("d"));
+		}
+		t=getFirstTag("215");
+	    if(t!=null) {
+		    r+=Utils.ifExists(". - ",t.getField("a"));
+		    r+=Utils.ifExists(" : ",t.getField("c"));
+		    r+=Utils.ifExists(" ; ",t.getField("d"));
+		    r+=Utils.ifExists(" + ",t.getField("e"));
+	    }
+
+	    t=getFirstTag("300");
+	    if(t!=null) {
+	    	r+=Utils.ifExists(". - ",t.getField("a"));
+	    }
+	    
+	    t=getFirstTag("010");
+	    if(t!=null) {
+	    	r+=Utils.ifExists(". - ",t.getField("a"));
+	    }
+		return r;
 	  }
 	
 	public String getComments() {
