@@ -583,12 +583,27 @@ public void initLinkUp() {
 		addTag(t);
 	}
 
+	/**
+	 * 463
+	 */
 	public void addPart(RecordInterface part)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
+		if(part!=null) {
+			Tag tag=new Tag("463");
+			tag.setRawContent(part.toEncapsulatedRecordFormat());
+			addTag(tag);
+		}
 	}
 
+	/**
+	 * 
+	 * 461
+	 */
 	public void addPartOf(RecordInterface partof)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
+		if(partof!=null) {
+			Tag tag=new Tag("461");
+			tag.setRawContent(partof.toEncapsulatedRecordFormat());
+			addTag(tag);
+		}
 	}
 
 	/**
