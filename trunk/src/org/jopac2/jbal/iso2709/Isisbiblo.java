@@ -47,7 +47,6 @@ import java.util.*;
 //import java.lang.*;
 //import java.sql.*;
 import org.jopac2.jbal.RecordInterface;
-import org.jopac2.jbal.abstractStructure.Delimiters;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.subject.SubjectInterface;

@@ -30,12 +30,11 @@ import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.ibm.icu.text.Transliterator;
-
 public abstract  class RecordReader extends BufferedReader {
 	protected String tipoNotizia;
 	protected long idTipo;
 	protected ParoleSpoolerInterface paroleSpooler;
+	protected String[] chToIndex=null;
 	
 	public RecordReader(Reader in) {
 		super(in);
@@ -92,5 +91,13 @@ public abstract  class RecordReader extends BufferedReader {
           }
           System.gc();
 		
+	}
+
+	public void setChToIndex(String[] chToIndex) {
+		this.chToIndex = chToIndex;
+	}
+
+	public String[] getChToIndex() {
+		return chToIndex;
 	}
 }

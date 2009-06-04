@@ -49,7 +49,6 @@ import org.jopac2.jbal.Readers.IsoRecordReader;
 import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.jbal.abstractStructure.Field;
 import org.jopac2.jbal.abstractStructure.Tag;
-import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.SimilarityHelp;
 //import java.lang.*;
 //import JOpac2.utils.*;
@@ -163,7 +162,9 @@ public abstract class ISO2709Impl extends ISO2709 {
 */
 
 	public RecordReader getRecordReader(InputStream dataFile) throws UnsupportedEncodingException {
-		return new IsoRecordReader(dataFile,ft,rt);
+		RecordReader r=new IsoRecordReader(dataFile,ft,rt);
+		r.setChToIndex(channels);
+		return r;
 	}
 
 	/*

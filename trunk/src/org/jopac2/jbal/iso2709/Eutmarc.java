@@ -10,7 +10,6 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 
 import org.apache.xerces.impl.dv.util.Base64;
-import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.abstractStructure.Field;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.BookSignature;

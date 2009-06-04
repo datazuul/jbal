@@ -10,7 +10,6 @@ import org.jopac2.jbal.Readers.MdbTableRecordReader;
 import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
-import org.jopac2.jbal.iso2709.ISO2709Impl;
 import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.TokenWord;
@@ -82,7 +81,8 @@ public class Mdb extends XML {
 
 	@Override
 	public RecordReader getRecordReader(InputStream dataFile) throws UnsupportedEncodingException {
-		return new MdbTableRecordReader(dataFile, "this");
+		MdbTableRecordReader r=new MdbTableRecordReader(dataFile, "this");
+		return r;
 	}
 
 	@Override

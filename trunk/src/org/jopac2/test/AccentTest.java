@@ -3,9 +3,6 @@ package org.jopac2.test;
 
 import junit.framework.TestCase;
 
-import org.jopac2.jbal.RecordFactory;
-import org.jopac2.jbal.RecordInterface;
-import org.jopac2.utils.Utils;
 import org.junit.After;
 import org.junit.Before;
 

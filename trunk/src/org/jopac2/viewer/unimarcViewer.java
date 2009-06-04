@@ -1,11 +1,14 @@
 package org.jopac2.viewer;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.Readers.RecordReader;
 
 public class unimarcViewer {
 
@@ -15,17 +18,28 @@ public class unimarcViewer {
 	 */
 	public static void main(String[] args) throws IOException {
 		String filename="/java_sba/colloca/docs/diprova.uni";
+		String tipo="sebina";
 		
-		if(args.length>0) filename=args[0];
+		if(args.length>0) {
+			filename=args[0];
+			tipo=args[1];
+		}
 		
-		FileReader f=new FileReader(filename);
-		BufferedReader r=new BufferedReader(f);
 		
-		String line=r.readLine();
-		while(line!=null) {
-			RecordInterface ma=RecordFactory.buildRecord(0, line, "sebina", 0);
+		FileInputStream f=new FileInputStream(new File(filename));
+		
+		RecordInterface ma=RecordFactory.buildRecord(0, "", tipo, 0);
+		RecordReader r=ma.getRecordReader(f);
+		
+		int i=0;
+		int max=10;
+		
+		String line=r.readRecord();
+		while(line!=null && i++<max) {
+			ma=RecordFactory.buildRecord(0, line, tipo, 0);
 			System.out.println(ma.toReadableString());
-			line=r.readLine();
+			
+			line=r.readRecord();
 		}
 		
 		r.close();
