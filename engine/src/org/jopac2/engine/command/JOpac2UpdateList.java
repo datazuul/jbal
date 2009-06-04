@@ -7,7 +7,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.jopac2.engine.dbGateway.DbGateway;
-import org.jopac2.jbal.RecordInterface;
 
 
 public class JOpac2UpdateList {

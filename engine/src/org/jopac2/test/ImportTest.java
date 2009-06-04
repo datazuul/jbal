@@ -15,7 +15,6 @@ import org.jopac2.engine.listSearch.ListSearch;
 import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
 import org.jopac2.engine.utils.MyTimer;
 import org.jopac2.engine.utils.SearchResultSet;
-import org.jopac2.jbal.RecordInterface;
 import org.junit.After;
 import org.junit.Before;
 

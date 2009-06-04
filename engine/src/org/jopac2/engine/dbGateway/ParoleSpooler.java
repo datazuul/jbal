@@ -38,9 +38,6 @@ import org.jopac2.jbal.stemmer.StemmerItv2;
 import org.jopac2.utils.Utils;
 
 import com.whirlycott.cache.Cache;
-import com.whirlycott.cache.CacheConfiguration;
-//import com.whirlycott.cache.CacheException;
-import com.whirlycott.cache.CacheManager;
 
 public class ParoleSpooler implements ParoleSpoolerInterface {
 	private PreparedStatement preparedParole[];

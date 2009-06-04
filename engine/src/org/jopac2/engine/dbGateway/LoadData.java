@@ -45,7 +45,6 @@ import org.jopac2.utils.ClasseDettaglio;
 import org.jopac2.utils.TokenWord;
 import org.jopac2.utils.ZipUnzip;
 
-import com.ibm.icu.text.Transliterator;
 import com.whirlycott.cache.Cache;
 
 
@@ -312,11 +311,12 @@ private boolean clearDatabase;
   
 
   
-  public void doJob(InputStream dataFile,String dbType,String temporaryDir,
+  public String[] doJob(InputStream dataFile,String dbType,String temporaryDir,
 		  Cache cache) { //, Transliterator t) {
 	  //this.t=t;
 	  //Cache cache=DbGateway.getCache();
 	  ParoleSpoolerInterface paroleSpooler=new ParoleSpooler(conn,maxValues4prepared,cache,out);
+	  String[] chToIndex=null;
     
 	  long start_time=System.currentTimeMillis();
 
@@ -345,7 +345,10 @@ private boolean clearDatabase;
            */
           bf.parse(bf,this,out);
           
+          chToIndex=bf.getChToIndex();
+          
           bf.destroy(conn[0]);
+          
         }
         catch (Exception e) {
           e.printStackTrace();
@@ -364,7 +367,7 @@ private boolean clearDatabase;
 	}
     
     out.println("tempo totale minuti:"+(System.currentTimeMillis()-start_time)/(60000.0));
-
+    return chToIndex;
   }
 
 

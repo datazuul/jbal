@@ -292,8 +292,30 @@ public class ImportTestMdb extends TestCase {
 	*/
 
 	
-	  public void testSearchOrder() throws Exception {
-		SearchResultSet rs = doSearch("(NomeRisorsa=business)|(NomeRisorsa=stampa)");
+//	  public void testSearchOrder() throws Exception {
+//		SearchResultSet rs = doSearch("(NomeRisorsa=business)|(NomeRisorsa=stampa)");
+//		long[] unordered = { 24, 25, 26, 27, 28, 29, 53, 59, 60 };
+//		long[] ordered = { 53, 24, 25, 26, 28, 29, 27, 59, 60 };
+//		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
+//		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
+//		DbGateway.orderBy(conn, "NomeRisorsa", rs);
+//		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
+//		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
+//		assertTrue("Done ", r1 && r2);
+//	}
+//
+//	public void testList() throws Exception {
+//		SearchResultSet rs = ListSearch.listSearch(conn, "NomeRisorsa",
+//				"English grammar in use", 10);
+//		long[] listres = { 106, 70, 22, 37, 42, 38, 43, 39, 35, 40, 36, 41, 44, 71, 17, 72, 56, 57 };
+//		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
+//		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
+//		assertTrue("Done ", r1);
+//	}
+	
+	public void testSpringsteen() throws Exception {
+		SearchResultSet rs = doSearch("(ANY=springsteen)");
+
 		long[] unordered = { 24, 25, 26, 27, 28, 29, 53, 59, 60 };
 		long[] ordered = { 53, 24, 25, 26, 28, 29, 27, 59, 60 };
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
@@ -303,15 +325,5 @@ public class ImportTestMdb extends TestCase {
 		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
 		assertTrue("Done ", r1 && r2);
 	}
-
-	public void econ() throws Exception {
-		SearchResultSet rs = ListSearch.listSearch(conn, "TIT",
-				"English grammar in use", 100);
-		long[] listres = { 1, 10, 2, 11, 17, 8, 5, 3, 4, 18, 9 };
-		//SearchResultSet.dumpSearchResultSet(conn, rs);
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
-		assertTrue("Done ", r1);
-	}
-	 
 
 }

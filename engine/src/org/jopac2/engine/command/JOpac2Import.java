@@ -13,8 +13,6 @@ import java.sql.SQLException;
 import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.importers.DataImporter;
 
-import com.ibm.icu.text.Transliterator;
-
 
 public class JOpac2Import {
 	InputStream inputFile;

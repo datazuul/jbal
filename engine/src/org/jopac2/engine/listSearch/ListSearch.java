@@ -1,11 +1,7 @@
 package org.jopac2.engine.listSearch;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Vector;
-
 import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.utils.SearchResultSet;
 

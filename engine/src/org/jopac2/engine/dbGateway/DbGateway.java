@@ -1060,7 +1060,7 @@ public abstract class DbGateway {
 //		}
 	}
 	
-	private void rebuildList(Connection conn, String[] channels) throws SQLException {
+	public void rebuildList(Connection conn, String[] channels) throws SQLException {
 		out.println("Indexing channels:");
 		for(int i=0;i<channels.length;i++) {
 			createTableListe(conn,channels[i]);

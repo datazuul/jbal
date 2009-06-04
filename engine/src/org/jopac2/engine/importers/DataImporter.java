@@ -47,11 +47,8 @@ import java.sql.SQLException;
 
 import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.dbGateway.LoadData;
-import org.jopac2.jbal.RecordFactory;
-import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.Readers.XsltTransformer;
 
-import com.ibm.icu.text.Transliterator;
 import com.whirlycott.cache.Cache;
 
 public class DataImporter extends Thread {
@@ -86,11 +83,13 @@ public class DataImporter extends Thread {
         dbGateway.createDBl_tables(conn,out);
 	}
 	
-    private void loadData(InputStream f,String dbType, String temporaryDir) {
+    private String[] loadData(InputStream f,String dbType, String temporaryDir) {
+    	String[] r=null;
     	DbGateway.commitAll(conn);
         LoadData ld=new LoadData(conn,clearDatabase,confdir,out);
-        ld.doJob(f,dbType,temporaryDir,cache); //,t);
+        r=ld.doJob(f,dbType,temporaryDir,cache); //,t);
         ld.destroy();
+        return r;
     }
 	
     public synchronized void doJob() {
@@ -110,6 +109,7 @@ public class DataImporter extends Thread {
 				 * TODO come gestire i filtri di trasformazione sulle notizie?!
 				 * Se si mantengono i dati raw, dovrebbe essere gestito da jbal, credo
 				 */
+				String[] ch=null;
 				
 				String XMLfilter=null; //DbGateway.getFilter(conn[0],filetype);
 				if(XMLfilter!=null) { // gestisce un filtro di trasformazione XSLT
@@ -120,20 +120,20 @@ public class DataImporter extends Thread {
 					t1.start();
 					
 					
-					loadData(pipedIn,filetype,tempDir);
+					ch=loadData(pipedIn,filetype,tempDir);
 					
 					
 					t1.join();
 				}
 				else {
-					loadData(f,filetype,tempDir);
+					ch=loadData(f,filetype,tempDir);
 				}
 				DbGateway.commitAll(conn);
 				
 	            consolidateDB(conn[0]);
 	            
 	            DbGateway dbGateway=DbGateway.getInstance(conn[0].toString(),out);
-	    		dbGateway.rebuildList(conn[0]);
+	    		dbGateway.rebuildList(conn[0],ch);
 	            
 	            out.println("End of process: OK");
 
