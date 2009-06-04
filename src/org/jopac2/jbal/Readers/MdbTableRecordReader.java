@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,15 +16,17 @@ import org.jopac2.utils.MdbDatabase;
 
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.Table;
+import com.healthmarketscience.jackcess.Column;
 
 
 
 public class MdbTableRecordReader extends RecordReader {
 
 
-	Database db=null;
-	Table table=null;
-	File fin=null;
+	private Database db=null;
+	private Table table=null;
+	private File fin=null;
+	boolean firstRecord=true;
 
 	public MdbTableRecordReader(InputStream in, String tableName) throws UnsupportedEncodingException {
 		super(in);
@@ -32,6 +35,11 @@ public class MdbTableRecordReader extends RecordReader {
 			FileChannel fc=fin.getChannel();
 			db=new MdbDatabase(fc, false);
 			table=db.getTable(tableName);
+			List<Column> c=table.getColumns();
+			chToIndex=new String[table.getColumnCount()];
+			for(int i=0;c!=null && i<c.size(); i++) {
+				chToIndex[i]=c.get(i).getName().replaceAll(" ", "_").replaceAll("/", "_");
+			}
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -41,6 +49,7 @@ public class MdbTableRecordReader extends RecordReader {
 
 	public String readRecord() throws IOException {
 		Map<String,Object> row=table.getNextRow();
+		
 		StringBuffer record=null;
 		if(row!=null) {
 			record=new StringBuffer("<record>\n");
