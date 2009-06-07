@@ -23,11 +23,9 @@ import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.avalon.framework.parameters.ParameterException;
 import org.apache.avalon.framework.parameters.Parameters;
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.apache.cocoon.xml.AttributesImpl;
 import org.jopac2.jbal.RecordInterface;
-import org.jopac2.jbal.iso2709.Eutmarc;
 
 public abstract class MyAbstractPageTransformer extends AbstractTransformer implements Composable, Disposable {
 	
