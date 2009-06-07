@@ -1,34 +1,22 @@
 package JSites.transformation.catalogSearch;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Vector;
-
 import org.apache.avalon.framework.component.ComponentException;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.ProcessingException;
-import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.SourceResolver;
-import org.jopac2.engine.NewSearch.DoSearchNew;
-import org.jopac2.engine.NewSearch.NewItemCardinality;
 import org.jopac2.engine.dbGateway.DbGateway;
-import org.jopac2.engine.dbGateway.StaticDataComponent;
-import org.jopac2.engine.listSearch.ListSearch;
-import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
-import org.jopac2.engine.utils.SearchResultSet;
 import org.jopac2.jbal.RecordInterface;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.apache.cocoon.xml.AttributesImpl;
 
 import JSites.transformation.MyAbstractPageTransformer;
-import JSites.utils.Util;
 
 
 public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {

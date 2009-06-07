@@ -1,11 +1,9 @@
 package JSites.transformation.catalogSearch;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
-import org.apache.avalon.framework.component.ComponentException;
 import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.jbal.iso2709.Eutmarc;
 import org.xml.sax.Attributes;
@@ -118,7 +116,7 @@ public class PublicationPairs extends MyAbstractPageTransformer {
 		
 		testo1 += "__anno__ " + e1.getPublicationDate() + "\n";
 		testo1 += "__abstract__ " + e1.getAbstract() + "\n";
-		testo1 += "__prezzo__ " + e1.getPrezzo() +  "€ ([orderAddItem?JID="+e1.getJOpacID()+">Acquista])";
+		testo1 += "__prezzo__ " + e1.getPrezzo() +  "ï¿½ ([orderAddItem?JID="+e1.getJOpacID()+">Acquista])";
 		testo1 += "\n\n[pageview?pid=7&query=jid="+e1.getJOpacID()+">__Dettagli__]";
 		String link = e1.getLink();
 		if(link!=null && link.length() > 0){

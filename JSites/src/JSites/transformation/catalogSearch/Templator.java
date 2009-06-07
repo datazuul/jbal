@@ -67,8 +67,6 @@ import org.apache.avalon.framework.component.ComponentSelector;
 import org.apache.avalon.framework.component.ComponentException;
 import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.component.Composable;
-import org.jopac2.utils.BookSignature;
-
 import JSites.transformation.MyAbstractPageTransformer;
 
 import java.sql.*;
