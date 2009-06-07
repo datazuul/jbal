@@ -23,7 +23,6 @@ package JSites.utils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
-import java.net.URL;
 
 
 public class DirectoryHelper {
