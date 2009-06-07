@@ -45,11 +45,7 @@ import org.apache.avalon.framework.component.ComponentManager;
 import org.apache.avalon.framework.component.ComponentException;
 
 import org.apache.cocoon.servlet.multipart.Part;
-import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.importers.DataImporter;
-import org.jopac2.utils.Utils;
-
-import com.ibm.icu.text.Transliterator;
 import com.whirlycott.cache.Cache;
 import com.whirlycott.cache.CacheConfiguration;
 import com.whirlycott.cache.CacheManager;

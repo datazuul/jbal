@@ -1,7 +1,6 @@
 package JSites.generation;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.sql.Connection;
 import java.util.Iterator;
 import java.util.Map;
@@ -13,9 +12,6 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.SourceResolver;
 import org.jopac2.engine.NewSearch.DoSearchNew;
 import org.jopac2.engine.dbGateway.DbGateway;
-import org.jopac2.engine.dbGateway.StaticDataComponent;
-import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
-import org.jopac2.engine.utils.SearchResultSet;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.iso2709.Eutmarc;
 import org.xml.sax.SAXException;
