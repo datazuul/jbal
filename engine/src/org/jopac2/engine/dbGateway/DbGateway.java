@@ -460,6 +460,7 @@ public abstract class DbGateway {
 	    	insertNotizia(c,notizia,idTipo,jid,paroleSpooler);
 	    	
 	    	paroleSpooler.destroy();
+	    	inserisciNotiziaListe(conn, notizia.getTipo(), jid, notizia);
     	}
     }
     
@@ -1017,7 +1018,7 @@ public abstract class DbGateway {
 	
 	public abstract void createTableListe(Connection conn,String classe) throws SQLException;
 	
-	public static void updateTableListe(Connection conn, String classe, int id_notizia, String testo) throws SQLException {//CR_LISTE
+	public static void updateTableListe(Connection conn, String classe, long id_notizia, String testo) throws SQLException {//CR_LISTE
 		if(testo!=null) {
 			String tab=nomeTableListe(classe);
 			String dl=String.valueOf((char)0x1b);
@@ -1025,7 +1026,7 @@ public abstract class DbGateway {
 			//String sql="INSERT INTO "+tab+" SET id_notizia=?, testo=?";
 			String sql="INSERT INTO "+tab+" (id_notizia, testo) values (?,?)"; // qs sintassi per compatibilita' derby
 			PreparedStatement pst=conn.prepareStatement(sql);
-			pst.setInt(1, id_notizia);
+			pst.setLong(1, id_notizia);
 			testo=testo.replaceAll(dl+"I", ""); // rimuove delimitatori asterisco
 			testo=testo.replaceAll(dl+"H", "");
 			if(testo.length()>50) testo=testo.substring(0,49);
@@ -1109,29 +1110,32 @@ public abstract class DbGateway {
 			if(step==0 || jid % step == 0)
 				out.println("Rebuilding list index ("+nomeTableListe(classe)+"): "+Utils.percentuale(maxid,jid)+"%");
 			RecordInterface ma=DbGateway.getNotiziaByJID(conn, jid);
-			if(ma!=null) {
-				if(classe.equals("TIT")) DbGateway.updateTableListe(conn, classe, jid, ma.getTitle()); //testo=ma.getTitle();
-				else if(classe.equals("NUM")) DbGateway.updateTableListe(conn, classe, jid, ma.getStandardNumber()); // testo=ma.getStandardNumber();
-				else if(classe.equals("DTE")) DbGateway.updateTableListe(conn, classe, jid, ma.getPublicationDate()); // testo=ma.getPublicationDate();
-				else if(classe.equals("AUT")) DbGateway.updateTableListe(conn, classe, jid, ma.getAuthors());
-				else if(classe.equals("SBJ")) DbGateway.updateTableListe(conn, classe, jid, subjectsToString(ma.getSubjects()));
-				else if(classe.equals("BIB")) {
-					Vector<BookSignature> signatures=ma.getSignatures();
-					for(int i=0;signatures!=null && i<signatures.size();i++) {
-						DbGateway.updateTableListe(conn, classe, jid, signatures.elementAt(i).getLibraryName());
-					}
-				}
-				else {
-					DbGateway.updateTableListe(conn, classe, jid, ma.getField(classe)); // prova diretto per file Mdb
-					//System.out.println("LISTA NON IMPLEMENTATA PER: "+classe);
-				}
-				
-				// TODO "LAN","MAT","INV","CLL","ABS"
-			}
+			inserisciNotiziaListe(conn,classe,jid,ma);
 		}
 
 	}
 	
+	private void inserisciNotiziaListe(Connection conn, String classe, long jid, RecordInterface ma) throws SQLException {
+		if(ma!=null) {
+			if(classe.equals("TIT")) DbGateway.updateTableListe(conn, classe, jid, ma.getTitle()); //testo=ma.getTitle();
+			else if(classe.equals("NUM")) DbGateway.updateTableListe(conn, classe, jid, ma.getStandardNumber()); // testo=ma.getStandardNumber();
+			else if(classe.equals("DTE")) DbGateway.updateTableListe(conn, classe, jid, ma.getPublicationDate()); // testo=ma.getPublicationDate();
+			else if(classe.equals("AUT")) DbGateway.updateTableListe(conn, classe, jid, ma.getAuthors());
+			else if(classe.equals("SBJ")) DbGateway.updateTableListe(conn, classe, jid, subjectsToString(ma.getSubjects()));
+			else if(classe.equals("BIB")) {
+				Vector<BookSignature> signatures=ma.getSignatures();
+				for(int i=0;signatures!=null && i<signatures.size();i++) {
+					DbGateway.updateTableListe(conn, classe, jid, signatures.elementAt(i).getLibraryName());
+				}
+			}
+			else {
+				DbGateway.updateTableListe(conn, classe, jid, ma.getField(classe)); // prova diretto per file Mdb
+				//System.out.println("LISTA NON IMPLEMENTATA PER: "+classe);
+			}
+			
+			// TODO "LAN","MAT","INV","CLL","ABS"
+		}
+	}
 
 	private Vector<String> subjectsToString(Vector<SubjectInterface> subjects) {
 		Vector<String> r=new Vector<String>();
@@ -1143,7 +1147,7 @@ public abstract class DbGateway {
 
 
 	private static void updateTableListe(Connection conn, String classe,
-			int jid, Vector<String> testi) throws SQLException {
+			long jid, Vector<String> testi) throws SQLException {
 		for(int i=0;testi!=null && i<testi.size();i++) {
 			DbGateway.updateTableListe(conn, classe, jid, testi.elementAt(i));
 		}
