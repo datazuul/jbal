@@ -68,6 +68,7 @@ import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
 import org.jopac2.engine.utils.SearchResultSet;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.classification.ClassificationInterface;
+import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.BookSignature;
 
 import JSites.generation.ImportCatalog;
@@ -213,17 +214,16 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
     	sendElement("publicationPlace",ma2.getPublicationPlace());
     	sendElement("publicationDate",ma2.getPublicationDate());
 
-        
-        v=ma2.getSubjects();
-        if((v!=null)&&(v.size()>0)) {
+        Vector<SubjectInterface> v1=ma2.getSubjects();
+        if((v1!=null)&&(v1.size()>0)) {
             super.startElement("","subjects","subjects",new AttributesImpl());
 
-            for(int i=0;i<v.size();i++) {
-            	sendElement("subject",(String)v.elementAt(i));
+            for(int i=0;i<v1.size();i++) {
+            	sendElement("subject",(v1.elementAt(i).getData()).elementAt(0).getContent());
             }
 
             super.endElement("","subjects","subjects");
-            v.clear();v=null;
+            v1.clear();v1=null;
         }
         
         Vector<ClassificationInterface> vc=ma2.getClassifications();
