@@ -460,7 +460,12 @@ public abstract class DbGateway {
 	    	insertNotizia(c,notizia,idTipo,jid,paroleSpooler);
 	    	
 	    	paroleSpooler.destroy();
-	    	inserisciNotiziaListe(conn, notizia.getTipo(), jid, notizia);
+	    	String[] channels=notizia.getChannels();
+	    	if(notizia!=null) {
+				for(int i=0;i<channels.length;i++)
+					updateTableListe(conn,channels[i],(int)jid,notizia);
+				
+			}
     	}
     }
     
@@ -541,7 +546,7 @@ public abstract class DbGateway {
 	}
 
 	private static void insertNotizia(Connection[] conn, RecordInterface notizia, long idTipo, long jid, ParoleSpooler paroleSpooler) throws SQLException {
-    	Vector<ClasseDettaglio> clDettaglio=initClDettaglio(conn[1],idTipo);
+    	Vector<ClasseDettaglio> clDettaglio=initClDettaglio(conn[conn.length>1?1:conn.length-1],idTipo);
     	long idSequenzaTag=0;
     	
     	Enumeration<TokenWord> e=notizia.getItems();
@@ -687,9 +692,9 @@ public abstract class DbGateway {
 	      }
 	      
 	      if((parola!=null)&&(parola.length()>0)) {
-		      long id_parola=InsertParola(conn[1],parola,paroleSpooler);
-		      long id_lcp=insertLClassiParole(conn[2],id_parola,cl.getIdClasse());
-		      insertLClassiParoleNotizie(conn[3],jid,id_lcp);
+		      long id_parola=InsertParola(conn[conn.length>1?1:conn.length-1],parola,paroleSpooler);
+		      long id_lcp=insertLClassiParole(conn[conn.length>2?2:conn.length-1],id_parola,cl.getIdClasse());
+		      insertLClassiParoleNotizie(conn[conn.length>3?3:conn.length-1],jid,id_lcp);
 	      }
 	    }
 	}
@@ -1069,7 +1074,7 @@ public abstract class DbGateway {
 		}
 		long maxid=DbGateway.getMaxIdTable(conn, "notizie");
 		long step=maxid/100;
-		for(int jid=0;jid<maxid;jid++) {
+		for(int jid=0;jid<=maxid;jid++) {
 			if(step==0 || jid % step == 0)
 				out.println("Rebuilding list indexes: "+Utils.percentuale(maxid,jid)+"%");
 			RecordInterface ma=DbGateway.getNotiziaByJID(conn, jid);

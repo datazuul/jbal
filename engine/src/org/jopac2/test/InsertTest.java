@@ -15,6 +15,9 @@ import org.jopac2.engine.listSearch.ListSearch;
 import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
 import org.jopac2.engine.utils.MyTimer;
 import org.jopac2.engine.utils.SearchResultSet;
+import org.jopac2.jbal.RecordFactory;
+import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.Readers.RecordReader;
 import org.junit.After;
 import org.junit.Before;
 
@@ -22,7 +25,7 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 import junit.framework.TestCase;
 
-public class ImportTest extends TestCase {
+public class InsertTest extends TestCase {
 	private static String sitename = "sebina";
 	private InputStream in = null;
 	private static String filetype = "sebina";
@@ -72,13 +75,41 @@ public class ImportTest extends TestCase {
 							.decode(org.jopac2.test.Base64DataExample.unimarcBase64DataExample),
 					"utf-8");
 
-			in = new ByteArrayInputStream(inFile.getBytes());
-
-			JOpac2Import ji = new JOpac2Import(in, filetype, JOpac2confdir,
+			String[] recs=inFile.split("\n");
+			
+//			RecordInterface ma=RecordFactory.buildRecord(0, "", filetype, 0);
+//			RecordReader r=ma.getRecordReader(in);
+//			ma.destroy();
+			
+			RecordInterface ma=null;
+			
+			Connection c=CreaConnessione();
+			DbGateway dbgw=DbGateway.getInstance("mysql", null);
+			
+			
+			// legge il primo record
+			String rec=recs[0];
+			
+			// carica con la procedura il primo record, per creare tutto il db, i canali di ricerca, le liste
+			InputStream in1 = new ByteArrayInputStream(rec.getBytes());
+			JOpac2Import ji = new JOpac2Import(in1, filetype, JOpac2confdir,
 					dbUrl, dbUser, dbPassword, true, System.out);
 			ji.doJob(false);
 			// ji.wait();
 			ji.destroy(dbUrl);
+			
+			// avanti con l'inserimento dei prossimi
+			
+			for(int i=1;i<recs.length;i++) {
+				ma=RecordFactory.buildRecord(0, recs[i], filetype, 0);
+				if(ma!=null) {
+					dbgw.inserisciNotizia(c, ma);
+					ma.destroy();
+				}
+			}
+			
+			c.close();
+//			in.close();
 			ru = true;
 		}
 
@@ -164,11 +195,14 @@ public class ImportTest extends TestCase {
 	}
 
 	public void testTblAnagrafeParole() throws Exception {
+
+
 		Vector<String> v1 = DbGateway.dumpTable(conn, "anagrafe_parole order by id");
 		// outputJava(v1);
 		boolean r1 = checkStringSequence(v1, org.jopac2.test.Base64DataExample.anagrafe_parole);
 		if (!r1) {
-			System.out.println(v1);
+			for(int i=0;i<v1.size();i++)
+				System.out.println(v1.elementAt(i));
 		}
 		assertTrue("Done ", r1);
 	}
@@ -190,7 +224,7 @@ public class ImportTest extends TestCase {
 		SearchResultSet rs = ListSearch.listSearch(conn, "TIT",
 				"English grammar in use", 100);
 		long[] listres = { 1, 10, 2, 11, 17, 8, 5, 3, 4, 18, 20, 9 };
-		SearchResultSet.dumpSearchResultSet(conn, rs);
+		//SearchResultSet.dumpSearchResultSet(conn, rs);
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
 		assertTrue("Done ", r1);
 	}
@@ -199,7 +233,7 @@ public class ImportTest extends TestCase {
 		SearchResultSet rs = ListSearch.listSearch(conn, "AUT",
 				"a", 100);
 		long[] listres = { 17, 19, 6, 3, 8, 4, 11, 4, 9, 5, 7, 10, 15, 1, 15, 16, 2, 5, 8, 12, 10, 13, 10, 14, 7, 15, 6, 6 };
-//		SearchResultSet.dumpSearchResultSet(conn, rs);
+		//SearchResultSet.dumpSearchResultSet(conn, rs);
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
 		assertTrue("Done ", r1);
 	}
