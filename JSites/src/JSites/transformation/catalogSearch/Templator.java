@@ -49,8 +49,11 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ProcessingInstruction;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
 import org.apache.cocoon.xml.AttributesImpl;
@@ -59,6 +62,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 
 import org.apache.avalon.framework.activity.Disposable;
@@ -73,6 +77,8 @@ import java.sql.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -194,6 +200,7 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
             buffer.delete(0, buffer.length());
 //            String pritableRecordXML=XML2String(document);
 //            System.out.println(pritableRecordXML);
+            
             String rRecord=parseTemplate(template,document);
             super.startElement("", "record", "record", this.emptyAttrs);
         	if(rRecord!=null && rRecord.length()>0) 
@@ -241,8 +248,14 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
 		}
 		return null;
 	}
+	
+	private Document String2XML(String xmlSource) throws SAXException, IOException, ParserConfigurationException {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	    DocumentBuilder builder = factory.newDocumentBuilder();
+	    return builder.parse(new InputSource(new StringReader(xmlSource)));
+	}
 
-	private String parseTemplate(String template2, Document document2) {
+	private String parseTemplateOrig(String template2, Document document2) {
 		String[] blocks=template2.split("\\[\\[");
 		String output=blocks[0];
 		for(int i=1;i<blocks.length;i++) {
@@ -254,7 +267,9 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
 				Element e=(Element) ce.item(0);
 				String value="";
 				if(e!=null) value=e.getTextContent();
-				value=markWord(value);
+				value=value.replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&amp;", "&");
+				if(!isInAttribute(blocks[i-1]))
+					value=markWord(value);
 				output+=value;
 			}
 			output+=blocks[i];
@@ -262,6 +277,136 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
 		return output;
 	}
 	
+	private String parseTemplate(String template2, Document document2) {
+		Document templateDocument=null;
+    	try {
+			templateDocument=String2XML(template);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		parseTemplate(templateDocument,document2);
+		
+		String output=XML2String(templateDocument);
+		
+		return output;
+	}
+	
+  private void parseTemplate(Node node, Document document2) {	  
+	  boolean splittableNode=isSplittableNode(node,document2);
+	  if(splittableNode) {
+		  
+	  }
+	  else {
+		  NodeList nl=node.getChildNodes();
+		  for(int i=0;nl!=null && i<nl.getLength();i++) {
+			  if(nl.item(i).getNodeType()!=Node.TEXT_NODE) {
+				  parseTemplate(nl.item(i),document2);
+			  }
+		  }
+	  }
+
+	}
+  
+  	private boolean isSplittableNode(Node node, Document document2) {
+  		boolean r=false;
+  		NamedNodeMap attributes = node.getAttributes();
+
+		for (int a = 0; attributes!=null && a < attributes.getLength(); a++) {
+			Node theAttribute = attributes.item(a);
+			r=r||isSplittableContent(theAttribute,document2);
+		}
+		Node child=node.getFirstChild();
+		if(child!=null && child.getNodeType()==Node.TEXT_NODE) {
+			r=r||isSplittableContent(child,document2);
+		}
+  		return r;
+  	}
+
+	private boolean isSplittableContent(Node node, Document document2) {
+		boolean r=false;
+		String c="";
+		if(node.getNodeType()==Node.TEXT_NODE) {
+			c=node.getTextContent();
+		}
+		else {
+			c=node.getNodeValue();
+		}
+		String[] blocks=c.split("\\[\\[");
+		String output=blocks[0];
+		for(int i=1;i<blocks.length;i++) {
+			if(blocks[i].contains("]]")) {
+				String value="";
+				int p=blocks[i].indexOf("]]");
+				String nodeName=blocks[i].substring(0,p);
+				if(!nodeName.contains(",")) {
+					blocks[i]=blocks[i].substring(p+2);
+					NodeList ce=document2.getElementsByTagName(nodeName);
+					Element e=(Element) ce.item(0);
+					if(e!=null) value=e.getTextContent();
+				}
+				else {
+					value="[["+nodeName+"]]";
+				}
+				output+=value;
+			}
+			output+=blocks[i];
+		}
+		
+		if(node.getNodeType()==Node.TEXT_NODE) {
+			output=output.replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&amp;", "&");
+			node.setTextContent(markWord(output));
+			ProcessingInstruction pi = 
+                node.getOwnerDocument().createProcessingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "");
+			node.getParentNode().insertBefore(pi, node);
+		}
+		else {
+			node.setNodeValue(output);
+		}
+		
+		return r;
+	}
+
+	private String match(String string, Document document2) {
+		String[] blocks=string.split("\\[\\[");
+		String output=blocks[0];
+		for(int i=1;i<blocks.length;i++) {
+			if(blocks[i].contains("]]")) {
+				int p=blocks[i].indexOf("]]");
+				String nodeName=blocks[i].substring(0,p);
+				blocks[i]=blocks[i].substring(p+2);
+				NodeList ce=document2.getElementsByTagName(nodeName);
+				Element e=(Element) ce.item(0);
+				String value="";
+				if(e!=null) value=e.getTextContent();
+				output+=value;
+			}
+			output+=blocks[i];
+		}
+		return output;
+  	}
+
+	static void listNodes(Node node, String indent) {
+		    String nodeName = node.getNodeName();
+		    System.out.println(indent + nodeName + " Node, type is "
+		        + node.getClass().getName() + ":");
+		    System.out.println(indent + " " + node);
+
+		    NodeList list = node.getChildNodes();
+		    if (list.getLength() > 0) {
+		      System.out.println(indent + "Child Nodes of " + nodeName + " are:");
+		      for (int i = 0; i < list.getLength(); i++)
+		        listNodes(list.item(i), indent + " ");
+		    }
+		  }
+	
+	private boolean isInAttribute(String string) {
+		int c=string.lastIndexOf(">");
+		int a=string.lastIndexOf("<");
+		if(a>c) return true;
+		else return false;
+	}
+
 	private String markWord(String value) {
 		String left="", right="", r="";
         StringTokenizer tk=new StringTokenizer(value," ,.;()/-'\\:=@%$&!?[]#*<>\016\017",true);
@@ -271,12 +416,6 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
             	right+=" ";
             	r+=left;
             	r+="<span class=\"match\">"+right+"</span>";
-//                super.startElement("","text","text",new AttributesImpl());
-//                super.characters(left.toCharArray(),0,left.length());
-//                super.endElement("","text","text");
-//                super.startElement("","match","match",new AttributesImpl());
-//                super.characters(right.toCharArray(),0,right.length());
-//                super.endElement("","match","match");
                 left="";
             }
             else {
@@ -285,9 +424,6 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
         }
         if(left.length()>0) {
         	r+=left;
-//            super.startElement("","text","text",new AttributesImpl());
-//            super.characters(left.toCharArray(),0,left.length());
-//            super.endElement("","text","text");
         }
 		return r;
 	}
@@ -299,8 +435,8 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
 	private String quota(String parola) {
     	parola = parola.toLowerCase();
 		parola = parola.replaceAll("\u010d","c");
-		parola = parola.replaceAll("�","s");
-		parola = parola.replaceAll("�","z");//
+//		parola = parola.replaceAll("�","s");
+//		parola = parola.replaceAll("�","z");//
 		parola = parola.replaceAll("\u0107","c");
 		parola = parola.replaceAll("\u0111","d");
 		parola = parola.replaceAll("dj","d");

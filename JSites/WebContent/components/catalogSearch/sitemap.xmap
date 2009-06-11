@@ -34,8 +34,6 @@
 	                    <map:transform type="catalogTemplator"/>
 	                    
 	                    <!-- map:transform type="tutil" src="/t/templated" / -->
-	                    
-      					
 
 	                    <map:transform src="catalogSearch.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>

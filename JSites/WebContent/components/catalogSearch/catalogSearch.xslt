@@ -103,6 +103,8 @@
 		<xsl:apply-templates select="order" />
 	</xsl:template>
 	
+	<xsl:template match="catalogFormat"></xsl:template>
+	
 	<xsl:template match="search">
 	    
 	    <!-- Autore: <input id="AUT" type="text"/>&#160;Titolo: <input id="TIT" type="text"/>&#160; -->
