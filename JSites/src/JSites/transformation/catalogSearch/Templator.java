@@ -87,7 +87,7 @@ import javax.xml.transform.stream.StreamResult;
 public class Templator extends MyAbstractPageTransformer implements Composable, Disposable //, CacheableProcessingComponent
 {
     private boolean isRecord=false,debug=false;
-    private boolean isOptimizedQuery=false;
+//    private boolean isOptimizedQuery=false;
 
     private Document document=null;
     private Element currentElement=null;
@@ -151,10 +151,10 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
 		if (namespaceURI.equals("") && localName.equals("root")) {
 			v.clear();buffer.delete(0, buffer.length());
 		}
-		else if (namespaceURI.equals("") && localName.equals("optimizedQuery")) {
-			isOptimizedQuery=true;
-		}
-        if (namespaceURI.equals("") && localName.equals("template")) {
+//		if (namespaceURI.equals("") && localName.equals("optimizedQuery")) {
+////			isOptimizedQuery=true;
+//		}
+		if (namespaceURI.equals("") && localName.equals("template")) {
 //            isTemplate=true;
         }
         else if (namespaceURI.equals("") && localName.equals("record")) {
@@ -186,8 +186,9 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
         if (namespaceURI.equals("") && localName.equals("optimizedQuery")) {
         	populateHashParole();
         	super.characters(buffer.toString().toCharArray(),0,buffer.length());
+        	buffer.delete(0, buffer.length());
         	super.endElement(namespaceURI, localName, qName);
-        	isOptimizedQuery=false;
+//        	isOptimizedQuery=false;
         }
         else if (namespaceURI.equals("") && localName.equals("template")) {
 //    		isTemplate=false;
@@ -254,28 +255,6 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
 	    DocumentBuilder builder = factory.newDocumentBuilder();
 	    return builder.parse(new InputSource(new StringReader(xmlSource)));
 	}
-
-	private String parseTemplateOrig(String template2, Document document2) {
-		String[] blocks=template2.split("\\[\\[");
-		String output=blocks[0];
-		for(int i=1;i<blocks.length;i++) {
-			if(blocks[i].contains("]]")) {
-				int p=blocks[i].indexOf("]]");
-				String nodeName=blocks[i].substring(0,p);
-				blocks[i]=blocks[i].substring(p+2);
-				NodeList ce=document2.getElementsByTagName(nodeName);
-				Element e=(Element) ce.item(0);
-				String value="";
-				if(e!=null) value=e.getTextContent();
-				value=value.replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&amp;", "&");
-				if(!isInAttribute(blocks[i-1]))
-					value=markWord(value);
-				output+=value;
-			}
-			output+=blocks[i];
-		}
-		return output;
-	}
 	
 	private String parseTemplate(String template2, Document document2) {
 		Document templateDocument=null;
@@ -287,44 +266,114 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
 		
 		parseTemplate(templateDocument,document2);
 		
+		purgeEmptyElements(templateDocument,"a");
+		
 		String output=XML2String(templateDocument);
 		
 		return output;
 	}
 	
-  private void parseTemplate(Node node, Document document2) {	  
-	  boolean splittableNode=isSplittableNode(node,document2);
-	  if(splittableNode) {
-		  
+  /**
+   * I browser sbagliano i casi come:
+   * 	<p><a href="hkhkhk" />abcd</p>
+   * e li interpretano come
+   * 	<p><a href="hkhkhk">abcd</a></p>
+   * 
+   * @param templateDocument
+   * @param string
+   */
+  private void purgeEmptyElements(Node node, String tag) {
+	  if(node!=null) {
+		NodeList nl=node.getChildNodes();
+		if(nl!=null)
+			for(int i=nl.getLength();i>=0 ;i--) {
+				if(isEmptyTag(nl.item(i),tag)) {
+					if(nl.item(i)!=null)
+						node.removeChild(nl.item(i));
+				}
+				else {
+					purgeEmptyElements(nl.item(i), tag);
+				}
+			}
+	  }
+	}
+
+private boolean isEmptyTag(Node item, String tag) {
+	boolean r=false;
+	if(item==null) return true;
+	if(item.getNodeName().equalsIgnoreCase(tag)) {
+		r=true;
+		NodeList nl=item.getChildNodes();
+		for(int i=0;nl!=null && i<nl.getLength();i++) {
+			if((nl.item(i).getNodeType()==Node.TEXT_NODE && nl.item(i).getTextContent().trim().length()>0) 
+					|| nl.item(i).getNodeType()==Node.ELEMENT_NODE) {
+				r=false;
+				break;
+			}
+		}
+	}
+	return r;
+}
+
+private void parseTemplate(Node node, Document document2) {
+	parseTemplate(node,document2,-1);
+}
+
+private void parseTemplate(Node node, Document document2,int k) {	  
+	  int splittableNode=isSplittableNode(node,document2,k);
+	  if(splittableNode>1) {
+		  // deve duplicare il nodo tante volte quante sono le entry
+		  Node[] nc=new Node[splittableNode-1];
+		  Node parent=node.getParentNode();
+		  for(int i=1;i<splittableNode;i++) {
+			  nc[i-1]=node.cloneNode(true);
+			  parent.appendChild(nc[i-1]);
+			  Node space=node.getOwnerDocument().createTextNode(" ");
+			  parent.appendChild(space);
+//			  ownerDocument.insertBefore(nc[i-1],node);
+			  parseTemplate(nc[i-1],document2,i);
+		  }
+		  parseTemplate(node,document2,0);
 	  }
 	  else {
 		  NodeList nl=node.getChildNodes();
 		  for(int i=0;nl!=null && i<nl.getLength();i++) {
-			  if(nl.item(i).getNodeType()!=Node.TEXT_NODE) {
+			  if(nl.item(i).getNodeType()==Node.ELEMENT_NODE)
 				  parseTemplate(nl.item(i),document2);
-			  }
 		  }
 	  }
 
 	}
   
-  	private boolean isSplittableNode(Node node, Document document2) {
-  		boolean r=false;
+  	private int isSplittableNode(Node node, Document document2, int nn) {
+  		int r=1;
   		NamedNodeMap attributes = node.getAttributes();
 
 		for (int a = 0; attributes!=null && a < attributes.getLength(); a++) {
 			Node theAttribute = attributes.item(a);
-			r=r||isSplittableContent(theAttribute,document2);
+			int k=isSplittableContent(theAttribute,document2,nn);
+			r=k>r?k:r;
 		}
-		Node child=node.getFirstChild();
-		if(child!=null && child.getNodeType()==Node.TEXT_NODE) {
-			r=r||isSplittableContent(child,document2);
+		
+		if(node.getNodeType()==Node.ELEMENT_NODE) {
+			NodeList nl=node.getChildNodes();
+			/**
+			 * Loop al contrario perche' viene inserito un nodo processingInstruction per disabilitare 
+			 * l'escaping dell'output
+			 */
+			if(nl!=null)
+				for(int i=nl.getLength();i>=0;i--) {
+					if(nl.item(i)!=null && nl.item(i).getNodeType()==Node.TEXT_NODE) {
+						int k=isSplittableContent(nl.item(i),document2,nn);
+						r=k>r?k:r;
+					}
+				}
 		}
   		return r;
   	}
 
-	private boolean isSplittableContent(Node node, Document document2) {
-		boolean r=false;
+	private int isSplittableContent(Node node, Document document2,int nn) {
+		int r=1;
 		String c="";
 		if(node.getNodeType()==Node.TEXT_NODE) {
 			c=node.getTextContent();
@@ -339,15 +388,32 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
 				String value="";
 				int p=blocks[i].indexOf("]]");
 				String nodeName=blocks[i].substring(0,p);
-				if(!nodeName.contains(",")) {
-					blocks[i]=blocks[i].substring(p+2);
-					NodeList ce=document2.getElementsByTagName(nodeName);
-					Element e=(Element) ce.item(0);
-					if(e!=null) value=e.getTextContent();
+				blocks[i]=blocks[i].substring(p+2);
+				boolean m=nodeName.contains(",");
+				String sep="";
+				if(m) {
+					int z=nodeName.indexOf(",");
+					sep=nodeName.substring(z+1);
+					nodeName=nodeName.substring(0,z);
 				}
-				else {
-					value="[["+nodeName+"]]";
+				NodeList ce=document2.getElementsByTagName(nodeName);
+				Element e=(Element) ce.item(0);
+				if(e!=null) value=e.getTextContent();
+				if(m) {
+					String[] values=value.split(sep);
+					
+					if(nn>=0 || values.length==1) {
+						if(nn==-1) nn=0;
+						if(nn<values.length) {
+							value=values[nn];
+						}
+					}
+					else {
+						value="[["+nodeName+","+sep+"]]";
+						r=values.length;
+					}
 				}
+				
 				output+=value;
 			}
 			output+=blocks[i];
@@ -367,24 +433,24 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
 		return r;
 	}
 
-	private String match(String string, Document document2) {
-		String[] blocks=string.split("\\[\\[");
-		String output=blocks[0];
-		for(int i=1;i<blocks.length;i++) {
-			if(blocks[i].contains("]]")) {
-				int p=blocks[i].indexOf("]]");
-				String nodeName=blocks[i].substring(0,p);
-				blocks[i]=blocks[i].substring(p+2);
-				NodeList ce=document2.getElementsByTagName(nodeName);
-				Element e=(Element) ce.item(0);
-				String value="";
-				if(e!=null) value=e.getTextContent();
-				output+=value;
-			}
-			output+=blocks[i];
-		}
-		return output;
-  	}
+//	private String match(String string, Document document2) {
+//		String[] blocks=string.split("\\[\\[");
+//		String output=blocks[0];
+//		for(int i=1;i<blocks.length;i++) {
+//			if(blocks[i].contains("]]")) {
+//				int p=blocks[i].indexOf("]]");
+//				String nodeName=blocks[i].substring(0,p);
+//				blocks[i]=blocks[i].substring(p+2);
+//				NodeList ce=document2.getElementsByTagName(nodeName);
+//				Element e=(Element) ce.item(0);
+//				String value="";
+//				if(e!=null) value=e.getTextContent();
+//				output+=value;
+//			}
+//			output+=blocks[i];
+//		}
+//		return output;
+//  	}
 
 	static void listNodes(Node node, String indent) {
 		    String nodeName = node.getNodeName();
@@ -399,13 +465,6 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
 		        listNodes(list.item(i), indent + " ");
 		    }
 		  }
-	
-	private boolean isInAttribute(String string) {
-		int c=string.lastIndexOf(">");
-		int a=string.lastIndexOf("<");
-		if(a>c) return true;
-		else return false;
-	}
 
 	private String markWord(String value) {
 		String left="", right="", r="";
