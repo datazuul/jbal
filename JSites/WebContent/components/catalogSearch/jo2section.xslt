@@ -13,7 +13,7 @@
    
    <xsl:template match="queryData">
       <DIV class="queryData">
-        <xsl:value-of select="substring-after(queryCount,')')" /><xsl:text> </xsl:text>record trovati in 
+        <xsl:value-of select="queryCount" /><xsl:text> </xsl:text>record trovati in 
         <xsl:value-of select="queryTime" /><xsl:text> </xsl:text>secondi.
       </DIV>
    </xsl:template>
