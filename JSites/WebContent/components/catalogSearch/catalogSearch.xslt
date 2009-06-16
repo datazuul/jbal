@@ -45,43 +45,53 @@
 				}
 				]]>
 				</script>
-				<table border="0" class="searchtableform">
-					<tr>
-					<td>
-						<form method="post" action="pageview?pid={$pid}" onsubmit="readParam()" id="catalogForm" style="float: left;">
-							<!-- <input name="pid" id="pid" type="hidden" value="{$pid}"/>  -->
-						    <input name="query" id="query" type="hidden" value=""/>
-						    <input id="page" name="page" type="hidden" value="0"/>
-						    
-						    <fieldset>
-						    <legend>Search</legend>
-						    <xsl:for-each select="//search">
-						    	<xsl:if test="string-length(@checked)>0">
-						    		<label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label><input id="{@name}" type="text" /><br/>
-						    	</xsl:if>
-						    </xsl:for-each>
-						    <input type="submit" value="Cerca"/>
-						    </fieldset>
-						</form>
-						</td>
+				<xsl:variable name="countSearch">
+					<xsl:value-of select="count(//search/@checked)" />
+				</xsl:variable>
+				<xsl:variable name="countList">
+					<xsl:value-of select="count(//list/@checked)" />
+				</xsl:variable>
+								
+				<xsl:if test="$countSearch &gt; 0">
+				
+					<table border="0" class="searchtableform">
+						<tr>
 						<td>
-						<!-- 
-						<div class="clearer">&#160;</div>
-		 				<xsl:call-template name="nav"/>
-						 -->
-						<xsl:for-each select="//list">
-							<xsl:if test="string-length(@checked)>0">
-								<form method="post" action="pageview?pid={$pid}">
-									<!--  <input name="pid" id="pid" type="hidden" value="{$pid}"/> -->
-							    	<label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label>
-							    	<input name="list{@name}" type="text" />
-							    	<input type="submit" value="List" />
-						    	</form>
-						    </xsl:if>
-					    </xsl:for-each>
-					    </td>
-				    </tr>
-			    </table>
+							<form method="post" action="pageview?pid={$pid}" onsubmit="readParam()" id="catalogForm" style="float: left;">
+								<!-- <input name="pid" id="pid" type="hidden" value="{$pid}"/>  -->
+							    <input name="query" id="query" type="hidden" value=""/>
+							    <input id="page" name="page" type="hidden" value="0"/>
+							    
+							    <fieldset>
+							    <legend>Search</legend>
+							    <xsl:for-each select="//search">
+							    	<xsl:if test="string-length(@checked)>0">
+							    		<label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label><input id="{@name}" type="text" /><br/>
+							    	</xsl:if>
+							    </xsl:for-each>
+							    <input type="submit" value="Cerca"/>
+							    </fieldset>
+							</form>
+							</td>
+							<td>
+							<!-- 
+							<div class="clearer">&#160;</div>
+			 				<xsl:call-template name="nav"/>
+							 -->
+							<xsl:for-each select="//list">
+								<xsl:if test="string-length(@checked)>0">
+									<form method="post" action="pageview?pid={$pid}">
+										<!--  <input name="pid" id="pid" type="hidden" value="{$pid}"/> -->
+								    	<label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label>
+								    	<input name="list{@name}" type="text" />
+								    	<input type="submit" value="List" />
+							    	</form>
+							    </xsl:if>
+						    </xsl:for-each>
+						    </td>
+					    </tr>
+				    </table>
+				</xsl:if>
 				
 				<!-- form method="post" action="pageview?pid={$pid}">
 				    Titolo: <input name="listTIT" type="text"/>&#160;&#160;
