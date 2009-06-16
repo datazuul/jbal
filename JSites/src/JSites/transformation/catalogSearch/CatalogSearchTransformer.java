@@ -17,6 +17,7 @@ import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.SourceResolver;
 import org.jopac2.engine.NewSearch.DoSearchNew;
 import org.jopac2.engine.NewSearch.NewItemCardinality;
+import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.dbGateway.StaticDataComponent;
 import org.jopac2.engine.listSearch.ListSearch;
 import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
@@ -109,6 +110,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		SearchResultSet result=null;
 		
 		String catalogQuery = getQuery(o);
+		String orderBy= o.getParameter("orderby");
 		
 		if(checkListParameter()) {
 			String[] list=getListParameter();
@@ -141,10 +143,14 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 				
 				sd.init(JSites.utils.DirectoryHelper.getPath()+"/WEB-INF/conf/");
 				DoSearchNew doSearchNew = new DoSearchNew(conn,sd);
+				
 				boolean useStemmer=false;
 	
 				try {
 					result = doSearchNew.executeSearch(catalogQuery, useStemmer);
+					if(orderBy!=null && orderBy.length()>0) {
+						DbGateway.orderBy(conn, orderBy, result);
+					}
 				} catch (ExpressionException e1) {
 					e1.printStackTrace();
 				}
