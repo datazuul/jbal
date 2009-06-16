@@ -98,6 +98,7 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
     private StringBuffer buffer=null;
     private String template="";
     private Hashtable<String,Boolean> v;
+    private Hashtable<String,String> para=new Hashtable<String,String>();
 
     
     public void sendElement(String element,String value) throws SAXException {
@@ -150,6 +151,7 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
     {
 		if (namespaceURI.equals("") && localName.equals("root")) {
 			v.clear();buffer.delete(0, buffer.length());
+			para.clear();
 		}
 //		if (namespaceURI.equals("") && localName.equals("optimizedQuery")) {
 ////			isOptimizedQuery=true;
@@ -215,6 +217,9 @@ public class Templator extends MyAbstractPageTransformer implements Composable, 
         	 currentElement=(Element) currentElement.getParentNode();
         }
         else {
+        	if(!isRecord)
+        		para.put(localName, buffer.toString());
+        	
         	dispatch();
         	super.endElement(namespaceURI, localName, qName);
         }
@@ -399,6 +404,13 @@ private void parseTemplate(Node node, Document document2,int k) {
 				NodeList ce=document2.getElementsByTagName(nodeName);
 				Element e=(Element) ce.item(0);
 				if(e!=null) value=e.getTextContent();
+				else {
+					// prova se e' un parametro globale
+					
+					value=para.get(nodeName);
+					if(value==null) value="";
+
+				}
 				if(m) {
 					String[] values=value.split(sep);
 					
