@@ -18,6 +18,7 @@
     <xsl:param name="extra" />
     <xsl:param name="type" />
     <xsl:param name="query" />
+    <xsl:param name="orderby" />
     <xsl:param name="page" />
     
     
@@ -125,22 +126,37 @@
 	</xsl:template> -->
 	
 	<xsl:template name="nav">
-		<xsl:if test="string-length($page) > 0">
-					<div class="ricerca_nav" style="text-align: center;">
-	 					<xsl:variable name="count"><xsl:value-of select="root/queryData/queryCount"/></xsl:variable>
-	 				
-						<xsl:if test="$page > 0">
-							<a href="pageview?pid={$pid}&amp;query={$query}&amp;page={$page+(-1)}">&lt;&lt; Indietro</a>
-						</xsl:if>
-						&#160;pagina&#160;<xsl:value-of select="$page +1"/>&#160;di&#160;<xsl:value-of select="floor($count div 10)+1"/>&#160;
-						<xsl:if test="(($page+1) * 10) &lt; $count ">
-							<a href="pageview?pid={$pid}&amp;query={$query}&amp;page={$page+1}">Avanti &gt;&gt;</a>
-						</xsl:if>
-						
-						<br/>
-					</div>
-					<div class="clearer">&#160;</div>
-				</xsl:if>
+		<xsl:if test="string-length($query) > 0">
+			<xsl:if test="string-length($page) > 0">
+				<div class="ricerca_nav" style="text-align: center;">
+						<xsl:variable name="count"><xsl:value-of select="root/queryData/queryCount"/></xsl:variable>
+					
+					<xsl:if test="$page > 0">
+						<a href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page={$page+(-1)}">&lt;&lt; Indietro</a>
+					</xsl:if>
+					&#160;pagina&#160;<xsl:value-of select="$page +1"/>&#160;di&#160;<xsl:value-of select="floor($count div 10)+1"/>&#160;
+					<xsl:if test="(($page+1) * 10) &lt; $count ">
+						<a href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page={$page+1}">Avanti &gt;&gt;</a>
+					</xsl:if>
+					
+					<br/>
+				</div>
+				<div class="clearer">&#160;</div>
+			</xsl:if>
+			<xsl:if test="string-length($page) = 0">
+				<div class="ricerca_nav" style="text-align: center;">
+						<xsl:variable name="count"><xsl:value-of select="root/queryData/queryCount"/></xsl:variable>
+					
+					&#160;pagina&#160;1&#160;di&#160;<xsl:value-of select="floor($count div 10)+1"/>&#160;
+					<xsl:if test="10 &lt; $count ">
+						<a href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page=1">Avanti &gt;&gt;</a>
+					</xsl:if>
+					
+					<br/>
+				</div>
+				<div class="clearer">&#160;</div>
+			</xsl:if>
+		</xsl:if>
 	</xsl:template>
 
 </xsl:stylesheet>
