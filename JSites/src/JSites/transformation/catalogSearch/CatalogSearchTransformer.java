@@ -115,13 +115,6 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		if(checkListParameter()) {
 			String[] list=getListParameter();
 			if(list[1]!=null && list[1].length()>0) {
-//				Statement stmt=conn.createStatement();
-//				ResultSet ts=stmt.executeQuery("select * from "+list[0]+"_NDX");
-//				while(ts.next()) {
-//					System.out.println(ts.getString("testo"));
-//				}
-//				ts.close();
-//				stmt.close();
 				result=ListSearch.listSearch(conn, list[0], list[1], 100);
 				throwResults(conn, catalogQuery, result);
 			}
@@ -218,10 +211,10 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		
 		if(end>nrec-1)end = nrec-1;
 		
-		if(page>0)
-			throwField("prevPage",catalogQuery+(new Integer(page-1).toString()));
-		if(page<(nrec/10))
-			throwField("nextPage",catalogQuery+(new Integer(page+1).toString()));
+//		if(page>0)
+//			throwField("prevPage",catalogQuery+(new Integer(page-1).toString()));
+//		if(page<(nrec/10))
+//			throwField("nextPage",catalogQuery+(new Integer(page+1).toString()));
 		
 		contentHandler.startElement("","resultSet","resultSet",new AttributesImpl());
         		
