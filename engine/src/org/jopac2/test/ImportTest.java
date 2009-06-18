@@ -135,6 +135,7 @@ public class ImportTest extends TestCase {
 		return r;
 	}
 
+	@SuppressWarnings("unused")
 	private void outputJava(Vector<String> v1) {
 		for (int i = 0; v1 != null && i < v1.size(); i++) {
 			System.out.println("\"" + v1.elementAt(i) + "\",\n");
@@ -190,7 +191,7 @@ public class ImportTest extends TestCase {
 		SearchResultSet rs = ListSearch.listSearch(conn, "TIT",
 				"English grammar in use", 100);
 		long[] listres = { 1, 10, 2, 11, 17, 8, 5, 3, 4, 18, 20, 9 };
-		SearchResultSet.dumpSearchResultSet(conn, rs);
+//		SearchResultSet.dumpSearchResultSet(conn, rs);
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
 		assertTrue("Done ", r1);
 	}
@@ -203,6 +204,14 @@ public class ImportTest extends TestCase {
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
 		assertTrue("Done ", r1);
 	}
-	 
+	
+	public void testListTITBackward() throws Exception {
+		SearchResultSet rs = ListSearch.listSearchBackward(conn, "TIT",
+				"English grammar in use", 100);
+		long[] listres = { 16, 14, 15, 12, 13, 6, 7, 19 };
+		SearchResultSet.dumpSearchResultSet(conn, rs);
+		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
+		assertTrue("Done ", r1);
+	}
 
 }

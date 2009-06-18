@@ -1042,7 +1042,7 @@ public abstract class DbGateway {
 	}
 	
 	public void rebuildList(Connection conn) {
-		String done="";
+//		String done="";
 		RecordInterface ma=DbGateway.getNotiziaByJID(conn, 1);
 		String[] channels=ma.getChannels();
 		ma.destroy();
@@ -1228,7 +1228,30 @@ public abstract class DbGateway {
 		else if(string.contains("derby")) return new derby(console);
 		return null;
 	}
+	
+	public static String getClassContentFromJID(Connection conn, String classe, long jid) throws SQLException {
+		String sql="select * from "+nomeTableListe(classe)+" where id_notizia="+jid;
+		String r=null;
+	
+		Statement st=conn.createStatement();
+		ResultSet rs=st.executeQuery(sql);
+		if(rs.next()) {
+			r=rs.getString("testo");
+		}
+		rs.close();
+		st.close();
+		return r;
+	}
+	
+	public abstract SearchResultSet listSearchFB(Connection conn, String classe,
+			String parole, int limit, boolean forward) throws SQLException;
 
-	public abstract SearchResultSet listSearch(Connection conn, String classe,
-			String parole, int limit) throws SQLException;
+	public SearchResultSet listSearchBackward(Connection conn,String classe,String parole,int limit) throws SQLException {
+		return listSearchFB(conn, classe, parole, limit, false);
+	}
+	
+	public SearchResultSet listSearch(Connection conn,String classe,String parole,int limit) throws SQLException {
+		return listSearchFB(conn, classe, parole, limit, true);
+	}
+
 }

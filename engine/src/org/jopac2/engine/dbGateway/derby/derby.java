@@ -245,7 +245,7 @@ public class derby extends DbGateway {
 
 	}
 	
-	public SearchResultSet listSearch(Connection conn,String classe,String parole,int limit) throws SQLException {
+	public SearchResultSet listSearchFB(Connection conn,String classe,String parole,int limit,boolean forward) throws SQLException {
 		Vector<Long> listResult=new Vector<Long>();
 		
 		/**
@@ -255,6 +255,8 @@ public class derby extends DbGateway {
 		 *	) AS tmp
 		 *	WHERE rownum <= 5; 
 		 */
+		String d=">=";
+		if(!forward) d="<=";
 		
 		String sql="select * " +
 				"from "+DbGateway.nomeTableListe(classe)+" b, "+
@@ -263,11 +265,11 @@ public class derby extends DbGateway {
 						"from " +
 						"(SELECT distinct testo, ROW_NUMBER() OVER() AS rownum " +
 							"FROM "+DbGateway.nomeTableListe(classe)+" a "+
-							"where testo >= ?  " +
+							"where testo "+d+" ?  " +
 						") as tmp where rownum <= ?" +
 					") c "+ //order by testo limit ?
 					"where b.testo=c.testo " +
-					"order by b.testo";
+					"order by b.testo"+(forward?"":" desc");
 
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setString(1, parole);

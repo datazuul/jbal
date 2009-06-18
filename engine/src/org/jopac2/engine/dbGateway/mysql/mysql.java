@@ -229,15 +229,17 @@ public class mysql extends DbGateway {
     	createIndex(conn,nomeTableListe(classe)+"_x1", nomeTableListe(classe), "testo(50)", false);//CR_LISTE
 
 	}
-
-	@Override
-	public SearchResultSet listSearch(Connection conn,String classe,String parole,int limit) throws SQLException {
-		Vector<Long> listResult=new Vector<Long>();		
+	
+	public SearchResultSet listSearchFB(Connection conn,String classe,String parole,int limit, boolean forward) throws SQLException {
+		Vector<Long> listResult=new Vector<Long>();
+		
+		String d=">=";
+		if(!forward) d="<=";
 		
 		String sql="select * from "+DbGateway.nomeTableListe(classe)+" b, "+
 			"(SELECT distinct testo FROM "+DbGateway.nomeTableListe(classe)+" a "+
-			"where testo >= ?  order by testo limit ?) c "+ 
-			"where b.testo=c.testo order by b.testo";
+			"where testo "+d+" ?  order by testo limit ?) c "+ 
+			"where b.testo=c.testo order by b.testo"+(forward?"":" desc");
 
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setString(1, parole);
