@@ -112,10 +112,22 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		String catalogQuery = getQuery(o);
 		String orderBy= o.getParameter("orderby");
 		
-		if(checkListParameter()) {
-			String[] list=getListParameter();
+		if(checkListParameter("list")) {
+			String[] list=getListParameter("list");
 			if(list[1]!=null && list[1].length()>0) {
 				result=ListSearch.listSearch(conn, list[0], list[1], 100);
+				throwField("listRecord", list[0]);
+				
+				throwResults(conn, catalogQuery, result);
+			}
+		}
+		else if(checkListParameter("nlist")) {
+			String[] list=getListParameter("nlist");
+			if(list[1]!=null && list[1].length()>0) {
+				long sjid=Long.parseLong(list[1]);
+				result=ListSearch.listSearch(conn, list[0], sjid, 100);
+				throwField("listRecord", list[0]);
+				
 				throwResults(conn, catalogQuery, result);
 			}
 		}
@@ -155,13 +167,13 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private String[] getListParameter() {
+	private String[] getListParameter(String p) {
 		String[] r=new String[2];
 		Enumeration<String> e=o.getParameterNames();
 		while(e.hasMoreElements()) {
 			String n=e.nextElement();
-			if(n.startsWith("list")) {
-				r[0]=n.substring(4);
+			if(n.startsWith(p)) {
+				r[0]=n.substring(p.length());
 				r[1]=o.getParameter(n);
 				break;
 			}
@@ -171,12 +183,12 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 
 
 	@SuppressWarnings("unchecked")
-	private boolean checkListParameter() {
+	private boolean checkListParameter(String p) {
 		boolean r=false;
 		Enumeration<String> e=o.getParameterNames();
 		while(e.hasMoreElements()) {
 			String n=e.nextElement();
-			if(n.startsWith("list")) {
+			if(n.startsWith(p)) {
 				r=true;
 				break;
 			}
@@ -209,7 +221,10 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		int start = (page * 10) + 0;
 		int end = (page * 10) + 9;
 		
-		if(end>nrec-1)end = nrec-1;
+		if(end>nrec-1) end = nrec-1;
+		
+		throwField("sjid", Long.toString(v.get(start)));
+		throwField("ejid", Long.toString(v.get(end)));
 		
 //		if(page>0)
 //			throwField("prevPage",catalogQuery+(new Integer(page-1).toString()));

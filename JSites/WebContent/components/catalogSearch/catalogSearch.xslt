@@ -75,10 +75,7 @@
 							</form>
 							</td>
 							<td>
-							<!-- 
-							<div class="clearer">&#160;</div>
-			 				<xsl:call-template name="nav"/>
-							 -->
+							
 							<xsl:for-each select="//list">
 								<xsl:if test="string-length(@checked)>0">
 									<form method="post" action="pageview?pid={$pid}">
@@ -104,7 +101,12 @@
 					<xsl:apply-templates />
 				</div>
 				<div class="clearer">&#160;</div>
-				<xsl:call-template name="nav"/>
+				<xsl:if test="string-length(root/listRecord) = 0">
+					<xsl:call-template name="nav"/>
+				</xsl:if>
+				<xsl:if test="string-length(root/listRecord) > 0">
+					<xsl:call-template name="listnav"/>
+				</xsl:if>
 			</div>
 		</div>
 		
@@ -121,10 +123,6 @@
 	    <!-- Autore: <input id="AUT" type="text"/>&#160;Titolo: <input id="TIT" type="text"/>&#160; -->
 	</xsl:template>			    
 			
-<!-- 	<xsl:template match="catalogSearch">
-		<xsl:apply-templates />
-	</xsl:template> -->
-	
 	<xsl:template name="nav">
 		<xsl:if test="string-length($query) > 0">
 			<xsl:if test="string-length($page) > 0">
@@ -156,6 +154,18 @@
 				</div>
 				<div class="clearer">&#160;</div>
 			</xsl:if>
+		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template name="listnav">
+		<xsl:if test="root/sjid > 1">
+			<div class="ricerca_nav" style="text-align: center;">
+				<xsl:variable name="ejid"><xsl:value-of select="root/ejid"/></xsl:variable>
+				<xsl:variable name="list"><xsl:value-of select="root/listRecord"/></xsl:variable>
+				<a href="pageview?pid={$pid}&amp;nlist{$list}={$ejid}">Prossimi risultati &gt;&gt;</a>				
+				<br/>
+			</div>
+			<div class="clearer">&#160;</div>
 		</xsl:if>
 	</xsl:template>
 

@@ -239,6 +239,7 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 			attrCid.addCDATAAttribute("accessible",String.valueOf(permission.hasPermission(Permission.ACCESSIBLE)));
 			attrCid.addCDATAAttribute("editable",String.valueOf(permission.hasPermission(Permission.EDITABLE)));
 			attrCid.addCDATAAttribute("validable",String.valueOf(permission.hasPermission(Permission.VALIDABLE)));
+			attrCid.addCDATAAttribute("sfa",String.valueOf(permission.hasPermission(Permission.SFA)));
 			attrCid.addCDATAAttribute("pageTitle",String.valueOf(DBGateway.getPageName(pageId, conn)   ));
 		}
 		contentHandler.startElement("",componentType,componentType,attrCid);

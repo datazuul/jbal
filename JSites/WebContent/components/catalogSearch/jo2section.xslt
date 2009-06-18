@@ -11,12 +11,22 @@
    <xsl:template match="prevPage" />
    <xsl:template match="nextPage" />
    
-   <xsl:template match="queryData">
-      <DIV class="queryData">
-        <xsl:value-of select="queryCount" /><xsl:text> </xsl:text>record trovati in 
-        <xsl:value-of select="queryTime" /><xsl:text> </xsl:text>secondi.
-      </DIV>
-   </xsl:template>
+   <xsl:template match="sjid" />
+   <xsl:template match="ejid" />
+   <xsl:template match="listRecord" />
+   
+	<xsl:template match="queryData">
+		<xsl:if test="string-length(/root/listRecord) = 0">
+			<DIV class="queryData">
+				<xsl:value-of select="queryCount" />
+				<xsl:text> </xsl:text>
+				record trovati in
+				<xsl:value-of select="queryTime" />
+				<xsl:text> </xsl:text>
+				secondi.
+			</DIV>
+		</xsl:if>
+	</xsl:template>
    
    <xsl:template match="searchData">
       <DIV class="searchData">

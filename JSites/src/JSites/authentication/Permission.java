@@ -5,6 +5,7 @@ public class Permission {
 	public static final byte ACCESSIBLE = 1;
 	public static final byte EDITABLE = 2;
 	public static final byte VALIDABLE = 4;
+	public static final byte SFA = 8; // super figo administrator
 	
 	private static final byte DEFAULT = 0;
 	

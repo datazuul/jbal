@@ -109,6 +109,8 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 					permission.setPermission(Permission.EDITABLE);
 				if(attributes.getValue("validable").equals("true"))
 					permission.setPermission(Permission.VALIDABLE);
+				if(attributes.getValue("sfa").equals("true"))
+					permission.setPermission(Permission.SFA);
 				contentCid = Long.parseLong(attributes.getValue("cid"));	
 			}
 		}
@@ -203,7 +205,8 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 			String value = attributes.getValue(i);
 			src=src+name+"="+value+"&";
 		}
-		src = src.substring(0,src.length()-1);
+//		src = src.substring(0,src.length()-1);
+		src = src  +"permission="+permission.getPermissionCode();
 
 		long pacid = 0;
 		
