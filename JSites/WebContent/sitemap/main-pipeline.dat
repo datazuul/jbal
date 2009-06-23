@@ -308,6 +308,10 @@
 	                 <map:parameter name="use-request-parameters" value="true"/>
 	             </map:part>
 	        </map:aggregate>
+	        
+            <!-- map:transform type="tutil" src="/t/final" / -->
+	        
+	        
 	        <map:transform type="xslt" src="xslt/xml2xhtml.xslt">
 	        	<map:parameter name="pid" value="{request-param:pid}"/>
 	        </map:transform>

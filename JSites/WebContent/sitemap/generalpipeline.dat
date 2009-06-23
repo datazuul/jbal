@@ -38,6 +38,31 @@
 	
 	</map:match>
 	
+	
+	<map:match pattern="fileManagerHtml">
+		<map:act type="auth-protect">
+        	<map:parameter name="handler" value="JSitesHandler"/>
+        	
+        	<map:act type="authorize-users">
+        		<map:parameter name="db" value="{global:db}"/>
+        		<map:parameter name="pid" value="0"/>
+        		<map:act type="request">
+					<map:generate type="fileManager" src="{global:data-directory}/images/">
+						<map:parameter name="db" value="{global:db}"/>
+						<map:parameter name="context" value="{context}"/>
+					</map:generate>
+				</map:act>
+
+			</map:act>	
+			
+			<map:serialize type="html" />
+		</map:act>
+	
+	</map:match>
+	
+	
+	
+	
 	<map:match pattern="importCatalog">
 		<map:act type="auth-protect">
         	<map:parameter name="handler" value="JSitesHandler"/>
@@ -151,6 +176,10 @@
    	<map:match pattern="mfm/**">
        	<map:read src="../js/mfm/{1}" />
    	</map:match>
+   	
+   	<map:match pattern="**/*.ico">
+        <map:read src="{global:data-directory}/images/{2}.ico" />
+    </map:match>
 	
 	<map:match pattern="images/**">
        	<map:read src="{global:data-directory}/images/{1}" />

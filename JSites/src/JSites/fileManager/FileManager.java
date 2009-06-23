@@ -44,6 +44,7 @@ public class FileManager extends MyAbstractPageGenerator {
 	                "mpg",
 	                "mpeg",
 	                "pdf",
+	                "png",
 	                "jpeg"
 	};
 	
@@ -207,13 +208,21 @@ public class FileManager extends MyAbstractPageGenerator {
 	    		while ((c = in.read(readchar)) != -1) {
 	    			out.write(readchar, 0, c);
 	    		}
-	    		out.close();
-	    		in.close();
+//	    		out.close();
+//	    		in.close();
+	    		
+//	    		sendError(0, "");
+	    		
+	    		contentHandler.startElement("","html","html", emptyAttrs);
+	    		contentHandler.startElement("","head","head", emptyAttrs);
 	    		
 	    		AttributesImpl ok=new AttributesImpl();
 	    		ok.addCDATAAttribute("type", "text/javascript");
-	    		String js="window.parent.frames[\"frmUpload\"].OnUploadCompleted('0','"+fileName+"');";
+	    		String js="window.parent.frames['frmUpload'].OnUploadCompleted('0','"+fileName+"');";
 	    		sendElement("script", js, ok);
+	    		
+	    		contentHandler.endElement("","head","head");
+	    		contentHandler.endElement("","html","html");
         	}
         	else {
         		sendError(202,"");

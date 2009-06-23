@@ -36,12 +36,12 @@ public class PageSaver extends MyAbstractPageGenerator{
 			return;
 		}
 		
-		if( save_pacid == id ){					//se il contenitore è quello giusto	
+		if( save_pacid == id ){					//se il contenitore ï¿½ quello giusto	
 			DBGateway.setHasChild(id, conn);
 			boolean isActive = false;
 			try { 
 				isActive = DBGateway.getState(newcid, conn)==3;
-				if(newcid==0 || isActive){		//se il componente deve essere validato (stato PND)							//o se il componente è una new entry	
+				if(newcid==0 || isActive){		//se il componente deve essere validato (stato PND)							//o se il componente ï¿½ una new entry	
 					newcid = DBGateway.getNewFreeCid(conn);		//cerca un nuovo CID nel DB
 					DBGateway.saveDBComponentAndRelationship(newcid, save_componentType, 0, save_pacid, save_cid, 
 							new java.util.Date(), statecode, pageId, request.getParameter("url"), order, conn);
@@ -105,7 +105,7 @@ public class PageSaver extends MyAbstractPageGenerator{
 		attrCid.addCDATAAttribute("accessible",String.valueOf(permission.hasPermission(Permission.ACCESSIBLE)));
 		attrCid.addCDATAAttribute("editable",String.valueOf(permission.hasPermission(Permission.EDITABLE)));
 		attrCid.addCDATAAttribute("validable",String.valueOf(permission.hasPermission(Permission.VALIDABLE)));
-
+		attrCid.addCDATAAttribute("sfa",String.valueOf(permission.hasPermission(Permission.SFA)));
 		
 		contentHandler.startElement("",componentType,componentType,attrCid);
 		if(hasChildren){
