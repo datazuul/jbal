@@ -209,14 +209,14 @@ public class Eutmarc extends Unimarc {
 		
 		public String getSeriesTitle() {
 			Tag tag=getFirstTag("225");
-			return Utils.ifExists("",tag.getField("a"));
+			return tag==null?"":Utils.ifExists("",tag.getField("a"));
 		}
 
 		public void setEditor() {
 
 			Tag t = new Tag("210",' ',' ');
 			t.addField(new Field("a","Trieste"));
-			t.addField(new Field("c","Edizioni Universit�"));
+			t.addField(new Field("c","Edizioni Universita'"));
 			
 			
 		}

@@ -31,14 +31,13 @@ public class unimarcViewer {
 		RecordInterface ma=RecordFactory.buildRecord(0, "", tipo, 0);
 		RecordReader r=ma.getRecordReader(f);
 		
-		int i=0;
-		int max=10;
+		int i=10;
+		int max=100;
 		
 		String line=r.readRecord();
 		while(line!=null && i++<max) {
 			ma=RecordFactory.buildRecord(0, line, tipo, 0);
 			System.out.println(ma.toReadableString());
-			
 			line=r.readRecord();
 		}
 		

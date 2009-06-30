@@ -168,7 +168,7 @@ public Vector<BookSignature> getSignatures() {
     Vector<BookSignature> res=new Vector<BookSignature>();
     
     try {
-	    String codiceBib=v.getField("B").getContent()+v.getField("b").getContent();
+	    String codiceBib=Utils.ifExists("", v.getField("B"))+Utils.ifExists("", v.getField("b"));
 	    String b=getFirstTag("712").getRawContent(); // prende la biblioteca (nome?)
 	    
 	    
@@ -286,22 +286,24 @@ public Vector<BookSignature> getSignatures() {
   public String getTitle() {
     String r="";
     Tag tag=getFirstTag("011");
-    r=tag.getField("T").getContent();
+    if(tag!=null)
+    	r=Utils.ifExists("", tag.getField("T"));
 //    Utils.Log("Titolo: "+r);
     return r;
   }
 
   public String getISBD() {
     String r="";
-    Tag tag=getFirstTag("011");                          				// AREA 1
-    r=Utils.ifExists("",tag.getField("T"),tag.getField("t")) + 				// titolo proprio
+    Tag tag=getFirstTag("011");
+    if(tag!=null) {// AREA 1
+    	r=Utils.ifExists("",tag.getField("T"),tag.getField("t")) + 				// titolo proprio
         Utils.ifExists(" : ",tag.getField("C"),tag.getField("c")) +    // compl. titolo
         Utils.ifExists(" : ",tag.getField("P"),tag.getField("p")) +    // titolo parallelo
         Utils.ifExists(" : ",tag.getField("R"),tag.getField("r")) +    // resp. princip.
         Utils.ifExists(" : ",tag.getField("A"),tag.getField("a")) +    // altra respon.
         Utils.ifExists(" : ",tag.getField("S"),tag.getField("s")) +    // titolo successivo
         Utils.ifExists(" : ",tag.getField("V"),tag.getField("v"));     // numero di volume se e' una collana. 
-    																							 // Se e' monografia non c'e' il ^V
+    }																							 // Se e' monografia non c'e' il ^V
     
     tag=getFirstTag("012");                            // AREA 2
     if(tag!=null) {
