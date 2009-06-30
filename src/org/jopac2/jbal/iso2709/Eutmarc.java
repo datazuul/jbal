@@ -73,6 +73,15 @@ public class Eutmarc extends Unimarc {
         }
        
         public void setImage(BufferedImage image) {
+        	if(image == null){
+        		try {
+					removeTags("911");
+				} catch (JOpac2Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return;
+        	}
                 ByteArrayOutputStream a=new ByteArrayOutputStream();
                    try {
                         Image im=image.getScaledInstance(maxx, maxy, Image.SCALE_SMOOTH);
