@@ -16,34 +16,38 @@ import org.jopac2.utils.JOpac2Exception;
 public class X2uni {
 
 	private static String workDir="/Users/romano/Documents/JOpac2-related/";
-	private static String inFile=workDir+"MST.ISO";
-	private static String outFile=workDir+"BNP.UNI";
+	// /Users/romano/Documents/JOpac2-related/seminarioPN/bd/biblo.iso
+	private static String inFile=workDir+"seminarioPN/bd/biblo.iso";
+	private static String outFile=workDir+"seminarioPN/bd/biblo.uni";
 	
 	public static void main(String[] args) throws Exception {
 		FileInputStream f=new FileInputStream(new File(inFile));
 		
 		PrintWriter p=new PrintWriter(outFile);
 		
-		RecordInterface mat=RecordFactory.buildRecord(0, "", "easyweb", 0);
+		RecordInterface mat=RecordFactory.buildRecord(0, "", "isisbiblo", 0);
 		RecordReader recordReader=mat.getRecordReader(f);
 		
 		String line=recordReader.readRecord();
 		while(line!=null) {
-			RecordInterface ma=RecordFactory.buildRecord(0, line, "easyweb", 0);
+			RecordInterface ma=RecordFactory.buildRecord(0, line, "isisbiblo", 0);
 			RecordInterface uni=null;
 			
 //			p.println(uni.toString());
 //			System.out.println(ma.toReadableString());
 //			System.out.println(uni.toReadableString());
 			
-			Vector<BookSignature> vb=ma.getSignatures();
-			for(int i=0;vb!=null && i<vb.size();i++) {
-				if(vb.elementAt(i).getLibraryId().equals("BNP")) {
-					uni=record2Unimarc(ma);
-					p.println(uni.toString());
-					break;
-				}
-			}
+			uni=record2Unimarc(ma);
+			p.println(uni.toString());
+			
+//			Vector<BookSignature> vb=ma.getSignatures();
+//			for(int i=0;vb!=null && i<vb.size();i++) {
+////				if(vb.elementAt(i).getLibraryId().equals("BNP")) {
+//					uni=record2Unimarc(ma);
+////					p.println(uni.toString());
+////					break;
+////				}
+//			}
 			if(uni!=null) uni.destroy();
 			ma.destroy();
 			line=recordReader.readRecord();

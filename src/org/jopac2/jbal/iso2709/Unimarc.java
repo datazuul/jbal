@@ -365,10 +365,12 @@ public void initLinkUp() {
 	  public String getDescription() {
 		  Tag tag=getFirstTag("215");
 		  String r="";
-		  r+=Utils.ifExists("",tag.getField("a").getContent());
-		    r+=Utils.ifExists(" : ",tag.getField("c").getContent());
-		    r+=Utils.ifExists(" ; ",tag.getField("d").getContent());
-		    r+=Utils.ifExists(" + ",tag.getField("e").getContent());
+		  if(tag!=null) {
+			  r+=Utils.ifExists("",tag.getField("a"));
+			  r+=Utils.ifExists(" : ",tag.getField("c"));
+			  r+=Utils.ifExists(" ; ",tag.getField("d"));
+			  r+=Utils.ifExists(" + ",tag.getField("e"));
+		  }
 		  	return r;
 		  }
   
