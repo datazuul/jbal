@@ -406,7 +406,9 @@ public abstract class DbGateway {
           execute(conn,"delete from l_classi_parole_notizie where id_notizia="+jid);
 
         execute(conn,"delete from notizie where id='"+jid+"'");
+        execute(conn,"delete from hash where id_notizia='"+jid+"'");
         qry2.close();
+        lcpn.close();
     }
     
     public static long getMaxIdTable(Connection conn, String tableName) throws SQLException {
