@@ -178,33 +178,33 @@ public class Eutmarc extends Unimarc {
     	}
     	
 
-		@Override
-		public void setDescription(String description) throws JOpac2Exception {
-			//la stringa splittata su "&" deve avere 4 parti
-			//pagine&ill.&cm&alleg
-			String[] split = description.split("&");
-			if(split.length!=4) throw new JOpac2Exception("Description not in right format");
-			else{	
-				Tag t = new Tag("215",' ',' ');
-				boolean add = false;
-				if(split[0].length()>1){
-					t.addField(new Field("a",split[0].trim())); add = true;
-				}
-				if(split[1].length()>1){
-					t.addField(new Field("c",split[1].trim())); add = true;
-				}
-				if(split[2].length()>1){
-					t.addField(new Field("d",split[2].trim())); add = true;
-				}
-				if(split[3].length()>1){
-					t.addField(new Field("e",split[3].trim())); add = true;
-				}
-				if(add){
-					removeTags("215");
-					addTag(t);
-				}
-			}
-		}
+//		@Override
+//		public void setDescription(String description) throws JOpac2Exception {
+//			//la stringa splittata su "&" deve avere 4 parti
+//			//pagine&ill.&cm&alleg
+//			String[] split = description.split("&");
+//			if(split.length!=4) throw new JOpac2Exception("Description not in right format");
+//			else{	
+//				Tag t = new Tag("215",' ',' ');
+//				boolean add = false;
+//				if(split[0].length()>1){
+//					t.addField(new Field("a",split[0].trim())); add = true;
+//				}
+//				if(split[1].length()>1){
+//					t.addField(new Field("c",split[1].trim())); add = true;
+//				}
+//				if(split[2].length()>1){
+//					t.addField(new Field("d",split[2].trim())); add = true;
+//				}
+//				if(split[3].length()>1){
+//					t.addField(new Field("e",split[3].trim())); add = true;
+//				}
+//				if(add){
+//					removeTags("215");
+//					addTag(t);
+//				}
+//			}
+//		}
 
 		public void setSeriesTitle(String collana, String collanaN) {
 			Tag t = new Tag("225",'|',' ');
@@ -222,12 +222,9 @@ public class Eutmarc extends Unimarc {
 		}
 
 		public void setEditor() {
-
 			Tag t = new Tag("210",' ',' ');
 			t.addField(new Field("a","Trieste"));
 			t.addField(new Field("c","Edizioni Universita'"));
-			
-			
 		}
 		
 		public String getTitle() {

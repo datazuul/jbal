@@ -349,14 +349,26 @@ public void initLinkUp() {
    * 10,11,13, 15, 20, 22, 35^a
    */
 	public String getStandardNumber() {
-		Tag tag=getFirstTag("010");
-		if(tag==null) tag=getFirstTag("011");
-		if(tag==null) tag=getFirstTag("013");
-		if(tag==null) tag=getFirstTag("015");
-		if(tag==null) tag=getFirstTag("020");
-		if(tag==null) tag=getFirstTag("022");
-		if(tag==null) tag=getFirstTag("035");
-		return tag==null?"":Utils.ifExists("", tag.getField("a"));
+		
+//		if(codeSystem.equals("ISBN")) tagName="010";
+//		else if(codeSystem.equals("ISSN")) tagName="011";
+//		else if(codeSystem.equals("ISMN")) tagName="013";
+//		else if(codeSystem.equals("ISRN")) tagName="015";
+//		else if(codeSystem.equals("NBN")) tagName="020";
+//		else if(codeSystem.equals("GPN")) tagName="022";
+		
+		Tag tag=getFirstTag("010");//ISBN
+		String code = "ISBN";
+		
+		if(tag==null) {tag=getFirstTag("011");code="ISSN";}
+		if(tag==null) {tag=getFirstTag("013");code="ISMN";}
+		if(tag==null) {tag=getFirstTag("015");code="ISRN";}
+		if(tag==null) {tag=getFirstTag("020");code="NBN";}
+		if(tag==null) {tag=getFirstTag("022");code="GPN";}
+		if(tag==null) {tag=getFirstTag("035"); code ="NA";}
+		String ret = (tag==null?"":Utils.ifExists("", tag.getField("a")));
+		if(ret!=null && ret.length()>0)ret = code + " " + ret;
+		return ret;
 	}
 
   /**
