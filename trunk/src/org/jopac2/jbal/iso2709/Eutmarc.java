@@ -160,7 +160,9 @@ public class Eutmarc extends Unimarc {
     	
     	public String getPrezzo(){
     		Tag t = getFirstTag("904");
+    		if(t==null)return "";
     		Field f = t.getField("p");
+    		if(f==null)return "";
     		String r = f.getContent();
     		if(r==null)r ="";
     		return r;
@@ -218,7 +220,8 @@ public class Eutmarc extends Unimarc {
 		
 		public String getSeriesTitle() {
 			Tag tag=getFirstTag("225");
-			return tag==null?"":Utils.ifExists("",tag.getField("a"));
+			if(tag == null) return "";
+			return Utils.ifExists("",tag.getField("a"));
 		}
 
 		public void setEditor() {
