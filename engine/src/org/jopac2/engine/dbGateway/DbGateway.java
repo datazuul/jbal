@@ -374,11 +374,11 @@ public abstract class DbGateway {
      * @param bid
      * @throws SQLException
      */
-    public static void cancellaNotiziaFromBid(Connection conn[], String bid) throws SQLException {
-    	Statement qry=conn[1].createStatement();
+    public static void cancellaNotiziaFromBid(Connection conn, String bid) throws SQLException {
+    	Statement qry=conn.createStatement();
         ResultSet rs=qry.executeQuery("select id from notizie where bid='"+bid+"'");
         while(rs.next()) {
-        	cancellaNotiziaFromJid(conn, rs.getString("ID"));
+        	cancellaNotiziaFromJid(conn, rs.getLong("ID"));
         }
         qry.close();
     }
@@ -389,8 +389,8 @@ public abstract class DbGateway {
      * @param jid
      * @throws SQLException
      */
-    public static void cancellaNotiziaFromJid(Connection conn[], String jid) throws SQLException {
-    	Statement qry2=conn[2].createStatement();
+    public static void cancellaNotiziaFromJid(Connection conn, long jid) throws SQLException {
+    	Statement qry2=conn.createStatement();
           /*ResultSet rsde=qry2.executeQuery("select id from data_element where id_notizia="+jid);
           while(rsde.next()) {
             execute(conn[1],"delete from l_parole_de where id_de="+rsde.getString("id"));
@@ -401,11 +401,11 @@ public abstract class DbGateway {
           //rsde.close();
           ResultSet lcpn=qry2.executeQuery("select id, id_l_classi_parole from l_classi_parole_notizie where id_notizia="+jid);
           while(lcpn.next()) {
-            execute(conn[1],"update l_classi_parole set n_notizie=n_notizie-1 where id="+lcpn.getString("id_l_classi_parole"));
+            execute(conn,"update l_classi_parole set n_notizie=n_notizie-1 where id="+lcpn.getString("id_l_classi_parole"));
           }
-          execute(conn[1],"delete from l_classi_parole_notizie where id_notizia="+jid);
+          execute(conn,"delete from l_classi_parole_notizie where id_notizia="+jid);
 
-        execute(conn[1],"delete from notizie where id='"+jid+"'");
+        execute(conn,"delete from notizie where id='"+jid+"'");
         qry2.close();
     }
     
@@ -438,16 +438,26 @@ public abstract class DbGateway {
   	  inserisciNotizia(conn,ma);
     }
     
+    public long inserisciNotizia(Connection conn, RecordInterface notizia) throws SQLException {
+    	long idTipo=getIdTipo(conn, notizia.getTipo());
+    	long jid=insertTableNotizie(conn,notizia, idTipo);
+    	return inserisciNotiziaInner(conn,notizia,jid);
+    }
+    
+    public long inserisciNotizia(Connection conn, RecordInterface notizia, long jid) throws SQLException {
+    	long idTipo=getIdTipo(conn, notizia.getTipo());
+    	insertTableNotizie(conn,notizia, idTipo, jid);
+    	return inserisciNotiziaInner(conn,notizia,jid);
+    }
+    
     /**
      * 
      * @param conn
      * @param notizia ISO2709
-     * @param clDettaglio Hashtable (tag+dataelement,id_classe) dalla tabella classi_dettaglio
      * @throws SQLException
      */
-    public void inserisciNotizia(Connection conn, RecordInterface notizia) throws SQLException {
+    private long inserisciNotiziaInner(Connection conn, RecordInterface notizia, long jid) throws SQLException {
     	long idTipo=getIdTipo(conn, notizia.getTipo());
-    	long jid=insertTableNotizie(conn,notizia, idTipo);
     	
     	if(notizia.toString()!=null) {
     	
@@ -467,6 +477,13 @@ public abstract class DbGateway {
 				
 			}
     	}
+    	return jid;
+    }
+    
+    public void updateNotizia(Connection conn, RecordInterface notizia) throws SQLException {
+    	long jid=notizia.getJOpacID();
+    	cancellaNotiziaFromJid(conn, jid);
+    	inserisciNotizia(conn,notizia,jid);
     }
     
     /**
@@ -562,9 +579,14 @@ public abstract class DbGateway {
         clDettaglio.removeAllElements();
         clDettaglio=null; 
     }
-
+	
 	private static long insertTableNotizie(Connection conn, RecordInterface notizia, long idTipo) throws SQLException {
-    	long jid=getMaxIdTable(conn,"notizie")+1;
+		long jid=getMaxIdTable(conn,"notizie")+1;
+		return insertTableNotizie(conn, notizia, idTipo, jid);
+	}
+
+	private static long insertTableNotizie(Connection conn, RecordInterface notizia, long idTipo, long jid) throws SQLException {
+    	
     	String record = notizia.getBid();
     	if(record.equals("0")) {record=String.valueOf(jid);}
     	
