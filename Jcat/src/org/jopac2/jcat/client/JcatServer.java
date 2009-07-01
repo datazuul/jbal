@@ -6,13 +6,17 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("jcat")
 public interface JcatServer extends RemoteService {
-
+	public RecordInfo getRecord(String jid);
+	
 	public static class Util {
-
+		
+		
 		public static JcatServerAsync getInstance() {
 
 			return GWT.create(JcatServer.class);
 		}
+		
+		
 	}
 
 }

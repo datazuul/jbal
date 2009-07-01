@@ -8,7 +8,7 @@ import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 
 public class JcatDynamicForm extends DynamicForm {
-	private JcatFieldItem[] jcatFields=null;
+	private JcatFieldItem[] jcatFields=null;	
 	private FormItem[] fi=null;
 
 	public JcatDynamicForm(String id, String title, String[] fields, boolean displayHints, ValuesManager vm) {
@@ -57,15 +57,52 @@ public class JcatDynamicForm extends DynamicForm {
 		}
 	}
 
-	private FormItem[] newArea(boolean hints) {
-		final FormItem[] fi = new FormItem[jcatFields.length*2+1];
+	public void setValue(String field, String value) {
+		for (int i = 0; i < jcatFields.length; i++) {
+			if(jcatFields[i].getName().equals(field)) {
+				fi[i*2].setValue(value);
+				
+				FormItem hint=fi[i*2+1];
+				String hintText = (String) hint.getValue();
+				
+
+				String newHintText = checkMash(hintText, value, fi[i*2].getAttributeAsStringArray("syntax"));
+				hint.setValue(newHintText);
+				break;
+			}
+		}
+	}
+	
+	public static String checkMash(String hintText, String areaText, String[] p) {
+		hintText=hintText.replaceAll("<b>", "");
+		hintText=hintText.replaceAll("</b>", "");
+		int i=0;
 		
-		FileItem fileItem=new FileItem();
-		fi[jcatFields.length*2]=fileItem;
+		if(areaText.length()>0) {
+			hintText="<b>"+hintText.substring(0,hintText.indexOf(p[0]))+"</b>"+hintText.substring(hintText.indexOf(p[0]));
+		}
+		
+		for(i=0;i<p.length-1;i++) {
+			 int k=areaText.indexOf(p[i]);
+			 if(k>=0) {
+				 hintText=hintText.substring(0,hintText.indexOf(p[i]))+"<b>"+hintText.substring(hintText.indexOf(p[i]),hintText.indexOf(p[i+1]))+"</b>"+hintText.substring(hintText.indexOf(p[i+1]));
+			 }
+		}
+
+		int k=areaText.indexOf(p[p.length-1]);
+		if(k>=0) {
+			 hintText=hintText.substring(0,hintText.indexOf(p[i]))+"<b>"+hintText.substring(hintText.indexOf(p[i]))+"</b>";
+		 }
+		return hintText;
+	}
+	
+	private FormItem[] newArea(boolean hints) {
+		final FormItem[] fi = new FormItem[jcatFields.length*2];
 		
 		
 		for (int i = 0; i < jcatFields.length; i++) {
-			fi[i * 2] = new TextItem(); //new TextAreaItem();
+			if(jcatFields[i].getElement().equals("FileItem")) fi[i * 2] = new FileItem();
+			else fi[i * 2] = new TextItem(); //new TextAreaItem();
 			fi[i * 2].setTitle(jcatFields[i].getName());
 			fi[i * 2].setWidth("*");
 			fi[i * 2].setAttribute("cattype", jcatFields[i].getType());
