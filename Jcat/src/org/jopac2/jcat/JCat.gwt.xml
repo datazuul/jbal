@@ -11,7 +11,7 @@
   	<!-- inherits name="at.bestsolution.gwt.util.impl.DynamicCallbackForm"/ -->
   	<!-- <inherits name="com.google.gwt.user.theme.chrome.Chrome"/> -->
   	<!-- <inherits name="com.google.gwt.user.theme.dark.Dark"/> -->
-<servlet class="org.jopac2.jcat.server.UploadFileServlet" path="/UploadFileServlet"/>
-<servlet class="org.jopac2.jcat.server.JcatServerImpl" path="/jcat"/>
-
+	<servlet class="org.jopac2.jcat.server.RecordFinderServlet" path="/RecordFinderServlet"/>
+	<servlet class="org.jopac2.jcat.server.UploadFileServlet" path="/UploadFileServlet"/>
+	<servlet class="org.jopac2.jcat.server.JcatServerImpl" path="/jcat"/>
 </module>
