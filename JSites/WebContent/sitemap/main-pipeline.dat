@@ -315,6 +315,7 @@
 	        <map:transform type="xslt" src="xslt/xml2xhtml.xslt">
 	        	<map:parameter name="pid" value="{request-param:pid}"/>
 	        </map:transform>
+	        <map:transform type="cinclude"/>
 	        <map:serialize type="html"/> 
 	    </map:match>
 	    
