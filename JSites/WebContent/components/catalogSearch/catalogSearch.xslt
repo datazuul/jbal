@@ -130,11 +130,11 @@
 						<xsl:variable name="count"><xsl:value-of select="root/queryData/queryCount"/></xsl:variable>
 					
 					<xsl:if test="$page > 0">
-						<a href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page={$page+(-1)}">&lt;&lt; Indietro</a>
+						<a accesskey="I" href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page={$page+(-1)}">&lt;&lt; Indietro</a>
 					</xsl:if>
 					&#160;pagina&#160;<xsl:value-of select="$page +1"/>&#160;di&#160;<xsl:value-of select="floor($count div 10)+1"/>&#160;
 					<xsl:if test="(($page+1) * 10) &lt; $count ">
-						<a href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page={$page+1}">Avanti &gt;&gt;</a>
+						<a accesskey="A" href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page={$page+1}">Avanti &gt;&gt;</a>
 					</xsl:if>
 					
 					<br/>
@@ -147,7 +147,7 @@
 					
 					&#160;pagina&#160;1&#160;di&#160;<xsl:value-of select="floor($count div 10)+1"/>&#160;
 					<xsl:if test="10 &lt; $count ">
-						<a href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page=1">Avanti &gt;&gt;</a>
+						<a accesskey="A"  href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page=1">Avanti &gt;&gt;</a>
 					</xsl:if>
 					
 					<br/>
@@ -162,7 +162,7 @@
 			<div class="ricerca_nav" style="text-align: center;">
 				<xsl:variable name="ejid"><xsl:value-of select="root/ejid"/></xsl:variable>
 				<xsl:variable name="list"><xsl:value-of select="root/listRecord"/></xsl:variable>
-				<a href="pageview?pid={$pid}&amp;nlist{$list}={$ejid}">Prossimi risultati &gt;&gt;</a>				
+				<a accesskey="P" href="pageview?pid={$pid}&amp;nlist{$list}={$ejid}">Prossimi risultati &gt;&gt;</a>				
 				<br/>
 			</div>
 			<div class="clearer">&#160;</div>
