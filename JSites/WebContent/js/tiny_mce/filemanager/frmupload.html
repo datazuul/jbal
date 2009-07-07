@@ -30,6 +30,8 @@ function SetCurrentFolder( resourceType, folderPath )
 	sUrl += '&CurrentFolder=' + folderPath ;
 	sUrl += '&pid=' + window.parent.pid ;
 	
+	sUrl = sUrl.replace('fileManager','fileManagerHtml');
+	
 	document.getElementById('frmUpload').action = sUrl ;
 }
 
@@ -51,7 +53,7 @@ function OnSubmit()
 function OnUploadCompleted( errorNumber, data )
 {
 	// Reset the Upload Worker Frame.
-	window.parent.frames['frmUploadWorker'].location = '../../../fckblank.html' ;
+	window.parent.frames['frmUploadWorker'].location = 'fckblank.html' ;
 	
 	// Reset the upload form (On IE we must do a little trick to avout problems).
 	if ( document.all )
@@ -63,7 +65,9 @@ function OnUploadCompleted( errorNumber, data )
 	document.getElementById('eUploadMessage').innerHTML = 'Upload a new file in this folder' ;
 	document.getElementById('btnUpload').disabled = false ;
 	
-	switch ( errorNumber )
+	eN = parseInt( errorNumber );
+	
+	switch ( eN )
 	{
 		case 0 :
 			window.parent.frames['frmResourcesList'].Refresh() ;
