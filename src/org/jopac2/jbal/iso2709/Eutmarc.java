@@ -233,6 +233,7 @@ public class Eutmarc extends Unimarc {
 		public String getTitle() {
 		    String r=null;
 		    Tag tag=getFirstTag("200");
+		    if(tag==null)return "";
 		    Vector<Field> a=tag.getFields("a");
 		    r=a.elementAt(0).getContent();
 		    for(int i=1;i<a.size();i++) r+=" ; "+a.elementAt(i).getContent();
