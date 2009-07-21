@@ -40,12 +40,16 @@ package org.jopac2.engine.importers;
 import java.io.PrintStream;
 import java.util.*;
 
-import org.jopac2.jbal.xmlHandlers.ClassHandlerImpl;
+import org.jopac2.jbal.RecordFactory;
+import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.abstractStructure.Field;
+import org.jopac2.jbal.abstractStructure.Tag;
+//import org.jopac2.jbal.xmlHandlers.ClassHandlerImpl;
 import org.jopac2.jbal.xmlHandlers.ClassItem;
-import org.jopac2.jbal.xmlHandlers.ClassParser;
-import org.jopac2.jbal.xmlHandlers.DataType;
-import org.jopac2.jbal.xmlHandlers.DataTypeHandlerImpl;
-import org.jopac2.jbal.xmlHandlers.DataTypeParser;
+//import org.jopac2.jbal.xmlHandlers.ClassParser;
+//import org.jopac2.jbal.xmlHandlers.DataType;
+//import org.jopac2.jbal.xmlHandlers.DataTypeHandlerImpl;
+//import org.jopac2.jbal.xmlHandlers.DataTypeParser;
 
 /**
  *
@@ -53,8 +57,8 @@ import org.jopac2.jbal.xmlHandlers.DataTypeParser;
  */
 public class LoadClasses {
     
-    private String configFile;
-    private String configPath;
+//    private String configFile=null;
+//    private String configPath=null;
     private Vector<ClassItem> SQLInstructions;
     private PrintStream out=null;
     
@@ -63,36 +67,68 @@ public class LoadClasses {
     }
     
     
+//    /** 
+//     * @deprecated
+//    */
+//    public LoadClasses(String xmlConfFile, PrintStream console) {
+//        configFile=xmlConfFile;
+//        configPath=xmlConfFile.substring(0,xmlConfFile.lastIndexOf('/'))+"/";
+//        out=console;
+//        out.println("Uso CONFIGPATH: "+configPath);
+//    }
+    
     /** Creates a new instance of LoadClasses */
-    public LoadClasses(String xmlConfFile, PrintStream console) {
-        configFile=xmlConfFile;
-        configPath=xmlConfFile.substring(0,xmlConfFile.lastIndexOf('/'))+"/";
+    public LoadClasses(PrintStream console) {
+//        configFile=xmlConfFile;
+//        configPath=xmlConfFile.substring(0,xmlConfFile.lastIndexOf('/'))+"/";
         out=console;
-        out.println("Uso CONFIGPATH: "+configPath);
+//        out.println("Uso CONFIGPATH: "+configPath);
     }
     
-    private Vector<DataType> getTypes() {
-        DataTypeHandlerImpl dataHandler=new DataTypeHandlerImpl();
-//        dataHandler.DEBUG=true;
-        DataTypeParser p=new DataTypeParser(dataHandler,null);
-        try {
-            org.xml.sax.InputSource i=new org.xml.sax.InputSource(configFile);
-            p.parse(i);
-        }
-        catch (Exception e) {
-            out.println(e.getMessage());
-        }
-        return dataHandler.getDataTypes();
-    }
     
-    public Vector<ClassItem> processType(String name) {
-        Vector<ClassItem> SQLInstructions=null;
-        ClassHandlerImpl classHandler=new ClassHandlerImpl();
-        ClassParser p=new ClassParser(classHandler,null);
+//    /**
+//     * @deprecated
+//     * @return
+//     */
+//    private Vector<DataType> getTypes() {
+//        DataTypeHandlerImpl dataHandler=new DataTypeHandlerImpl();
+////        dataHandler.DEBUG=true;
+//        DataTypeParser p=new DataTypeParser(dataHandler,null);
+//        try {
+//            org.xml.sax.InputSource i=new org.xml.sax.InputSource(configFile);
+//            p.parse(i);
+//        }
+//        catch (Exception e) {
+//            out.println(e.getMessage());
+//        }
+//        return dataHandler.getDataTypes();
+//    }
+    
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    private Vector<ClassItem> processType(String name) {
+        Vector<ClassItem> SQLInstructions=new Vector<ClassItem>();
+        
         try {
-            org.xml.sax.InputSource i=new org.xml.sax.InputSource(configPath+name+".xml");
-            p.parse(i);
-            SQLInstructions=p.getSQLInstructions();
+        	RecordInterface ma=RecordFactory.buildRecord(0, "", name, 0);
+        	Hashtable<String, List<Tag>> mapping=ma.getRecordMapping();
+        	ma.destroy();
+        	Enumeration<String> e=mapping.keys();
+        	while(e.hasMoreElements()) {
+        		String currentElement=e.nextElement();
+        		Iterator<Tag> i=mapping.get(currentElement).iterator();
+        		while(i.hasNext()) {
+        			Tag t=i.next();
+        			String tag=t.getTagName();
+        			Vector<Field> f=t.getFields();
+        			for(int n=0;f!=null && n<f.size();n++)
+        				SQLInstructions.addElement(new ClassItem(name,currentElement,tag,f.elementAt(n).getFieldCode()));
+        		}
+        	}
+        	
         }
         catch (Exception e) {
             out.println(e.getMessage());
@@ -101,21 +137,16 @@ public class LoadClasses {
     }
     
 	public void doJob(String[] channels) {
-        Vector<DataType> v=getTypes();
-        Iterator<DataType> i=v.iterator();
+        String[] v=RecordFactory.getRecordInterfaces();
         
         SQLInstructions=new Vector<ClassItem>();
         
-        while(i.hasNext()) {
-            DataType currentDataType=(DataType) i.next();
-            
-            String currentName=currentDataType.getName();
-//            System.err.println("Processing: "+currentName);
+        for(int i=0;i<v.length;i++) {            
             try {
-                SQLInstructions.addAll(processType(currentName));
+                SQLInstructions.addAll(processType(v[i]));
             }
             catch (Exception e) {
-                System.err.println("No data for class: "+currentName);
+                System.err.println("No data for class: "+v[i]);
             }
         }
         

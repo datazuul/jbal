@@ -218,8 +218,8 @@ public abstract class DbGateway {
 			}
     }
     
-    public void importClassiDettaglio(String[] channels,Connection conn, String configFile, PrintStream console) {
-        LoadClasses lClasses=new LoadClasses(configFile, console);
+    public void importClassiDettaglio(String[] channels,Connection conn, PrintStream console) {
+    	LoadClasses lClasses=new LoadClasses(console);
         lClasses.doJob(channels);
         Vector<ClassItem> SQLInstructions=lClasses.getSQLInstructions();
         ClassItem currentItem;
@@ -233,6 +233,29 @@ public abstract class DbGateway {
 			}
         }
     }
+    
+//    /**
+//     * @deprecated
+//     * @param channels
+//     * @param conn
+//     * @param configFile
+//     * @param console
+//     */
+//    public void importClassiDettaglio(String[] channels,Connection conn, String configFile, PrintStream console) {
+//        LoadClasses lClasses=new LoadClasses(configFile, console);
+//        lClasses.doJob(channels);
+//        Vector<ClassItem> SQLInstructions=lClasses.getSQLInstructions();
+//        ClassItem currentItem;
+//        
+//        for(int i=0;i<SQLInstructions.size();i++) {
+//            currentItem=SQLInstructions.elementAt(i);
+//            try {
+//				insertClassItem(channels,conn, currentItem);
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//        }
+//    }
     
     public void create1stIndex(Connection conn) throws SQLException{
     	createIndex(conn,"anagrafe_parole_parola", "anagrafe_parole", "parola(30)", true);
@@ -436,8 +459,13 @@ public abstract class DbGateway {
     		String notizia) throws SQLException {
   	  RecordInterface ma;
   	  //ma=ISO2709.creaNotizia(0,notizia,tipo,0);
-  	  ma=RecordFactory.buildRecord(0,notizia,tipo,0);
-  	  inserisciNotizia(conn,ma);
+  	  try {
+		ma=RecordFactory.buildRecord(0,notizia,tipo,0);
+		inserisciNotizia(conn,ma);
+	} catch (Exception e) {
+		e.printStackTrace();
+	} 
+  	  
     }
     
     public long inserisciNotizia(Connection conn, RecordInterface notizia) throws SQLException {
@@ -656,9 +684,14 @@ public abstract class DbGateway {
 		while(rs.next()) {
 			int idTipo=rs.getInt("id_tipo");
 			String tipo=tipiNotizie.get(new Integer(idTipo));
-			RecordInterface ma=RecordFactory.buildRecord(0,rs.getString("notizia"),tipo,0);
+			RecordInterface ma=null;
+			try {
+				ma=RecordFactory.buildRecord(0,rs.getString("notizia"),tipo,0);
+				insertNotizia(conn,ma,idTipo,rs.getLong("id"),paroleSpooler); //ISO2709 notizia, long idTipo, long jid
+			} catch (Exception e) {
+				e.printStackTrace();
+			} 
 			//ISO2709 ma=ISO2709.creaNotizia(0,rs.getString("notizia"),tipo,0);
-			insertNotizia(conn,ma,idTipo,rs.getLong("id"),paroleSpooler); //ISO2709 notizia, long idTipo, long jid
 			current++;
 			if(current%1000==0) {
 				console.println(current+" record reimportati");

@@ -231,7 +231,7 @@ private boolean clearDatabase;
 		dbGateway.createAllTables(conn);
 		out.println("Importing data types");
 
-		dbGateway.importClassiDettaglio(channels,conn,confDir+"/dataDefinition/DataType.xml",out);
+		dbGateway.importClassiDettaglio(channels,conn,out); //confDir+"/dataDefinition/DataType.xml",out);
 		
 		out.println("Create DB 1st index");
 		dbGateway.create1stIndex(conn);
@@ -242,12 +242,17 @@ private boolean clearDatabase;
 	}
 
   public void process(String stringa, ParoleSpoolerInterface paroleSpooler) throws SQLException {
-	  RecordInterface notizia;
+	  RecordInterface notizia=null;
 	  Enumeration<TokenWord> tags=null;
   
     //long id_notizia=0;
 
-	  notizia=RecordFactory.buildRecord(0,stringa,dbType,0);
+	  try {
+		  notizia=RecordFactory.buildRecord(0,stringa,dbType,0);
+	  }
+	  catch(Exception e) {
+		  e.printStackTrace();
+	  }
 	if(notizia.toString()!=null) {
     	if(clearDatabase) {
     		inizializeDB(notizia.getChannels(),conn[0]);
@@ -326,7 +331,13 @@ private boolean clearDatabase;
       //idTipo=classID;
       this.dbType=dbType;
 
-      RecordInterface n=RecordFactory.buildRecord(0,"",tipoNotizia,0);
+      RecordInterface n=null;
+      try {
+    	  n=RecordFactory.buildRecord(0,"",tipoNotizia,0);
+      }
+      catch(Exception e) {
+    	  e.printStackTrace();
+      }
       //String terms=n.getTerminators();
       if(dbType!=null && dbType.length()>0) {
         
