@@ -58,7 +58,7 @@ public class X2uni {
 
 	}
 
-	private static RecordInterface record2Unimarc(RecordInterface ma) {
+	private static RecordInterface record2Unimarc(RecordInterface ma) throws SecurityException, IllegalArgumentException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 		RecordInterface uni=RecordFactory.buildRecord(0, "", "sebina", 0);
 		uni.setType(ma.getType());
 		

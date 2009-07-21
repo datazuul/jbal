@@ -54,6 +54,24 @@ public class Sebina extends Unimarc {
     super(stringa,dTipo,livello);
   }
   
+  public Hashtable<String, List<Tag>> getRecordMapping() {
+		Hashtable<String, List<Tag>> r=super.getRecordMapping();
+		
+		List<Tag> bib=new Vector<Tag>();
+		bib.add(new Tag("899","a",""));
+		r.put("BIB", bib);
+		
+		List<Tag> inv=new Vector<Tag>();
+		inv.add(new Tag("950","e",""));
+		r.put("INV", inv);
+		
+		return r;
+	}
+
+	public String getRecordTypeDescription() {
+		return "Sebina unimarc format.";
+	}
+  
   public void addSignature(BookSignature signature) {
 	  
 	  if(getSignatures().contains(signature)) return;

@@ -55,6 +55,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.iso2709.ISO2709Impl;
 import org.jopac2.jbal.subject.SubjectInterface;
@@ -82,6 +83,14 @@ public class Rdf extends ISO2709Impl {
   public Rdf(String stringa, String dTipo, String livello) {
   	init(stringa);
   }
+  
+	public Hashtable<String, List<Tag>> getRecordMapping() {
+		return null;
+	}
+
+	public String getRecordTypeDescription() {
+		return "General RDF text";
+	}
   
   public void init(String stringa) {
   	record=new RdfData();
@@ -267,17 +276,20 @@ public class Rdf extends ISO2709Impl {
     	in=in.replaceAll("&#9;","");
     	//in=in.replaceAll("&","&amp;");
         
-    	InputSource is=new InputSource(new StringReader(in));
-    	DOMParser p=new DOMParser();
-
-    	p.parse(is);
+    	if(in.length()>0) {
     	
-    	Node n=p.getDocument();
-    	
-    	NodeList children = n.getChildNodes();
-	    int len = children.getLength();
-	      for (int i=0; i<len; i++)
-	        explore(children.item(i),record);
+	    	InputSource is=new InputSource(new StringReader(in));
+	    	DOMParser p=new DOMParser();
+	
+	    	p.parse(is);
+	    	
+	    	Node n=p.getDocument();
+	    	
+	    	NodeList children = n.getChildNodes();
+		    int len = children.getLength();
+		      for (int i=0; i<len; i++)
+		        explore(children.item(i),record);
+    	}
 //	    System.out.println("Out Rdf");
     }
     catch(Exception e){

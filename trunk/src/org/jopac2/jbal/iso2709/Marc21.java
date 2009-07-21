@@ -1,6 +1,8 @@
 package org.jopac2.jbal.iso2709;
 
 import java.awt.image.BufferedImage;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import org.jopac2.jbal.RecordInterface;
@@ -54,6 +56,14 @@ public class Marc21 extends ISO2709Impl {
   public Marc21(String stringa,String dTipo,String livello) {
     super(stringa,dTipo,livello);
   }
+  
+	public Hashtable<String, List<Tag>> getRecordMapping() {
+		return null;
+	}
+
+	public String getRecordTypeDescription() {
+		return "General Marc21";
+	}
 
   public Vector<String> getAuthors() {
     Vector<Tag> v=getTags("100");

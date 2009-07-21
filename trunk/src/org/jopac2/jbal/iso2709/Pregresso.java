@@ -75,6 +75,26 @@ public class Pregresso extends ISO2709Impl {
     initLinkDown();
     initLinkSerie();
   }
+  
+  public Hashtable<String, List<Tag>> getRecordMapping() {
+		Hashtable<String, List<Tag>> r=new Hashtable<String, List<Tag>>();
+		
+		List<Tag> tit=new Vector<Tag>();
+
+		tit.add(new Tag("300","a",""));
+		tit.add(new Tag("310","a",""));
+		tit.add(new Tag("320","a",""));
+		tit.add(new Tag("330","a",""));
+		tit.add(new Tag("330","b",""));
+		
+		r.put("TIT", tit);
+
+		return r;
+	}
+
+	public String getRecordTypeDescription() {
+		return "Pregresso ISO2709 format.";
+	}
 
   public void initLinkUp() {
     linkUp=null;

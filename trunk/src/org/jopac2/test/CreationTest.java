@@ -101,7 +101,20 @@ public class CreationTest extends TestCase {
 
 	
 	private String rebuild(String record, String type) {
-		RecordInterface ma=RecordFactory.buildRecord(0, record, type, 0);
+		RecordInterface ma=null;
+		try {
+			ma = RecordFactory.buildRecord(0, record, type, 0);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
 		String r=ma.toString();
 		ma.destroy();
 		return r;

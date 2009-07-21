@@ -75,7 +75,14 @@ public abstract class ISO2709 implements RecordInterface {
   public Vector<RecordInterface> linkSerie=null;
   
   public RecordInterface clone() {
-	  return RecordFactory.buildRecord(0, this.toString(), this.getTipo(), this.getLivello());
+	  RecordInterface ma=null;
+	  try {
+		  ma=RecordFactory.buildRecord(0, this.toString(), this.getTipo(), this.getLivello());
+	  }
+	  catch(Exception e) {
+		  e.printStackTrace();
+	  }
+	  return ma;
   }
   
   public String getDl() {

@@ -80,7 +80,25 @@ public abstract class XML implements RecordInterface {
 
   
   public RecordInterface clone() {
-	  return RecordFactory.buildRecord(0, this.toString(), this.getTipo(), this.getLivello());
+	  try {
+		return RecordFactory.buildRecord(0, this.toString(), this.getTipo(), this.getLivello());
+	} catch (SecurityException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IllegalArgumentException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (NoSuchMethodException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (InstantiationException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IllegalAccessException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return null;
   }
   
 	/* (non-Javadoc)
@@ -299,6 +317,14 @@ public abstract class XML implements RecordInterface {
       document=null;
       tw=new Vector<TokenWord>();
   }
+  
+	public Hashtable<String, List<Tag>> getRecordMapping() {
+		return null;
+	}
+
+	public String getRecordTypeDescription() {
+		return "General XML text";
+	}
   
   public Enumeration<TokenWord> getItems() {
 		tw.removeAllElements();

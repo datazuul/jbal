@@ -53,6 +53,24 @@ public class SBNUnix extends Unimarc {
   public SBNUnix(String stringa,String dTipo,String livello) {
     super(stringa,dTipo,livello);
   }
+  
+  public Hashtable<String, List<Tag>> getRecordMapping() {
+		Hashtable<String, List<Tag>> r=super.getRecordMapping();
+		
+		List<Tag> bib=new Vector<Tag>();
+		bib.add(new Tag("950","a",""));
+		r.put("BIB", bib);
+		
+		List<Tag> inv=new Vector<Tag>();
+		inv.add(new Tag("950","e",""));
+		r.put("INV", inv);
+		
+		return r;
+	}
+
+	public String getRecordTypeDescription() {
+		return "SBNUnix unimarc format.";
+	}
 
 /**
  * 13/2/2003 - R.T.

@@ -77,6 +77,117 @@ public class Isisbiblo extends ISO2709Impl {
     initLinkSerie();
   }
     
+    public Hashtable<String, List<Tag>> getRecordMapping() {
+		Hashtable<String, List<Tag>> r=new Hashtable<String, List<Tag>>();
+		
+		List<Tag> aut=new Vector<Tag>();
+		aut.add(new Tag("011","R",""));
+		aut.add(new Tag("011","A",""));
+		aut.add(new Tag("012","R",""));
+		aut.add(new Tag("014","N",""));
+		aut.add(new Tag("021","R",""));
+		aut.add(new Tag("021","A",""));
+		aut.add(new Tag("031","R",""));
+		aut.add(new Tag("031","A",""));
+		aut.add(new Tag("041","C",""));
+		aut.add(new Tag("041","N",""));
+		aut.add(new Tag("051","C",""));
+		aut.add(new Tag("051","N",""));
+		aut.add(new Tag("054","C",""));
+		aut.add(new Tag("054","N",""));
+		
+		aut.add(new Tag("011","r",""));
+		aut.add(new Tag("011","a",""));
+		aut.add(new Tag("012","r",""));
+		aut.add(new Tag("014","n",""));
+		aut.add(new Tag("021","r",""));
+		aut.add(new Tag("021","a",""));
+		aut.add(new Tag("031","r",""));
+		aut.add(new Tag("031","a",""));
+		aut.add(new Tag("041","c",""));
+		aut.add(new Tag("041","n",""));
+		aut.add(new Tag("051","c",""));
+		aut.add(new Tag("051","n",""));
+		aut.add(new Tag("054","c",""));
+		aut.add(new Tag("054","n",""));
+		r.put("AUT", aut);
+		
+		List<Tag> tit=new Vector<Tag>();
+		tit.add(new Tag("011","T",""));
+		tit.add(new Tag("011","C",""));
+		tit.add(new Tag("011","P",""));
+		tit.add(new Tag("011","S",""));
+		tit.add(new Tag("021","T",""));
+		tit.add(new Tag("021","C",""));
+		tit.add(new Tag("021","P",""));
+		tit.add(new Tag("021","S",""));
+		tit.add(new Tag("031","T",""));
+		tit.add(new Tag("031","C",""));
+		tit.add(new Tag("031","P",""));
+		tit.add(new Tag("031","S",""));
+		tit.add(new Tag("045","T",""));
+		tit.add(new Tag("045","P",""));
+		
+		tit.add(new Tag("011","a",""));
+		tit.add(new Tag("011","c",""));
+		tit.add(new Tag("011","p",""));
+		tit.add(new Tag("011","s",""));
+		tit.add(new Tag("021","t",""));
+		tit.add(new Tag("021","c",""));
+		tit.add(new Tag("021","p",""));
+		tit.add(new Tag("021","s",""));
+		tit.add(new Tag("031","t",""));
+		tit.add(new Tag("031","c",""));
+		tit.add(new Tag("031","p",""));
+		tit.add(new Tag("031","s",""));
+		tit.add(new Tag("045","t",""));
+		tit.add(new Tag("045","p",""));
+		r.put("TIT", tit);
+		
+		List<Tag> num=new Vector<Tag>();
+		num.add(new Tag("018","B",""));
+		num.add(new Tag("018","S",""));
+		num.add(new Tag("018","b",""));
+		num.add(new Tag("018","s",""));
+		r.put("NUM", num);
+		
+		List<Tag> cll=new Vector<Tag>();
+		cll.add(new Tag("016","T",""));
+		cll.add(new Tag("016","P",""));
+		cll.add(new Tag("016","C",""));
+		cll.add(new Tag("016","t",""));
+		cll.add(new Tag("016","p",""));
+		cll.add(new Tag("016","c",""));
+		r.put("CLL", cll);
+		
+		
+		
+		
+//		List<Tag> mat=new Vector<Tag>();
+//		mat.add(new Tag("040","a",""));
+//		r.put("MAT", mat);
+//		
+//		List<Tag> sbj=new Vector<Tag>();
+//		sbj.add(new Tag("730","a",""));
+//		r.put("SBJ", sbj);
+		
+		List<Tag> bib=new Vector<Tag>();
+		bib.add(new Tag("741","B",""));
+		r.put("BIB", bib);
+		
+		List<Tag> inv=new Vector<Tag>();
+		inv.add(new Tag("001","",""));
+		r.put("INV", inv);
+		
+//		712 = biblioteca (o codice biblioteca)
+		
+		return r;
+	}
+
+	public String getRecordTypeDescription() {
+		return "CDS/ISIS BIBLO ISO2709 format.";
+	}
+    
     public String getTerminators() {
   	  System.out.println("prende i terminatori Isisbiblo");
       return ft+rt+dl;

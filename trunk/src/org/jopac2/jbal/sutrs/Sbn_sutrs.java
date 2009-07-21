@@ -140,8 +140,21 @@ public void init(String stringa) {
 			addTag(t);
   			
   			if(linkUp==null) linkUp=new Vector<RecordInterface>();
-			RecordInterface ma=RecordFactory.buildRecord(0, "Titolo:"+temp, "sbn_sutrs", 0);
-			linkUp.addElement(ma);
+			RecordInterface ma;
+			try {
+				ma = RecordFactory.buildRecord(0, "Titolo:"+temp, "sbn_sutrs", 0);
+				linkUp.addElement(ma);
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
   		}
   		else if(temp.startsWith("Collezione:")) {
   			temp = temp.substring(11).trim();
@@ -152,8 +165,21 @@ public void init(String stringa) {
 			addTag(t);
   			
   			if(linkSerie==null) linkSerie=new Vector<RecordInterface>();
-			RecordInterface ma=RecordFactory.buildRecord(0, "Titolo:"+temp, "sbn_sutrs", 0);
-			linkSerie.addElement(ma);
+			RecordInterface ma;
+			try {
+				ma = RecordFactory.buildRecord(0, "Titolo:"+temp, "sbn_sutrs", 0);
+				linkSerie.addElement(ma);
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
   		}
   		else if(temp.startsWith("Comprende:")) {
   			temp = temp.substring(10).trim();
@@ -168,8 +194,21 @@ public void init(String stringa) {
   				Tag ta=new Tag("463",' ',' ');
   				ta.addField(new Field("a",temp));
   				addTag(ta);
-  				RecordInterface ma=RecordFactory.buildRecord(0, "Titolo:"+temp, "sbn_sutrs", 0);
-  				linkDown.addElement(ma);
+  				RecordInterface ma;
+				try {
+					ma = RecordFactory.buildRecord(0, "Titolo:"+temp, "sbn_sutrs", 0);
+	  				linkDown.addElement(ma);
+				} catch (SecurityException e) {
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
   			}
   		}
   		else if(temp.startsWith("Nomi:")){

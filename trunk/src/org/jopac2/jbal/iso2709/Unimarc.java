@@ -188,20 +188,10 @@ public void initLinkUp() {
   public String getISBD() {
     String r;
     r=getTitle();
-    /*
-    Tag tag=getFirstTag("200");
-    r+=tag.getField("d").getContent();
-    r+=Utils.ifExists(" : ",tag.getField("e").getContent());
-    r+=Utils.ifExists(" / ",tag.getField("f").getContent());
-    r+=Utils.ifExists(" ; ",tag.getField("g").getContent());
-	*/
+
     
     r+=getEdition();
-    /*
-    tag=getFirstTag("205");
-    r+=Utils.ifExists(". - ",tag.getField("a").getContent());
-    r+=Utils.ifExists(" ; ",tag.getField("b").getContent());
-	*/
+
     
     Tag tag=getFirstTag("210");
     if(tag!=null) {
@@ -490,16 +480,16 @@ public void initLinkUp() {
 		 */
 		if(author==null || author.length()==0) return;
 		
-		// 1. determina se esiste 200^f. Se esiste aggiungi in ^g, altrimenti in ^f
-		//		Tag tag200=getFirstTag("200");
-		//		Field auth=new Field("f",author);
-		//		Field mr=tag200.getField("f");
-		//		if(mr!=null && !mr.getContent().equals(author)) {
-		//			auth.setFieldCode("g");
-		//			tag200.addField(auth);
-		//		}
-		//		removeTags("200");
-		//		addTag(tag200);
+		 // 1. determina se esiste 200^f. Se esiste aggiungi in ^g, altrimenti in ^f
+				Tag tag200=getFirstTag("200");
+				Field auth=new Field("f",author);
+				Field mr=tag200.getField("f");
+				if(mr!=null && !mr.getContent().equals(author)) {
+					auth.setFieldCode("g");
+					tag200.addField(auth);
+				}
+				removeTags("200");
+				addTag(tag200);
 		
 		// 2. determina se esiste già il campo 700. Se non esiste lo crea, altrimenti crea 701
 		Tag tag=getFirstTag("700");
@@ -917,6 +907,71 @@ public void initLinkUp() {
 		return null;
 	}
   
-  
+	public Hashtable<String, List<Tag>> getRecordMapping() {
+		Hashtable<String, List<Tag>> r=new Hashtable<String, List<Tag>>();
+		
+		List<Tag> aut=new Vector<Tag>();
+		aut.add(new Tag("200","f",""));
+		aut.add(new Tag("200","g",""));
+		aut.add(new Tag("700","a",""));
+		aut.add(new Tag("700","b",""));
+		aut.add(new Tag("700","c",""));
+		aut.add(new Tag("701","a",""));
+		aut.add(new Tag("701","b",""));
+		aut.add(new Tag("701","c",""));
+		aut.add(new Tag("702","a",""));
+		aut.add(new Tag("702","b",""));
+		aut.add(new Tag("702","c",""));
+		r.put("AUT", aut);
+		
+		List<Tag> tit=new Vector<Tag>();
+		tit.add(new Tag("200","a",""));
+		tit.add(new Tag("200","c",""));
+		tit.add(new Tag("200","d",""));
+		tit.add(new Tag("200","e",""));
+		tit.add(new Tag("500","a",""));
+		tit.add(new Tag("510","a",""));
+		tit.add(new Tag("517","a",""));
+		r.put("TIT", tit);
+		
+		List<Tag> num=new Vector<Tag>();
+		num.add(new Tag("010","a",""));
+		num.add(new Tag("011","a",""));
+		num.add(new Tag("013","a",""));
+		r.put("NUM", num);
+		
+		List<Tag> lan=new Vector<Tag>();
+		lan.add(new Tag("101","a",""));
+		r.put("LAN", lan);
+		
+		List<Tag> mat=new Vector<Tag>();
+		mat.add(new Tag("200","b",""));
+		r.put("MAT", mat);
+		
+		List<Tag> dte=new Vector<Tag>();
+		dte.add(new Tag("500","k",""));
+		r.put("DTE", dte);
+		
+		List<Tag> sbj=new Vector<Tag>();
+		sbj.add(new Tag("600","a",""));
+		sbj.add(new Tag("601","a",""));
+		sbj.add(new Tag("602","a",""));
+		sbj.add(new Tag("604","1",""));
+		sbj.add(new Tag("605","a",""));
+		sbj.add(new Tag("606","a",""));
+		sbj.add(new Tag("607","a",""));
+		sbj.add(new Tag("610","a",""));
+		r.put("SBJ", sbj);
+		
+		List<Tag> cll=new Vector<Tag>();
+		cll.add(new Tag("410","a",""));
+		r.put("CLL", cll);
+		
+		return r;
+	}
+
+	public String getRecordTypeDescription() {
+		return "General unimarc format.";
+	}
 
 }

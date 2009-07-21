@@ -1,6 +1,9 @@
 package org.jopac2.jbal.sutrs;
 
 import java.io.BufferedReader;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
 
 import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.jbal.Readers.TxtIndexRecordReader;
@@ -41,6 +44,17 @@ public class PregressoImages_sutrs extends Sutrs {
   public PregressoImages_sutrs(String notizia,String dTipo,String livello) {
     this.iso2709Costruttore(notizia,dTipo,Integer.parseInt(livello));
   }
+  
+  public Hashtable<String, List<Tag>> getRecordMapping() {
+		Hashtable<String, List<Tag>> r=new Hashtable<String, List<Tag>>();
+		
+
+		return r;
+	}
+
+	public String getRecordTypeDescription() {
+		return "Pregresso ISO2709 format.";
+	}
   
   public void init(String stringa) {
 	  Tag t=new Tag("001",' ',' ');
