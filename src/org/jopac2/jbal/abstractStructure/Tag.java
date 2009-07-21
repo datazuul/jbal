@@ -36,6 +36,18 @@ public class Tag implements Comparable<Tag> {
 		init(tagString,delimiters);
 	}
 	
+	/**
+	 * Shortcut to create a tag with ONE field
+	 * @param tagName
+	 * @param fieldName
+	 * @param fieldContent
+	 */
+	public Tag(String tagName, String fieldName, String fieldContent) {
+		this.tagName=tagName;
+		Field f=new Field(fieldName, fieldContent);
+		this.addField(f);
+	}
+	
 	
 	public Tag(String tagString, Delimiters d) {
 		init(tagString,d);

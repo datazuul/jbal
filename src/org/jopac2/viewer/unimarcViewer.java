@@ -28,20 +28,27 @@ public class unimarcViewer {
 		
 		FileInputStream f=new FileInputStream(new File(filename));
 		
-		RecordInterface ma=RecordFactory.buildRecord(0, "", tipo, 0);
-		RecordReader r=ma.getRecordReader(f);
-		
-		int i=10;
-		int max=100;
-		
-		String line=r.readRecord();
-		while(line!=null && i++<max) {
-			ma=RecordFactory.buildRecord(0, line, tipo, 0);
-			System.out.println(ma.toReadableString());
-			line=r.readRecord();
+		RecordInterface ma=null;
+		try {
+			ma=RecordFactory.buildRecord(0, "", tipo, 0);
+			RecordReader r=ma.getRecordReader(f);
+			
+			int i=10;
+			int max=100;
+			
+			String line=r.readRecord();
+			while(line!=null && i++<max) {
+				ma=RecordFactory.buildRecord(0, line, tipo, 0);
+				System.out.println(ma.toReadableString());
+				line=r.readRecord();
+			}
+			r.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
 		}
 		
-		r.close();
+		
 		f.close();
 
 	}

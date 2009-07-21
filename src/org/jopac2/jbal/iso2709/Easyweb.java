@@ -81,6 +81,52 @@ public class Easyweb extends ISO2709Impl {
     initLinkSerie();
   }
   
+  public Hashtable<String, List<Tag>> getRecordMapping() {
+		Hashtable<String, List<Tag>> r=new Hashtable<String, List<Tag>>();
+		
+		List<Tag> aut=new Vector<Tag>();
+		aut.add(new Tag("710","a",""));
+		aut.add(new Tag("711","a",""));
+		aut.add(new Tag("712","a",""));
+		r.put("AUT", aut);
+		
+		List<Tag> tit=new Vector<Tag>();
+		tit.add(new Tag("997","a",""));
+		r.put("TIT", tit);
+		
+		List<Tag> lan=new Vector<Tag>();
+		lan.add(new Tag("030","a",""));
+		r.put("LAN", lan);
+		
+		List<Tag> mat=new Vector<Tag>();
+		mat.add(new Tag("040","a",""));
+		r.put("MAT", mat);
+		
+		List<Tag> sbj=new Vector<Tag>();
+		sbj.add(new Tag("730","a",""));
+		r.put("SBJ", sbj);
+		
+		List<Tag> bib=new Vector<Tag>();
+		bib.add(new Tag("800","a",""));
+		bib.add(new Tag("800","b",""));
+		r.put("BIB", bib);
+		
+		List<Tag> inv=new Vector<Tag>();
+		inv.add(new Tag("800","d",""));
+		r.put("INV", inv);
+		
+		List<Tag> cll=new Vector<Tag>();
+		cll.add(new Tag("420","a",""));
+		r.put("CLL", cll);
+		
+		return r;
+	}
+
+	public String getRecordTypeDescription() {
+		return "Easyweb ISO2709 format.";
+	}
+  
+  
   public String getBid() {
 	  return Utils.ifExists("", getFirstTag("001"));
   }

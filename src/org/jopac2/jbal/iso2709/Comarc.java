@@ -1,6 +1,8 @@
 package org.jopac2.jbal.iso2709;
 
 import java.awt.image.BufferedImage;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import org.jopac2.jbal.abstractStructure.Field;
@@ -118,4 +120,5 @@ public Vector<BookSignature> getSignatures() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }

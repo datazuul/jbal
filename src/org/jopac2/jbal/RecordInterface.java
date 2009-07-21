@@ -41,7 +41,20 @@ import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.JOpac2Exception;
 import org.jopac2.utils.TokenWord;
 
-public interface RecordInterface {	
+public interface RecordInterface {
+	/**
+	 * Restituisce una descrizione del tipo di record
+	 * @return
+	 */
+	public String getRecordTypeDescription();
+	
+	/**
+	 * Restituisce una mappatura tra gli elementi del record e i canali da indicizzare.
+	 * @return
+	 */
+	public Hashtable<String,List<Tag>> getRecordMapping();
+	
+	
 	/** clona il record, restituendone una nuova istanza
 	 * 
 	 * @return RecordInterface

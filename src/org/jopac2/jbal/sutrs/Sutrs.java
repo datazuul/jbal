@@ -46,12 +46,20 @@ import org.jopac2.utils.Utils;
 
 public class Sutrs extends ISO2709Impl {
 
-public int delimiterPosition=27;
+  public int delimiterPosition=27;
   public char delimiter=':';
 
   public Sutrs(String notizia,String dTipo,String livello) {
     this.iso2709Costruttore(notizia,dTipo,Integer.parseInt(livello));
   }
+  
+	public Hashtable<String, List<Tag>> getRecordMapping() {
+		return null;
+	}
+
+	public String getRecordTypeDescription() {
+		return "General SUTRS text";
+	}
   
   public void setDelimiter(char delimiter) {
   	this.delimiter=delimiter;
