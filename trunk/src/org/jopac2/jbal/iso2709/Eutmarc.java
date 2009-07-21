@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -33,6 +35,20 @@ public class Eutmarc extends Unimarc {
         public Eutmarc(String stringa, String tipo, String livello) {
             super(stringa, tipo, livello);
         }
+        
+        public Hashtable<String, List<Tag>> getRecordMapping() {
+    		Hashtable<String, List<Tag>> r=super.getRecordMapping();
+    		
+    		List<Tag> nat=new Vector<Tag>();
+    		nat.add(new Tag("901","a",""));
+    		r.put("NAT", nat);
+    		
+    		return r;
+    	}
+
+    	public String getRecordTypeDescription() {
+    		return "EUT unimarc format.";
+    	}
         
 //        901 ^a mettiamo il tipo:
 //            M = monografia
