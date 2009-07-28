@@ -11,7 +11,7 @@
 	            <map:match pattern="view">
 	                <map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/gallery{cid}.xml" label="edit"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/gallery{cid}.xml" label="edit"/>
 	                    <map:transform src="gallery.xslt">
 	                        <map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
@@ -42,7 +42,7 @@
 	            <map:match pattern="edit">
 	                <map:act type="request">
 	                	<map:parameter name="parameters" value="true"/>
-	             		<map:generate src="{request-param:datadir}/data/gallery{cid}.xml"/>
+	             		<map:generate type="componentGenerator" src="{request-param:datadir}/data/gallery{cid}.xml"/>
 	
 	                    <map:transform src="galleryedit.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
@@ -70,7 +70,7 @@
 				<map:match pattern="order">
 				 	<map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/gallery{cid}.xml" label="edit"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/gallery{cid}.xml" label="edit"/>
 	                    
 	                    <map:transform src="galleryorder.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>

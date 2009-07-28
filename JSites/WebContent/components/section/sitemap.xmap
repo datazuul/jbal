@@ -11,7 +11,7 @@
 	            <map:match pattern="view">
 	                <map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/section{cid}.xml" label="edit"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/section{cid}.xml" label="edit"/>
 	                    <map:transform src="preparenewsedit.xslt">
 	             			<map:parameter name="use-request-parameters" value="true"/>
 	             		</map:transform>
@@ -31,7 +31,7 @@
 	                <map:act type="request">
 	                	<map:parameter name="parameters" value="true"/>
 	                	
-	             		<map:generate src="{request-param:datadir}/data/section{cid}.xml"/>
+	             		<map:generate type="componentGenerator" src="{request-param:datadir}/data/section{cid}.xml"/>
 	             		<map:transform src="preparenewsedit.xslt">
 	             			<map:parameter name="use-request-parameters" value="true"/>
 	             		</map:transform>
@@ -72,7 +72,7 @@
 				<map:match pattern="order">
 				 	<map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/section{cid}.xml" label="edit"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/section{cid}.xml" label="edit"/>
 	                    <map:transform src="sectionorder.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>

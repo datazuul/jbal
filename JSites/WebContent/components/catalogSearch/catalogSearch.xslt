@@ -38,6 +38,10 @@
 				        if(el.type == "text" && el.value.length > 0 && el.id != "page"){
 				            q = q + el.id + "=" + el.value + "&";
 				        }
+				        
+				        if(el.type == "select-one" && el.selectedIndex != 0 ){
+                                q = q + el.id + "=" + el[el.selectedIndex].value + "&";
+                        }
 				    }
 				    q = q.substring(0,q.length-1);
 				    

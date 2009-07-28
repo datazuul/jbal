@@ -15,7 +15,7 @@
 	            <map:match pattern="view">
 	                <map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/table{cid}.xml"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/table{cid}.xml"/>
 	                    <map:transform src="table.xslt">
 	                        <map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
@@ -27,7 +27,7 @@
 	            <map:match pattern="edit">
 	                <map:act type="request">
 	                	<map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/table{cid}.xml"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/table{cid}.xml"/>
 	                    <map:transform src="tableedit.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
@@ -55,7 +55,7 @@
 				<map:match pattern="order">
 				 	<map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/table{cid}.xml" label="edit"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/table{cid}.xml" label="edit"/>
 	                    <map:transform src="tableorder.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>

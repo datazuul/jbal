@@ -19,7 +19,7 @@
 	            <map:match pattern="view">
 	                <map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/excel{cid}.xml"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/excel{cid}.xml"/>
 	                    <map:transform src="excel.xslt">
 	                        <map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
@@ -31,7 +31,7 @@
 	            <map:match pattern="edit">
 	                <map:act type="request">
 	                	<map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/excel{cid}.xml"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/excel{cid}.xml"/>
 	                    <map:transform src="exceledit.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
@@ -60,7 +60,7 @@
 				<map:match pattern="order">
 				 	<map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/excel{cid}.xml" label="edit"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/excel{cid}.xml" label="edit"/>
 	                    <map:transform src="excelorder.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
