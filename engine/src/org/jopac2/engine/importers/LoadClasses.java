@@ -131,7 +131,7 @@ public class LoadClasses {
         	
         }
         catch (Exception e) {
-            out.println(e.getMessage());
+            out.println("WARN: "+name+" "+e.getMessage()+" (missing mapping?)");
         }
         return SQLInstructions;
     }

@@ -286,6 +286,8 @@ private boolean clearDatabase;
 			valore_tag=tw.getValue();
 			tag=tw.getTag();
 			
+			if(tag.contains("/")) tag=tag.substring(tag.lastIndexOf("/")+1);
+			
 			int k=cl_dettaglio.indexOf(new ClasseDettaglio(-1,-1,-1,tag,tw.getDataelement()));
 			if(k>=0) {
 				ClasseDettaglio cd=cl_dettaglio.elementAt(k);
