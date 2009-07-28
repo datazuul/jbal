@@ -82,6 +82,8 @@ public class LoadData implements LoadDataInterface {
   //private String ft;
   //private String rt;
   
+  private String[] chToIndex=null;
+  
   PrintStream out=null;
   
   public void appendNotizie() {
@@ -226,12 +228,12 @@ private boolean clearDatabase;
       return r;
   }
   
-  private void inizializeDB(String[] channels,Connection conn) throws SQLException {
+  private void inizializeDB(Connection conn) throws SQLException {
 		out.println("Creating tables");
 		dbGateway.createAllTables(conn);
 		out.println("Importing data types");
 
-		dbGateway.importClassiDettaglio(channels,conn,out); //confDir+"/dataDefinition/DataType.xml",out);
+		dbGateway.importClassiDettaglio(chToIndex,conn,out); //confDir+"/dataDefinition/DataType.xml",out);
 		
 		out.println("Create DB 1st index");
 		dbGateway.create1stIndex(conn);
@@ -255,7 +257,7 @@ private boolean clearDatabase;
 	  }
 	if(notizia.toString()!=null) {
     	if(clearDatabase) {
-    		inizializeDB(notizia.getChannels(),conn[0]);
+    		inizializeDB(conn[0]);
     		clearDatabase=false;
     	}
 
@@ -321,7 +323,7 @@ private boolean clearDatabase;
 	  //this.t=t;
 	  //Cache cache=DbGateway.getCache();
 	  ParoleSpoolerInterface paroleSpooler=new ParoleSpooler(conn,maxValues4prepared,cache,out);
-	  String[] chToIndex=null;
+	  
     
 	  long start_time=System.currentTimeMillis();
 
@@ -350,13 +352,15 @@ private boolean clearDatabase;
           bf.setIdTipo(idTipo);
           bf.setParoleSpooler(paroleSpooler);
           
+          chToIndex=bf.getChToIndex();
+          
           
           /* R.T. 05/06/2006: ciclo di lettura spostato nel RecordReader per
            * facilitare l'uso di SAXParser per dati in formato XML
            */
           bf.parse(bf,this,out);
           
-          chToIndex=bf.getChToIndex();
+          
           
           bf.destroy(conn[0]);
           

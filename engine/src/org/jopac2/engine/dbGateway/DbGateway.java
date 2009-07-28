@@ -1310,5 +1310,20 @@ public abstract class DbGateway {
 	public SearchResultSet listSearch(Connection conn,String classe,String parole,int limit) throws SQLException {
 		return listSearchFB(conn, classe, parole, limit, true);
 	}
+	
+	public static String[] getChannels(Connection conn, String classe) throws SQLException {
+		Vector<String> r=new Vector<String>();
+		String sql="SELECT tag FROM classi_dettaglio c, tipi_notizie t where t.id=c.id_tipo and t.nome='"+classe+"'";
+		Statement st=conn.createStatement();
+		ResultSet rs=st.executeQuery(sql);
+		while(rs.next()) {
+			String c=rs.getString("tag");
+			if(c!=null && c.contains("/")) c=c.substring(c.lastIndexOf("/")+1);
+			r.addElement(c);
+		}
+		rs.close();
+		st.close();
+		return r.toArray(new String[r.size()]);
+	}
 
 }

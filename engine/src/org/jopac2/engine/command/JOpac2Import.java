@@ -91,45 +91,45 @@ public class JOpac2Import {
 		}
 	}
 	
-	private static void testMac() throws Exception {
-		//JOpac2Import ji=new JOpac2Import(args[0],args[1],args[2],args[3],args[4],args[5],true);
-		//String webcontentdir="/java_source/keiko/WebContent";
-		String sitename="sebina";
-		String filename="/java_jopac2/engine/data/demo_Sebina.uni";
-		String filetype="sebina";
-		String JOpac2confdir="/java_jopac2/engine/src/org/jopac2/conf";
-		String dbUrl = "jdbc:derby:/t/db"+sitename+";create=true";
-		//String dbUrl="jdbc:mysql://localhost/db"+sitename;
-		String dbUser="root";
-		String dbPassword="";
-		
-		JOpac2Import ji=new JOpac2Import(filename,filetype,JOpac2confdir,dbUrl,dbUser,dbPassword,true,System.out);
-		ji.doJob();
-		ji.wait();
-		ji.destroy(dbUrl);
-	}
-	
-	private static void testWin() throws Exception {
-		String sitename="sebina";
-		String filename="D:/Dev/workspace/engine/data/demo_Sebina.uni";
-		String filetype="sebina";
-		String JOpac2confdir="D:/Dev/workspace/engine/src/org/jopac2/conf";
-		//String dbUrl = "jdbc:derby:db"+sitename+";create=true";
-		String dbUrl="jdbc:mysql://localhost/db"+sitename;
-		String dbUser="root";
-		String dbPassword="";
-		
-		//DbGateway.createDB(conn, dbName)		
-		JOpac2Import ji=new JOpac2Import(filename,filetype,JOpac2confdir,dbUrl,dbUser,dbPassword,true,System.out);
-		ji.doJob();
-		ji.wait();
-		ji.destroy(dbUrl);
-	}
-	
-	public static void main(String[] args) throws Exception {
-		testMac();
-		//testWin();
-	}
+//	private static void testMac() throws Exception {
+//		//JOpac2Import ji=new JOpac2Import(args[0],args[1],args[2],args[3],args[4],args[5],true);
+//		//String webcontentdir="/java_source/keiko/WebContent";
+//		String sitename="sebina";
+//		String filename="/java_jopac2/engine/data/demo_Sebina.uni";
+//		String filetype="sebina";
+//		String JOpac2confdir="/java_jopac2/engine/src/org/jopac2/conf";
+//		String dbUrl = "jdbc:derby:/t/db"+sitename+";create=true";
+//		//String dbUrl="jdbc:mysql://localhost/db"+sitename;
+//		String dbUser="root";
+//		String dbPassword="";
+//		
+//		JOpac2Import ji=new JOpac2Import(filename,filetype,JOpac2confdir,dbUrl,dbUser,dbPassword,true,System.out);
+//		ji.doJob();
+//		ji.wait();
+//		ji.destroy(dbUrl);
+//	}
+//	
+//	private static void testWin() throws Exception {
+//		String sitename="sebina";
+//		String filename="D:/Dev/workspace/engine/data/demo_Sebina.uni";
+//		String filetype="sebina";
+//		String JOpac2confdir="D:/Dev/workspace/engine/src/org/jopac2/conf";
+//		//String dbUrl = "jdbc:derby:db"+sitename+";create=true";
+//		String dbUrl="jdbc:mysql://localhost/db"+sitename;
+//		String dbUser="root";
+//		String dbPassword="";
+//		
+//		//DbGateway.createDB(conn, dbName)		
+//		JOpac2Import ji=new JOpac2Import(filename,filetype,JOpac2confdir,dbUrl,dbUser,dbPassword,true,System.out);
+//		ji.doJob();
+//		ji.wait();
+//		ji.destroy(dbUrl);
+//	}
+//	
+//	public static void main(String[] args) throws Exception {
+//		testMac();
+//		//testWin();
+//	}
 
 
 }
