@@ -12,6 +12,7 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.SourceResolver;
 import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.xml.Mdb;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.apache.cocoon.xml.AttributesImpl;
@@ -74,8 +75,9 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 				Connection conn;
 				try {
 					conn = getConnection(catalogConnection);
-					RecordInterface ma=DbGateway.getNotiziaByJID(conn, 1);
-					if(ma!=null) chr=ma.getChannels();
+					chr=DbGateway.getChannels(conn,"mdb");
+//					RecordInterface ma=DbGateway.getNotiziaByJID(conn, 1);
+//					if(ma!=null) chr=ma.getChannels();
 					conn.close();
 				} catch (ComponentException e) {
 					e.printStackTrace();

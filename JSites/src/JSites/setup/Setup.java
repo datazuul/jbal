@@ -16,9 +16,9 @@ public class Setup {
 	public static void main(String[] args) {
 		String sourcePath=getPath();
 		String dataComponentsDir="/siti";
-		String siteName="terotechengineering";
+		String siteName="treviglio";
 		String dbName="db"+siteName.toLowerCase();
-		String virtualDomainName="www."+siteName+".com";
+		String virtualDomainName="www."+siteName+".it";
 		String dbUrl="jdbc:mysql://localhost/";
 		String dbUser="root";
 		String dbPassword="";
