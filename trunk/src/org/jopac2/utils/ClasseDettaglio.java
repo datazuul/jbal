@@ -23,6 +23,10 @@ package org.jopac2.utils;
 public class ClasseDettaglio implements Comparable<Object> {
 	long id,idTipo,idClasse;
 	String tag,dataElement;
+	
+	public String toString() {
+		return "<id: "+id+" idTipo: " +idTipo+" idClasse: "+idClasse+" tag: "+tag + " dataElement: "+dataElement+">";
+	}
 
 	public ClasseDettaglio(long id, long idTipo, long idClasse, String tag, String dataElement) {
 		super();
