@@ -223,21 +223,19 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		
 		if(end>nrec-1) end = nrec-1;
 		
-		throwField("sjid", Long.toString(v.get(start)));
-		throwField("ejid", Long.toString(v.get(end)));
+		if(v.size()>0) {
 		
-//		if(page>0)
-//			throwField("prevPage",catalogQuery+(new Integer(page-1).toString()));
-//		if(page<(nrec/10))
-//			throwField("nextPage",catalogQuery+(new Integer(page+1).toString()));
-		
-		contentHandler.startElement("","resultSet","resultSet",new AttributesImpl());
-        		
-		for(int i=start;i<=end;i++){
-			Long t = v.get(i);
-			throwField("record",t.toString());	
+			throwField("sjid", Long.toString(v.get(start)));
+			throwField("ejid", Long.toString(v.get(end)));
+			
+			contentHandler.startElement("","resultSet","resultSet",new AttributesImpl());
+	        		
+			for(int i=start;i<=end;i++){
+				Long t = v.get(i);
+				throwField("record",t.toString());	
+			}
+	        contentHandler.endElement("","resultSet","resultSet");
 		}
-        contentHandler.endElement("","resultSet","resultSet");		
 	}
 
 

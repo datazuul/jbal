@@ -8,6 +8,8 @@ import java.sql.SQLException;
 
 import org.apache.commons.io.FileUtils;
 
+import JSites.utils.DBGateway;
+
 public class Setup {
 
 	/**
@@ -16,7 +18,7 @@ public class Setup {
 	public static void main(String[] args) {
 		String sourcePath=getPath();
 		String dataComponentsDir="/siti";
-		String siteName="treviglio";
+		String siteName="prova";
 		String dbName="db"+siteName.toLowerCase();
 		String virtualDomainName="www."+siteName+".it";
 		String dbUrl="jdbc:mysql://localhost/";
@@ -62,23 +64,7 @@ public class Setup {
 			DbSetup.createDatabase(mysql,dbName);
 			mysql.close();
 			Connection conn=DbSetup.getConnection(dbName, classDriver, dbUrl, dbUser, dbPassword);
-			DbSetup.createTableInfo(conn);
-			DbSetup.loadTableInfo(conn);
-			DbSetup.createTableTblComponenti(conn);
-			DbSetup.loadTableTblComponenti(conn);
-			DbSetup.createTableTblContenuti(conn);
-			DbSetup.loadTableTblContenuti(conn);
-			DbSetup.createTableTblPagine(conn);
-			DbSetup.loadTableTblPagine(conn);
-			DbSetup.createTableTblRedirects(conn);
-			DbSetup.loadTableTblRedirects(conn);
-			DbSetup.createTableTblRoles(conn);
-			DbSetup.loadTableTblRoles(conn);
-			DbSetup.createTableTblStrutture(conn);
-			DbSetup.loadTableTblStrutture(conn);
-			DbSetup.createTableTblStati(conn);
-			DbSetup.loadTableTblStati(conn);
-			DbSetup.createTableNews(conn);
+			DBGateway.caricaDB(conn);
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();

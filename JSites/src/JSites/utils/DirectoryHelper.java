@@ -23,6 +23,8 @@ package JSites.utils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
+import java.util.Arrays;
+import java.util.Vector;
 
 
 public class DirectoryHelper {
@@ -69,6 +71,22 @@ public class DirectoryHelper {
 	    
 	    File[] children = dir.listFiles(filter);
 	    return children;
+	}
+	
+	public static File[] processFilesRecursive(File dir) {
+		Vector<File> r=new Vector<File>();
+		File[] t=processFiles(dir);
+		if(t!=null && t.length>0) {
+			r.addAll(Arrays.asList(t));
+			int l=r.size()-1;
+			for(int i=l;i>=0;i--) {
+				if(r.elementAt(i).isDirectory()) {
+					t=processFilesRecursive(r.elementAt(i));
+					r.addAll(Arrays.asList(t));
+				}
+			}
+		}
+		return r.toArray(new File[r.size()]);
 	}
 
 	public static File[] processSubdir(String path) {

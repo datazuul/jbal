@@ -259,6 +259,7 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 
 	private Document String2XML(String xmlSource) throws SAXException,
 			IOException, ParserConfigurationException {
+		xmlSource="<div class=\"resultSet\">"+xmlSource+"</div>";
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		return builder.parse(new InputSource(new StringReader(xmlSource)));
@@ -384,6 +385,7 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 	}
 
 	private void parseTemplate(Node node, Document document2, int k) {
+		if(node==null) return;
 		int splittableNode = isSplittableNode(node, document2, k);
 		if (splittableNode > 1) {
 			// deve duplicare il nodo tante volte quante sono le entry

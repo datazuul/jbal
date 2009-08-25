@@ -133,6 +133,7 @@ public class DbSetup {
 				"(1,8,3,4)," +
 				"(2,12,3,1)," +
 				"(3,9,4,6)," +
+				"(4,10,3,1)," +
 				"(11,12,3,1);";
 		Statement st=conn.createStatement();
 		st.execute(sql);

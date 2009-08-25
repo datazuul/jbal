@@ -9,6 +9,7 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.xml.AttributesImpl;
+import org.jopac2.engine.dbGateway.DbGateway;
 import org.xml.sax.SAXException;
 
 import JSites.utils.DBGateway;
@@ -30,6 +31,7 @@ public class RedirectNA extends MyAbstractPageTransformer {
 		 String q = o.getRequestURI();
 		 if(q.contains("view"))
 			 isView = true;
+		 Connection conn=null;
 		 try{
 			 long pageId=1;
 			 String pCode = o.getParameter("pcode");
@@ -45,7 +47,7 @@ public class RedirectNA extends MyAbstractPageTransformer {
 				 redirect = false;
 			 }
 			 
-			 Connection conn = this.getConnection(dbname);
+			 conn = this.getConnection(dbname);
 			 try{
 				 if(pCode != null)
 					 pageId = DBGateway.getPidFrom(pCode, conn);
@@ -63,7 +65,13 @@ public class RedirectNA extends MyAbstractPageTransformer {
 						 return;
 					 }
 				 }
-			 }catch(Exception e) {e.printStackTrace();}
+			 }catch(Exception e) {
+				 if(conn!=null){
+					 DBGateway.caricaDB(conn);
+					 conn.close();
+				 }
+				 e.printStackTrace();
+				}
 				
 			 try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}	 
 			 

@@ -9,6 +9,7 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.transformation.AbstractTransformer;
 import org.apache.cocoon.xml.AttributesImpl;
+import org.jopac2.engine.utils.ZipUnzip;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -59,7 +60,7 @@ public class CopyFile extends AbstractTransformer {
 			try {
 				if(s!=null && d!=null && safeFilename(d.getCanonicalPath())) {
 					if(unzip.equals("true")) {
-						JSites.utils.ZipUnzip.unzipArchive(s.getCanonicalPath(), d.getCanonicalPath().substring(0,d.getCanonicalPath().lastIndexOf('/')));
+						ZipUnzip.unzipArchive(s.getCanonicalPath(), d.getCanonicalPath().substring(0,d.getCanonicalPath().lastIndexOf('/')));
 					}
 					else {
 						org.apache.commons.io.FileUtils.copyFile(s, d);

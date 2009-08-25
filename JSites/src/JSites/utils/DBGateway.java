@@ -13,6 +13,7 @@ import org.apache.avalon.framework.component.ComponentException;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.Session;
 
+import JSites.setup.DbSetup;
 import JSites.utils.site.NewsItem;
 
 
@@ -837,6 +838,25 @@ public class DBGateway {
 		return r;
 	}
 
+	public static void caricaDB(Connection conn) throws SQLException {
+		DbSetup.createTableInfo(conn);
+		DbSetup.loadTableInfo(conn);
+		DbSetup.createTableTblComponenti(conn);
+		DbSetup.loadTableTblComponenti(conn);
+		DbSetup.createTableTblContenuti(conn);
+		DbSetup.loadTableTblContenuti(conn);
+		DbSetup.createTableTblPagine(conn);
+		DbSetup.loadTableTblPagine(conn);
+		DbSetup.createTableTblRedirects(conn);
+		DbSetup.loadTableTblRedirects(conn);
+		DbSetup.createTableTblRoles(conn);
+		DbSetup.loadTableTblRoles(conn);
+		DbSetup.createTableTblStrutture(conn);
+		DbSetup.loadTableTblStrutture(conn);
+		DbSetup.createTableTblStati(conn);
+		DbSetup.loadTableTblStati(conn);
+		DbSetup.createTableNews(conn);
+	}
 
 	public static Vector<Long> getChildPages(long pageId, Connection conn) throws SQLException {
 		Vector<Long> v = new Vector<Long>();

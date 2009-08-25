@@ -52,6 +52,7 @@ implements CacheableProcessingComponent {
         		String base="";
         		if(componentName.contains("/")) {
         			base=src.substring(0,src.lastIndexOf("/")+1);
+        			checkDir(base);
         			componentName=componentName.substring(componentName.lastIndexOf("/")+1);
         		}
         		componentName=componentName.replaceAll("\\d", "");
@@ -66,7 +67,20 @@ implements CacheableProcessingComponent {
         }
     }
     
-    public String getResource(String name) {
+    private void checkDir(String base) {
+		File d=new File(base);
+		if(!d.isDirectory()) {
+			d.mkdirs();
+		}
+		if(base.contains("/data")) {
+			String t=base.substring(0,base.lastIndexOf("/data"));
+			File c=new File(t+"/images/contentimg");
+			if(!c.isDirectory()) c.mkdirs();
+		}
+		
+	}
+
+	public String getResource(String name) {
     	String path = ObjectModelHelper.getContext(objectModel).getRealPath(name);
     	return path;
     }

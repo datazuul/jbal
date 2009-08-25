@@ -87,11 +87,12 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 			}
 			
 			for(int k=0;chr!=null && k<chr.length;k++) {
-				if(chr[k].contains("/")) {
-					String tc=chr[k].substring(chr[k].lastIndexOf("/")+1);
-					if(!searchChannel.containsKey(tc)) searchChannel.put(tc, new Channel(tc,tc,""));
-					if(!listChannel.containsKey(tc)) listChannel.put(tc, new Channel(tc,tc,""));
+				String tc=chr[k];
+				if(tc.contains("/")) {
+					tc=tc.substring(tc.lastIndexOf("/")+1);
 				}
+				if(!searchChannel.containsKey(tc)) searchChannel.put(tc, new Channel(tc,tc,""));
+				if(!listChannel.containsKey(tc)) listChannel.put(tc, new Channel(tc,tc,""));
 			}
 			
 			Enumeration<String> i=searchChannel.keys();
