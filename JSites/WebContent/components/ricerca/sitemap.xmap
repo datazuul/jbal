@@ -10,8 +10,8 @@
 	            <map:match pattern="*">
 	                <map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/ricerca{cid}.xml"/>
-	                    <map:transform src="context:/{request-param:site}/xslt/ricerca.xslt">
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/ricerca{cid}.xml"/>
+	                    <map:transform src="ricerca.xslt">
 	                        <map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
 	                    <map:serialize type="xml"/>

@@ -46,7 +46,7 @@
 	                
 	                <map:act type="request">
 	                    <map:parameter name="parameters" value="true" />
-	                    <map:generate src="{request-param:datadir}/data/lingue{cid}.xml" />
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/lingue{cid}.xml" />
 	   					<map:transform src="lingue.xslt">
 		                    <map:parameter name="use-request-parameters" value="true" />
 		                </map:transform>

@@ -17,7 +17,7 @@
 	            <map:match pattern="view">
 	                <map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/childrenListing{cid}.xml"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/childrenListing{cid}.xml"/>
 	                    <map:transform type="ChildrenListing" />
 	                    <map:transform src="../section/section.xslt">
 	                        <map:parameter name="use-request-parameters" value="true"/>
@@ -30,7 +30,7 @@
 	            <map:match pattern="edit">
 	                <map:act type="request">
 	                	<map:parameter name="parameters" value="true"/>
-	             		<map:generate src="{request-param:datadir}/data/childrenListing{cid}.xml"/>
+	             		<map:generate type="componentGenerator" src="{request-param:datadir}/data/childrenListing{cid}.xml"/>
 	                    <map:transform src="childrenListingedit.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
@@ -56,7 +56,7 @@
 				<map:match pattern="order">
 				 	<map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/childrenListing{cid}.xml" label="edit"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/childrenListing{cid}.xml" label="edit"/>
 	                    <map:transform type="ChildrenListing" />
 	                    <map:transform src="context://components/section/sectionorder.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>

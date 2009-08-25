@@ -43,7 +43,7 @@
 	            <map:match pattern="view">
 	                <map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/map{cid}.xml"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/map{cid}.xml"/>
 	                    <map:transform src="map.xslt">
 	                        <map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
@@ -54,7 +54,7 @@
 	            <map:match pattern="edit">
 	                <map:act type="request">
 	                	<map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/map{cid}.xml"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/map{cid}.xml"/>
 	                    <map:transform src="mapedit.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
@@ -78,7 +78,7 @@
 				<map:match pattern="order">
 				 	<map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/map{cid}.xml" label="edit"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/map{cid}.xml" label="edit"/>
 	                    <map:transform src="maporder.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>

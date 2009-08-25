@@ -20,7 +20,7 @@
 	            <map:match pattern="edit">
 	                <map:act type="request">
 	                	<map:parameter name="parameters" value="true"/>
-	             		<map:generate src="{request-param:datadir}/data/box{cid}.xml"/>
+	             		<map:generate type="componentGenerator" src="{request-param:datadir}/data/box{cid}.xml"/>
 						
 	                    <map:transform src="boxedit.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
@@ -48,7 +48,7 @@
 				<map:match pattern="order">
 				 	<map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate src="{request-param:datadir}/data/box{cid}.xml" label="edit"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/box{cid}.xml" label="edit"/>
 	                    
 	                    <map:transform src="boxorder.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
@@ -66,7 +66,7 @@
 				<map:match pattern="unit">
 	                <map:act type="request">
 	                	<map:parameter name="parameters" value="true"/>
-	             		<map:generate src="{request-param:datadir}/data/box{cid}.xml"/>
+	             		<map:generate type="componentGenerator" src="{request-param:datadir}/data/box{cid}.xml"/>
 						
 	                    <map:transform src="unit.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>

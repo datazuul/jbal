@@ -46,7 +46,7 @@
 	                
 	                <map:act type="request">
 	                    <map:parameter name="parameters" value="true" />
-	                    <map:generate src="{request-param:datadir}/data/strumenti{cid}.xml" />
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/strumenti{cid}.xml" />
 	                    
 	                    <!-- SE LOGGATO LANCIA L'XSLT CON IL PARAMETRO LOGGED=TRUE ALTRIMENTI LOGGED=FALSE -->
 	                    <map:act type="auth-loggedIn">

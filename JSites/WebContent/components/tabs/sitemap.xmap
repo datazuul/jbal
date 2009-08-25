@@ -16,7 +16,7 @@
 	                
 	                <map:act type="request">
 	                    <map:parameter name="parameters" value="true" />
-	                    <map:generate src="{request-param:datadir}/data/tabs{cid}.xml" />
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/tabs{cid}.xml" />
 	                    
 	   					<map:transform src="tabs.xslt">
 		                    <map:parameter name="use-request-parameters" value="true" />

@@ -38,17 +38,20 @@
 			<xsl:if test="contains(record[1],'tbody')">
 				<xsl:value-of disable-output-escaping="yes"
 							select="substring-before(record[1],'&lt;tbody&gt;')" />
-			</xsl:if>
-
-			<xsl:for-each select="record">
-				<xsl:value-of disable-output-escaping="yes"
-					select="substring-before(substring-after(text(),'&lt;tbody&gt;'),'&lt;/tbody&gt;')" />
-			</xsl:for-each>
-			
-			<xsl:if test="contains(record[1],'tbody')">
+				<xsl:for-each select="record">
+					<xsl:value-of disable-output-escaping="yes"
+						select="substring-before(substring-after(text(),'&lt;tbody&gt;'),'&lt;/tbody&gt;')" />
+				</xsl:for-each>
 				<xsl:value-of disable-output-escaping="yes"
 							select="substring-after(record[1],'&lt;/tbody&gt;')" />
 			</xsl:if>
+			<xsl:if test="not(contains(record[1],'tbody'))">
+				<xsl:for-each select="record">
+					<xsl:value-of disable-output-escaping="yes" select="text()"/>
+				</xsl:for-each>
+			</xsl:if>
+		
+
 
 		</xsl:if>
 	</xsl:template>

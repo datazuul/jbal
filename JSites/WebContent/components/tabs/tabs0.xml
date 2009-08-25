@@ -1,0 +1,18 @@
+<tabs>
+		<item>
+		<text>Biblioteche</text>
+		<pid>2</pid>
+	</item>
+	<item>
+		<text>Ricerca</text>
+		<pid>3</pid>
+	</item>
+	<item>
+		<text>Servizi</text>
+		<pid>4</pid>
+	</item>
+	<item>
+		<text>Struttura</text>
+		<pid>5</pid>
+	</item>
+</tabs>

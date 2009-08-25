@@ -3,7 +3,7 @@
 	<map:match pattern="view">
         <map:act type="request">
             <map:parameter name="parameters" value="true"/>
-            <map:generate src="{datadir}/data/{global:component-name}{cid}.xml" label="edit"/>
+            <map:generate type="componentGenerator" src="{datadir}/data/{global:component-name}{cid}.xml" label="edit"/>
 			<map:act type="authorize-users">
 	            <map:transform src="{global:component-name}.xslt">
 	                <map:parameter name="use-request-parameters" value="true"/>
@@ -19,7 +19,7 @@
     <map:match pattern="*">
         <map:act type="request">
             <map:parameter name="parameters" value="true"/>
-            <map:generate src="{datadir}/data/{global:component-name}{cid}.xml" label="edit"/>
+            <map:generate type="componentGenerator" src="{datadir}/data/{global:component-name}{cid}.xml" label="edit"/>
 			<map:act type="authorize-users">
 	            <map:transform src="{global:component-name}{../../1}.xslt">
 	                <map:parameter name="use-request-parameters" value="true"/>
