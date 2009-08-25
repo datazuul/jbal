@@ -57,6 +57,8 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 		//super();
 		this.nvalues=nvalues;
 		this.cache=cache;
+		cache.clear();
+
 		out=console;
 		preparedParole = new PreparedStatement[conn.length];
 		for(int i=0;i<nvalues-1;i++) {

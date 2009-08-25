@@ -36,6 +36,7 @@ import java.io.*;
 import java.util.*;
 import java.sql.*;
 
+import org.jopac2.engine.utils.ZipUnzip;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.Readers.LoadDataInterface;
@@ -43,7 +44,6 @@ import org.jopac2.jbal.Readers.ParoleSpoolerInterface;
 import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.utils.ClasseDettaglio;
 import org.jopac2.utils.TokenWord;
-import org.jopac2.utils.ZipUnzip;
 
 import com.whirlycott.cache.Cache;
 

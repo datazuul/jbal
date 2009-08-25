@@ -42,6 +42,7 @@ import org.jopac2.engine.dbGateway.hsqldb.hsqldb;
 import org.jopac2.engine.dbGateway.mysql.mysql;
 import org.jopac2.engine.importers.LoadClasses;
 import org.jopac2.engine.utils.SearchResultSet;
+import org.jopac2.engine.utils.ZipUnzip;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.subject.SubjectInterface;
@@ -52,7 +53,6 @@ import org.jopac2.utils.JOpac2Exception;
 import org.jopac2.utils.ObjectPair;
 import org.jopac2.utils.TokenWord;
 import org.jopac2.utils.Utils;
-import org.jopac2.utils.ZipUnzip;
 
 import com.whirlycott.cache.Cache;
 import com.whirlycott.cache.CacheConfiguration;

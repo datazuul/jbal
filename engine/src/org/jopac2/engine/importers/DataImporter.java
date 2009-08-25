@@ -99,12 +99,9 @@ public class DataImporter extends Thread {
             out.println("Uso tempdir="+tempDir);
 			try {
 				int max_conn=5;
-				
-				
-				
+
 				out.println("Loading data");
-				
-				
+
 				/**
 				 * TODO come gestire i filtri di trasformazione sulle notizie?!
 				 * Se si mantengono i dati raw, dovrebbe essere gestito da jbal, credo
@@ -140,6 +137,8 @@ public class DataImporter extends Thread {
 	            for(int i=0;i<max_conn;i++) {
 					conn[i].close();
 				}
+	            
+	            f.close();
 
 	            this.notifyAll();
 			} catch (Exception e) {
