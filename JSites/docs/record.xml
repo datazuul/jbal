@@ -1,0 +1,95 @@
+<root>
+	<search desc="Soggetto" name="SBJ"></search>
+	<search checked="true" desc="Titolo" name="TIT"></search>
+	<search checked="true" desc="Autore" name="AUT"></search>
+	<search checked="true" desc="Data" name="DTE"></search>
+	<search checked="true" desc="Parole chiave" name="ANY"></search>
+	<list desc="Soggetto" name="SBJ"></list>
+	<list checked="true" desc="Titolo" name="TIT"></list>
+	<list checked="true" desc="Autore" name="AUT"></list>
+	<list checked="true" desc="Data" name="DTE"></list>
+	<catalogName>Catalogo EUT</catalogName>
+	<catalogFile></catalogFile>
+	<catalogFormat>sebina</catalogFormat>
+	<template>
+		<table style="width: 162px; height: 138px;" border="0">
+			<tbody>
+				<tr>
+					<td>
+						<img src="images/page10/Scan 2.jpeg" alt="" width="79" height="128" />
+					</td>
+					<td>
+						<p>&#160;</p>
+						<p>[[title]]</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</template>
+	<queryData>
+		<requestQuery>AUT=a</requestQuery>
+		<stemmer>false</stemmer>
+		<switchStemmer>AUT=a&amp;stemmer=true</switchStemmer>
+
+    <query>AUT=a</query>
+    <optimizedQuery>a(48:0ms,qry:1ms,op:0ms)</optimizedQuery>
+    <queryCount>48</queryCount>
+    <queryTime>0.0010</queryTime>
+  </queryData>
+  <searchData></searchData>
+  <nextPage>AUT=a1</nextPage>
+  <resultSet>
+    <record>
+	<id >2</id>
+	<db >dbeutmarc</db>
+	<type >eutmarc</type>
+	<image nature="M">images/pubimages/eut2.jpg</image>
+	<title>
+		L'Inquisizione nel Patriarcato e Diocesi di Aquileia, 
+		1557-1559. CCLXXII
+	</title>
+	<authors >
+		<author >Del Col, Andrea (a cura di)</author>
+	</authors>
+	<ISBD >
+		L'Inquisizione nel Patriarcato e Diocesi di Aquileia,
+		 1557-1559. CCLXXII. - Trieste : Edizioni Università , 
+		1998. - 442 p. ; 24 cm
+	</ISBD>
+	<editors >
+		<editor >Edizioni Università</editor>
+	</editors>
+	<standardNumber>
+	</standardNumber>
+	<publicationPlace >Trieste</publicationPlace>
+	<publicationDate >1998</publicationDate>
+	<subjects>
+		<subject></subject>
+	</subjects>
+	<classifications>
+		<classification></classification>
+	</classifications>
+	<partof>
+		// included
+	</partof>
+	<haspart>
+		// included
+	</haspart>
+	<signatures>
+		<signature>
+			<libraryId></libraryId>
+			<libraryName></libraryName>
+			<idNumber></idNumber>
+			<localization></localization>
+			<holding></holding>
+		</signature>
+	</signatures>
+	<abstract >
+		In questo volume sono pubblicati, in modo critico e sistematico, i processi per delitti contro la fede nel patriarcato di Aquileia dall’inizio di un archivio stabile dell’Inquisizione a Udine fino al servizio del secondo inquisitore. Nell’introduzione sono delineate alcune questioni fondamentali concernenti l’azione del Sant’Ufficio (organizzazione, rapporto con Venezia, relazione tra Venezia e Roma, azione di notai e giudici) e il dissenso religioso nel patriarcato di Aquileia, alla luce di una metodologia critica delle fonti. Seguono le edizioni di processi e atti giudiziari contro eretici.
+	</abstract>
+	<prezzo >€ 36,00</prezzo>
+	<bid >2</bid>
+	<jid >2</jid>
+</record>
+  </resultSet>
+</root>
