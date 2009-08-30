@@ -56,7 +56,7 @@ implements CacheableProcessingComponent {
         			componentName=componentName.substring(componentName.lastIndexOf("/")+1);
         		}
         		componentName=componentName.replaceAll("\\d", "");
-        		base=getResource("/")+"components/"+componentName+"/";
+        		base=getResource("/")+"/components/"+componentName+"/";
         		componentName=base+componentName+"0.xml";
 //        		System.out.println(componentName);
         	}
