@@ -1,5 +1,6 @@
 package JSites.backup;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -28,8 +29,9 @@ public class TestBackup {
       
 		Class.forName ("com.mysql.jdbc.Driver").newInstance ();
 		Connection conn = DriverManager.getConnection ("jdbc:mysql://" + hostname + ":" + port + "/" + schema, username, password);
-        Backup.backup(conn, site, context);
+        File backup=Backup.backup(conn, site, context);
 		conn.close();
+		System.out.println("Finito, backup: "+backup.getAbsolutePath());
 	}
 
 }
