@@ -312,7 +312,7 @@
             <!-- map:transform type="tutil" src="/t/final" / -->
 	        
 	        
-	        <map:transform type="xslt" src="context://templates/jopac2/xslt/xml2xhtml.xslt">
+	        <map:transform type="xslt" src="context://templates/{global:template}/xslt/xml2xhtml.xslt">
 	        	<map:parameter name="pid" value="{request-param:pid}"/>
 	        	<map:parameter name="template" value="{global:template}"/>
 	        </map:transform>
