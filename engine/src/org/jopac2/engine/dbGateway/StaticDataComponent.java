@@ -89,15 +89,17 @@ public final class StaticDataComponent { //, Contextualizable, ThreadSafe {
 
 	public static long getChannelIndexbyName(String[] channels, String channelName) {
 		int r=-1;
+		int d=0;
 		String cn="/record/"+channelName; // workaround per Mdb nelle ricerche
 		int mdb=-1;
 		for(int i=0;i<channels.length;i++) {
+			if(channels[i].equals("ANY")) d--;
 			if(channelName.equals(channels[i])) {
 				r=i;
 				break;
 			}
 			if(cn.equals(channels[i])) {
-				mdb=i;
+				mdb=i+d;
 			}
 		}
 		return r==-1?mdb:r;
