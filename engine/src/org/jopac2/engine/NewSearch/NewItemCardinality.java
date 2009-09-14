@@ -40,6 +40,7 @@ import java.sql.SQLException;
 import java.util.BitSet;
 import java.util.StringTokenizer;
 
+import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.dbGateway.StaticDataComponent;
 import org.jopac2.jbal.stemmer.Radice;
 import org.jopac2.jbal.stemmer.StemmerItv2;
@@ -110,10 +111,11 @@ public class NewItemCardinality {
 	 * 
 	 * @param s
 	 */
-	public void setClasseParola(String[] channels,String s, StaticDataComponent sd) {
+	public void setClasseParola(String[] channels,String s, Connection conn) {
 		if(s!=null && s.length()>0){
 			StringTokenizer st = new StringTokenizer(s, "=");			
 			String classe = st.nextToken().trim();
+			DbGateway dbGateway=DbGateway.getInstance(conn.toString(), System.out);
 
 			// se e' presente un solo token, allora impostare la classe come ANY di default
 			if(!st.hasMoreTokens()){
@@ -127,12 +129,18 @@ public class NewItemCardinality {
 				// decodifica nome classe
 				this.nomeClasse = classe;
 				try {
-					this.classe=StaticDataComponent.getChannelIndexbyName(channels,classe);
+					this.classe=dbGateway.getClassIDClasseDettaglio(conn, classe);
+//					this.classe=StaticDataComponent.getChannelIndexbyName(channels,classe);
 				}
 				catch(Exception e){
 					// se la classe non esiste viene usata ANY
 					this.nomeClasse="ANY";
-					this.classe=StaticDataComponent.getChannelIndexbyName(channels,nomeClasse);
+					try {
+						this.classe=dbGateway.getClassIDClasseDettaglio(conn, classe);
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+//					this.classe=StaticDataComponent.getChannelIndexbyName(channels,nomeClasse);
 				}
 			} else { 
 				// classe e' un numero

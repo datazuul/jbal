@@ -1326,4 +1326,18 @@ public abstract class DbGateway {
 		return r.toArray(new String[r.size()]);
 	}
 
+
+	public long getClassIDClasseDettaglio(Connection conn, String classe) throws SQLException {
+		String sql="select id_classe from classi_dettaglio where tag='"+classe+"'";
+		Statement st=conn.createStatement();
+		long r=-1;
+		ResultSet rs=st.executeQuery(sql);
+		while(rs.next()) {
+			r=rs.getLong("id_classe");
+		}
+		rs.close();
+		st.close();
+		return r;
+	}
+
 }

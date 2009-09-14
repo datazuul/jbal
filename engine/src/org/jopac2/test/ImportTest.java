@@ -27,8 +27,8 @@ public class ImportTest extends TestCase {
 	private InputStream in = null;
 	private static String filetype = "sebina";
 	private static String JOpac2confdir = "src/org/jopac2/conf";
-	//private static String dbUrl = "jdbc:derby:/siti/jopac2/catalogs/db" + sitename + ";create=true";
-	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
+	private static String dbUrl = "jdbc:derby:/siti/jopac2/catalogs/db" + sitename + ";create=true";
+//	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
 	private static String dbUser = "root";
 	private static String dbPassword = "";
 
