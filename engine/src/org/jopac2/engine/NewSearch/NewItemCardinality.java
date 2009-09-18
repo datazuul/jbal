@@ -129,18 +129,13 @@ public class NewItemCardinality {
 				// decodifica nome classe
 				this.nomeClasse = classe;
 				try {
-					this.classe=dbGateway.getClassIDClasseDettaglio(conn, classe);
+					this.classe=dbGateway.getClassNameID(conn, classe);
 //					this.classe=StaticDataComponent.getChannelIndexbyName(channels,classe);
 				}
 				catch(Exception e){
 					// se la classe non esiste viene usata ANY
 					this.nomeClasse="ANY";
-					try {
-						this.classe=dbGateway.getClassIDClasseDettaglio(conn, classe);
-					} catch (SQLException e1) {
-						e1.printStackTrace();
-					}
-//					this.classe=StaticDataComponent.getChannelIndexbyName(channels,nomeClasse);
+					this.classe=dbGateway.getClassNameID(conn, classe);
 				}
 			} else { 
 				// classe e' un numero
