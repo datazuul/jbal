@@ -34,6 +34,10 @@ package org.jopac2.jbal.xmlHandlers;
 /**
  *
  * @author  romano
+ * 
+ * TODO
+ * 18-09-2009 ClassiDettaglio in engine fa praticamente la stessa cosa e si trova nel
+ * package giusto. Questa classe forse va rimossa.
  */
 public class ClassItem {
     
