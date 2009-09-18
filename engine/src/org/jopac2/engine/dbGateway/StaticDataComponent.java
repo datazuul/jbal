@@ -39,6 +39,8 @@ import java.io.File;
  * TODO questa classe e' da rivedere. O si fa singleton oppure deve prendere una connection e risolvere sul db.
  * Forse la prima per performance standarizzando i nomi / id delle classi.
  * Si potrebbe anche abolire la tabella classi e tenere solo i codici?
+ * 
+ * 18-09-2009 forse questa classe la possiamo far sparire (RT)
  */
 
 
@@ -57,9 +59,9 @@ public final class StaticDataComponent { //, Contextualizable, ThreadSafe {
    		return stopword;
    }
    
-   public Hashtable<String,Long> getTipi() {
-       return tipi;
-   }
+//   public Hashtable<String,Long> getTipi() {
+//       return tipi;
+//   }
    
    public SBAInternalClient getStaticClient(){
    		return staticclient;
@@ -83,25 +85,25 @@ public final class StaticDataComponent { //, Contextualizable, ThreadSafe {
 	    stopword.LoadList(new File(path+"stopwords.lst"));
    }
 
-	public static String getChannelNamebyIndex(String[] channels,String classe) {
-		return channels[Integer.parseInt(classe)];
-	}
+//	public static String getChannelNamebyIndex(String[] channels,String classe) {
+//		return channels[Integer.parseInt(classe)];
+//	}
 
-	public static long getChannelIndexbyName(String[] channels, String channelName) {
-		int r=-1;
-		int d=0;
-		String cn="/record/"+channelName; // workaround per Mdb nelle ricerche
-		int mdb=-1;
-		for(int i=0;i<channels.length;i++) {
-			if(channels[i].equals("ANY")) d--;
-			if(channelName.equals(channels[i])) {
-				r=i;
-				break;
-			}
-			if(cn.equals(channels[i])) {
-				mdb=i+d;
-			}
-		}
-		return r==-1?mdb:r;
-	}
+//	public static long getChannelIndexbyName(String[] channels, String channelName) {
+//		int r=-1;
+//		int d=0;
+//		String cn="/record/"+channelName; // workaround per Mdb nelle ricerche
+//		int mdb=-1;
+//		for(int i=0;i<channels.length;i++) {
+//			if(channels[i].equals("ANY")) d--;
+//			if(channelName.equals(channels[i])) {
+//				r=i;
+//				break;
+//			}
+//			if(cn.equals(channels[i])) {
+//				mdb=i+d;
+//			}
+//		}
+//		return r==-1?mdb:r;
+//	}
 }

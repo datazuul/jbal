@@ -237,7 +237,7 @@ private boolean clearDatabase;
 		
 		out.println("Create DB 1st index");
 		dbGateway.create1stIndex(conn);
-		idTipo=dbGateway.getClassID(conn, dbType);
+		idTipo=dbGateway.getTypeID(conn, dbType);
 		cl_dettaglio=DbGateway.initClDettaglio(conn,idTipo);
 		appendNotizie();
 		

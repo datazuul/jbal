@@ -277,21 +277,21 @@ public abstract class DbGateway {
     public abstract void createDBl_tables(Connection conn, PrintStream console) throws SQLException;
     
     
-    public long getClassID(Connection conn, String className) {
+    public long getTypeID(Connection conn, String className) {
         return getIDwhere(conn, "tipi_notizie","nome",className);
     }
     
-    /*public static long getElementNameID(Connection conn, String elementName) {
+    public long getClassNameID(Connection conn, String elementName) {
         return getIDwhere(conn, "classi","nome",elementName);
-    }*/
+    }
     
 
 	public void insertClassItem(String[] channels,Connection conn, ClassItem currentItem) throws SQLException {
-        long currentClassID=getClassID(conn, currentItem.getClassName());
-        long currentElementID=StaticDataComponent.getChannelIndexbyName(channels,currentItem.getElementName()); //DbGateway.getElementNameID(conn, currentItem.getElementName());
+        long currentTypeID=getTypeID(conn, currentItem.getClassName());
+        long currentClassID=getClassNameID(conn, currentItem.getElementName());
         
         String sql="insert into classi_dettaglio (id_classe,id_tipo,tag,data_element) "+
-        	"values ("+currentElementID+","+currentClassID+",'"+
+        	"values ("+currentClassID+","+currentTypeID+",'"+
         	currentItem.getTag()+"','"+currentItem.getField()+"')";
         DbGateway.execute(conn, sql);
 //        System.out.println(currentItem);
@@ -1327,17 +1327,17 @@ public abstract class DbGateway {
 	}
 
 
-	public long getClassIDClasseDettaglio(Connection conn, String classe) throws SQLException {
-		String sql="select id_classe from classi_dettaglio where tag='"+classe+"'";
-		Statement st=conn.createStatement();
-		long r=-1;
-		ResultSet rs=st.executeQuery(sql);
-		while(rs.next()) {
-			r=rs.getLong("id_classe");
-		}
-		rs.close();
-		st.close();
-		return r;
-	}
+//	public long getClassIDClasseDettaglio(Connection conn, String classe) throws SQLException {
+//		String sql="select id_classe from classi_dettaglio where tag='"+classe+"'";
+//		Statement st=conn.createStatement();
+//		long r=-1;
+//		ResultSet rs=st.executeQuery(sql);
+//		while(rs.next()) {
+//			r=rs.getLong("id_classe");
+//		}
+//		rs.close();
+//		st.close();
+//		return r;
+//	}
 
 }
