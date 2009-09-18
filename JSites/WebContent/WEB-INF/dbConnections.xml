@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--+ Here you add datasources - DB connections to be used
+	| This file is going to be included in cocoon.xconf with a reference
+	+-->
+
+<datasources>
+	<jdbc name="dbjopac2">
+		<pool-controller max="500" min="50" />
+		<auto-commit>true</auto-commit>
+		<dburl>jdbc:mysql://localhost/dbjopac?autoReconnect=true</dburl>
+		<user>root</user>
+		<password></password>
+	</jdbc>
+	<jdbc name="dbsito">
+		<pool-controller max="500" min="50" />
+		<auto-commit>true</auto-commit>
+		<dburl>jdbc:mysql://localhost/dbsito?autoReconnect=true</dburl>
+		<user>root</user>
+		<password></password>
+	</jdbc>
+	<jdbc name="banchedati">
+		<pool-controller max="500" min="50" />
+		<auto-commit>true</auto-commit>
+		<dburl>jdbc:mysql://localhost/banchedati?autoReconnect=true</dburl>
+		<user>root</user>
+		<password></password>
+	</jdbc>
+</datasources>
