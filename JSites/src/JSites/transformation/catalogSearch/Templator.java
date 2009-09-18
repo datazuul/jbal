@@ -277,10 +277,61 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 
 		purgeEmptyElements(templateDocument, "a");
 		purgeEmptyAttribute(templateDocument, "a","href");
+		swapTagOrder(templateDocument,"a","string");
+		swapTagOrder(templateDocument,"a","span");
 
 		String output = XML2String(templateDocument);
 
 		return output;
+	}
+
+	
+	/**
+	 * Inverte l'ordine di nodi innestati.
+	 * <tag1>
+	 * 		<tag2></tag2>
+	 * </tag1>
+	 * 
+	 * diventa
+	 * 
+	 * <tag2>
+	 * 		<tag1></tag1>
+	 * <tag2>
+	 * 
+	 * @param node
+	 * @param tag1
+	 * @param tag2
+	 */
+	private void swapTagOrder(Node node, String tag1,
+			String tag2) {
+		if (node != null) {
+			NodeList nl = node.getChildNodes();
+			if (nl != null)
+				for (int i = nl.getLength(); i >= 0; i--) {
+					if (nl.item(i) != null && nl.item(i).getNodeName().equals(tag1)) {
+						NodeList nl1=nl.item(i).getChildNodes();
+						if(nl1!=null && nl1.getLength()==1 && nl1.item(0)!=null && nl1.item(0).getNodeName().equals(tag2)) {
+							Node t1=nl.item(i);
+							Node t2=nl1.item(0);
+							// togli t2 da t1
+							t1.removeChild(t2);
+							// togli t1 da node
+							node.removeChild(t1);
+							// aggiungi t1 a t2
+							t2.appendChild(t1);
+							// aggiungi t2 a node
+							node.appendChild(t2);
+						}
+						else {
+							swapTagOrder(nl.item(i),tag1,tag2);
+						}
+					}
+					else {
+						swapTagOrder(nl.item(i),tag1,tag2);
+					}
+				}
+		}
+		
 	}
 
 	/**
