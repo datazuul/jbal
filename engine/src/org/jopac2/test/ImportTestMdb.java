@@ -188,8 +188,8 @@ public class ImportTestMdb extends TestCase {
 	public void testAida() throws Exception {
 		SearchResultSet rs = doSearch("(NomeRisorsa=aida)");
 
-		long[] unordered = { 3 };
-		long[] ordered = { 3 };
+		long[] unordered = { 1 };
+		long[] ordered = { 1 };
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
 		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
 		DbGateway.orderBy(conn, "NomeRisorsa", rs);
@@ -199,10 +199,10 @@ public class ImportTestMdb extends TestCase {
 	}
 	
 	public void testScienzeFisiche() throws Exception {
-		SearchResultSet rs = doSearch("(AreaDisciplinare=scienze)");
+		SearchResultSet rs = doSearch("(AreaDisciplinare=scienze fisiche)");
 
-		long[] unordered = { 3 };
-		long[] ordered = { 3 };
+		long[] unordered = { 71 };
+		long[] ordered = { 71 };
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
 		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
 		DbGateway.orderBy(conn, "NomeRisorsa", rs);

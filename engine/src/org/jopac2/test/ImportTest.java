@@ -27,8 +27,8 @@ public class ImportTest extends TestCase {
 	private InputStream in = null;
 	private static String filetype = "sebina";
 	private static String JOpac2confdir = "src/org/jopac2/conf";
-	private static String dbUrl = "jdbc:derby:/siti/jopac2/catalogs/db" + sitename + ";create=true";
-//	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
+//	private static String dbUrl = "jdbc:derby:/siti/jopac2/catalogs/db" + sitename + ";create=true";
+	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
 	private static String dbUser = "root";
 	private static String dbPassword = "";
 
@@ -152,9 +152,10 @@ public class ImportTest extends TestCase {
 		 * "          anagrafe_parole a "
 		 */
 
-		String[] tipi_notizie = { "1,sebina", "2,sosebi", "3,sbn-unix",
-				"4,isisbiblo", "5,easyweb", "6,bibliowin4", "7,pregresso",
-				"8,ejournal", "9,eut", "10,eutmarc" , "11,mdb"};
+		String[] tipi_notizie = {"1,bibliowin4", "2,comarc", "3,easyweb", 
+				"4,eutmarc", "5,isisbiblo", "6,pregresso", "7,sbnunix", 
+				"8,sebina", "9,sosebi", "10,mdb"};
+
 
 		Vector<String> v1 = DbGateway.dumpTable(conn, "tipi_notizie");
 		boolean r1 = checkStringSequence(v1, tipi_notizie);
@@ -200,7 +201,7 @@ public class ImportTest extends TestCase {
 		SearchResultSet rs = ListSearch.listSearch(conn, "AUT",
 				"a", 100);
 		long[] listres = { 17, 19, 6, 3, 8, 4, 11, 4, 9, 5, 7, 10, 15, 1, 15, 16, 2, 5, 8, 12, 10, 13, 10, 14, 7, 15, 6, 6 };
-//		SearchResultSet.dumpSearchResultSet(conn, rs);
+		SearchResultSet.dumpSearchResultSet(conn, rs);
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
 		assertTrue("Done ", r1);
 	}
