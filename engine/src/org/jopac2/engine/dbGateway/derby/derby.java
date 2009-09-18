@@ -49,8 +49,8 @@ public class derby extends DbGateway {
 	    //"id_parola int,id_de int) ENGINE = MYISAM DEFAULT CHARSET=utf8");
 	    DbGateway.execute(conn,"create table anagrafe_parole (ID int not null "+autoincrement+","+
 	        "parola varchar(50), stemma varchar(50),primary key(id))"); //type=memory // ,primary key(id)
-	    //DbGateway.execute(conn,"create table classi ("+
-	    //    "ID int not null auto_increment,nome char(30) ,primary key(id)) ENGINE = MYISAM DEFAULT CHARSET=utf8");
+	    DbGateway.execute(conn,"create table classi ("+
+	        "ID int not null "+autoincrement1+",nome char(30) ,primary key(id))");
 	    DbGateway.execute(conn,"create table classi_dettaglio ("+
 	        "ID int not null "+autoincrement1+",id_tipo int, id_classe int,"+
 	        "tag char(50),data_element char(1) ,primary key(id))"); //,primary key(id)
