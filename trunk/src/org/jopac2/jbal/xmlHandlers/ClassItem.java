@@ -38,6 +38,7 @@ package org.jopac2.jbal.xmlHandlers;
 public class ClassItem {
     
     private String cName,eName,t,f;
+    private long idTipo=-1;
     
     /** Creates a new instance of ClassItem */
     public ClassItem(String className, String elementName, String tag, String field) {
@@ -66,4 +67,12 @@ public class ClassItem {
     public String toString() {
         return(cName+"::"+eName+"::"+t+"::"+f);
     }
+
+	public void setIdTipo(long idTipo) {
+		this.idTipo = idTipo;
+	}
+
+	public long getIdTipo() {
+		return idTipo;
+	}
 }
