@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map:sitemap [
+<!ENTITY generalpipeline SYSTEM "../sitemap/generalpipeline.dat">
+<!ENTITY auth-manager SYSTEM "../sitemap/auth-manager.dat">
+<!ENTITY auth-pipeline SYSTEM "../sitemap/auth-pipeline.dat">
+<!ENTITY main-pipeline SYSTEM "../sitemap/main-pipeline.dat">
+<!ENTITY auth-method SYSTEM "../sitemap/auth-method.dat">
+]>
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+	<!-- PLEASE DO MODIFY ONLY THE PART BELOW -->
+	
+	<map:pipelines>
+
+		<map:component-configurations>
+
+			&auth-manager;
+
+			<global-variables>
+				<db>dbjopac2</db>
+				<sitename>jopac2</sitename>
+				<data-directory>/siti/jopac2</data-directory>
+				<showAreasInFirstLevelPages>true</showAreasInFirstLevelPages>
+				<template>jopac2</template>
+			</global-variables>
+			
+		</map:component-configurations>
+		
+		<map:pipeline internal-only="true">
+			<!-- This is the authentication resource -->
+			<map:match pattern="authenticate">
+				<map:generate src="auth/userlist.xml"/>
+				<map:transform src="../stylesheets/auth/authenticate.xsl">
+					<map:parameter name="use-request-parameters" value="true"/>
+				</map:transform>
+				<map:serialize type="xml"/>
+			</map:match>
+		</map:pipeline>  
+		
+		<!-- PLEASE DO MODIFY ONLY THE PART ABOVE -->
+		
+		<map:pipeline internal-only="false">
+			<map:match pattern="/js/tiny_mce/**">
+				<map:read src="/js/tiny_mce/{1}" />
+			</map:match>
+		
+			<map:match pattern="Tree/*.html">
+				<map:read mime-type="text/html" src="../Tree/{1}.html" />
+			</map:match>
+			
+			<!-- JavaScript scripts -->
+			<map:match pattern="Tree/src/*.js">
+      			<map:read mime-type="text/javascript" src="../Tree/src/{1}.js"/>
+			</map:match>
+			
+			<map:match pattern="Tree/src/*/*.js">
+      			<map:read mime-type="text/javascript" src="../Tree/src/{1}/{2}.js"/>
+			</map:match>
+			
+			<map:match pattern="Tree/*.js">
+      			<map:read mime-type="text/javascript" src="../Tree/{1}.js"/>
+			</map:match>
+			
+			<map:match pattern="Tree/**/*.css">
+      			<map:read mime-type="text/css" src="../Tree/{1}/{2}.css"/>
+			</map:match>
+			
+			<map:match pattern="Tree/getChildren">
+				<map:generate type="request" />
+				<map:transform type="JSONReadData" />
+				<!-- map:transform type="tutil" src="/tmp/getChildren" / -->
+				<map:serialize type="text" />
+			</map:match>
+			
+			<map:match pattern="Tree/*">
+      			<map:read mime-type="text/txt" src="../Tree/{1}"/>
+			</map:match>
+			
+			<map:match pattern="Tree/static/*.*">
+      			<map:read mime-type="images/{2}" src="../Tree/static/{1}.{2}"/>
+			</map:match>
+			
+			<map:match pattern="Tree/**/images/**/*.*">
+      			<map:read mime-type="images/{4}" src="../Tree/{1}/images/{2}/{3}.{4}"/>
+			</map:match>
+			
+		</map:pipeline>
+		
+		&auth-pipeline;
+		&auth-method;
+		&main-pipeline;
+		&generalpipeline;
+		
+	</map:pipelines>					
+</map:sitemap>
