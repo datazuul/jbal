@@ -20,61 +20,61 @@ public class derby extends DbGateway {
 	String autoincrement1="GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)";
 
 
-	protected void createHashTable(Connection conn) throws SQLException {
-		DbGateway.execute(conn,"create table hash (hash varchar(32) not null,"+
+	protected void createHashTable(Connection conn, String catalog) throws SQLException {
+		DbGateway.execute(conn,"create table je_"+catalog+"_hash (hash varchar(32) not null,"+
         "id_notizia integer not null,primary key(id_notizia))");
     }
 	
-	public void createAllTables(Connection conn) throws SQLException {
-    	dropTable(conn,"notizie");
-    	dropTable(conn,nomeTableListe("TIT"));//CR_LISTE
+	public void createAllTables(Connection conn, String catalog) throws SQLException {
+    	dropTable(conn,"je_"+catalog+"_notizie");
+    	dropTable(conn,"je_"+catalog+"_"+nomeTableListe("TIT"));//CR_LISTE
     	//DbGateway.dropTable(conn,"data_element");
     	//DbGateway.dropTable(conn,"l_parole_de");
-    	dropTable(conn,"anagrafe_parole");
-    	dropTable(conn,"classi");
-    	dropTable(conn,"classi_dettaglio");
-    	dropTable(conn,"tipi_notizie");
-    	dropTable(conn,"temp_lcpn");
-    	dropTable(conn,"hash");
-    	dropTable(conn, "ricerche_dettaglio");
-    	dropTable(conn, "ricerche");
+    	dropTable(conn,"je_"+catalog+"_anagrafe_parole");
+    	dropTable(conn,"je_"+catalog+"_classi");
+    	dropTable(conn,"je_"+catalog+"_classi_dettaglio");
+    	dropTable(conn,"je_"+catalog+"_tipi_notizie");
+    	dropTable(conn,"je_"+catalog+"_temp_lcpn");
+    	dropTable(conn,"je_"+catalog+"_hash");
+    	dropTable(conn, "je_"+catalog+"_ricerche_dettaglio");
+    	dropTable(conn, "je_"+catalog+"_ricerche");
     	
     	
-        DbGateway.execute(conn,"create table notizie (id integer not null "+autoincrement+","+
+        DbGateway.execute(conn,"create table je_"+catalog+"_notizie (id integer not null "+autoincrement+","+
         "bid varchar(50),id_tipo integer,notizia blob,primary key(id))"); 
-        createHashTable(conn);
+        createHashTable(conn, catalog);
 	    //DbGateway.execute(conn,"create table data_element (ID int not null,"+
 	    //    "id_notizia int,id_classi_dettaglio int) ENGINE = MYISAM DEFAULT CHARSET=utf8");
 	    //DbGateway.execute(conn,"create table l_parole_de (ID int not null,"+
 	    //"id_parola int,id_de int) ENGINE = MYISAM DEFAULT CHARSET=utf8");
-	    DbGateway.execute(conn,"create table anagrafe_parole (ID int not null "+autoincrement+","+
+	    DbGateway.execute(conn,"create table je_"+catalog+"_anagrafe_parole (ID int not null "+autoincrement+","+
 	        "parola varchar(50), stemma varchar(50),primary key(id))"); //type=memory // ,primary key(id)
-	    DbGateway.execute(conn,"create table classi ("+
+	    DbGateway.execute(conn,"create table je_"+catalog+"_classi ("+
 	        "ID int not null "+autoincrement1+",nome char(30) ,primary key(id))");
-	    DbGateway.execute(conn,"create table classi_dettaglio ("+
+	    DbGateway.execute(conn,"create table je_"+catalog+"_classi_dettaglio ("+
 	        "ID int not null "+autoincrement1+",id_tipo int, id_classe int,"+
 	        "tag char(50),data_element char(1) ,primary key(id))"); //,primary key(id)
-	    DbGateway.execute(conn,"create table tipi_notizie ("+
+	    DbGateway.execute(conn,"create table je_"+catalog+"_tipi_notizie ("+
 	        "ID int not null "+autoincrement1+", nome varchar(20),primary key(id))"); //,primary key(id)
-	    DbGateway.execute(conn,"create table temp_lcpn "+
+	    DbGateway.execute(conn,"create table je_"+catalog+"_temp_lcpn "+
             "(id_notizia int,id_parola int,id_classe int " +
 //            ", primary key(id_notizia,id_parola,id_classe) "+
             ")");
 	
-	    createTableRicerche(conn);
+	    createTableRicerche(conn, catalog);
 	    //DbGateway.createTableListe(conn,"TIT");//CR_LISTE
     }
 	
-	public void createTableRicerche(Connection conn) throws SQLException {
-		dropTable(conn, "dettaglio_ricerche");
-		String sql1="CREATE TABLE ricerche_dettaglio (" +
+	public void createTableRicerche(Connection conn, String catalog) throws SQLException {
+		dropTable(conn, "je_"+catalog+"_dettaglio_ricerche");
+		String sql1="CREATE TABLE je_"+catalog+"_ricerche_dettaglio (" +
 				  "id_notizia INT NOT NULL, " +
 				  "id_ricerca INT NOT NULL, " +
 				  "PRIMARY KEY(id_notizia, id_ricerca) " +
 				") ";
 
 
-		String sql2="CREATE TABLE ricerche (" +
+		String sql2="CREATE TABLE je_"+catalog+"_ricerche (" +
 				  "id INT NOT NULL "+autoincrement1+", " +
 				  "jsession_id varchar(100) NOT NULL, " +
 				  "testo_ricerca clob, " +
@@ -86,7 +86,7 @@ public class derby extends DbGateway {
 		stmt.execute(sql1);
 		stmt.execute(sql2);
 		
-		execute(conn, "create index jsession_idx on ricerche (jsession_id)");
+		execute(conn, "create index je_"+catalog+"_jsession_idx on je_"+catalog+"_ricerche (jsession_id)");
 
 		stmt.close();
 	}
@@ -130,35 +130,35 @@ public class derby extends DbGateway {
         return currentID;
     }
     
-    public  void createDBl_tables(Connection conn, PrintStream console) throws SQLException {
+    public  void createDBl_tables(Connection conn, String catalog, PrintStream console) throws SQLException {
     	try {
-        execute(conn, "drop table l_classi_parole",true,console);
+        execute(conn, "drop table je_"+catalog+"_l_classi_parole",true,console);
     	}
     	catch(Exception e) {}
         
 
-        execute(conn, "create table l_classi_parole ("+
+        execute(conn, "create table je_"+catalog+"_l_classi_parole ("+
             "ID int not null "+autoincrement1+",id_parola int,id_classe int,"+ // auto_increment
             "n_notizie int ,primary key(id)) ");
 
-        execute(conn, "create index l_classi_parole_idx1 on l_classi_parole (id_parola)");
-        execute(conn, "create index l_classi_parole_idx2 on l_classi_parole (id_classe)");
-        execute(conn, "create index l_classi_parole_idx3 on l_classi_parole (id_parola,id_classe)");
+        execute(conn, "create index je_"+catalog+"_l_classi_parole_idx1 on je_"+catalog+"_l_classi_parole (id_parola)");
+        execute(conn, "create index je_"+catalog+"_l_classi_parole_idx2 on je_"+catalog+"_l_classi_parole (id_classe)");
+        execute(conn, "create index je_"+catalog+"_l_classi_parole_idx3 on je_"+catalog+"_l_classi_parole (id_parola,id_classe)");
 
         try {
-        	execute(conn, "drop table l_classi_parole_notizie",true,console);
+        	execute(conn, "drop table je_"+catalog+"_l_classi_parole_notizie",true,console);
         }
         catch(Exception e) {}
         
 
-        execute(conn, "create table l_classi_parole_notizie ("+
+        execute(conn, "create table je_"+catalog+"_l_classi_parole_notizie ("+
             "ID int not null "+autoincrement1+",id_l_classi_parole int,"+
             "id_notizia int,primary key(id)) ");
 
-        execute(conn, "create index l_classi_parole_notizie_idclassi "+
-            "on l_classi_parole_notizie (id_l_classi_parole)");
-        execute(conn, "create index l_classi_parole_notizie_idnotizie "+
-            "on l_classi_parole_notizie (id_notizia)");
+        execute(conn, "create index je_"+catalog+"_l_classi_parole_notizie_idclassi "+
+            "on je_"+catalog+"_l_classi_parole_notizie (id_l_classi_parole)");
+        execute(conn, "create index je_"+catalog+"_l_classi_parole_notizie_idnotizie "+
+            "on je_"+catalog+"_l_classi_parole_notizie (id_notizia)");
 
    //     execute("drop table if exists temp_lcpn");
 
@@ -177,18 +177,18 @@ public class derby extends DbGateway {
 
         //-- 1min, 667k
         
-        execute(conn, "insert into l_classi_parole (id_parola,id_classe,n_notizie) "+
+        execute(conn, "insert into je_"+catalog+"_l_classi_parole (id_parola,id_classe,n_notizie) "+
             "select id_parola,id_classe,count(*) as n_notizie "+
-            "from temp_lcpn "+
+            "from je_"+catalog+"_temp_lcpn "+
             "group by id_parola,id_classe",true,console);
 
         //--minuti: 16min, 6780360 (=temp_lcpn)
         
 
-        execute(conn, "insert into l_classi_parole_notizie(id_notizia,id_l_classi_parole) "+
+        execute(conn, "insert into je_"+catalog+"_l_classi_parole_notizie(id_notizia,id_l_classi_parole) "+
             "select id_notizia,lcp.id "+
-            "from l_classi_parole lcp "+ // use index (l_classi_parole_idx3)
-            ", temp_lcpn  "+ // force index (temp_3)
+            "from je_"+catalog+"_l_classi_parole lcp "+ // use index (l_classi_parole_idx3)
+            ", je_"+catalog+"_temp_lcpn temp_lcpn "+ // force index (temp_3)
             "where "+
             "temp_lcpn.id_parola=lcp.id_parola and "+
             "temp_lcpn.id_classe=lcp.id_classe",true,console);
@@ -234,18 +234,18 @@ public class derby extends DbGateway {
     	execute(conn, sql);
     }
     
-	public void createTableListe(Connection conn,String classe) throws SQLException {//CR_LISTE
-		dropTable(conn, nomeTableListe(classe));
-		String sql1="CREATE TABLE "+nomeTableListe(classe)+" (id INT NOT NULL "+autoincrement1+", id_notizia INT NOT NULL,testo varchar(50)," +
+	public void createTableListe(Connection conn, String catalog, String classe) throws SQLException {//CR_LISTE
+		dropTable(conn, "je_"+catalog+"_"+nomeTableListe(classe));
+		String sql1="CREATE TABLE je_"+catalog+"_"+nomeTableListe(classe)+" (id INT NOT NULL "+autoincrement1+", id_notizia INT NOT NULL,testo varchar(50)," +
 				    "PRIMARY KEY(id))";
 		Statement stmt=conn.createStatement();
 		stmt.execute(sql1);
 		stmt.close();
-    	createIndex(conn,nomeTableListe(classe)+"_x1", nomeTableListe(classe), "testo(50)", false);//CR_LISTE
+    	createIndex(conn,"je_"+catalog+"_"+nomeTableListe(classe)+"_x1", "je_"+catalog+"_"+nomeTableListe(classe), "testo(50)", false);//CR_LISTE
 
 	}
 	
-	public SearchResultSet listSearchFB(Connection conn,String classe,String parole,int limit,boolean forward) throws SQLException {
+	public SearchResultSet listSearchFB(Connection conn, String catalog, String classe,String parole,int limit,boolean forward) throws SQLException {
 		Vector<Long> listResult=new Vector<Long>();
 		
 		/**
@@ -259,12 +259,12 @@ public class derby extends DbGateway {
 		if(!forward) d="<=";
 		
 		String sql="select * " +
-				"from "+DbGateway.nomeTableListe(classe)+" b, "+
+				"from je_"+catalog+"_"+DbGateway.nomeTableListe(classe)+" b, "+
 					"(" +
 						"select * " +
 						"from " +
 						"(SELECT distinct testo, ROW_NUMBER() OVER() AS rownum " +
-							"FROM "+DbGateway.nomeTableListe(classe)+" a "+
+							"FROM je_"+catalog+"_"+DbGateway.nomeTableListe(classe)+" a "+
 							"where testo "+d+" ?  " +
 						") as tmp where rownum <= ?" +
 					") c "+ //order by testo limit ?

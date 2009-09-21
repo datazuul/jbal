@@ -31,6 +31,7 @@ public class ImportTest extends TestCase {
 	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
 	private static String dbUser = "root";
 	private static String dbPassword = "";
+	private static String catalog=sitename;
 
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
 	private static String _classHSQLDBDriver = "org.hsqldb.jdbcDriver";
@@ -74,7 +75,7 @@ public class ImportTest extends TestCase {
 
 			in = new ByteArrayInputStream(inFile.getBytes());
 
-			JOpac2Import ji = new JOpac2Import(in, filetype, JOpac2confdir,
+			JOpac2Import ji = new JOpac2Import(in, catalog, filetype, JOpac2confdir,
 					dbUrl, dbUser, dbPassword, true, System.out);
 			ji.doJob(false);
 			// ji.wait();
@@ -85,7 +86,7 @@ public class ImportTest extends TestCase {
 		StaticDataComponent sd = new StaticDataComponent();
 		sd.init("src/org/jopac2/conf/commons/");
 		conn = CreaConnessione();
-		doSearchNew = new DoSearchNew(conn, sd);
+		doSearchNew = new DoSearchNew(conn, catalog, sd);
 	}
 
 	@After
@@ -182,14 +183,14 @@ public class ImportTest extends TestCase {
 		long[] ordered = { 7, 6, 1, 10, 3, 9 };
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
 		//SearchResultSet.dumpSearchResultSet(conn, rs);
-		DbGateway.orderBy(conn, "TIT", rs);
+		DbGateway.orderBy(conn, catalog,"TIT", rs);
 		//SearchResultSet.dumpSearchResultSet(conn, rs);
 		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
 		assertTrue("Done ", r1 && r2);
 	}
 
 	public void testListTIT() throws Exception {
-		SearchResultSet rs = ListSearch.listSearch(conn, "TIT",
+		SearchResultSet rs = ListSearch.listSearch(conn, catalog, "TIT",
 				"English grammar in use", 100);
 		long[] listres = { 1, 10, 2, 11, 17, 8, 5, 3, 4, 18, 20, 9 };
 //		SearchResultSet.dumpSearchResultSet(conn, rs);
@@ -198,19 +199,19 @@ public class ImportTest extends TestCase {
 	}
 	
 	public void testListAUT() throws Exception {
-		SearchResultSet rs = ListSearch.listSearch(conn, "AUT",
+		SearchResultSet rs = ListSearch.listSearch(conn, catalog, "AUT",
 				"a", 100);
 		long[] listres = { 17, 19, 6, 3, 8, 4, 11, 4, 9, 5, 7, 10, 15, 1, 15, 16, 2, 5, 8, 12, 10, 13, 10, 14, 7, 15, 6, 6 };
-		SearchResultSet.dumpSearchResultSet(conn, rs);
+		SearchResultSet.dumpSearchResultSet(conn, catalog, rs);
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
 		assertTrue("Done ", r1);
 	}
 	
 	public void testListTITBackward() throws Exception {
-		SearchResultSet rs = ListSearch.listSearchBackward(conn, "TIT",
+		SearchResultSet rs = ListSearch.listSearchBackward(conn, catalog, "TIT",
 				"English grammar in use", 100);
 		long[] listres = { 16, 14, 15, 12, 13, 6, 7, 19 };
-		SearchResultSet.dumpSearchResultSet(conn, rs);
+		SearchResultSet.dumpSearchResultSet(conn, catalog, rs);
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
 		assertTrue("Done ", r1);
 	}

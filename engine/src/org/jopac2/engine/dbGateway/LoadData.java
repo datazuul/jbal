@@ -54,6 +54,7 @@ import com.whirlycott.cache.Cache;
  *     */
 public class LoadData implements LoadDataInterface {
   public Connection conn[];
+  public String catalog="";
   private PreparedStatement preparedNotizia[];
   private PreparedStatement preparedTempLCP[];
 
@@ -89,7 +90,7 @@ public class LoadData implements LoadDataInterface {
   public void appendNotizie() {
     try {
       Statement stmt=conn[0].createStatement();
-      ResultSet rs=stmt.executeQuery("SELECT Max(notizie.id) AS MaxOfid FROM notizie");
+      ResultSet rs=stmt.executeQuery("SELECT Max(je_"+catalog+"_notizie.id) AS MaxOfid FROM je_"+catalog+"_notizie");
       if(rs.next()) {
         id_nz_f=rs.getInt(1);
         inz=id_nz_f;
@@ -102,7 +103,7 @@ public class LoadData implements LoadDataInterface {
     
     try {
         Statement stmt=conn[0].createStatement();
-        ResultSet rs=stmt.executeQuery("SELECT Max(anagrafe_parole.id) AS MaxOfid FROM anagrafe_parole");
+        ResultSet rs=stmt.executeQuery("SELECT Max(je_"+catalog+"_anagrafe_parole.id) AS MaxOfid FROM je_"+catalog+"_anagrafe_parole");
         if(rs.next()) {
           id_ap_f=rs.getInt(1);
           //inz=id_nz_f;
@@ -216,7 +217,7 @@ private boolean clearDatabase;
 	  Long r=null;
 	  try {
 		  Statement stmt=conn[0].createStatement();
-		  ResultSet rs = stmt.executeQuery("select id from anagrafe_parole where parola = '"+parola+"'");
+		  ResultSet rs = stmt.executeQuery("select id from je_"+catalog+"_anagrafe_parole where parola = '"+parola+"'");
 	
 	      if(rs.next()) { // c'e' un record
 	        r=rs.getLong(1);
@@ -230,15 +231,15 @@ private boolean clearDatabase;
   
   private void inizializeDB(Connection conn) throws SQLException {
 		out.println("Creating tables");
-		dbGateway.createAllTables(conn);
+		dbGateway.createAllTables(conn, catalog);
 		out.println("Importing data types");
 
-		dbGateway.importClassiDettaglio(chToIndex,conn,out); //confDir+"/dataDefinition/DataType.xml",out);
+		dbGateway.importClassiDettaglio(chToIndex,conn,catalog,out); //confDir+"/dataDefinition/DataType.xml",out);
 		
 		out.println("Create DB 1st index");
-		dbGateway.create1stIndex(conn);
-		idTipo=dbGateway.getTypeID(conn, dbType);
-		cl_dettaglio=DbGateway.initClDettaglio(conn,idTipo);
+		dbGateway.create1stIndex(conn, catalog);
+		idTipo=dbGateway.getTypeID(conn, catalog, dbType);
+		cl_dettaglio=DbGateway.initClDettaglio(conn, catalog, idTipo);
 		appendNotizie();
 		
 	}
@@ -306,7 +307,7 @@ private boolean clearDatabase;
   
   public void destroy() {
 	  for(int i=0;i<currentSegTempLCP;i++) {
-		  String tempLCP="insert into temp_lcpn (id_notizia,id_parola,id_classe) values ("+
+		  String tempLCP="insert into je_"+catalog+"_temp_lcpn (id_notizia,id_parola,id_classe) values ("+
 		  	arTempLCP[i].getFirst()+","+arTempLCP[i].getSecond()+","+arTempLCP[i].getThird()+")";
 		  try {
 			Statement st=conn[0].createStatement();
@@ -324,7 +325,7 @@ private boolean clearDatabase;
 		  Cache cache) { //, Transliterator t) {
 	  //this.t=t;
 	  //Cache cache=DbGateway.getCache();
-	  ParoleSpoolerInterface paroleSpooler=new ParoleSpooler(conn,maxValues4prepared,cache,out);
+	  ParoleSpoolerInterface paroleSpooler=new ParoleSpooler(conn, catalog, maxValues4prepared,cache,out);
 	  
     
 	  long start_time=System.currentTimeMillis();
@@ -388,8 +389,9 @@ private boolean clearDatabase;
   }
 
 
-  public LoadData(Connection conn[],boolean clearDatabase, String confDir, PrintStream console) {
+  public LoadData(Connection conn[],String catalog, boolean clearDatabase, String confDir, PrintStream console) {
   	  this.conn=conn;
+  	  this.catalog=catalog;
   	  this.clearDatabase=clearDatabase;
   	  this.confDir=confDir;
   	  out=console;
@@ -398,8 +400,7 @@ private boolean clearDatabase;
   	  /**
   	   * TODO: hsqldb non consente inserimenti multipli 
   	   */
-  	  if(conn[0].toString().contains("hsqldb")||
-  			conn[0].toString().contains("derby")) maxValues4prepared=1;
+  	  if(conn[0].toString().contains("derby")) maxValues4prepared=1;
   	  
   	  arTempLCP=new mySet[maxValues4prepared];
   	  
@@ -410,7 +411,7 @@ private boolean clearDatabase;
   	  
   	//maxValues4prepared
 
-  	  String TempLCP="insert into temp_lcpn (id_notizia,id_parola,id_classe) values (?,?,?)";
+  	  String TempLCP="insert into je_"+catalog+"_temp_lcpn (id_notizia,id_parola,id_classe) values (?,?,?)";
   	  
   	  for(int i=0;i<maxValues4prepared-1;i++) {
   		TempLCP=TempLCP+",(?,?,?)";
@@ -418,7 +419,7 @@ private boolean clearDatabase;
   	  
       try {
     	for(int i=0;i<conn.length;i++) {
-    		preparedNotizia[i]=conn[i].prepareStatement("insert into notizie (id,bid,id_tipo,notizia) values (?,?,?,?)");
+    		preparedNotizia[i]=conn[i].prepareStatement("insert into je_"+catalog+"_notizie (id,bid,id_tipo,notizia) values (?,?,?,?)");
     	    preparedTempLCP[i]=conn[i].prepareStatement(TempLCP);
     	}
 	} catch (SQLException e) {

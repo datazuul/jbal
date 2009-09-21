@@ -19,26 +19,26 @@ public class DBUtils {
 	//public static String PATH="C:/Docs/mysource/JOpac2/";
 	public static String PATH="/java_source/keiko/";
 	
-	public static void Prepara(boolean completo) throws Exception{
+	public static void Prepara(String catalog, boolean completo) throws Exception{
 		if(completo){
-			CreaDB();
-			CaricaDati();
+//			CreaDB();
+			CaricaDati(catalog);
 		}
 	} 
 	
-	public static void CreaDB() throws SQLException{
-		Connection conn=CreadbMySql.CreaConnessione("mysql");
-		DbGateway.dropDB(conn,DBNAME);
-		DbGateway.createDB(conn, DBNAME);
-		conn.close();
-
-	}
+//	public static void CreaDB(String catalog) throws SQLException{
+//		Connection conn=CreadbMySql.CreaConnessione("mysql");
+//		DbGateway.dropDB(conn,catalog,DBNAME);
+//		DbGateway.createDB(conn, catalog, DBNAME);
+//		conn.close();
+//
+//	}
 	
 	/**
 	 * @deprecated
 	 * @throws FileNotFoundException
 	 */
-	public static void CaricaDati() throws FileNotFoundException{
+	public static void CaricaDati(String catalog) throws FileNotFoundException{
 		FileInputStream is =new FileInputStream(new File(PATH+"docs/DBTest/kp.iso"));
 		String ft="Isisbiblo";
 		
@@ -46,7 +46,7 @@ public class DBUtils {
 		for(int i=0;i<NUM_CONNESSIONI;i++)
 			connessioni[i]=CreadbMySql.CreaConnessione(DBNAME);
 		
-		DataImporter d = new DataImporter(is,ft,PATH+"WebContent/WEB-INF/conf",connessioni,true,null, System.out); //,null);
+		DataImporter d = new DataImporter(is,ft,PATH+"WebContent/WEB-INF/conf",connessioni,catalog, true,null, System.out); //,null);
 		System.out.println("caricamento dati...");
 		d.start();
 		try {
@@ -60,11 +60,11 @@ public class DBUtils {
 	/*
 	 * inizializza classe per le ricerche, generando un oggetto sd stile Cocoon
 	 */
-	public static DoSearchNew InitDoSearch(Connection conn){
+	public static DoSearchNew InitDoSearch(Connection conn, String catalog){
 		StaticDataComponent sd = new StaticDataComponent();
 		sd.init(PATH+"WebContent/");
 		DoSearchNew doSearchNew;
-		doSearchNew = new DoSearchNew(conn,sd);
+		doSearchNew = new DoSearchNew(conn,catalog,sd);
 		return doSearchNew;
 	}
 

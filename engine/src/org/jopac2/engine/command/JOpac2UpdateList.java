@@ -12,14 +12,14 @@ import org.jopac2.engine.dbGateway.DbGateway;
 public class JOpac2UpdateList {
 	Connection[] conns;
 	int max_conn=5;
+	String catalog="";
 	
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
-	private static String _classHSQLDBDriver = "org.hsqldb.jdbcDriver";
 	
-	public JOpac2UpdateList(String dbUrl, String dbUser, String dbPassword) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+	public JOpac2UpdateList(String dbUrl, String catalog, String dbUser, String dbPassword) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		conns=new Connection[max_conn];
+		this.catalog=catalog;
 		String driver=_classMySQLDriver;
-		if(dbUrl.contains(":hsqldb:")) driver=_classHSQLDBDriver;
 		
 		Class.forName(driver).newInstance();
 		
@@ -30,7 +30,7 @@ public class JOpac2UpdateList {
 	
 	private void doJob() {
 		DbGateway dbGateway=DbGateway.getInstance(conns[0].toString(),System.out);
-		dbGateway.rebuildList(conns[0]);
+		dbGateway.rebuildList(conns[0],catalog);
 	}
 
 	private void destroy() throws SQLException, IOException {
@@ -52,8 +52,9 @@ public class JOpac2UpdateList {
 		String dbUrl="jdbc:mysql://localhost/db"+sitename;
 		String dbUser="root";
 		String dbPassword="";
+		String catalog="";
 		
-		JOpac2UpdateList ji=new JOpac2UpdateList(dbUrl,dbUser,dbPassword);
+		JOpac2UpdateList ji=new JOpac2UpdateList(dbUrl,catalog,dbUser,dbPassword);
 		ji.doJob();
 		
 		ji.destroy();

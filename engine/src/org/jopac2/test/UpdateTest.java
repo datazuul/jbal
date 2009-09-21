@@ -11,13 +11,11 @@ import org.jopac2.engine.NewSearch.DoSearchNew;
 import org.jopac2.engine.command.JOpac2Import;
 import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.dbGateway.StaticDataComponent;
-import org.jopac2.engine.listSearch.ListSearch;
 import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
 import org.jopac2.engine.utils.MyTimer;
 import org.jopac2.engine.utils.SearchResultSet;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
-import org.jopac2.jbal.Readers.RecordReader;
 import org.junit.After;
 import org.junit.Before;
 
@@ -27,13 +25,14 @@ import junit.framework.TestCase;
 
 public class UpdateTest extends TestCase {
 	private static String sitename = "sebina";
-	private InputStream in = null;
+//	private InputStream in = null;
 	private static String filetype = "sebina";
 	private static String JOpac2confdir = "src/org/jopac2/conf";
 	//private static String dbUrl = "jdbc:derby:/siti/jopac2/catalogs/db" + sitename + ";create=true";
 	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
 	private static String dbUser = "root";
 	private static String dbPassword = "";
+	private static String catalog=sitename;
 
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
 	private static String _classHSQLDBDriver = "org.hsqldb.jdbcDriver";
@@ -92,7 +91,7 @@ public class UpdateTest extends TestCase {
 			
 			// carica con la procedura il primo record, per creare tutto il db, i canali di ricerca, le liste
 			InputStream in1 = new ByteArrayInputStream(rec.getBytes());
-			JOpac2Import ji = new JOpac2Import(in1, filetype, JOpac2confdir,
+			JOpac2Import ji = new JOpac2Import(in1, catalog, filetype, JOpac2confdir,
 					dbUrl, dbUser, dbPassword, true, System.out);
 			ji.doJob(false);
 			// ji.wait();
@@ -103,7 +102,7 @@ public class UpdateTest extends TestCase {
 			for(int i=1;i<recs.length;i++) {
 				ma=RecordFactory.buildRecord(0, recs[i], filetype, 0);
 				if(ma!=null) {
-					dbgw.inserisciNotizia(c, ma);
+					dbgw.inserisciNotizia(c, catalog, ma);
 					ma.destroy();
 				}
 			}
@@ -116,7 +115,7 @@ public class UpdateTest extends TestCase {
 		StaticDataComponent sd = new StaticDataComponent();
 		sd.init("src/org/jopac2/conf/commons/");
 		conn = CreaConnessione();
-		doSearchNew = new DoSearchNew(conn, sd);
+		doSearchNew = new DoSearchNew(conn, catalog, sd);
 	}
 
 	@After
@@ -125,6 +124,7 @@ public class UpdateTest extends TestCase {
 		conn.close();
 	}
 
+	@SuppressWarnings("unused")
 	private SearchResultSet doSearch(String str) throws ExpressionException,
 			SQLException {
 		MyTimer t = new MyTimer(new String[] { "NEW", "esecuzione" });
@@ -152,6 +152,7 @@ public class UpdateTest extends TestCase {
 		return r;
 	}
 
+	@SuppressWarnings("unused")
 	private boolean checkIdSequence(Vector<Long> recordIDs, long[] a) {
 		boolean r = false;
 		if (recordIDs != null && recordIDs.size() == a.length) {
@@ -166,6 +167,7 @@ public class UpdateTest extends TestCase {
 		return r;
 	}
 
+	@SuppressWarnings("unused")
 	private void outputJava(Vector<String> v1) {
 		for (int i = 0; v1 != null && i < v1.size(); i++) {
 			System.out.println("\"" + v1.elementAt(i) + "\",\n");
@@ -211,14 +213,14 @@ public class UpdateTest extends TestCase {
 	  public void testUpdate() throws Exception {
 		Connection conn=CreaConnessione();
 		DbGateway dbgw=DbGateway.getInstance("mysql", null);
-		RecordInterface ma=DbGateway.getNotiziaByJID(conn, 1);
+		RecordInterface ma=DbGateway.getNotiziaByJID(conn, catalog, 1);
 		System.out.println(ma.toReadableString());
 		ma.setTitle("Titolo prova");
 		
-		dbgw.updateNotizia(conn, ma);
+		dbgw.updateNotizia(conn, catalog, ma);
 		
 		ma.destroy();
-		ma=DbGateway.getNotiziaByJID(conn, 1);
+		ma=DbGateway.getNotiziaByJID(conn, catalog, 1);
 		System.out.println(ma.toReadableString());
 		conn.close();
 		assertTrue("Done ", true);

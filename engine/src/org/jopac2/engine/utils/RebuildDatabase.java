@@ -80,6 +80,7 @@ public class RebuildDatabase {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		// rebuildDatabase(Connection[] conn)
+		String catalog="catalog";
 		try {
 			TestConnessione();
 			Connection conn1,conn2,conn3,conn4,conn5,conn6,conn7;
@@ -91,7 +92,7 @@ public class RebuildDatabase {
 			conn6=CreaConnessione();
 			conn7=CreaConnessione();
 			Connection[] c={conn1,conn2,conn3,conn4,conn5,conn6,conn7};
-			DbGateway.rebuildDatabase(c,System.out);
+			DbGateway.rebuildDatabase(c,catalog,System.out);
 			conn7.close();
 			conn6.close();
 			conn5.close();

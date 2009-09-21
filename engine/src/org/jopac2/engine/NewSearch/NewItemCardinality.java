@@ -111,7 +111,7 @@ public class NewItemCardinality {
 	 * 
 	 * @param s
 	 */
-	public void setClasseParola(String[] channels,String s, Connection conn) {
+	public void setClasseParola(String[] channels,String s, Connection conn, String catalog) {
 		if(s!=null && s.length()>0){
 			StringTokenizer st = new StringTokenizer(s, "=");			
 			String classe = st.nextToken().trim();
@@ -129,13 +129,13 @@ public class NewItemCardinality {
 				// decodifica nome classe
 				this.nomeClasse = classe;
 				try {
-					this.classe=dbGateway.getClassNameID(conn, classe);
+					this.classe=dbGateway.getClassNameID(conn, catalog, classe);
 //					this.classe=StaticDataComponent.getChannelIndexbyName(channels,classe);
 				}
 				catch(Exception e){
 					// se la classe non esiste viene usata ANY
 					this.nomeClasse="ANY";
-					this.classe=dbGateway.getClassNameID(conn, classe);
+					this.classe=dbGateway.getClassNameID(conn, catalog, classe);
 				}
 			} else { 
 				// classe e' un numero

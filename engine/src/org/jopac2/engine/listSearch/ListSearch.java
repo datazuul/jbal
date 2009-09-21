@@ -7,23 +7,23 @@ import org.jopac2.engine.utils.SearchResultSet;
 
 public class ListSearch {
 
-	public static SearchResultSet listSearch(Connection conn,String classe,String parole,int limit) throws SQLException {
+	public static SearchResultSet listSearch(Connection conn, String catalog, String classe,String parole,int limit) throws SQLException {
 		DbGateway db=DbGateway.getInstance(conn.toString(),null);
-		return db.listSearch(conn,classe,parole,limit);
+		return db.listSearch(conn,catalog,classe,parole,limit);
 	}
 	
-	public static SearchResultSet listSearchBackward(Connection conn,String classe,String parole,int limit) throws SQLException {
+	public static SearchResultSet listSearchBackward(Connection conn, String catalog, String classe,String parole,int limit) throws SQLException {
 		DbGateway db=DbGateway.getInstance(conn.toString(),null);
-		return db.listSearchBackward(conn,classe,parole,limit);
+		return db.listSearchBackward(conn,catalog,classe,parole,limit);
 	}
 	
-	public static SearchResultSet listSearch(Connection conn,String classe,long jid,int limit) throws SQLException {
-		String testo=DbGateway.getClassContentFromJID(conn, classe, jid);
-		return listSearch(conn,classe,testo,limit);
+	public static SearchResultSet listSearch(Connection conn, String catalog, String classe,long jid,int limit) throws SQLException {
+		String testo=DbGateway.getClassContentFromJID(conn, catalog, classe, jid);
+		return listSearch(conn, catalog, classe, testo, limit);
 	}
 	
-	public static SearchResultSet listSearchBackward(Connection conn,String classe,long jid,int limit) throws SQLException {
-		String testo=DbGateway.getClassContentFromJID(conn, classe, jid);
-		return listSearchBackward(conn,classe,testo,limit);
+	public static SearchResultSet listSearchBackward(Connection conn, String catalog, String classe,long jid,int limit) throws SQLException {
+		String testo=DbGateway.getClassContentFromJID(conn, catalog, classe, jid);
+		return listSearchBackward(conn, catalog, classe, testo,limit);
 	}
 }

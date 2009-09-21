@@ -31,6 +31,7 @@ public class ImportTestMdb1 extends TestCase {
 	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
 	private static String dbUser = "root";
 	private static String dbPassword = "";
+	private static String catalog=sitename;
 
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
 	private static String _classHSQLDBDriver = "org.hsqldb.jdbcDriver";
@@ -71,7 +72,7 @@ public class ImportTestMdb1 extends TestCase {
 
 			in = new FileInputStream(f);
 
-			JOpac2Import ji = new JOpac2Import(in, filetype, JOpac2confdir,
+			JOpac2Import ji = new JOpac2Import(in, catalog, filetype, JOpac2confdir,
 					dbUrl, dbUser, dbPassword, true, System.out);
 			ji.doJob(false);
 			// ji.wait();
@@ -82,7 +83,7 @@ public class ImportTestMdb1 extends TestCase {
 		StaticDataComponent sd = new StaticDataComponent();
 		sd.init("src/org/jopac2/conf/commons/");
 		conn = CreaConnessione();
-		doSearchNew = new DoSearchNew(conn, sd);
+		doSearchNew = new DoSearchNew(conn, catalog, sd);
 	}
 
 	@After
@@ -132,6 +133,7 @@ public class ImportTestMdb1 extends TestCase {
 		return r;
 	}
 
+	@SuppressWarnings("unused")
 	private void outputJava(Vector<String> v1) {
 		for (int i = 0; v1 != null && i < v1.size(); i++) {
 			System.out.println("\"" + v1.elementAt(i) + "\",\n");
@@ -319,9 +321,9 @@ public class ImportTestMdb1 extends TestCase {
 		long[] unordered = { 24, 25, 26, 27, 28, 29, 53, 59, 60 };
 		long[] ordered = { 53, 24, 25, 26, 28, 29, 27, 59, 60 };
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
-		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
-		DbGateway.orderBy(conn, "NomeRisorsa", rs);
-		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
+		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
+		DbGateway.orderBy(conn, catalog, "NomeRisorsa", rs);
+		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
 		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
 		assertTrue("Done ", r1 && r2);
 	}

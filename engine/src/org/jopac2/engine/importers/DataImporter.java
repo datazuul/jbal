@@ -53,6 +53,7 @@ import com.whirlycott.cache.Cache;
 
 public class DataImporter extends Thread {
 	private InputStream f;
+	private String catalog;
 	private String filetype,tempDir,confdir;
 	Connection[] conn=null;
 	boolean clearDatabase=true;
@@ -62,7 +63,7 @@ public class DataImporter extends Thread {
 	String[] channels=null;
 	PrintStream out=null;
 	
-	public DataImporter(InputStream f,String filetype,String JOpac2confdir,Connection[] conns, boolean clearDatabase, Cache cache, PrintStream console) { //, Transliterator t) {
+	public DataImporter(InputStream f,String filetype,String JOpac2confdir,Connection[] conns, String catalog, boolean clearDatabase, Cache cache, PrintStream console) { //, Transliterator t) {
 		this.f=f;
 		this.filetype=filetype;
 		confdir=JOpac2confdir;
@@ -71,6 +72,7 @@ public class DataImporter extends Thread {
 		dbGateway=DbGateway.getInstance(conns[0].toString(),console);
 		this.cache=cache;
 		this.out=console;
+		this.catalog=catalog;
 	}
 	
 
@@ -78,15 +80,15 @@ public class DataImporter extends Thread {
 	public void consolidateDB(Connection conn) throws SQLException {
 
         out.println("Creating indexes");
-        dbGateway.createDBindexes(conn);
+        dbGateway.createDBindexes(conn,catalog);
         out.println("Generating l_tables");
-        dbGateway.createDBl_tables(conn,out);
+        dbGateway.createDBl_tables(conn,catalog,out);
 	}
 	
     private String[] loadData(InputStream f,String dbType, String temporaryDir) {
     	String[] r=null;
     	DbGateway.commitAll(conn);
-        LoadData ld=new LoadData(conn,clearDatabase,confdir,out);
+        LoadData ld=new LoadData(conn,catalog,clearDatabase,confdir,out);
         r=ld.doJob(f,dbType,temporaryDir,cache); //,t);
         ld.destroy();
         return r;
@@ -130,7 +132,7 @@ public class DataImporter extends Thread {
 	            consolidateDB(conn[0]);
 	            
 	            DbGateway dbGateway=DbGateway.getInstance(conn[0].toString(),out);
-	    		dbGateway.rebuildList(conn[0],ch);
+	    		dbGateway.rebuildList(conn[0],catalog,ch);
 	            
 	            out.println("End of process: OK");
 

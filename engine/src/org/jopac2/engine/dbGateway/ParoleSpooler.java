@@ -41,22 +41,26 @@ import com.whirlycott.cache.Cache;
 
 public class ParoleSpooler implements ParoleSpoolerInterface {
 	private PreparedStatement preparedParole[];
+	private String catalog="";
 	private int nvalues=100;
-	private String prepared="insert into anagrafe_parole (id,parola,stemma) values (?,?,?)";
 	private int currentStmt=0, currentValue=0;
 	private Hashtable<String,Long> buffer;
 	private Connection c;
 	private int block=0;
 	private Cache cache;
-	private String selectID="select id from anagrafe_parole where parola = (?)";
+	private String selectID;
+	private String prepared;
 	private PreparedStatement preparedSelectID;
 	private Radice stemmer=null;
 	private PrintStream out=null;
 
-	public ParoleSpooler(Connection[] conn, int nvalues, Cache cache, PrintStream console) {
+	public ParoleSpooler(Connection[] conn, String catalog, int nvalues, Cache cache, PrintStream console) {
 		//super();
 		this.nvalues=nvalues;
 		this.cache=cache;
+		this.catalog=catalog;
+		selectID="select id from je_"+catalog+"_anagrafe_parole where parola = (?)";
+		prepared="insert into je_"+catalog+"_anagrafe_parole (id,parola,stemma) values (?,?,?)";
 		cache.clear();
 
 		out=console;
@@ -142,7 +146,7 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 				preparedSelectID.setString(1,parola);
 				ResultSet rs=preparedSelectID.executeQuery();
 //				stmt = c.createStatement();
-//				ResultSet rs = stmt.executeQuery("select id from anagrafe_parole where parola = '"+parola+"'");
+//				ResultSet rs = stmt.executeQuery("select id from je_"+catalog+"_anagrafe_parole where parola = '"+parola+"'");
 
 				if(rs.next()) { // c'e' un record
 					r=rs.getLong(1);
@@ -168,13 +172,13 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 				
 				Statement stmt=c.createStatement();
 
-	            ResultSet r=stmt.executeQuery("select id from anagrafe_parole "+
+	            ResultSet r=stmt.executeQuery("select id from je_"+catalog+"_anagrafe_parole "+
 	                "where (parola='"+p+"')");
 	            if(r.next()) is=true;
 	            r.close();
 	            stmt.close();
 				
-				if(!is) DbGateway.InsertParola(c, p, stemmer.radice(p), id);
+				if(!is) DbGateway.InsertParola(c, catalog, p, stemmer.radice(p), id);
 			}
 			
 			buffer.clear();

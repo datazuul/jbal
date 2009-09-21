@@ -59,14 +59,16 @@ public class QuerySearch {
 	@SuppressWarnings("unused")
 	private String ricercaOttimizzata="";
 	private String[] channels;
+	private String catalog="";
 
 	private static void InitLogger() {
 		//logger.setLevel(Level.ALL); // setta logger al livello massimo
 		logger.setLevel(Level.OFF); // disabilita logger
 	}
 
-	public QuerySearch(String ricercaJopac, Connection conn, String[] channels) throws ExpressionException {
+	public QuerySearch(String ricercaJopac, Connection conn, String catalog, String[] channels) throws ExpressionException {
 		this.channels=channels;
+		this.catalog=catalog;
 		InitLogger();
 		//try {
 		this.ricercaOriginale=ricercaJopac;
@@ -196,7 +198,7 @@ public class QuerySearch {
 			} else {
 				// il valore del nodo e nella forma classe=parola
 				NewItemCardinality n = new NewItemCardinality();				
-				n.setClasseParola(channels,tree.getValoreAsString(),this.conn);	// TODO era staticDataComponent
+				n.setClasseParola(channels,tree.getValoreAsString(),this.conn,this.catalog);	// TODO era staticDataComponent
 				
 				if(n.getClasseAsString().equals("ANY")){										
 					//effettua la ricerca e popola il bitarray di notizie

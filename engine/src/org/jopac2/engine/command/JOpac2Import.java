@@ -22,22 +22,22 @@ public class JOpac2Import {
 	boolean clearDatabase=true;
 	int max_conn=5;
 	private PrintStream out=null;
+	private String catalog="";
 	
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
-	private static String _classHSQLDBDriver = "org.hsqldb.jdbcDriver";
     private static String _classDerbyDriver = "org.apache.derby.jdbc.EmbeddedDriver";
     
 	
-	public JOpac2Import(String inputFile, String filetype, String JOpac2confdir, String dbUrl, String dbUser, 
+	public JOpac2Import(String inputFile, String catalog, String filetype, String JOpac2confdir, String dbUrl, String dbUser, 
 			String dbPassword, boolean clearDatabase,PrintStream console) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		File fi=new File(inputFile);
 		this.inputFile=new FileInputStream(fi);
 		this.JOpac2confdir=JOpac2confdir;
 		this.filetype=filetype;
 		out=console;
+		this.catalog=catalog;
 		conns=new Connection[max_conn];
 		String driver=_classMySQLDriver;
-		if(dbUrl.contains(":hsqldb:")) driver=_classHSQLDBDriver;
 		if(dbUrl.contains(":derby:")) driver=_classDerbyDriver;
 		
 		Class.forName(driver).newInstance();
@@ -47,14 +47,14 @@ public class JOpac2Import {
 		}
 	}
 	
-	public JOpac2Import(InputStream in, String filetype, String JOpac2confdir, String dbUrl, String dbUser, String dbPassword, boolean clearDatabase, PrintStream console) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+	public JOpac2Import(InputStream in, String catalog, String filetype, String JOpac2confdir, String dbUrl, String dbUser, String dbPassword, boolean clearDatabase, PrintStream console) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		this.inputFile=in;
 		this.JOpac2confdir=JOpac2confdir;
 		this.filetype=filetype;
 		out=console;
+		this.catalog=catalog;
 		conns=new Connection[max_conn];
 		String driver=_classMySQLDriver;
-		if(dbUrl.contains(":hsqldb:")) driver=_classHSQLDBDriver;
 		if(dbUrl.contains(":derby:")) driver=_classDerbyDriver;
 		
 		Class.forName(driver).newInstance();
@@ -71,7 +71,7 @@ public class JOpac2Import {
 	public void doJob(boolean background) {
 		//Transliterator t=Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
 
-		DataImporter dataimporter=new DataImporter(inputFile,filetype,JOpac2confdir, conns, clearDatabase,DbGateway.getCache(),out); //,t);
+		DataImporter dataimporter=new DataImporter(inputFile, filetype,JOpac2confdir, conns, catalog, clearDatabase,DbGateway.getCache(),out); //,t);
 		if(background)
 			dataimporter.start();
 		else

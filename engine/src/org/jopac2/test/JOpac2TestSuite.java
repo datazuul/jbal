@@ -6,9 +6,10 @@ import junit.framework.TestSuite;
 public class JOpac2TestSuite {
 
 	public static final boolean TEST_COMPLETO=true; // se 1 droppa, ricrea e reimporta il db
+	private static String catalog="catalog";
 	
     public static Test suite() throws Exception {    	
-    	DBUtils.Prepara(TEST_COMPLETO);    	
+    	DBUtils.Prepara(catalog, TEST_COMPLETO);    	
         TestSuite suite = new TestSuite();
         suite.addTestSuite(MainDoSearch.class);
         suite.addTestSuite(MainBug.class);

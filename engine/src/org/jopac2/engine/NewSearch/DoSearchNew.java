@@ -42,12 +42,14 @@ public class DoSearchNew {
 	private Connection conn = null;
 	protected StaticDataComponent staticdata;
 	private String[] channels=null;
+	private String catalog="";
 	
-	public DoSearchNew(Connection c, StaticDataComponent d) {
+	public DoSearchNew(Connection c, String catalog, StaticDataComponent d) {
 		this.conn = c;
 		this.staticdata = d;
+		this.catalog = catalog;
 		this.resultSet = new Vector<Long>();
-		RecordInterface ma=DbGateway.getNotiziaByJID(c, 1);
+		RecordInterface ma=DbGateway.getNotiziaByJID(c, catalog, 1);
 		channels=ma.getChannels();
 		ma.destroy();
 	}
@@ -60,14 +62,14 @@ public class DoSearchNew {
 		result.setQuery(query);
 		
 		if(query!=null && query.length()>0) {
-			QuerySearch qs=new QuerySearch(query,this.conn,channels); // this.staticdata
+			QuerySearch qs=new QuerySearch(query,this.conn,catalog,channels); // this.staticdata
 			qs.optimize(useStemmer);  // ottimizza ed esegue la query
 			result.setOptimizedQuery(qs.toString());
 			result.setItemCardinalities(qs.getQueryCardinality());				
 			resultSet=qs.getResultsAsVector();
 		}
 		else {
-			resultSet=DbGateway.getIdNotizie(conn);
+			resultSet=DbGateway.getIdNotizie(conn,catalog);
 		}
 		//System.out.println("risultato:"+resultSet);
 		double t = (System.currentTimeMillis() - start_time) / (1000.0);
@@ -75,7 +77,7 @@ public class DoSearchNew {
 		result.setQueryCount(resultSet.size());
 		result.setRecordIDs(resultSet);
 		try {
-			int idQ=DbGateway.saveQuery(conn, "", result);
+			int idQ=DbGateway.saveQuery(conn, catalog, "", result);
 			result.setQueryID(idQ);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -84,6 +86,6 @@ public class DoSearchNew {
 	}
 
 	public RecordInterface getRecord(Long t) {
-		return DbGateway.getNotiziaByJID(conn, t.longValue());
+		return DbGateway.getNotiziaByJID(conn, catalog, t.longValue());
 	}
 }
