@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map:selector name="host" logger="sitemap.selector.host" src="org.apache.cocoon.selection.HostSelector">
-	<host name="sba" value="www.biblio.iztok" />
-	<host name="polotsa" value="polotsa.iztok" />
-	<host name="eut" value="eut.iztok" />
-	<host name="sba" value="biblio12.units.it" />
-	<host name="eut" value="140.105.49.12" />
-	<host name="example" value="www.example" />
-	<host name="mittelnet" value="www.mittelnet" />
-	<host name="lumi" value="www.lumi" />
 	<host name="jopac2" value="www.jopac2" />
 
-	<host name="nomesito" value="www.nomesito.org" />
-	<host name="tt" value="www.terotech.org" />
-	<host name="benessere" value="benessere" />
-	<host name="estate" value="estate" />
-	<host name="allevamentomoratto" value="www.allevamentomoratto.org" />
-	<host name="terotechengineering" value="www.terotechengineering.com" />
 </map:selector>
