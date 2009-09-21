@@ -32,7 +32,7 @@ public class ListingGenerator extends MyAbstractPageGenerator {
 			Section s = new Section();
 			String nome = DBGateway.getPageName(pid, conn);
 			if(!(DBGateway.isPageValid(pid, conn))){
-				nome = nome + " (questa pagina non è attiva)";
+				nome = nome + " (questa pagina non e' attiva)";
 			}
 			if(nome.startsWith("Altre")){
 				try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
