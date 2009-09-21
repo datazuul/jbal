@@ -1,47 +1,10 @@
 <map:select type="host">
-	<map:when test="terotechengineering">
-		<map:mount uri-prefix="" src="terotechengineering/sitemap.xmap" />
-	</map:when>
-
-	<map:when test="allevamentomoratto">
-		<map:mount uri-prefix="" src="allevamentomoratto/sitemap.xmap" />
-	</map:when>
-
-	<map:when test="estate">
-		<map:mount uri-prefix="" src="estate/sitemap.xmap" />
-	</map:when>
-
-	<map:when test="benessere">
-		<map:mount uri-prefix="" src="benessere/sitemap.xmap" />
-	</map:when>
-
-	<map:when test="tt">
-		<map:mount uri-prefix="" src="tt/sitemap.xmap" />
-	</map:when>
-
-	<map:when test="nomesito">
-		<map:mount uri-prefix="" src="nomesito/sitemap.xmap" />
-	</map:when>
-
-	<map:when test="sba">
-		<map:mount uri-prefix="" src="sba/sitemap.xmap" />
-	</map:when>
-	<map:when test="polotsa">
-	    <map:mount uri-prefix="" src="polotsa/sitemap.xmap" />
-	</map:when>
-	<map:when test="eut">
-	    <map:mount uri-prefix="" src="eut/sitemap.xmap" />
-	</map:when>
-	<map:when test="mittelnet">
-	    <map:mount uri-prefix="" src="mittelnet/sitemap.xmap" />
-	</map:when>
-	<map:when test="lumi">
-	    <map:mount uri-prefix="" src="lumi/sitemap.xmap" />
-	</map:when>
 	<map:when test="jopac2">
-	    <map:mount uri-prefix="" src="jopac2/sitemap.xmap" />
+		<map:mount uri-prefix="" src="jopac2/sitemap.xmap" />
 	</map:when>
+
+
 	<map:otherwise>
-		<map:mount uri-prefix="" src="tt/sitemap.xmap" />
+		<map:mount uri-prefix="" src="jopac2/sitemap.xmap" />
     </map:otherwise>
 </map:select>
