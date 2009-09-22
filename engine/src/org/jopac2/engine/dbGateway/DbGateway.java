@@ -1312,20 +1312,22 @@ public abstract class DbGateway {
 		return listSearchFB(conn, catalog, classe, parole, limit, true);
 	}
 	
-//	public static String[] getChannels(Connection conn, String catalog, String classe) throws SQLException {
-//		Vector<String> r=new Vector<String>();
-//		String sql="SELECT tag FROM je_"+catalog+"_classi_dettaglio c, tipi_notizie t where t.id=c.id_tipo and t.nome='"+classe+"'";
-//		Statement st=conn.createStatement();
-//		ResultSet rs=st.executeQuery(sql);
-//		while(rs.next()) {
-//			String c=rs.getString("tag");
-//			if(c!=null && c.contains("/")) c=c.substring(c.lastIndexOf("/")+1);
-//			r.addElement(c);
-//		}
-//		rs.close();
-//		st.close();
-//		return r.toArray(new String[r.size()]);
-//	}
+	public static String[] getChannels(Connection conn, String catalog, String tipo) throws SQLException {
+		Vector<String> r=new Vector<String>();
+		String sql="SELECT n.nome " +
+				"FROM je_"+catalog+"_classi_dettaglio c, je_"+catalog+"_tipi_notizie t,  je_"+catalog+"_classi n " +
+				"where t.id=c.id_tipo and t.nome='"+tipo+"' and n.id=c.id_classe";
+		Statement st=conn.createStatement();
+		ResultSet rs=st.executeQuery(sql);
+		while(rs.next()) {
+			String c=rs.getString("nome");
+			if(c!=null && c.contains("/")) c=c.substring(c.lastIndexOf("/")+1);
+			r.addElement(c);
+		}
+		rs.close();
+		st.close();
+		return r.toArray(new String[r.size()]);
+	}
 
 
 //	public long getClassIDClasseDettaglio(Connection conn, String classe) throws SQLException {
