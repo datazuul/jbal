@@ -36,7 +36,7 @@ public class PageSaver extends MyAbstractPageGenerator{
 			return;
 		}
 		
-		if( save_pacid == id ){					//se il contenitore � quello giusto	
+		if( save_pacid == id ){					//se il contenitore e' quello giusto	
 			DBGateway.setHasChild(id, conn);
 			boolean isActive = false;
 			try { 

@@ -70,12 +70,12 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 		if(loc.equals("catalogSearch")) {
 			String[] chr=null;
 			String catalogFormat=o.getParameter("catalogFormat");
-			String catalogConnection=o.getParameter("catalogConnection");
+			String catalog=o.getParameter("catalogConnection");
 			if(catalogFormat.equalsIgnoreCase("mdb")) {
 				Connection conn;
 				try {
-					conn = getConnection(catalogConnection);
-					chr=DbGateway.getChannels(conn,"mdb");
+					conn = getConnection(dbname);
+					chr=DbGateway.getChannels(conn,catalog,"mdb");
 //					RecordInterface ma=DbGateway.getNotiziaByJID(conn, 1);
 //					if(ma!=null) chr=ma.getChannels();
 					conn.close();

@@ -96,17 +96,9 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 
 	private void throwResults() throws ComponentException, SQLException, SAXException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Connection conn=null;
-		if(dbType != null && dbType.equalsIgnoreCase("derby")) {
-			String driver=ImportCatalog._classDerbyDriver;
-			dbUrl = "jdbc:derby:"+o.getParameter("datadir")+"/catalogs/"+catalogConnection+";create=true";
-			
-			Class.forName(driver).newInstance();
-			
-			conn = DriverManager.getConnection(dbUrl, "", "");
-		}
-		else {
-			conn = getConnection(catalogConnection);
-		}
+		
+		conn = getConnection(dbname);
+
 		SearchResultSet result=null;
 		
 		String catalogQuery = getQuery(o);
@@ -115,7 +107,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		if(checkListParameter("list")) {
 			String[] list=getListParameter("list");
 			if(list[1]!=null && list[1].length()>0) {
-				result=ListSearch.listSearch(conn, list[0], list[1], 100);
+				result=ListSearch.listSearch(conn, catalogConnection, list[0], list[1], 100);
 				throwField("listRecord", list[0]);
 				
 				throwResults(conn, catalogQuery, result);
@@ -125,7 +117,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 			String[] list=getListParameter("nlist");
 			if(list[1]!=null && list[1].length()>0) {
 				long sjid=Long.parseLong(list[1]);
-				result=ListSearch.listSearch(conn, list[0], sjid, 100);
+				result=ListSearch.listSearch(conn, catalogConnection, list[0], sjid, 100);
 				throwField("listRecord", list[0]);
 				
 				throwResults(conn, catalogQuery, result);
@@ -147,14 +139,14 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 				StaticDataComponent sd = new StaticDataComponent();
 				
 				sd.init(JSites.utils.DirectoryHelper.getPath()+"/WEB-INF/conf/");
-				DoSearchNew doSearchNew = new DoSearchNew(conn,sd);
+				DoSearchNew doSearchNew = new DoSearchNew(conn,catalogConnection, sd);
 				
 				boolean useStemmer=false;
 	
 				try {
 					result = doSearchNew.executeSearch(catalogQuery, useStemmer);
 					if(orderBy!=null && orderBy.length()>0) {
-						DbGateway.orderBy(conn, orderBy, result);
+						DbGateway.orderBy(conn, catalogConnection, orderBy, result);
 					}
 				} catch (ExpressionException e1) {
 					e1.printStackTrace();

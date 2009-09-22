@@ -16,6 +16,7 @@ public class PublicationPairs extends MyAbstractPageTransformer {
 
 	private boolean started;
 	StringBuffer sb = new StringBuffer();
+	String catalog="eutmarc";
 
 	public void startElement(String uri, String loc, String raw, Attributes a) throws SAXException {
 		
@@ -61,13 +62,13 @@ public class PublicationPairs extends MyAbstractPageTransformer {
 		if(b.matches("\\d+"))
 			bn = Integer.parseInt(b);
 		try{
-			Connection conn = getConnection("dbeutmarc");
+			Connection conn = getConnection(dbname);
 			
 			super.startElement("", "box", "box", emptyAttrs);
 			
 			super.startElement("", "unit1", "unit1", emptyAttrs);
 			
-			Eutmarc e1 = (Eutmarc) DbGateway.getNotiziaByJID(conn, an);
+			Eutmarc e1 = (Eutmarc) DbGateway.getNotiziaByJID(conn, catalog, an);
 			
 			throwField("img1", saveImgFile(e1));
 			throwField("titolo1", e1.getTitle());
@@ -79,7 +80,7 @@ public class PublicationPairs extends MyAbstractPageTransformer {
 			if(bn>-1){
 				super.startElement("", "unit2", "unit2", emptyAttrs);
 				
-				Eutmarc e2 = (Eutmarc) DbGateway.getNotiziaByJID(conn, bn);
+				Eutmarc e2 = (Eutmarc) DbGateway.getNotiziaByJID(conn, catalog, bn);
 				throwField("img2", saveImgFile(e2));
 				throwField("titolo2", e2.getTitle());
 				throwField("testo2", getTestoFrom(e2));

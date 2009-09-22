@@ -51,32 +51,40 @@ import com.whirlycott.cache.CacheConfiguration;
 import com.whirlycott.cache.CacheManager;
 
 
-public class ImportCatalog extends myAbsGenerator {
+public class ImportCatalog extends MyAbstractPageGenerator {
     
     private Part part;
 	private int max_conn=5;
-    public static String _classDerbyDriver = "org.apache.derby.jdbc.EmbeddedDriver";
     
-    public void generate() throws SAXException, IOException, ProcessingException {
+    public void generate()  {
     	Request request = ObjectModelHelper.getRequest(objectModel);
     	ObjectModelHelper.getContext(objectModel).getAttributeNames().nextElement();
         part = (Part) request.get("upload-file");
         String pid=request.getParameter("pid");
         String cid=request.getParameter("cid");
-        String con=request.getParameter("conn");
+        String catalog=request.getParameter("catalog");
         String format=request.getParameter("format");
         String dbtype=request.getParameter("dbtype");
         
-        contentHandler.startDocument();
-        contentHandler.startElement("","root","root",new AttributesImpl());
+        try {
+			contentHandler.startDocument();
+			contentHandler.startElement("","root","root",new AttributesImpl());
+		} catch (SAXException e2) {
+			e2.printStackTrace();
+		}
         if(pid==null || cid==null) {
-        	sendElement("error","pid or cid missing");
+        	try {
+				sendElement("error","pid or cid missing");
+			} catch (SAXException e) {
+				e.printStackTrace();
+			}
         }
-        else if(part!=null && pid!=null && cid!=null && con!=null && format!=null && dbtype!=null) {
-        	contentHandler.startElement("","loading","loading",new AttributesImpl());
-	        InputStream in = null;
+        else if(part!=null && pid!=null && cid!=null && catalog!=null && format!=null && dbtype!=null) {
+        	
 	        
-	        try {				
+	        try {
+	        	contentHandler.startElement("","loading","loading",new AttributesImpl());
+		        InputStream in = null;
 	        	String dir = this.source;
 	        	
 	    		in = part.getInputStream();
@@ -106,7 +114,7 @@ public class ImportCatalog extends myAbsGenerator {
 		        sendElement("size",String.valueOf(part.getSize()));
 		        sendElement("cid",cid);
 	        	sendElement("pid",pid);
-	        	sendElement("conn",con);
+	        	sendElement("catalog",catalog);
 	        	sendElement("format",format);
 	        	sendElement("dbtype",dbtype);
 		        contentHandler.endElement("","load","load");
@@ -117,21 +125,13 @@ public class ImportCatalog extends myAbsGenerator {
 				boolean background=true;
 				
 				Connection[] conns=new Connection[max_conn];
-				String driver=_classDerbyDriver;
-				String dbUrl = "jdbc:derby:"+dir+con+";create=true";
 				
-				if(dbtype.equalsIgnoreCase("derby")) {
-					Class.forName(driver).newInstance();
+
+				for(int i=0;i<conns.length;i++) {
 					
-					for(int i=0;i<conns.length;i++) {
-						conns[i] = DriverManager.getConnection(dbUrl, "", "");
-					}
+					conns[i] = this.getConnection(dbname);
 				}
-				else {
-					for(int i=0;i<conns.length;i++) {
-						conns[i] = this.getConnection(con);
-					}
-				}
+
 				
 				Cache cache=null;
 				
@@ -159,41 +159,56 @@ public class ImportCatalog extends myAbsGenerator {
 					e.printStackTrace();
 				}
 				
-				DataImporter dataimporter=new DataImporter(in,format,JOpac2confdir, conns, true,cache, console); //,t);
+				DataImporter dataimporter=new DataImporter(in,format,JOpac2confdir, conns, catalog, true,cache, console); //,t);
 				if(background) {
 					dataimporter.start();
 				}
 				else {
 					dataimporter.doJob();
-					if(dbtype.equalsIgnoreCase("derby")) {
-						try {
-							DriverManager.getConnection("jdbc:derby:"+dir+con+";shutdown=true");
-						} catch (Exception e) {
-						}
-					}
+					
 				}
 				
 			} catch (Exception e) {
 				e.printStackTrace();
 				String message="error";
-				contentHandler.startElement("","status","status",new AttributesImpl());
-		        contentHandler.characters(message.toCharArray(), 0, message.length());
-		        contentHandler.endElement("","status","status");
+				try {
+					contentHandler.startElement("","status","status",new AttributesImpl());
+					contentHandler.characters(message.toCharArray(), 0, message.length());
+					contentHandler.endElement("","status","status");
+				} catch (SAXException e1) {
+					e1.printStackTrace();
+				}
 			}
-			contentHandler.endElement("","loading","loading");
+			try {
+				contentHandler.endElement("","loading","loading");
+			} catch (SAXException e) {
+				e.printStackTrace();
+			}
         }
         else {
         	// generate form
-        	contentHandler.startElement("","form","form",new AttributesImpl());
-        	sendElement("cid",cid);
-        	sendElement("pid",pid);
-        	sendElement("conn",con);
-        	sendElement("format",format);
-        	sendElement("dbtype",dbtype);
-        	contentHandler.endElement("","form","form");
+        	try {
+        		contentHandler.startElement("","form","form",new AttributesImpl());
+            	sendElement("cid",cid);
+            	sendElement("pid",pid);
+            	sendElement("catalog",catalog);
+				sendElement("format",format);
+			} catch (SAXException e) {
+				e.printStackTrace();
+			}
+        	try {
+				sendElement("dbtype",dbtype);
+				contentHandler.endElement("","form","form");
+			} catch (SAXException e) {
+				e.printStackTrace();
+			}
         }
-		contentHandler.endElement("","root","root");
-        contentHandler.endDocument();
+		try {
+			contentHandler.endElement("","root","root");
+			contentHandler.endDocument();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		}
     }
     
     public void compose(ComponentManager manager) throws ComponentException {

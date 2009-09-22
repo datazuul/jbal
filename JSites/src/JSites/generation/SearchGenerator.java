@@ -23,15 +23,16 @@ public class SearchGenerator extends MyAbstractPageGenerator {
 	private String catalogQuery = "";
 	private DoSearchNew doSearchNew = null;
 	private Connection conn;
+	private String catalog;
 	
 	@Override
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par) throws IOException, ProcessingException, SAXException {
 		
 		super.setup(resolver, objectModel, src, par);
-		String cDb;
+		
 		try {
-			cDb = par.getParameter("catalogDB");
-			conn = this.getConnection(cDb);
+			catalog = par.getParameter("catalog");
+			conn = this.getConnection(dbname);
 		} catch (ParameterException e) { }
 		
 	}
@@ -47,7 +48,7 @@ public class SearchGenerator extends MyAbstractPageGenerator {
 		
 		Long t = Long.parseLong(request.getParameter("JID"));
 		
-		RecordInterface ri = DbGateway.getNotiziaByJID(conn,t);
+		RecordInterface ri = DbGateway.getNotiziaByJID(conn,catalog,t);
 		
 		String ts = String.valueOf(t);
 		throwField("ID", ts);

@@ -87,7 +87,7 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
     //private RecordInterface ma;
     private BookSignature b;
     private StringBuffer buffer=null;
-    protected String db,dbType;
+    protected String catalog,dbType;
     
     public void sendElement(String element,String value) throws SAXException {
     	if(value!=null) {
@@ -316,7 +316,7 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
             throws SAXException
     {
     	if (namespaceURI.equals("") && localName.equals("catalogConnection")) {
-    		db=buffer.toString().replaceAll("[\n\r]", "").trim();
+    		catalog=buffer.toString().replaceAll("[\n\r]", "").trim();
     		buffer.delete(0, buffer.length());
     		isCatalogConnection=false;
     		return;
@@ -331,34 +331,14 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
         	String id=buffer.toString().replaceAll("[\n\r]", "").trim();
             if(isRecord) {
             	sendElement("id",id);
-            	sendElement("db",db);
+            	sendElement("db",catalog);
             	
             	Connection myConnection;
     			try {
+    				    					
+					myConnection = getConnection(dbname);
     				
-    				if(dbType != null && dbType.equalsIgnoreCase("derby")) {
-    					String driver=ImportCatalog._classDerbyDriver;
-    					String dbUrl = "jdbc:derby:"+o.getParameter("datadir")+"/catalogs/"+db+";create=true";
-    					
-    					try {
-							Class.forName(driver).newInstance();
-						} catch (InstantiationException e) {
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							e.printStackTrace();
-						} catch (ClassNotFoundException e) {
-							e.printStackTrace();
-						}
-    					
-    					myConnection = DriverManager.getConnection(dbUrl, "", "");
-    				}
-    				else {
-    					myConnection = getConnection(db);
-    				}
-    				
-    				
-    				
-    	            RecordInterface ma=DbGateway.getNotiziaByJID(myConnection,id);
+    	            RecordInterface ma=DbGateway.getNotiziaByJID(myConnection,catalog,id);
     	            myConnection.close();
     	            if(ma!=null) { 
     	            	ma.setJOpacID(Long.parseLong(id));
@@ -444,7 +424,7 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
 	    	String tit = ma.getTitle();
 			StaticDataComponent sd = new StaticDataComponent();
 			sd.init(JSites.utils.DirectoryHelper.getPath()+"/WEB-INF/conf/");
-			DoSearchNew doSearchNew = new DoSearchNew(getConnection(db),sd);
+			DoSearchNew doSearchNew = new DoSearchNew(getConnection(dbname),catalog,sd);
 			SearchResultSet result = doSearchNew.executeSearch("CLL="+tit, false);
 			
 			
