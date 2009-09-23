@@ -3,7 +3,7 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:c="http://apache.org/cocoon/include/1.0">
 	
-
+	<xsl:param name="db" />
 
 	<xsl:template match="root">
 				<xsl:apply-templates />
@@ -99,7 +99,7 @@ setTimeout('refreshdiv()',seconds*1000);
 		        Size: <xsl:value-of select="size" /><br/>
 		        CID: <xsl:value-of select="cid" /><br/>
 	        	PID: <xsl:value-of select="pid" /><br/>
-	        	Connection: <xsl:value-of select="conn" /><br/>
+	        	Connection: <xsl:value-of select="catalog" /><br/>
 	        	Format: <xsl:value-of select="format" /><br/>
 	        	DbType: <xsl:value-of select="dbtype" />
 	        	<hr/>
@@ -129,7 +129,7 @@ setTimeout('refreshdiv()',seconds*1000);
 					]]>
 				</script>
 		
-				<form id="upfrm" enctype="multipart/form-data" action="importCatalog?pid={pid}&amp;cid={cid}&amp;dbtype={dbtype}&amp;conn={conn}" 
+				<form id="upfrm" enctype="multipart/form-data" action="importCatalog?pid={pid}&amp;cid={cid}&amp;dbtype={dbtype}&amp;conn={catalog}" 
 					method="post" onSubmit="saveCatalogFormat();">
 					<!-- ?pid={pid}&amp;cid={cid}  -->
 					<fieldset>
@@ -139,7 +139,7 @@ setTimeout('refreshdiv()',seconds*1000);
 								<td><label>File:</label></td><td><input type="file" name="upload-file" /></td>
 							</tr>
 							<tr>
-								<td><label>Formato dati:</label></td><td><input type="text" name="format" id="format" /></td>
+								<td><label>Formato dati:</label></td><td><input type="text" name="format" id="format" value="{format}"/></td>
 							</tr>
 						</table>
 					</fieldset>
@@ -147,8 +147,9 @@ setTimeout('refreshdiv()',seconds*1000);
 					<!-- con, format, dbtype -->
 				</form>
 				
-				Db-type: <b><xsl:value-of select="dbtype" /></b><br/>
-				Nome db: <b><xsl:value-of select="conn" /></b><br/>
+				<!--  Db-type: <b><xsl:value-of select="dbtype" /></b><br/> -->
+				Nome catalogo: <b><xsl:value-of select="catalog" /></b><br/>
+				Db-site: <b><xsl:value-of select="$db" /></b><br/>
 			</body>
 		</html>
 	</xsl:template>
