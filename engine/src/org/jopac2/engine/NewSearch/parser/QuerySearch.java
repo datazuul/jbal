@@ -202,14 +202,14 @@ public class QuerySearch {
 				
 				if(n.getClasseAsString().equals("ANY")){										
 					//effettua la ricerca e popola il bitarray di notizie
-					n.bit=n.doRicercaBitArrayAny(this.conn, useStemmer);
+					n.bit=n.doRicercaBitArrayAny(this.conn, catalog, useStemmer);
 				} else {					
 					//n.ricercaId_lcp(this.conn);// forse si puo risalire alla connessione in altro modo
 					//effettua la ricerca e popola il bitarray di notizie
 					//n.bit=n.doRicercaBitArray(this.conn,n.getId_lcp());
 					if(!n.getClasseAsString().equals("ERRORE")){
 						n.setId_lcp(-1);
-						n.bit=n.doRicercaBitArrayJolly(this.conn, useStemmer);
+						n.bit=n.doRicercaBitArrayJolly(this.conn, catalog, useStemmer);
 					} else {
 						n.setId_lcp(-1);
 						n.bit=null;						
