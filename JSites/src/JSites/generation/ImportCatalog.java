@@ -62,7 +62,7 @@ public class ImportCatalog extends MyAbstractPageGenerator {
         part = (Part) request.get("upload-file");
         String pid=request.getParameter("pid");
         String cid=request.getParameter("cid");
-        String catalog=request.getParameter("catalog");
+        String catalog=request.getParameter("conn");
         String format=request.getParameter("format");
         String dbtype=request.getParameter("dbtype");
         
