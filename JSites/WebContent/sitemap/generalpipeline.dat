@@ -79,8 +79,12 @@
 						<map:parameter name="db" value="{global:db}"/>
 						<map:parameter name="context" value="{context}"/>
 					</map:generate>
+					<map:transform src="context://stylesheets/xslt/importCatalog.xslt">
+						<map:parameter name="db" value="{global:db}"/>
+						<map:parameter name="context" value="{context}"/>
+					</map:transform>
+					
 				</map:act>
-				<map:transform src="context://stylesheets/xslt/importCatalog.xslt" />
 			</map:act>	
 			
 			<map:serialize type="xhtml" />
