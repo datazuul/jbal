@@ -263,7 +263,7 @@ public class NewItemCardinality {
 	 * @return bitarray di id_notizie
 	 * @throws SQLException 
 	 */
-	public BitSet doRicercaBitArrayAny(Connection conn, boolean useStemmer) throws SQLException {
+	public BitSet doRicercaBitArrayAny(Connection conn, String catalog, boolean useStemmer) throws SQLException {
 		BitSet b = new BitSet();
 		long now = System.currentTimeMillis();
 		this.queryTime = -1;
@@ -271,17 +271,17 @@ public class NewItemCardinality {
 			String sql;
 			if(useStemmer) 
 				sql = "SELECT DISTINCT lcpn.id_notizia "
-						+ "     FROM l_classi_parole_notizie lcpn," 
-						+ "		     l_classi_parole lcp, " 
-						+"           anagrafe_parole a "
+						+ "     FROM je_"+catalog+"_l_classi_parole_notizie lcpn," 
+						+ "		     je_"+catalog+"_l_classi_parole lcp, " 
+						+"           je_"+catalog+"_anagrafe_parole a "
 						+ "    WHERE a.stemma like ? " 
 						+ "          and lcp.id_parola=a.id "
 						+ "          and lcpn.id_l_classi_parole=lcp.id";
 			else
 				sql = "SELECT DISTINCT lcpn.id_notizia "
-					+ "     FROM l_classi_parole_notizie lcpn," 
-					+ "		     l_classi_parole lcp, " 
-					+"           anagrafe_parole a "
+					+ "     FROM je_"+catalog+"_l_classi_parole_notizie lcpn," 
+					+ "		     je_"+catalog+"_l_classi_parole lcp, " 
+					+"           je_"+catalog+"_anagrafe_parole a "
 					+ "    WHERE a.parola like ? " 
 					+ "          and lcp.id_parola=a.id "
 					+ "          and lcpn.id_l_classi_parole=lcp.id";
@@ -314,7 +314,7 @@ public class NewItemCardinality {
 	 * @return bitarray di id_notizie
 	 * @throws SQLException 
 	 */
-	public BitSet doRicercaBitArrayJolly(Connection conn, boolean useStemmer) throws SQLException {
+	public BitSet doRicercaBitArrayJolly(Connection conn, String catalog, boolean useStemmer) throws SQLException {
 		BitSet b = new BitSet();
 		long now = System.currentTimeMillis();
 		this.queryTime = -1;
@@ -322,18 +322,18 @@ public class NewItemCardinality {
 			String sql;
 			if(useStemmer) 
 				sql= "SELECT DISTINCT lcpn.id_notizia "
-					+ "     FROM l_classi_parole lcp," // QUESTA TABELLA DEVE ESSERE LA PRIMA
-				    + "          l_classi_parole_notizie lcpn," 
-					+ "          anagrafe_parole a "
+					+ "     FROM je_"+catalog+"_l_classi_parole lcp," // QUESTA TABELLA DEVE ESSERE LA PRIMA
+				    + "          je_"+catalog+"_l_classi_parole_notizie lcpn," 
+					+ "          je_"+catalog+"_anagrafe_parole a "
 					+ "    WHERE a.stemma like ? "
 					+ "          and lcp.id_classe = ?"
 					+ "          and lcp.id_parola=a.id "
 					+ "          and lcpn.id_l_classi_parole=lcp.id";
 			else
 				sql= "SELECT DISTINCT lcpn.id_notizia "
-					+ "     FROM l_classi_parole lcp," // QUESTA TABELLA DEVE ESSERE LA PRIMA
-				    + "          l_classi_parole_notizie lcpn," 
-					+ "          anagrafe_parole a "
+					+ "     FROM je_"+catalog+"_l_classi_parole lcp," // QUESTA TABELLA DEVE ESSERE LA PRIMA
+				    + "          je_"+catalog+"_l_classi_parole_notizie lcpn," 
+					+ "          je_"+catalog+"_anagrafe_parole a "
 					+ "    WHERE a.parola like ? "
 					+ "          and lcp.id_classe = ?"
 					+ "          and lcp.id_parola=a.id "
