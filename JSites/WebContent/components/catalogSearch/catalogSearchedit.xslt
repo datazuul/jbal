@@ -29,7 +29,7 @@
 					<xsl:apply-templates select="catalogName" />
 					<xsl:apply-templates select="catalogConnection" />
 					<xsl:apply-templates select="catalogFormat" />
-					<xsl:apply-templates select="dbType" />
+					<!--   <xsl:apply-templates select="dbType" /> -->
 					</table>
 					<script type="text/javascript" wiki="false">
 					<![CDATA[
@@ -38,16 +38,22 @@
 						   var stili = "top=10, left=10, width=400, height=250, status=no, menubar=no, toolbar=no scrollbar=no";
 						   var nomecatalogo = document.getElementById("catalogName").value;
 						   var connessione = document.getElementById("catalogConnection").value;
-						   var dbtype = "";
+						   var format = document.getElementById("catalogFormat").value;
+						   //var dbtype = "";
+						   
+						   //nomecatalogo = document.editform.catalogName.value;
+						   //connessione = document.editform.catalogConnection.value;
+						   
+						   //alert(connessione);
 
-							for( i = 0; i < document.editform.dbType.length; i++ ) {
-								if( document.editform.dbType[i].checked == true ) {
-									dbtype = document.editform.dbType[i].value;
-									break;
-								}
-							}
+							//for( i = 0; i < document.editform.dbType.length; i++ ) {
+							//	if( document.editform.dbType[i].checked == true ) {
+							//		dbtype = document.editform.dbType[i].value;
+							//		break;
+							//	}
+							//}
 
-						   var testo = window.open("importCatalog?pid=]]><xsl:value-of select="$pid" /><![CDATA[&cid=]]><xsl:value-of select="$cid" /><![CDATA[&conn="+connessione+"&dbtype="+dbtype, nomecatalogo, stili);
+						   var testo = window.open("importCatalog?pid=]]><xsl:value-of select="$pid" /><![CDATA[&cid=]]><xsl:value-of select="$cid" /><![CDATA[&conn="+connessione+"&format="+format, nomecatalogo, stili);
 						 }
 
 					]]>
@@ -100,6 +106,7 @@
 		</tr>
 	</xsl:template>
 	
+	<!-- 
 	<xsl:template match="dbType">
 		<tr>
 		<td>
@@ -118,6 +125,7 @@
 		</td>
 		</tr>
 	</xsl:template>
+	 -->
 	
 	<xsl:template match="catalogFile">
 		<tr>
@@ -131,7 +139,7 @@
 
 	<xsl:template match="catalogName">
 		<tr>
-		<td><label class="cat_data_label">Nome catalogo</label></td>
+		<td><label class="cat_data_label">Descrizione catalogo</label></td>
 		<td><input type="text" size="40" name="catalogName" id="catalogName" value="{text()}" /></td>
 		</tr>
 	</xsl:template>
@@ -139,7 +147,7 @@
 
 	<xsl:template match="catalogConnection">
 		<tr>
-		<td><label class="cat_data_label">Nome connessione</label></td>
+		<td><label class="cat_data_label">Nome catalogo (senza spazi)</label></td>
 		<td><input type="text" size="40" name="catalogConnection" id="catalogConnection" value="{text()}" /></td>
 		</tr>
 	</xsl:template>
