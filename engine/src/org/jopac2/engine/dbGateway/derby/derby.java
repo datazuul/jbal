@@ -2,6 +2,7 @@ package org.jopac2.engine.dbGateway.derby;
 
 import java.io.PrintStream;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -285,5 +286,27 @@ public class derby extends DbGateway {
 		SearchResultSet result=new SearchResultSet();
 		result.setRecordIDs(listResult);
 		return result;
+	}
+
+	@Override
+	  public Connection createConnection(String hostname, String dbName, String dbUser, String dbPassword) throws SQLException {
+		Connection conn = null;
+		String driver = "org.apache.derby.jdbc.EmbeddedDriver";
+		String dbUrl = "jdbc:derby:" + dbName + ";create=true";
+
+		boolean inizializzato = false;
+		if (!inizializzato) {
+			inizializzato = true;
+			try {
+				Class.forName(driver).newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("getting conn....");
+		conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+		System.out.println("presa");
+
+		return conn;
 	}
 }
