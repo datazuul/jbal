@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -27,8 +28,8 @@ public class ImportTest extends TestCase {
 	private InputStream in = null;
 	private static String filetype = "sebina";
 	private static String JOpac2confdir = "src/org/jopac2/conf";
-//	private static String dbUrl = "jdbc:derby:/siti/jopac2/catalogs/db" + sitename + ";create=true";
-	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
+	private static String dbUrl = "jdbc:derby:/siti/jopac2/catalogs/db" + sitename + ";create=true";
+//	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
 	private static String dbUser = "root";
 	private static String dbPassword = "";
 	private static String catalog=sitename;
@@ -67,6 +68,7 @@ public class ImportTest extends TestCase {
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
+		
 		if (!ru) {
 			String inFile = new String(
 					Base64
@@ -144,21 +146,26 @@ public class ImportTest extends TestCase {
 	}
 
 	// **** inizio test ***//
-
+	  public void testSearchOrder() throws Exception {
+			SearchResultSet rs = doSearch("(TIT=in)|(TIT=der)");
+			long[] unordered = { 1, 3, 6, 7, 9, 10 };
+			long[] ordered = { 7, 6, 1, 10, 3, 9 };
+			boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
+			//SearchResultSet.dumpSearchResultSet(conn, rs);
+			DbGateway.orderBy(conn, catalog,"TIT", rs);
+			//SearchResultSet.dumpSearchResultSet(conn, rs);
+			boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
+			assertTrue("Done ", r1 && r2);
+		}
+	
+	
 	public void testTblTipiNotizie() throws Exception {
-
-		/**
-		 * FROM l_classi_parole lcp," // QUESTA TABELLA DEVE ESSERE LA PRIMA +
-		 * "          l_classi_parole_notizie lcpn," +
-		 * "          anagrafe_parole a "
-		 */
-
 		String[] tipi_notizie = {"1,bibliowin4", "2,comarc", "3,easyweb", 
 				"4,eutmarc", "5,isisbiblo", "6,pregresso", "7,sbnunix", 
 				"8,sebina", "9,sosebi", "10,mdb"};
 
 
-		Vector<String> v1 = DbGateway.dumpTable(conn, "tipi_notizie");
+		Vector<String> v1 = DbGateway.dumpTable(conn, "je_"+catalog+"_tipi_notizie");
 		boolean r1 = checkStringSequence(v1, tipi_notizie);
 		if (!r1) {
 			System.out.println(v1);
@@ -166,8 +173,9 @@ public class ImportTest extends TestCase {
 		assertTrue("Done ", r1);
 	}
 
+	
 	public void testTblAnagrafeParole() throws Exception {
-		Vector<String> v1 = DbGateway.dumpTable(conn, "anagrafe_parole order by id");
+		Vector<String> v1 = DbGateway.dumpTable(conn, "je_"+catalog+"_anagrafe_parole order by id");
 		// outputJava(v1);
 		boolean r1 = checkStringSequence(v1, org.jopac2.test.Base64DataExample.anagrafe_parole);
 		if (!r1) {
@@ -177,17 +185,7 @@ public class ImportTest extends TestCase {
 	}
 
 	
-	  public void testSearchOrder() throws Exception {
-		SearchResultSet rs = doSearch("(TIT=in)|(TIT=der)");
-		long[] unordered = { 1, 3, 6, 7, 9, 10 };
-		long[] ordered = { 7, 6, 1, 10, 3, 9 };
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
-		//SearchResultSet.dumpSearchResultSet(conn, rs);
-		DbGateway.orderBy(conn, catalog,"TIT", rs);
-		//SearchResultSet.dumpSearchResultSet(conn, rs);
-		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
-		assertTrue("Done ", r1 && r2);
-	}
+
 
 	public void testListTIT() throws Exception {
 		SearchResultSet rs = ListSearch.listSearch(conn, catalog, "TIT",

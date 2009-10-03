@@ -85,7 +85,7 @@ public class DataImporter extends Thread {
         dbGateway.createDBl_tables(conn,catalog,out);
 	}
 	
-    private String[] loadData(InputStream f,String dbType, String temporaryDir) {
+    private String[] loadData(InputStream f,String dbType, String temporaryDir) throws SQLException {
     	String[] r=null;
     	DbGateway.commitAll(conn);
         LoadData ld=new LoadData(conn,catalog,clearDatabase,confdir,out);

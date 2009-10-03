@@ -289,10 +289,9 @@ public class derby extends DbGateway {
 	}
 
 	@Override
-	  public Connection createConnection(String hostname, String dbName, String dbUser, String dbPassword) throws SQLException {
+	  public Connection createConnection(String dbUrl, String dbUser, String dbPassword) throws SQLException {
 		Connection conn = null;
 		String driver = "org.apache.derby.jdbc.EmbeddedDriver";
-		String dbUrl = "jdbc:derby:" + dbName + ";create=true";
 
 		boolean inizializzato = false;
 		if (!inizializzato) {

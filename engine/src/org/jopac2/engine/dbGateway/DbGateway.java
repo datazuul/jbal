@@ -75,7 +75,7 @@ public abstract class DbGateway {
 		  out=console;
 	  }
 	  
-	  public abstract Connection createConnection(String hostname, String dbName, String dbUser, String dbPassword)  throws SQLException;
+	  public abstract Connection createConnection(String dbUrl, String dbUser, String dbPassword)  throws SQLException;
 
 
 	/**

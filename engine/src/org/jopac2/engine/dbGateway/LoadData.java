@@ -229,9 +229,13 @@ private boolean clearDatabase;
       return r;
   }
   
-  private void inizializeDB(Connection conn) throws SQLException {
-		out.println("Creating tables");
+  private void createDB(Connection conn) throws SQLException {
+	  out.println("Creating tables");
 		dbGateway.createAllTables(conn, catalog);
+  }
+  
+  private void inizializeDB(Connection conn) throws SQLException {
+		
 		out.println("Importing data types");
 
 		dbGateway.importClassiDettaglio(chToIndex,conn,catalog,out); //confDir+"/dataDefinition/DataType.xml",out);
@@ -257,10 +261,10 @@ private boolean clearDatabase;
 		  e.printStackTrace();
 	  }
 	if(notizia.toString()!=null) {
-    	if(clearDatabase) {
-    		inizializeDB(conn[0]);
-    		clearDatabase=false;
-    	}
+	  	if(clearDatabase) {
+			inizializeDB(conn[0]);
+			clearDatabase=false;
+	  	}
 
 	    long idSequenzaTag=0;
 	    String record = notizia.getBid();
@@ -389,7 +393,7 @@ private boolean clearDatabase;
   }
 
 
-  public LoadData(Connection conn[],String catalog, boolean clearDatabase, String confDir, PrintStream console) {
+  public LoadData(Connection conn[],String catalog, boolean clearDatabase, String confDir, PrintStream console) throws SQLException {
   	  this.conn=conn;
   	  this.catalog=catalog;
   	  this.clearDatabase=clearDatabase;
@@ -401,6 +405,10 @@ private boolean clearDatabase;
   	   * TODO: hsqldb non consente inserimenti multipli 
   	   */
   	  if(conn[0].toString().contains("derby")) maxValues4prepared=1;
+  	  
+  	if(clearDatabase) {
+  		createDB(conn[0]);
+	}
   	  
   	  arTempLCP=new mySet[maxValues4prepared];
   	  

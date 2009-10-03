@@ -258,10 +258,9 @@ public class mysql extends DbGateway {
 		return result;
 	}
 	
-	  public Connection createConnection(String hostname, String dbName, String dbUser, String dbPassword) throws SQLException {
+	  public Connection createConnection(String dbUrl, String dbUser, String dbPassword) throws SQLException {
 		Connection conn = null;
 		String driver = "com.mysql.jdbc.Driver";
-		String dbUrl="jdbc:mysql://hostname/" + dbName;
 
 		boolean inizializzato = false;
 		if (!inizializzato) {

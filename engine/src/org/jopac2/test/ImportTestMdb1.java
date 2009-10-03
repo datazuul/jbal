@@ -68,7 +68,7 @@ public class ImportTestMdb1 extends TestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		if (!ru) {
-			File f=new File("/Users/romano/Desktop/REA.mdb");
+			File f=new File("/Users/romano/Desktop/ej.mdb");
 
 			in = new FileInputStream(f);
 
