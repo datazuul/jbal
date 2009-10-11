@@ -182,7 +182,7 @@
       
         <!-- For Database Driver: -->
 
-	<!-- Carica mySQL JDBC driver -->        com.mysql.jdbc.Driver        	<!-- Carica Postgresql JDBC driver -->        org.postgresql.Driver	<!-- Carica HSQLDB JDBC driver -->        org.hsqldb.jdbcDriver
+	<!-- Carica mySQL JDBC driver -->        com.mysql.jdbc.Driver        	<!-- Carica Derby JDBC driver -->        org.apache.derby.jdbc.EmbeddedDriver
 
 </param-value>
     </init-param>
