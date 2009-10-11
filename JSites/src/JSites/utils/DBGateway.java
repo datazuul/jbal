@@ -839,23 +839,24 @@ public class DBGateway {
 	}
 
 	public static void caricaDB(Connection conn) throws SQLException {
-		DbSetup.createTableInfo(conn);
-		DbSetup.loadTableInfo(conn);
-		DbSetup.createTableTblComponenti(conn);
-		DbSetup.loadTableTblComponenti(conn);
-		DbSetup.createTableTblContenuti(conn);
-		DbSetup.loadTableTblContenuti(conn);
-		DbSetup.createTableTblPagine(conn);
-		DbSetup.loadTableTblPagine(conn);
-		DbSetup.createTableTblRedirects(conn);
-		DbSetup.loadTableTblRedirects(conn);
-		DbSetup.createTableTblRoles(conn);
-		DbSetup.loadTableTblRoles(conn);
-		DbSetup.createTableTblStrutture(conn);
-		DbSetup.loadTableTblStrutture(conn);
-		DbSetup.createTableTblStati(conn);
-		DbSetup.loadTableTblStati(conn);
-		DbSetup.createTableNews(conn);
+		DbSetup dbs=DbSetup.getInstance(conn.toString());
+		dbs.createTableInfo(conn);
+		dbs.loadTableInfo(conn);
+		dbs.createTableTblComponenti(conn);
+		dbs.loadTableTblComponenti(conn);
+		dbs.createTableTblContenuti(conn);
+		dbs.loadTableTblContenuti(conn);
+		dbs.createTableTblPagine(conn);
+		dbs.loadTableTblPagine(conn);
+		dbs.createTableTblRedirects(conn);
+		dbs.loadTableTblRedirects(conn);
+		dbs.createTableTblRoles(conn);
+		dbs.loadTableTblRoles(conn);
+		dbs.createTableTblStrutture(conn);
+		dbs.loadTableTblStrutture(conn);
+		dbs.createTableTblStati(conn);
+		dbs.loadTableTblStati(conn);
+		dbs.createTableNews(conn);
 	}
 
 	public static Vector<Long> getChildPages(long pageId, Connection conn) throws SQLException {

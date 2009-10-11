@@ -29,15 +29,12 @@ package JSites.generation;
 
 import java.io.*;
 
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 
-import org.apache.cocoon.*;
 import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Request;
 
@@ -45,6 +42,7 @@ import org.apache.avalon.framework.component.ComponentManager;
 import org.apache.avalon.framework.component.ComponentException;
 
 import org.apache.cocoon.servlet.multipart.Part;
+import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.importers.DataImporter;
 import com.whirlycott.cache.Cache;
 import com.whirlycott.cache.CacheConfiguration;
@@ -123,16 +121,7 @@ public class ImportCatalog extends MyAbstractPageGenerator {
 				String JOpac2confdir=getResource("/")+"WEB-INF/conf/engine/";
 				
 				boolean background=true;
-				
-				Connection[] conns=new Connection[max_conn];
-				
 
-				for(int i=0;i<conns.length;i++) {
-					
-					conns[i] = this.getConnection(dbname);
-				}
-
-				
 				Cache cache=null;
 				
 				try {
@@ -157,6 +146,17 @@ public class ImportCatalog extends MyAbstractPageGenerator {
 				}
 				catch(Exception e) {
 					e.printStackTrace();
+				}
+				
+				Connection[] conns=new Connection[max_conn];
+				
+				Connection tc=this.getConnection(dbname);
+				
+				DbGateway dbg=DbGateway.getInstance(tc.toString(), console);
+				String dbUrl=tc.getMetaData().getURL();
+
+				for(int i=0;i<conns.length;i++) {
+					conns[i] = dbg.createConnection(dbUrl, "root", "");// this.getConnection(dbname);
 				}
 				
 				DataImporter dataimporter=new DataImporter(in,format,JOpac2confdir, conns, catalog, true,cache, console); //,t);
@@ -210,6 +210,7 @@ public class ImportCatalog extends MyAbstractPageGenerator {
 			e.printStackTrace();
 		}
     }
+    
     
     public void compose(ComponentManager manager) throws ComponentException {
     	super.compose(manager);

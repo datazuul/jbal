@@ -61,7 +61,8 @@ public class Setup {
 
 		try {
 			Connection mysql=DbSetup.getConnection("mysql", classDriver, dbUrl, dbUser, dbPassword);
-			DbSetup.createDatabase(mysql,dbName);
+			DbSetup dbs=DbSetup.getInstance(mysql.toString());
+			dbs.createDatabase(mysql,dbName);
 			mysql.close();
 			Connection conn=DbSetup.getConnection(dbName, classDriver, dbUrl, dbUser, dbPassword);
 			DBGateway.caricaDB(conn);
