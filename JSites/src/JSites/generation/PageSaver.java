@@ -110,7 +110,7 @@ public class PageSaver extends MyAbstractPageGenerator{
 		contentHandler.startElement("",componentType,componentType,attrCid);
 		if(hasChildren){
 			Statement st = conn.createStatement();
-	    	ResultSet rs = st.executeQuery("select CID from tblcontenuti where PaCID='" + id +"' and StateID<4 order by OrderNumber"); // ho tolto and IDStato=3
+	    	ResultSet rs = st.executeQuery("select CID from tblcontenuti where PaCID=" + id +" and StateID<4 order by OrderNumber"); // ho tolto and IDStato=3
 			while(rs.next()){
 				long childId = rs.getLong(1);
 				if(this.containerType.equals("content")){
