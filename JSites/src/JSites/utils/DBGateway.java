@@ -689,10 +689,10 @@ public class DBGateway {
 	
 	public static void saveDBComponent(long cid, String componentType, int hasChild, long historycid, Date date, 
 			long pid, String url, Connection conn) throws SQLException, ComponentException{
-		java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+//		java.sql.Date sqlDate = new java.sql.Date(date.getTime());
 		
-		String sqlComponenteNuovo = "INSERT INTO tblcomponenti (CID,Type,Attributes,HasChildren,HistoryCid,InsertDate)" + 
-									"VALUES (" + cid + ",'" + componentType + "',null,"+ hasChild+"," + historycid + ",'" + sqlDate + "')";
+		String sqlComponenteNuovo = "INSERT INTO tblcomponenti (CID,Type,Attributes,HasChildren,HistoryCid)" + // ,InsertDate
+									"VALUES (" + cid + ",'" + componentType + "',null,"+ hasChild+"," + historycid + ")"; // ,'" + sqlDate + "'
 		Statement st = conn.createStatement();
 		st.execute(sqlComponenteNuovo);
 		
