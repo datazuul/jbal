@@ -112,12 +112,12 @@ public class DbSetupMysql extends DbSetup {
 		st.execute(sql);
 		
 		sql="CREATE TABLE tblroles (" +
-				"User varchar(50) NOT NULL," +
+				"Username varchar(50) NOT NULL," +
 				"PermissionCode int(10) unsigned NOT NULL default '0'," +
 				"PID int(10) unsigned NOT NULL default '0'," +
-				"PRIMARY KEY  (User,PID)," +
-				"KEY Index_2 (User)," +
-				"KEY Index_3 USING BTREE (User)" +
+				"PRIMARY KEY  (Username,PID)," +
+				"KEY Index_2 (Username)," +
+				"KEY Index_3 USING BTREE (Username)" +
 				") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
 		st.execute(sql);
 		st.close();

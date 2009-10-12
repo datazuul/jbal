@@ -14,7 +14,7 @@ public class DbSetupDerby extends DbSetup {
 			st.execute(sql);
 		}
 		catch(Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			// eccezione se la tabella non esiste
 		}
 	}
@@ -23,11 +23,15 @@ public class DbSetupDerby extends DbSetup {
 		dropTable(conn,"tblstrutture");
 		Statement st=conn.createStatement();		
 		String sql="CREATE TABLE tblstrutture (" +
-				"PID int(10) unsigned NOT NULL default '0'," +
-				"CID int(10) unsigned NOT NULL default '0'," +
-				"UNIQUE KEY Index_3 USING BTREE (PID,CID)," +
-				"KEY Index_1 USING BTREE (PID)," +
-				"KEY Index_2 USING BTREE (CID)) " + postfix;
+				"PID int NOT NULL default 0," +
+				"CID int NOT NULL default 0," +
+				"PRIMARY KEY (PID,CID)) " + postfix;
+//				"KEY Index_1 USING BTREE (PID)," +
+//				"KEY Index_2 USING BTREE (CID)) " + postfix;
+		st.execute(sql);
+		sql="create index tblstrutture_Index_2 on tblstrutture(PID)";
+		st.execute(sql);
+		sql="create index tblstrutture_Index_3 on tblstrutture(CID)";
 		st.execute(sql);
 		st.close();
 	}
@@ -36,12 +40,14 @@ public class DbSetupDerby extends DbSetup {
 		dropTable(conn,"tblstati");
 		Statement st=conn.createStatement();		
 		String sql="CREATE TABLE tblstati (" +
-				"StateID int(10) unsigned NOT NULL auto_increment," +
+				"StateID int NOT NULL generated always as identity," +
 				"StateName varchar(5) NOT NULL," +
 				"Scope varchar(45) NOT NULL," +
-				"PRIMARY KEY  (StateID)," +
-				"KEY Index_3 USING BTREE (Scope)) " + postfix;
+				"PRIMARY KEY  (StateID)) "  + postfix;
+//				"KEY Index_3 USING BTREE (Scope)) " + postfix;
 //				"ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;";
+		st.execute(sql);
+		sql="create index tblstati_Index_2 on tblstati(Scope)";
 		st.execute(sql);
 		st.close();
 	}
@@ -50,13 +56,16 @@ public class DbSetupDerby extends DbSetup {
 		dropTable(conn,"tblroles");
 		Statement st=conn.createStatement();		
 		String sql="CREATE TABLE tblroles (" +
-				"User varchar(50) NOT NULL," +
-				"PermissionCode int(10) unsigned NOT NULL default '0'," +
-				"PID int(10) unsigned NOT NULL default '0'," +
-				"PRIMARY KEY  (User,PID)," +
-				"KEY Index_2 (User)," +
-				"KEY Index_3 USING BTREE (User))" + postfix;
+				"Username varchar(50) NOT NULL," +
+				"PermissionCode int NOT NULL default 0," +
+				"PID int NOT NULL default 0) " + postfix;
+//				"KEY Index_2 (User)," +
+//				"KEY Index_3 USING BTREE (User))" + postfix;
 //				"ENGINE=MyISAM DEFAULT CHARSET=latin1;";
+		st.execute(sql);
+		sql="create index tblroles_Index_2 on tblroles(Username)";
+		st.execute(sql);
+		sql="create index tblroles_Index_3 on tblroles(Username,PID)";
 		st.execute(sql);
 		st.close();
 	}
@@ -65,10 +74,11 @@ public class DbSetupDerby extends DbSetup {
 		dropTable(conn,"tblredirects");
 		Statement st=conn.createStatement();		
 		String sql="CREATE TABLE tblredirects (" +
-				"PID int(10) unsigned NOT NULL default '0'," +
-				"Url text NOT NULL," +
-				"KEY Index_1 USING BTREE (PID)" +
+				"PID int  NOT NULL default 0," +
+				"Url varchar(1024) NOT NULL" +
 				") "+postfix;
+		st.execute(sql);
+		sql="create index tblredirects_Index_1 on tblredirects(PID)";
 		st.execute(sql);
 		st.close();
 	}
@@ -77,18 +87,24 @@ public class DbSetupDerby extends DbSetup {
 		dropTable(conn,"tblpagine");
 		Statement st=conn.createStatement();		
 		String sql="CREATE TABLE tblpagine (" +
-				"PID int(10) unsigned NOT NULL auto_increment," +
+				"PID int NOT NULL generated always as identity," +
 				"Name varchar(100) NOT NULL default ''," +
-				"PaPID int(10) unsigned default '0'," +
-				"Valid tinyint(1) unsigned NOT NULL default '1'," +
-				"HasChild tinyint(1) unsigned NOT NULL default '0'," +
+				"PaPID int default 0," +
+				"Valid int NOT NULL default 1," +
+				"HasChild int NOT NULL default 0," +
 				"PCode varchar(20) NOT NULL," +
-				"InSidebar tinyint(1) unsigned NOT NULL default '1'," +
-				"PRIMARY KEY  (PID)," +
-				"UNIQUE KEY Codice USING BTREE (PCode)," +
-				"KEY Index_2 USING BTREE (PaPID)) " + postfix;
+				"InSidebar int  NOT NULL default 1," +
+				"PRIMARY KEY  (PID)) " + postfix;
+//				"UNIQUE KEY Codice USING BTREE (PCode)," +
+//				"KEY Index_2 USING BTREE (PaPID)) " + postfix;
 //				"ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;";
 		st.execute(sql);
+		
+		sql="create index tblpagine_Index_Codice on tblpagine(PCode)";
+		st.execute(sql);
+		sql="create index tblpagine_Index_1 on tblpagine(PaPID)";
+		st.execute(sql);
+		
 		st.close();
 	}
 	
@@ -97,15 +113,24 @@ public class DbSetupDerby extends DbSetup {
 		Statement st=conn.createStatement();
 		
 		String sql="CREATE TABLE tblcontenuti (" +
-				"PaCID int(10) unsigned NOT NULL default '0'," +
-				"CID int(10) unsigned NOT NULL default '0'," +
-				"StateID int(10) unsigned NOT NULL default '3'," +
-				"OrderNumber int(10) unsigned NOT NULL default '0'," +
-				"UNIQUE KEY Index_4 USING BTREE (PaCID,CID)," +
-				"KEY Index_1 USING BTREE (PaCID)," +
-				"KEY Index_2 USING BTREE (CID)," +
-				"KEY FK_tblcontenuti_3 USING BTREE (StateID))" + postfix;
+				"PaCID int NOT NULL," + //  default '0'
+				"CID int NOT NULL," +  //  default '0'
+				"StateID int NOT NULL default 3," + //  default '3'
+				"OrderNumber int NOT NULL," + //  default '0'
+				"PRIMARY KEY (PaCID,CID)) " + postfix; 
+//				"UNIQUE KEY Index_4 USING BTREE (PaCID,CID)," +
+//				"KEY Index_1 USING BTREE (PaCID)," +
+//				"KEY Index_2 USING BTREE (CID)," +
+//				"KEY FK_tblcontenuti_3 USING BTREE (StateID))" + postfix;
 		st.execute(sql);
+		
+		sql="create index tblcontenuti_Index_1 on tblcontenuti(PaCID)";
+		st.execute(sql);
+		sql="create index tblcontenuti_Index_2 on tblcontenuti(CID)";
+		st.execute(sql);
+		sql="create index tblcontenuti_Index_3 on tblcontenuti(StateID)";
+		st.execute(sql);
+		
 		st.close();
 	}
 	
@@ -114,27 +139,38 @@ public class DbSetupDerby extends DbSetup {
 		Statement st=conn.createStatement();
 		String sql="CREATE TABLE tblnews (CID integer, startdate varchar(8) NOT NULL," +
 				"enddate varchar(8) NOT NULL," +
-				"list tinyint(1), " +
-				"PRIMARY KEY (CID)," +
-				"KEY Index_2 (startdate), " +
-				"KEY Index_3 (enddate), " +
-				"KEY Index_4 (list) ) "+postfix;
+				"list int, " +
+				"PRIMARY KEY (CID)) " + postfix;
+//				"KEY Index_2 (startdate), " +
+//				"KEY Index_3 (enddate), " +
+//				"KEY Index_4 (list) ) "+postfix;
 		
 		st.execute(sql);
+		sql="create index tblnews_Index_2 on tblnews(startdate)";
+		st.execute(sql);
+		sql="create index tblnews_Index_3 on tblnews(enddate)";
+		st.execute(sql);
+		sql="create index tblnews_Index_4 on tblnews(list)";
+		st.execute(sql);
+		
+		
 		st.close();
 	}
 	
 	public void createTableTblComponenti(Connection conn) throws SQLException {
 		dropTable(conn,"tblcomponenti");		
 		Statement st=conn.createStatement();
-		String sql="CREATE TABLE tblcomponenti (CID int(10) unsigned NOT NULL default '0'," +
-				"Type varchar(45) NOT NULL default ''," +
-				"Attributes longtext," +
-				"HasChildren tinyint(1) unsigned NOT NULL default '0'," +
-				"HistoryCid int(10) unsigned NOT NULL default '0'," +
-				"InsertDate datetime NOT NULL default '0000-00-00 00:00:00'," +
-				"PRIMARY KEY  (CID)," +
-				"KEY Index_2 (Type)) "+postfix;
+		String sql="CREATE TABLE tblcomponenti (CID int NOT NULL, " + // default '0'," +
+				"Type varchar(45) NOT NULL ," + // default ''
+				"Attributes varchar(10)," +
+				"HasChildren int NOT NULL ," + // default '0'
+				"HistoryCid int NOT NULL," + // default '0'
+				"InsertDate timestamp NOT NULL default CURRENT_TIMESTAMP ," + //default '0000-00-00 00:00:00'
+				"PRIMARY KEY  (CID)) " + postfix;
+//				"KEY Index_2 (Type)) "+postfix;
+		st.execute(sql);
+		
+		sql="create index tblcomponenti_Index_2 on tblcomponenti(Type)";
 		st.execute(sql);
 		st.close();
 	}

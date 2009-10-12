@@ -202,7 +202,7 @@ public class DBGateway {
 	public static long getPapid(long pid, Connection conn) throws SQLException {
 		Statement st = conn.createStatement();
 		long ret = 0;
-		ResultSet rs = st.executeQuery("select PaPID from tblpagine where PID='"+pid+"'");
+		ResultSet rs = st.executeQuery("select PaPID from tblpagine where PID="+pid);
 		if(rs.next())ret = rs.getLong(1);
 		rs.close();
 		st.close();
@@ -440,7 +440,7 @@ public class DBGateway {
 
 	public static String getPageName(long pid, Connection conn) throws SQLException {
 		Statement sqlState = conn.createStatement();
-		sqlState.executeQuery("select Name from tblpagine where PID='"+pid+"'");
+		sqlState.executeQuery("select Name from tblpagine where PID="+pid);
 		ResultSet temp = sqlState.getResultSet();
 		temp.next();
 		String ret = temp.getString(1);
@@ -460,14 +460,14 @@ public class DBGateway {
 	
 	public static void setPageCode(long pid, String newCode, Connection conn) throws SQLException {
 		Statement sqlState = conn.createStatement();
-		sqlState.executeUpdate("update tblpagine set PCode='"+newCode+"'where PID='"+pid+"'");
+		sqlState.executeUpdate("update tblpagine set PCode='"+newCode+"'where PID="+pid);
 		sqlState.close();
 	}
 	
 	public static boolean pageExists(long pid, Connection conn) throws SQLException {
 		boolean ret = false;
 		Statement sqlState = conn.createStatement();
-		sqlState.executeQuery("select Name from tblpagine where PID='"+pid+"'");
+		sqlState.executeQuery("select Name from tblpagine where PID="+pid);
 		ResultSet temp = sqlState.getResultSet();
 		ret = temp.next();
 		temp.close();
@@ -477,7 +477,7 @@ public class DBGateway {
 
 	public static Permission getPermission(String username, long pid, Connection conn) throws SQLException {
 		Statement sqlState = conn.createStatement();
-		sqlState.executeQuery("select PermissionCode from tblroles where PID='"+pid+"' and User='"+username+"'");
+		sqlState.executeQuery("select PermissionCode from tblroles where PID="+pid+" and Username='"+username+"'");
 		ResultSet temp = sqlState.getResultSet();
 		byte ret = -1;
 		if(temp.next()){
@@ -486,7 +486,7 @@ public class DBGateway {
 		temp.close();
 		
 		if(ret==-1) {
-			temp = sqlState.executeQuery("select PermissionCode from tblroles where PID='0' and User='"+username+"'");
+			temp = sqlState.executeQuery("select PermissionCode from tblroles where PID=0 and Username='"+username+"'");
 			if(temp.next()){
 				ret=temp.getByte(1);
 			}
@@ -647,7 +647,7 @@ public class DBGateway {
 			query1  = "insert into tblroles values('"+userData+"'," + (int)p.getPermissionCode() +","+pid+")";
 			
 			if(p.getPermissionCode() == 0){
-				query1 = "delete from tblroles where User='" + userData + "' and PID="+pid;
+				query1 = "delete from tblroles where Username='" + userData + "' and PID="+pid;
 			}
 			
 			try {
@@ -656,7 +656,7 @@ public class DBGateway {
 				st.close();
 			} catch (SQLException e) {
 				query1  = "update tblroles set PermissionCode=" + (int)p.getPermissionCode() +
-							" where User = '" + userData + "' and PID=" + pid;
+							" where Username = '" + userData + "' and PID=" + pid;
 				try{
 					Statement st = conn.createStatement();
 					st.execute(query1);

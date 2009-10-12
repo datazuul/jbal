@@ -48,21 +48,36 @@ public abstract class DbSetup {
 	public abstract void createTableTblComponenti(Connection conn) throws SQLException;
 
 	public void loadTableTblComponenti(Connection conn) throws SQLException {
+//		String sql="INSERT INTO tblcomponenti " +
+//				"(CID,Type,Attributes,HasChildren,HistoryCid,InsertDate) " +
+//				"VALUES " +
+//				"(1,'header',NULL,1,0,'0000-00-00 00:00:00')," +
+//				"(2,'navbar',NULL,1,0,'0000-00-00 00:00:00')," +
+//				"(3,'content',NULL,1,0,'0000-00-00 00:00:00')," +
+//				"(4,'footer',NULL,1,0,'0000-00-00 00:00:00')," +
+//				"(5,'tabs',NULL,0,0,'0000-00-00 00:00:00')," +
+//				"(6,'lingue',NULL,0,0,'0000-00-00 00:00:00')," +
+//				"(7,'strumenti',NULL,0,0,'0000-00-00 00:00:00')," +
+//				"(8,'ricerca',NULL,0,0,'0000-00-00 00:00:00')," +
+//				"(9,'section',NULL,0,0,'2006-07-20 00:00:00')," +
+//				"(10,'footerContent',NULL,0,0,'0000-00-00 00:00:00')," +
+//				"(11,'navbar',NULL,1,0,'0000-00-00 00:00:00')," +
+//				"(12,'sidebar',NULL,0,0,'0000-00-00 00:00:00')";
 		String sql="INSERT INTO tblcomponenti " +
-				"(CID,Type,Attributes,HasChildren,HistoryCid,InsertDate) " +
-				"VALUES " +
-				"(1,'header',NULL,1,0,'0000-00-00 00:00:00')," +
-				"(2,'navbar',NULL,1,0,'0000-00-00 00:00:00')," +
-				"(3,'content',NULL,1,0,'0000-00-00 00:00:00')," +
-				"(4,'footer',NULL,1,0,'0000-00-00 00:00:00')," +
-				"(5,'tabs',NULL,0,0,'0000-00-00 00:00:00')," +
-				"(6,'lingue',NULL,0,0,'0000-00-00 00:00:00')," +
-				"(7,'strumenti',NULL,0,0,'0000-00-00 00:00:00')," +
-				"(8,'ricerca',NULL,0,0,'0000-00-00 00:00:00')," +
-				"(9,'section',NULL,0,0,'2006-07-20 00:00:00')," +
-				"(10,'footerContent',NULL,0,0,'0000-00-00 00:00:00')," +
-				"(11,'navbar',NULL,1,0,'0000-00-00 00:00:00')," +
-				"(12,'sidebar',NULL,0,0,'0000-00-00 00:00:00');";
+		"(CID,Type,Attributes,HasChildren,HistoryCid) " +
+		"VALUES " +
+		"(1,'header',NULL,1,0)," +
+		"(2,'navbar',NULL,1,0)," +
+		"(3,'content',NULL,1,0)," +
+		"(4,'footer',NULL,1,0)," +
+		"(5,'tabs',NULL,0,0)," +
+		"(6,'lingue',NULL,0,0)," +
+		"(7,'strumenti',NULL,0,0)," +
+		"(8,'ricerca',NULL,0,0)," +
+		"(9,'section',NULL,0,0)," +
+		"(10,'footerContent',NULL,0,0)," +
+		"(11,'navbar',NULL,1,0)," +
+		"(12,'sidebar',NULL,0,0)";
 		Statement st=conn.createStatement();
 		st.execute(sql);
 		st.close();
@@ -80,7 +95,7 @@ public abstract class DbSetup {
 				"(2,12,3,1)," +
 				"(3,9,4,6)," +
 				"(4,10,3,1)," +
-				"(11,12,3,1);";
+				"(11,12,3,1)";
 		Statement st=conn.createStatement();
 		st.execute(sql);
 		st.close();
@@ -90,9 +105,9 @@ public abstract class DbSetup {
 	
 	public void loadTableTblPagine(Connection conn) throws SQLException {
 		String sql="INSERT INTO tblpagine (" +
-				"PID,Name,PaPID,Valid,HasChild,PCode,InSidebar) " +
+				"Name,PaPID,Valid,HasChild,PCode,InSidebar) " +
 				"VALUES " +
-				"(1,'Homepage',NULL,1,1,'HMP',1);";
+				"('Homepage',NULL,1,1,'HMP',1)";
 		Statement st=conn.createStatement();
 		st.execute(sql);
 		st.close();
@@ -106,7 +121,7 @@ public abstract class DbSetup {
 	public abstract void createTableTblRoles(Connection conn) throws SQLException;
 
 	public void loadTableTblRoles(Connection conn) throws SQLException {
-		String sql="INSERT INTO tblroles (User,PermissionCode,PID) VALUES " +
+		String sql="INSERT INTO tblroles (Username,PermissionCode,PID) VALUES " +
 				"('admin',7,0)";
 		Statement st=conn.createStatement();
 		st.execute(sql);
@@ -116,12 +131,12 @@ public abstract class DbSetup {
 	public abstract void createTableTblStati(Connection conn) throws SQLException;
 
 	public void loadTableTblStati(Connection conn) throws SQLException {
-		String sql="INSERT INTO tblstati (StateID,StateName,Scope) VALUES " +
-				"(1,'WRK','modifica')," +
-				"(2,'PND','modifica')," +
-				"(3,'ACT','validazione')," +
-				"(4,'OLD','archivio')," +
-				"(5,'DEL','cancellazione');";
+		String sql="INSERT INTO tblstati (StateName,Scope) VALUES " +
+				"('WRK','modifica')," +
+				"('PND','modifica')," +
+				"('ACT','validazione')," +
+				"('OLD','archivio')," +
+				"('DEL','cancellazione')";
 		Statement st=conn.createStatement();
 		st.execute(sql);
 		st.close();
@@ -134,7 +149,7 @@ public abstract class DbSetup {
 				"(1,1)," +
 				"(1,2)," +
 				"(1,3)," +
-				"(1,4);";
+				"(1,4)";
 		Statement st=conn.createStatement();
 		st.execute(sql);
 		st.close();
