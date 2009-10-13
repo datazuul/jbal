@@ -1290,7 +1290,7 @@ public abstract class DbGateway {
 	}
 	
 	public static String getClassContentFromJID(Connection conn, String catalog, String classe, long jid) throws SQLException {
-		String sql="select * from "+nomeTableListe(classe)+" where je_"+catalog+"_id_notizia="+jid;
+		String sql="select * from je_"+catalog+"_"+nomeTableListe(classe)+" where id_notizia="+jid;
 		String r=null;
 	
 		Statement st=conn.createStatement();
