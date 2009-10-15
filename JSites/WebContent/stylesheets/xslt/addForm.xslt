@@ -31,6 +31,7 @@
 					<option value="excel">foglio excel</option>
 					<option value="gallery">foto gallery</option>
 					<option value="catalogSearch">ricerca catalogo</option>
+					<option value="sendmail">invio form per email</option>
 				</select>
 	
 				<input type="hidden" name="pid">
