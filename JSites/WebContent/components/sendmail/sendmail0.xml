@@ -1,0 +1,7 @@
+<sendmail>
+	<email>address to send data</email>
+	<subject>subject all mails will have</subject>
+	<smtphost>SMTP ahost to use</smtphost>
+	<smtpuser></smtpuser>
+	<smtppassword></smtppassword>
+</sendmail>
