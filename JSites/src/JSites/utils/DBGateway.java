@@ -477,7 +477,22 @@ public class DBGateway {
 
 	public static Permission getPermission(String username, long pid, Connection conn) throws SQLException {
 		Statement sqlState = conn.createStatement();
-		sqlState.executeQuery("select PermissionCode from tblroles where PID="+pid+" and Username='"+username+"'");
+		String sql="select PermissionCode from tblroles where PID="+pid+" and Username='"+username+"'";
+		try {
+			sqlState.executeQuery(sql);
+		}
+		catch(SQLException e) {
+			// Cambiato nome colonna
+			String alter="ALTER TABLE tblroles CHANGE COLUMN User Username VARCHAR(50)";
+			int n=e.getErrorCode();
+			if(n==1054) {
+				sqlState.execute(alter);
+				sqlState.executeQuery(sql);
+			}
+			else {
+				throw e;
+			}
+		}
 		ResultSet temp = sqlState.getResultSet();
 		byte ret = -1;
 		if(temp.next()){
