@@ -63,6 +63,13 @@
 		</smtppassword>
 	</xsl:template>
 	
+	<xsl:template match="parameters">
+		<parameters>
+			<xsl:value-of select="text()"/>
+		</parameters>
+	</xsl:template>
+	
+	
 	
 	<xsl:template match="text()"/>
 

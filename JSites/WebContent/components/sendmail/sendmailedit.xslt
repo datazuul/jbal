@@ -25,24 +25,18 @@
 		<div class="{$time}">
 			<div class="sezione">
 				<div class="sezione_contenuto">
-					<b>email:</b><input type="text" size="40" name="email" value="{email/text()}" /><br />
-					<b>subject:</b><input type="text" size="40" name="subject" value="{subject/text()}" /><br />
-					<b>smtphost:</b><input type="text" size="40" name="smtphost" value="{smtphost/text()}" /><br />
-					<b>smtpuser:</b><input type="text" size="40" name="smtpuser" value="{smtpuser/text()}" /><br />
-					<b>smtppassword:</b><input type="text" size="40" name="smtppassword" value="{smtppassword/text()}" /><br />
+					<table border='0'>
+						<tr><td><b>email:</b></td><td><input type="text" size="40" name="email" value="{email/text()}" /></td></tr>
+						<tr><td><b>subject:</b></td><td><input type="text" size="40" name="subject" value="{subject/text()}" /></td></tr>
+						<tr><td><b>parameters:</b></td><td><input type="text" size="40" name="parameters" value="{parameters/text()}" /></td></tr>
+						<tr><td><b>smtphost:</b></td><td><input type="text" size="40" name="smtphost" value="{smtphost/text()}" /></td></tr>
+						<tr><td><b>smtpuser:</b></td><td><input type="text" size="40" name="smtpuser" value="{smtpuser/text()}" /></td></tr>
+						<tr><td><b>smtppassword:</b></td><td><input type="text" size="40" name="smtppassword" value="{smtppassword/text()}" /></td></tr>
+					</table>
 				</div>
 			</div>		
 		</div>
 	</xsl:template>
-
-	<!--  
-	
-	<email>address to send data</email>
-	<subject>subject all mails will have</subject>
-	<smtphost>SMTP host to use</smtphost>
-	<smtpuser></smtpuser>
-	<smtppassword></smtppassword>
-	 -->
 
 	
 </xsl:stylesheet>

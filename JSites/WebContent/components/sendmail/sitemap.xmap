@@ -13,7 +13,7 @@
 						  	<map:part src="cocoon:/request"/>
 						 </map:aggregate>
 	                    
-	                    <map:transform type="tutil" src="/t/send" />
+	                    <!-- map:transform type="tutil" src="/t/send" / -->
 	                    
 	                    <map:transform src="sendmail.xslt">
 	                        <map:parameter name="use-request-parameters" value="true"/>
@@ -27,7 +27,7 @@
 	            </map:match>
 	            
 	            <map:match pattern="componentview">
-	                <map:generate type="componentGenerator" src="/siti/sito_components/data/sendmail6191.xml" label="edit"/>
+	                <map:generate type="componentGenerator" src="{request-param:re}" label="edit"/>
 	                <map:serialize type="xml"/>
 	            </map:match>
 	            

@@ -4,4 +4,5 @@
 	<smtphost>SMTP ahost to use</smtphost>
 	<smtpuser></smtpuser>
 	<smtppassword></smtppassword>
+	<parameters>Parameters to send</parameters>
 </sendmail>
