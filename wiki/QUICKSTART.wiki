@@ -2,11 +2,11 @@
 
 = 5 steps =
 
-# Install java on your computer
-# create a directory in your root with name 'siti' (mkdir /siti)
-# download the war file and rename it as JSites.zip
-# unzip it (assume it is in /JSites directory
-# in the /JSites directory give
+  # Install java on your computer
+  # create a directory in your root with name 'siti' (mkdir /siti)
+  # download the war file and rename it as JSites.zip
+  # unzip it (assume it is in /JSites directory
+  # in the /JSites directory give
 
 java -cp jettylib/jetty-6.1.20.jar:jettylib/jetty-util-6.1.20.jar:jettylib/servlet-api-2.5-20081211.jar:WEB-INF/classes JSites.main.Start
 
