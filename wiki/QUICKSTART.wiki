@@ -1,0 +1,17 @@
+#JOpac2 Quick-start Installation
+
+= 5 steps =
+
+1.  Install java on your computer
+2.  create a directory in your root with name 'siti' (mkdir /siti)
+3.  download the war file and rename it as JSites.zip
+4.  unzip it (assume it is in /JSites directory
+5.  in the /JSites directory give
+
+java -cp jettylib/jetty-6.1.20.jar:jettylib/jetty-util-6.1.20.jar:jettylib/servlet-api-2.5-20081211.jar:WEB-INF/classes JSites.main.Start
+
+Point your browser at http://localhost:8080/JSites and enjoy!
+
+P.S.: to login and add content go to http://localhost:8080/JSites/login (login admin/admin)
+
+
