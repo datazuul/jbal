@@ -867,23 +867,41 @@ public class DBGateway {
 
 	public static void caricaDB(Connection conn) throws SQLException {
 		DbSetup dbs=DbSetup.getInstance(conn.toString());
-		dbs.createTableInfo(conn);
-		dbs.loadTableInfo(conn);
-		dbs.createTableTblComponenti(conn);
-		dbs.loadTableTblComponenti(conn);
-		dbs.createTableTblContenuti(conn);
-		dbs.loadTableTblContenuti(conn);
-		dbs.createTableTblPagine(conn);
-		dbs.loadTableTblPagine(conn);
-		dbs.createTableTblRedirects(conn);
-		dbs.loadTableTblRedirects(conn);
-		dbs.createTableTblRoles(conn);
-		dbs.loadTableTblRoles(conn);
-		dbs.createTableTblStrutture(conn);
-		dbs.loadTableTblStrutture(conn);
-		dbs.createTableTblStati(conn);
-		dbs.loadTableTblStati(conn);
-		dbs.createTableNews(conn);
+		if(!dbs.existTable(conn, "info")) {
+			dbs.createTableInfo(conn);
+			dbs.loadTableInfo(conn);
+		}
+		if(!dbs.existTable(conn, "tblcomponenti")) {
+			dbs.createTableTblComponenti(conn);
+			dbs.loadTableTblComponenti(conn);
+		}
+		if(!dbs.existTable(conn, "tblcontenuti")) {
+			dbs.createTableTblContenuti(conn);
+			dbs.loadTableTblContenuti(conn);
+		}
+		if(!dbs.existTable(conn, "tblpagine")) {
+			dbs.createTableTblPagine(conn);
+			dbs.loadTableTblPagine(conn);
+		}
+		if(!dbs.existTable(conn, "tblredirects")) {
+			dbs.createTableTblRedirects(conn);
+			dbs.loadTableTblRedirects(conn);
+		}
+		if(!dbs.existTable(conn, "tblroles")) {
+			dbs.createTableTblRoles(conn);
+			dbs.loadTableTblRoles(conn);
+		}
+		if(!dbs.existTable(conn, "tblstrutture")) {
+			dbs.createTableTblStrutture(conn);
+			dbs.loadTableTblStrutture(conn);
+		}
+		if(!dbs.existTable(conn, "tblstati")) {
+			dbs.createTableTblStati(conn);
+			dbs.loadTableTblStati(conn);
+		}
+		if(!dbs.existTable(conn, "tblnews")) {
+			dbs.createTableNews(conn);
+		}
 	}
 
 	public static Vector<Long> getChildPages(long pageId, Connection conn) throws SQLException {
