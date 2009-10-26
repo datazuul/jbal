@@ -21,29 +21,39 @@
     
 	<xsl:template match="root">
 		<content>
-			<xsl:if test="h:request/h:requestHeaders/h:header[@name='referer']/text()">
-				<sendmail:sendmail>		
-					<sendmail:from>
-						<xsl:value-of select="sendmail/email" />
-					</sendmail:from>
-					
-					<xsl:apply-templates select="sendmail" />
-					
-					<sendmail:body>
-						<![CDATA[
-						<html>
-							<body>
+			<xsl:if test="contains(h:request/h:requestHeaders/h:header[@name='referer']/text(),concat('pid=',$pid))">
+				<xsl:variable name="r">
+					<xsl:call-template name="check-tokens">
+		            	<xsl:with-param name="list"><xsl:value-of select="sendmail/required" /></xsl:with-param>
+		        	</xsl:call-template>
+				</xsl:variable>
+				
+				Re:<xsl:value-of select="$r" />
+				
+				<xsl:if test="not(contains($r,'1'))">
+					<sendmail:sendmail>		
+						<sendmail:from>
+							<xsl:value-of select="sendmail/email" />
+						</sendmail:from>
 						
-						Dati da: 
-						]]><xsl:value-of select="h:request/h:requestHeaders/h:header[@name='referer']/text()" /><![CDATA[<br/>]]>
-						<xsl:apply-templates select="h:request"/>
-						<![CDATA[
-							</body>
-						</html>
-						]]>
-					</sendmail:body>
-		
-				</sendmail:sendmail>
+						<xsl:apply-templates select="sendmail" />
+						
+						<sendmail:body>
+							<![CDATA[
+							<html>
+								<body>
+							
+							Dati da: 
+							]]><xsl:value-of select="h:request/h:requestHeaders/h:header[@name='referer']/text()" /><![CDATA[<br/>]]>
+							<xsl:apply-templates select="h:request"/>
+							<![CDATA[
+								</body>
+							</html>
+							]]>
+						</sendmail:body>
+			
+					</sendmail:sendmail>
+				</xsl:if>
 			</xsl:if>
 		</content>
 		
@@ -102,6 +112,25 @@
           <xsl:call-template name="output-tokens">
               <xsl:with-param name="list" select="$remaining" />
           </xsl:call-template>
+      </xsl:if>
+  	</xsl:template>
+  	
+  	<xsl:template name="check-tokens">
+      <xsl:param name="list" />
+      <xsl:if test="string-length(normalize-space($list))!=0">
+	      <xsl:variable name="newlist" select="concat(normalize-space($list), ' ')" />
+	      <xsl:variable name="first" select="substring-before($newlist, ' ')" />
+	      <xsl:variable name="remaining" select="substring-after($newlist, ' ')" />
+	      
+	
+		  <xsl:if test="string-length(normalize-space(/root/h:request/h:requestParameters/h:parameter[@name=$first]/h:value))=0">1</xsl:if>
+	
+			
+	      <xsl:if test="$remaining">
+	          <xsl:call-template name="check-tokens">
+	              <xsl:with-param name="list" select="$remaining" />
+	          </xsl:call-template>
+	      </xsl:if>
       </xsl:if>
   	</xsl:template>
 	

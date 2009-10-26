@@ -5,4 +5,5 @@
 	<smtpuser></smtpuser>
 	<smtppassword></smtppassword>
 	<parameters>Parameters to send</parameters>
+	<required>Parameters required to send the mail</required>
 </sendmail>

@@ -29,6 +29,7 @@
 						<tr><td><b>email:</b></td><td><input type="text" size="40" name="email" value="{email/text()}" /></td></tr>
 						<tr><td><b>subject:</b></td><td><input type="text" size="40" name="subject" value="{subject/text()}" /></td></tr>
 						<tr><td><b>parameters:</b></td><td><input type="text" size="40" name="parameters" value="{parameters/text()}" /></td></tr>
+						<tr><td><b>required:</b></td><td><input type="text" size="40" name="required" value="{required/text()}" /></td></tr>
 						<tr><td><b>smtphost:</b></td><td><input type="text" size="40" name="smtphost" value="{smtphost/text()}" /></td></tr>
 						<tr><td><b>smtpuser:</b></td><td><input type="text" size="40" name="smtpuser" value="{smtpuser/text()}" /></td></tr>
 						<tr><td><b>smtppassword:</b></td><td><input type="text" size="40" name="smtppassword" value="{smtppassword/text()}" /></td></tr>

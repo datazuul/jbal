@@ -23,15 +23,6 @@
 		</source:write>
 	</xsl:template>
 	
-	<!-- 
-	
-	<email>address to send data</email>
-	<subject>subject all mails will have</subject>
-	<smtphost>SMTP host to use</smtphost>
-	<smtpuser></smtpuser>
-	<smtppassword></smtppassword>
-	
-	 -->
 	
 	<xsl:template match="email">
 		<email>
@@ -67,6 +58,12 @@
 		<parameters>
 			<xsl:value-of select="text()"/>
 		</parameters>
+	</xsl:template>
+	
+		<xsl:template match="required">
+		<required>
+			<xsl:value-of select="text()"/>
+		</required>
 	</xsl:template>
 	
 	
