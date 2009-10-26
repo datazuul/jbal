@@ -27,10 +27,11 @@
 		            	<xsl:with-param name="list"><xsl:value-of select="sendmail/required" /></xsl:with-param>
 		        	</xsl:call-template>
 				</xsl:variable>
-				
-				Re:<xsl:value-of select="$r" />
-				
+								
 				<xsl:if test="not(contains($r,'1'))">
+					<xsl:variable name="body">
+						<xsl:apply-templates select="h:request"/>
+					</xsl:variable>
 					<sendmail:sendmail>		
 						<sendmail:from>
 							<xsl:value-of select="sendmail/email" />
@@ -45,7 +46,7 @@
 							
 							Dati da: 
 							]]><xsl:value-of select="h:request/h:requestHeaders/h:header[@name='referer']/text()" /><![CDATA[<br/>]]>
-							<xsl:apply-templates select="h:request"/>
+							<xsl:value-of select="$body" />
 							<![CDATA[
 								</body>
 							</html>
@@ -53,6 +54,10 @@
 						</sendmail:body>
 			
 					</sendmail:sendmail>
+					Sono state inviate le seguenti informazioni:<br/>
+					<futiz>
+					<xsl:value-of select="normalize-space($body)" disable-output-escaping="no"/>
+					</futiz>
 				</xsl:if>
 			</xsl:if>
 		</content>
