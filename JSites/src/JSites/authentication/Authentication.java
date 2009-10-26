@@ -7,6 +7,7 @@ import java.util.HashMap;
 import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.webapps.authentication.user.UserState;
+import org.jopac2.utils.JOpac2Exception;
 
 import JSites.utils.DBGateway;
 
@@ -32,7 +33,7 @@ public class Authentication {
 		return UID;
 	}
 	
-	public static Permission assignPermissions(Session session, long pid, Connection conn) throws SQLException {
+	public static Permission assignPermissions(Session session, long pid, Connection conn) throws SQLException, JOpac2Exception {
 		
 		Permission ret = new Permission();
 		ret = DBGateway.getPermission(getUsername(session), pid, conn);

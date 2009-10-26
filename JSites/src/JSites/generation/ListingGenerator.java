@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.SourceResolver;
+import org.jopac2.utils.JOpac2Exception;
 import org.xml.sax.SAXException;
 
 import JSites.authentication.Authentication;
@@ -53,12 +54,12 @@ public class ListingGenerator extends MyAbstractPageGenerator {
 		contentHandler.endDocument();
 	}
 	
-	private String getChildList(Connection conn, long cpid) throws SQLException {
+	private String getChildList(Connection conn, long cpid) throws SQLException, JOpac2Exception {
 		TreeSet<String> tree = getTree(conn, cpid);
 		return Section.listChilds(tree);
 	}
 
-	private TreeSet<String> getTree(Connection conn, long papid) throws SQLException {
+	private TreeSet<String> getTree(Connection conn, long papid) throws SQLException, JOpac2Exception {
 		TreeSet<String> tree = new TreeSet<String>();
 		PreparedStatement st = conn.prepareStatement("select Name, PID from tblpagine where PaPID=?");
 		st.setLong(1, papid);

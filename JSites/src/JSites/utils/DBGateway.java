@@ -12,6 +12,7 @@ import java.util.Vector;
 import org.apache.avalon.framework.component.ComponentException;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.Session;
+import org.jopac2.utils.JOpac2Exception;
 
 import JSites.setup.DbSetup;
 import JSites.utils.site.NewsItem;
@@ -343,7 +344,7 @@ public class DBGateway {
 		return ret>0;
 	}
 	
-	public static boolean hasChild(long pid, Connection conn, Session session) throws SQLException {
+	public static boolean hasChild(long pid, Connection conn, Session session) throws SQLException, JOpac2Exception {
 		if(pid==0)return false;
 		int ret = 0;
 		Statement st = conn.createStatement();
@@ -475,24 +476,35 @@ public class DBGateway {
 		return ret;
 	}
 
-	public static Permission getPermission(String username, long pid, Connection conn) throws SQLException {
+	public static Permission getPermission(String username, long pid, Connection conn) throws SQLException, JOpac2Exception {
 		Statement sqlState = conn.createStatement();
 		String sql="select PermissionCode from tblroles where PID="+pid+" and Username='"+username+"'";
-		try {
-			sqlState.executeQuery(sql);
-		}
-		catch(SQLException e) {
-			// Cambiato nome colonna
-			String alter="ALTER TABLE tblroles CHANGE COLUMN User Username VARCHAR(50)";
-			int n=e.getErrorCode();
-			if(n==1054) {
-				sqlState.execute(alter);
-				sqlState.executeQuery(sql);
-			}
-			else {
-				throw e;
-			}
-		}
+		
+		sqlState.executeQuery(sql);
+		
+//		try {
+//			sqlState.executeQuery(sql);
+//		}
+//		catch(SQLException e) {
+//			// Cambiato nome colonna
+//			String alter="ALTER TABLE tblroles CHANGE COLUMN User Username VARCHAR(50)";
+//			int n=e.getErrorCode();
+//			if(n==1054) {
+//				try {
+//					sqlState.execute(alter);
+//					sqlState.executeQuery(sql);
+//				}
+//				catch(Exception ez) {
+//					System.out.println("ALTER ERROR DBGateway.getPermission: "+ez.getMessage());
+//					sqlState.close();
+//				}
+//			}
+//			else {
+//				sqlState.close();
+//				if(n==30000) throw e;
+//				else throw new JOpac2Exception("User/Username exception");
+//			}
+//		}
 		ResultSet temp = sqlState.getResultSet();
 		byte ret = -1;
 		if(temp.next()){
@@ -630,7 +642,7 @@ public class DBGateway {
 		return ret;
 	}
 	
-	public static boolean isLeaf(long tempPid, Session session, Connection conn) throws SQLException {
+	public static boolean isLeaf(long tempPid, Session session, Connection conn) throws SQLException, JOpac2Exception {
 		boolean ret = true;
 		Statement st = conn.createStatement();
 		String q = "select PID from tblpagine where PaPID="+tempPid;
@@ -655,7 +667,7 @@ public class DBGateway {
 		Permission tempP = null;
 		try {
 			tempP = DBGateway.getPermission(userData, 0, conn);
-		} catch (SQLException e2) {e2.printStackTrace();}
+		} catch (Exception e2) {e2.printStackTrace();}
 		
 		if(tempP.getPermissionCode() != p.getPermissionCode() || p.getPermissionCode() == 0 )
 		{		

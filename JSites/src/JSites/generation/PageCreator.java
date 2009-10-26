@@ -34,7 +34,7 @@ public class PageCreator extends MyAbstractPageGenerator {
 			
 			if(hasChildren){
 				Statement st = conn.createStatement();
-		    	ResultSet rs = st.executeQuery("select CID from tblcontenuti where PaCID='" + id +"'  order by OrderNumber"); // ho tolto and IDStato=3
+		    	ResultSet rs = st.executeQuery("select CID from tblcontenuti where PaCID=" + id +"  order by OrderNumber"); // ho tolto and IDStato=3
 				while(rs.next()){
 					long childId = rs.getLong(1);
 					processChild(childId, conn);

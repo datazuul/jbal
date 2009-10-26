@@ -12,6 +12,7 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.xml.AttributesImpl;
+import org.jopac2.utils.JOpac2Exception;
 import org.xml.sax.SAXException;
 
 import JSites.authentication.Authentication;
@@ -102,7 +103,7 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 	}
 
 	
-	private PageTree createPageTree(long pid, Connection conn) throws SQLException {
+	private PageTree createPageTree(long pid, Connection conn) throws SQLException, JOpac2Exception {
 		long padre = DBGateway.getPapid(pid, conn);
 		TreeSet<PageTree> zii = getChildren(DBGateway.getPapid(padre,conn),conn);
 		TreeSet<PageTree> figli = null;
@@ -201,7 +202,7 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 		return ret;
 	}
 	
-	private PageTree getPadre(PageTree me, Connection conn) throws SQLException {
+	private PageTree getPadre(PageTree me, Connection conn) throws SQLException, JOpac2Exception {
 		long padre = DBGateway.getPapid(me.getRootPid(), conn);
 		TreeSet<PageTree> fratelli = getChildren(padre, conn);
 		fratelli.remove(me);
@@ -212,7 +213,7 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 		return ret;
 	}
 
-	private TreeSet<PageTree> fill2L(TreeSet<PageTree> areaChildrenL2, PageTree nonno, Connection conn) throws SQLException{
+	private TreeSet<PageTree> fill2L(TreeSet<PageTree> areaChildrenL2, PageTree nonno, Connection conn) throws SQLException, JOpac2Exception{
 		
 		Iterator<PageTree> ai = areaChildrenL2.iterator();
     	while(ai.hasNext()) {
@@ -229,7 +230,7 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 	}
 
 
-	private TreeSet<PageTree> getChildren(long pid, Connection conn) throws SQLException {
+	private TreeSet<PageTree> getChildren(long pid, Connection conn) throws SQLException, JOpac2Exception {
 		return getChildren(pid,1,conn);
 	}
 
@@ -237,7 +238,7 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 	 * long c = 0 se vogliamo nipoti, 
 	 * altrimenti: se vogliamo solo i figli, allora c = 1
 	 */
-	private TreeSet<PageTree> getChildren(long tempPid, long c, Connection conn) throws SQLException {
+	private TreeSet<PageTree> getChildren(long tempPid, long c, Connection conn) throws SQLException, JOpac2Exception {
 		
 		TreeSet<PageTree> v = new TreeSet<PageTree>();
 		

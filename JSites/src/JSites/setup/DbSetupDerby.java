@@ -11,7 +11,7 @@ public class DbSetupDerby extends DbSetup {
 		String sql="DROP TABLE "+tableName;
 		try {
 			Statement st=conn.createStatement();
-			st.execute(sql);
+//			st.execute(sql);
 		}
 		catch(Exception e) {
 //			e.printStackTrace();
@@ -87,13 +87,13 @@ public class DbSetupDerby extends DbSetup {
 		dropTable(conn,"tblpagine");
 		Statement st=conn.createStatement();		
 		String sql="CREATE TABLE tblpagine (" +
-				"PID int NOT NULL generated always as identity," +
+				"PID int NOT NULL," + // generated always as identity
 				"Name varchar(100) NOT NULL default ''," +
 				"PaPID int default 0," +
 				"Valid int NOT NULL default 1," +
 				"HasChild int NOT NULL default 0," +
 				"PCode varchar(20) NOT NULL," +
-				"InSidebar int  NOT NULL default 1," +
+				"InSidebar int  NOT NULL default 1," + 
 				"PRIMARY KEY  (PID)) " + postfix;
 //				"UNIQUE KEY Codice USING BTREE (PCode)," +
 //				"KEY Index_2 USING BTREE (PaPID)) " + postfix;
@@ -103,6 +103,9 @@ public class DbSetupDerby extends DbSetup {
 		sql="create index tblpagine_Index_Codice on tblpagine(PCode)";
 		st.execute(sql);
 		sql="create index tblpagine_Index_1 on tblpagine(PaPID)";
+		st.execute(sql);
+		
+		sql="create index tblpagine_Index_pid on tblpagine(PID)";
 		st.execute(sql);
 		
 		st.close();

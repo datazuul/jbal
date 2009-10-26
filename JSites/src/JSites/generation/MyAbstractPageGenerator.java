@@ -24,6 +24,7 @@ import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.generation.AbstractGenerator;
 import org.apache.cocoon.webapps.session.SessionManager;
 import org.apache.cocoon.xml.AttributesImpl;
+import org.jopac2.utils.JOpac2Exception;
 import org.xml.sax.SAXException;
 
 import java.util.logging.Level;
@@ -295,7 +296,13 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 				if(l==null){
 					l = DBGateway.getNewPageId(conn);
 					DBGateway.creaPaginaInDB(l,request, conn);
-					DBGateway.setPermission(l, Authentication.getUserData(session, "ID"), conn);
+					try {
+						Permission p=DBGateway.getPermission(Authentication.getUserData(session, "ID"), ret, conn);
+						DBGateway.setPermission(l, Authentication.getUserData(session, "ID"), p, conn);
+
+					} catch (JOpac2Exception e) {
+						DBGateway.setPermission(l, Authentication.getUserData(session, "ID"), conn);
+					}
 					session.setAttribute("newPageID",l);
 				}
 				ret = l.longValue();

@@ -2,14 +2,17 @@ package JSites.transformation;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 
+import org.apache.avalon.framework.component.ComponentException;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.xml.AttributesImpl;
 import org.jopac2.engine.dbGateway.DbGateway;
+import org.jopac2.utils.JOpac2Exception;
 import org.xml.sax.SAXException;
 
 import JSites.utils.DBGateway;
@@ -48,32 +51,52 @@ public class RedirectNA extends MyAbstractPageTransformer {
 			 }
 			 
 			 conn = this.getConnection(dbname);
-			 try{
-				 if(pCode != null)
-					 pageId = DBGateway.getPidFrom(pCode, conn);
-				 
-				 Session session = this.sessionManager.getSession(true);
-				 permission = Authentication.assignPermissions(session, pageId, conn);
-				 String readRedir = DBGateway.getRedirectURL(pageId, conn);
-				 if(readRedir != null && isView && permission.hasPermission(Permission.ACCESSIBLE)){
-					 redirURL = readRedir;
-					 redirect = true;
-					 
-					 if(permission.hasPermission(Permission.EDITABLE) || permission.hasPermission(Permission.VALIDABLE)){}
-					 else{
-						 conn.close();
-						 return;
-					 }
-				 }
-			 }catch(Exception e) {
-				 if(conn!=null){
-					 DBGateway.caricaDB(conn);
-					 conn.close();
-				 }
-				 e.printStackTrace();
+			
+			 try {
+				if (pCode != null)
+					pageId = DBGateway.getPidFrom(pCode, conn);
+
+				Session session = this.sessionManager.getSession(true);
+				permission = Authentication.assignPermissions(session, pageId, conn);
+//				try {
+//					permission = Authentication.assignPermissions(session, pageId, conn);
+//				} catch (JOpac2Exception e) {
+//					e.printStackTrace();
+//				}
+				String readRedir = DBGateway.getRedirectURL(pageId, conn);
+				if (readRedir != null && isView
+						&& permission.hasPermission(Permission.ACCESSIBLE)) {
+					redirURL = readRedir;
+					redirect = true;
+
+					if (permission.hasPermission(Permission.EDITABLE)
+							|| permission.hasPermission(Permission.VALIDABLE)) {
+					} else {
+						conn.close();
+						return;
+					}
 				}
-				
-			 try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}	 
+			} catch (SQLException e) {
+				if (conn != null && !e.getMessage().contains("User/Username exception")) {
+					try {
+						DBGateway.caricaDB(conn);
+					}
+					catch(Exception ee) {
+						ee.printStackTrace();
+					}
+					finally {
+						conn.close();
+					}
+				}
+				e.printStackTrace();
+			}
+
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				System.out.println("Non ho potuto chiudere la connessione");
+			}	 
 			 
 		 }
 		 catch(Exception e){e.printStackTrace();}

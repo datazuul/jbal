@@ -8,20 +8,26 @@ public class DbSetupMysql extends DbSetup {
 	public void createTableInfo(Connection conn) throws SQLException {
 		String sql="DROP TABLE IF EXISTS info;";
 		Statement st=conn.createStatement();
-		st.execute(sql);
+//		st.execute(sql);
 		
 		sql="CREATE TABLE info (PCode varchar(3) NOT NULL," +
 				"PaPCode varchar(3) NOT NULL) " +
 				"ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 		
-		st.execute(sql);
+		try {
+			st.execute(sql);
+		}
+		catch(SQLException e) {
+			st.close();
+			throw e;
+		}
 		st.close();
 	}
 	
 	public void createTableTblComponenti(Connection conn) throws SQLException {
 		String sql="DROP TABLE IF EXISTS tblcomponenti;";
 		Statement st=conn.createStatement();
-		st.execute(sql);
+//		st.execute(sql);
 		
 		sql="CREATE TABLE tblcomponenti (CID int(10) unsigned NOT NULL default '0'," +
 				"Type varchar(45) NOT NULL default ''," +
@@ -31,14 +37,20 @@ public class DbSetupMysql extends DbSetup {
 				"InsertDate datetime NOT NULL default '0000-00-00 00:00:00'," +
 				"PRIMARY KEY  (CID)," +
 				"KEY Index_2 (Type)) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-		st.execute(sql);
+		try {
+			st.execute(sql);
+		}
+		catch(SQLException e) {
+			st.close();
+			throw e;
+		}
 		st.close();
 	}
 	
 	public void createTableNews(Connection conn) throws SQLException {
 		String sql="DROP TABLE IF EXISTS tblnews;";
 		Statement st=conn.createStatement();
-		st.execute(sql);
+//		st.execute(sql);
 		
 		sql="CREATE TABLE tblnews (CID integer, startdate varchar(8) NOT NULL," +
 				"enddate varchar(8) NOT NULL," +
@@ -48,14 +60,20 @@ public class DbSetupMysql extends DbSetup {
 				"KEY Index_3 (enddate), " +
 				"KEY Index_4 (list) ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 		
-		st.execute(sql);
+		try {
+			st.execute(sql);
+		}
+		catch(SQLException e) {
+			st.close();
+			throw e;
+		}
 		st.close();
 	}
 	
 	public void createTableTblContenuti(Connection conn) throws SQLException {
 		String sql="DROP TABLE IF EXISTS tblcontenuti;";
 		Statement st=conn.createStatement();
-		st.execute(sql);
+//		st.execute(sql);
 		
 		sql="CREATE TABLE tblcontenuti (" +
 				"PaCID int(10) unsigned NOT NULL default '0'," +
@@ -67,14 +85,20 @@ public class DbSetupMysql extends DbSetup {
 				"KEY Index_2 USING BTREE (CID)," +
 				"KEY FK_tblcontenuti_3 USING BTREE (StateID)" +
 				") ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-		st.execute(sql);
+		try {
+			st.execute(sql);
+		}
+		catch(SQLException e) {
+			st.close();
+			throw e;
+		}
 		st.close();
 	}
 	
 	public void createTableTblPagine(Connection conn) throws SQLException {
 		String sql="DROP TABLE IF EXISTS tblpagine;";
 		Statement st=conn.createStatement();
-		st.execute(sql);
+//		st.execute(sql);
 		
 		sql="CREATE TABLE tblpagine (" +
 				"PID int(10) unsigned NOT NULL auto_increment," +
@@ -88,28 +112,40 @@ public class DbSetupMysql extends DbSetup {
 				"UNIQUE KEY Codice USING BTREE (PCode)," +
 				"KEY Index_2 USING BTREE (PaPID)" +
 				") ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;";
-		st.execute(sql);
+		try {
+			st.execute(sql);
+		}
+		catch(SQLException e) {
+			st.close();
+			throw e;
+		}
 		st.close();
 	}
 	
 	public void createTableTblRedirects(Connection conn) throws SQLException {
 		String sql="DROP TABLE IF EXISTS tblredirects;";
 		Statement st=conn.createStatement();
-		st.execute(sql);
+//		st.execute(sql);
 		
 		sql="CREATE TABLE tblredirects (" +
 				"PID int(10) unsigned NOT NULL default '0'," +
 				"Url text NOT NULL," +
 				"KEY Index_1 USING BTREE (PID)" +
 				") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
-		st.execute(sql);
+		try {
+			st.execute(sql);
+		}
+		catch(SQLException e) {
+			st.close();
+			throw e;
+		}
 		st.close();
 	}
 	
 	public void createTableTblRoles(Connection conn) throws SQLException {
 		String sql="DROP TABLE IF EXISTS tblroles;";
 		Statement st=conn.createStatement();
-		st.execute(sql);
+//		st.execute(sql);
 		
 		sql="CREATE TABLE tblroles (" +
 				"Username varchar(50) NOT NULL," +
@@ -119,14 +155,20 @@ public class DbSetupMysql extends DbSetup {
 				"KEY Index_2 (Username)," +
 				"KEY Index_3 USING BTREE (Username)" +
 				") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
-		st.execute(sql);
+		try {
+			st.execute(sql);
+		}
+		catch(SQLException e) {
+			st.close();
+			throw e;
+		}
 		st.close();
 	}
 	
 	public void createTableTblStati(Connection conn) throws SQLException {
 		String sql="DROP TABLE IF EXISTS tblstati;";
 		Statement st=conn.createStatement();
-		st.execute(sql);
+//		st.execute(sql);
 		
 		sql="CREATE TABLE tblstati (" +
 				"StateID int(10) unsigned NOT NULL auto_increment," +
@@ -135,14 +177,20 @@ public class DbSetupMysql extends DbSetup {
 				"PRIMARY KEY  (StateID)," +
 				"KEY Index_3 USING BTREE (Scope)" +
 				") ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;";
-		st.execute(sql);
+		try {
+			st.execute(sql);
+		}
+		catch(SQLException e) {
+			st.close();
+			throw e;
+		}
 		st.close();
 	}
 	
 	public void createTableTblStrutture(Connection conn) throws SQLException {
 		String sql="DROP TABLE IF EXISTS tblstrutture;";
 		Statement st=conn.createStatement();
-		st.execute(sql);
+//		st.execute(sql);
 		
 		sql="CREATE TABLE tblstrutture (" +
 				"PID int(10) unsigned NOT NULL default '0'," +
@@ -151,7 +199,13 @@ public class DbSetupMysql extends DbSetup {
 				"KEY Index_1 USING BTREE (PID)," +
 				"KEY Index_2 USING BTREE (CID)" +
 				") ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-		st.execute(sql);
+		try {
+			st.execute(sql);
+		}
+		catch(SQLException e) {
+			st.close();
+			throw e;
+		}
 		st.close();
 	}
 

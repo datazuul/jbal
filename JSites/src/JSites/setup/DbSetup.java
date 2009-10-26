@@ -105,9 +105,9 @@ public abstract class DbSetup {
 	
 	public void loadTableTblPagine(Connection conn) throws SQLException {
 		String sql="INSERT INTO tblpagine (" +
-				"Name,PaPID,Valid,HasChild,PCode,InSidebar) " +
+				"PID,Name,PaPID,Valid,HasChild,PCode,InSidebar) " +
 				"VALUES " +
-				"('Homepage',NULL,1,1,'HMP',1)";
+				"(1,'Homepage',NULL,1,1,'HMP',1)";
 		Statement st=conn.createStatement();
 		st.execute(sql);
 		st.close();
@@ -122,7 +122,7 @@ public abstract class DbSetup {
 
 	public void loadTableTblRoles(Connection conn) throws SQLException {
 		String sql="INSERT INTO tblroles (Username,PermissionCode,PID) VALUES " +
-				"('admin',7,0)";
+				"('admin',15,0)";
 		Statement st=conn.createStatement();
 		st.execute(sql);
 		st.close();
