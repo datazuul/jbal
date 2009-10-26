@@ -1,6 +1,7 @@
 package JSites.setup;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -186,6 +187,24 @@ public class DbSetupDerby extends DbSetup {
 				"PaPCode varchar(3) NOT NULL)"+postfix;
 		st.execute(sql);
 		st.close();
+	}
+	
+	@Override
+	public boolean existTable(Connection conn, String tablename)
+			throws SQLException {
+		boolean r=false;
+		Statement st=conn.createStatement();
+		String sql="show tables";
+		ResultSet rs=st.executeQuery(sql);
+		while(rs.next()) {
+			if(tablename.equalsIgnoreCase(rs.getString("TABLE_NAME"))) {
+				r=true;
+				break;
+			}
+		}
+		rs.close();
+		st.close();
+		return r;
 	}
 
 }

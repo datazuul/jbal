@@ -1,6 +1,7 @@
 package JSites.setup;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -207,6 +208,21 @@ public class DbSetupMysql extends DbSetup {
 			throw e;
 		}
 		st.close();
+	}
+
+	@Override
+	public boolean existTable(Connection conn, String tablename)
+			throws SQLException {
+		boolean r=false;
+		Statement st=conn.createStatement();
+		String sql="show tables like \""+tablename+"\"";
+		ResultSet rs=st.executeQuery(sql);
+		if(rs.next()) {
+			r=true;
+		}
+		rs.close();
+		st.close();
+		return r;
 	}
 
 }

@@ -2,6 +2,7 @@ package JSites.setup;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -12,6 +13,8 @@ public abstract class DbSetup {
 		if(name.contains("derby")) return new DbSetupDerby();
 		return dbs;
 	}
+	
+	public abstract boolean existTable(Connection conn, String tablename) throws SQLException;
 	
 	public static Connection getConnection(String _dbName, String _classDriver, 
 			String _dbMasterUrl, String _dbUser, String _dbPass) {
