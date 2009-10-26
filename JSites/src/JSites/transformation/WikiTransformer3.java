@@ -146,7 +146,7 @@ public class WikiTransformer3 extends AbstractTransformer{
         
         // Il parser crea un nuovo documento XML, l'handler invocera' startDocument e endDocument
         // inoltre un documento XML deve avere un solo root element
-        // la nostra stringa non � un document XML, ma un frammento XML, quindi una parte di un docuemnto
+        // la nostra stringa non e' un document XML, ma un frammento XML, quindi una parte di un docuemnto
         // XML che non deve invocare start e endDocument, e puo' essere formato da piu' elementi.
         // Per risolvere questi problemi e' stata introdotta una variabile booleana per evitare di invocare 
         // start e endDocument in fase di parsing, ed e' stato aggiunto un tag <futiz> come root element
