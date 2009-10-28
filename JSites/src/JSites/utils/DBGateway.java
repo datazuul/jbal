@@ -718,8 +718,8 @@ public class DBGateway {
 			long pid, String url, Connection conn) throws SQLException, ComponentException{
 //		java.sql.Date sqlDate = new java.sql.Date(date.getTime());
 		
-		String sqlComponenteNuovo = "INSERT INTO tblcomponenti (CID,Type,Attributes,HasChildren,HistoryCid)" + // ,InsertDate
-									"VALUES (" + cid + ",'" + componentType + "',null,"+ hasChild+"," + historycid + ")"; // ,'" + sqlDate + "'
+		String sqlComponenteNuovo = "INSERT INTO tblcomponenti (InsertDate,CID,Type,Attributes,HasChildren,HistoryCid)" + // ,InsertDate
+									"VALUES (current_timestamp," + cid + ",'" + componentType + "',null,"+ hasChild+"," + historycid + ")"; // ,'" + sqlDate + "'
 		Statement st = conn.createStatement();
 		st.execute(sqlComponenteNuovo);
 		
