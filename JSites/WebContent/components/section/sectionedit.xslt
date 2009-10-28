@@ -102,11 +102,11 @@
 			<br/>
 
 			<input type="text" size="8" name="startdate" value="{sql:rowset/sql:row/sql:startdate}" id="startdate" readonly="1" />
-			<img src="images/img.gif" id="f_trigger_c" style="cursor: pointer; border: 1px solid red;" title="Date selector"
+			<img src="images/calendar.gif" id="f_trigger_c" style="cursor: pointer; border: 1px solid red;" title="Date selector"
       onmouseover="this.style.background='red';" onmouseout="this.style.background=''" />&#160;&#160;
 	
 			<input type="text" size="8" name="enddate" value="{sql:rowset/sql:row/sql:enddate}" id="enddate" readonly="1" />
-			<img src="images/img.gif" id="f_trigger_d" style="cursor: pointer; border: 1px solid red;" title="Date selector"
+			<img src="images/calendar.gif" id="f_trigger_d" style="cursor: pointer; border: 1px solid red;" title="Date selector"
 	      onmouseover="this.style.background='red';" onmouseout="this.style.background=''" />&#160;&#160;
 		
 			
