@@ -209,16 +209,22 @@
     	<map:generate type="pageorderer">
             <map:parameter name="containerType" value="{1}"/>
         </map:generate>
+        
+        <!-- map:transform type="tutil" src="/t/pageorderer" / -->
 
-	        <map:parameter name="parameters" value="true"/>
-	        <map:transform type="fillBill">
-	        	<map:parameter name="pid" value="{request-param:pid}"/>
-	        	
-	        </map:transform>
+        <map:parameter name="parameters" value="true"/>
+        <map:transform type="fillBill">
+        	<map:parameter name="pid" value="{request-param:pid}"/>
+        	
+        </map:transform>
+	    
+	    <!-- map:transform type="tutil" src="/t/pagepostorderer" / -->
 
 		<map:transform type="cinclude">
 	        <map:parameter name="use-request-parameters" value="true"/>
 	    </map:transform>
+	    
+	    <!-- map:transform type="tutil" src="/t/pageincludeorderer" / -->
 	    
 	    <map:act type="auth-loggedIn">
         	<map:parameter name="handler" value="JSitesHandler"/>
@@ -230,7 +236,7 @@
 		    </map:act>
 		</map:act>
 	    
-	    <!--map:transform type="wikitrans" /-->
+	    <!-- map:transform type="wikitrans" / -->
 	    <map:serialize type="xml"/>
     </map:match>
     
