@@ -140,7 +140,7 @@ public class WikiTransformer3 extends AbstractTransformer{
         //TODO la dichiarazione meglio se venisse salvata nel file xml cosi'
         // e' anche un buon pattern per riconoscere
         // la dichiarazione non va messa
-        String temp = s.toString();
+        String temp = normalizeEntities(s.toString());
         
         StringReader sr= new StringReader("<futiz>"+temp+"</futiz>");
         
@@ -155,6 +155,32 @@ public class WikiTransformer3 extends AbstractTransformer{
 		InputSource i=new InputSource(sr);
         rdr.parse(i);
         
+	}
+
+	/**
+	 * Replace any '&' with '&amp;' if ';' is not in 5 chars from ';'
+	 * @param string
+	 * @return
+	 */
+	private String normalizeEntities(String string) {
+		int limit=6;
+		String output="";
+		int p=string.lastIndexOf('&');
+		while(p>=0) {
+			String e=string.substring(p+1);
+			String b=string.substring(0,p);
+			int k=e.indexOf(';');
+			if(k>limit || k<0) {
+				output="&amp;"+e+output;
+				string=b;
+			}
+			else {
+				output="&"+e+output;
+				string=b;
+			}
+			p=string.lastIndexOf('&');
+		}
+		return string+output;
 	}
 
 	public void doFinalWiki(StringBuffer s) throws SAXException {		
