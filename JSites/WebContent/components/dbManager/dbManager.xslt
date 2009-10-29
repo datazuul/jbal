@@ -51,8 +51,8 @@
 					<xsl:variable name="pcode"><xsl:value-of select="sql:permissioncode" /></xsl:variable>
 					<tr>
 						<td>
-							<xsl:value-of select="sql:user" />
-							<input type="hidden" name="utente{position()}" value="{sql:user}" />
+							<xsl:value-of select="sql:username" />
+							<input type="hidden" name="utente{position()}" value="{sql:username}" />
 						</td>
 						<td>
 							<input type="checkbox" name="editable{position()}" class="myTableLine">

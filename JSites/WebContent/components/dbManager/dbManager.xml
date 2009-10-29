@@ -7,7 +7,7 @@
 	</pageTitle>
 	<permissions>
 		<sql:execute-query xmlns:sql="http://apache.org/cocoon/SQL/2.0">
-			<sql:query>select User, PermissionCode from tblroles where PID=<pid /></sql:query>
+			<sql:query>select Username, PermissionCode from tblroles where PID=<pid /></sql:query>
 		</sql:execute-query>
 	</permissions>
 </dbManager>
