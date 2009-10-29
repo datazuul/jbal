@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!DOCTYPE map:sitemap [
+<!ENTITY generalComponentPipeline SYSTEM "../generalComponentPipeline.dat">
+]>
 <map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
 
 	
@@ -56,21 +58,7 @@
 						<map:serialize type="xml"/>
 					</map:act>
 				</map:match>
-				
-				<map:match pattern="order">
-				 	<map:act type="request">
-	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/excel{cid}.xml" label="edit"/>
-	                    <map:transform src="excelorder.xslt">
-	                    	<map:parameter name="use-request-parameters" value="true"/>
-	                    </map:transform>
-	                    <map:transform src="excel.xslt">
-	                        <map:parameter name="use-request-parameters" value="true"/>
-	                    </map:transform>
-	                    <map:transform type="wikitrans" />
-	                    <map:serialize type="xml" />
-	                </map:act>
-				</map:match>
+
 				
 				<map:handle-errors>
 					<map:select type="exception">
@@ -82,6 +70,8 @@
 				</map:handle-errors>
 
 		</map:pipeline>
+		
+		&generalComponentPipeline;
 		
 	</map:pipelines>
 	

@@ -44,25 +44,7 @@
 	                <map:transform type="cinclude"/>
 					<map:serialize type="xml"/>
 				</map:match>
-				
-				<map:match pattern="order">
-				 	<map:act type="request">
-	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/box{cid}.xml" label="edit"/>
-	                    
-	                    <map:transform src="boxorder.xslt">
-	                    	<map:parameter name="use-request-parameters" value="true"/>
-	                    </map:transform>
-	                    
-	                    <map:transform src="box.xslt">
-	                        <map:parameter name="use-request-parameters" value="true"/>
-	                    </map:transform>
-	                    
-	                    <map:transform type="wikitrans"/>
-	                    <map:serialize type="xhtml" />
-	                </map:act>
-				</map:match>
-				
+
 				<map:match pattern="unit">
 	                <map:act type="request">
 	                	<map:parameter name="parameters" value="true"/>

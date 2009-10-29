@@ -62,25 +62,7 @@
 	                </map:transform>
 	                <map:serialize type="xml"/>
 				</map:match>
-	            
-				<map:match pattern="order">
-				 	<map:act type="request">
-	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/catalogSearch{cid}.xml" label="edit"/>
-	                    
-	                    <map:transform src="../section/sectionorder.xslt">
-	                    	<map:parameter name="use-request-parameters" value="true"/>
-	                    </map:transform>
-	                    
-	                    <map:transform src="../section/section.xslt">
-	                        <map:parameter name="use-request-parameters" value="true"/>
-	                    </map:transform>
-	                    
-	                    <map:transform type="wikitrans"/>
-	                    <map:serialize type="xhtml" />
-	                </map:act>
-				</map:match>
-				
+
 		</map:pipeline>
 		
 		&generalComponentPipeline;

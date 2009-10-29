@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!DOCTYPE map:sitemap [
+<!ENTITY generalComponentPipeline SYSTEM "../generalComponentPipeline.dat">
+]>
 <map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
 	
 	
@@ -67,27 +69,9 @@
 					<map:serialize type="xml"/>
 				</map:match>
 				
-				<map:match pattern="order">
-				 	<map:act type="request">
-	                    <map:parameter name="parameters" value="true"/>
-	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/gallery{cid}.xml" label="edit"/>
-	                    
-	                    <map:transform src="galleryorder.xslt">
-	                    	<map:parameter name="use-request-parameters" value="true"/>
-	                    </map:transform>
-	                    
-	                    <map:transform src="gallery.xslt">
-	                        <map:parameter name="use-request-parameters" value="true"/>
-	                    </map:transform>
-	                    
-	                    <map:transform type="wikitrans"/>
-	                    <map:serialize type="xhtml" />
-	                </map:act>
-				</map:match>	
-				
 				
 		</map:pipeline>
-		
+		&generalComponentPipeline;
 	</map:pipelines>
 	
 </map:sitemap>
