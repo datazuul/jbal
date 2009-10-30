@@ -2,8 +2,10 @@
 	<map:when test="jopac2">
 		<map:mount uri-prefix="" src="jopac2/sitemap.xmap" />
 	</map:when>
-
-
+	<map:when test="biblio">
+		<map:mount uri-prefix="" src="biblio/sitemap.xmap" />
+	</map:when>
+	
 	<map:otherwise>
 		<map:mount uri-prefix="" src="jopac2/sitemap.xmap" />
     </map:otherwise>

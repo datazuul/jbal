@@ -8,12 +8,7 @@
 	</xsl:template>
 	
 	<xsl:template match="testo">
-		<testo>ATTENZIONE: State per uscire dal sito Web del Sistema Bibliotecario di Ateneo (SBA)
-
-SBA non esercita alcun controllo sui contenuti del sito Web che state per visitare. 
-Tali contenuti potrebbero essere in una lingua diversa rispetto a questo sito. 
-SBA fornisce questo link a vostro esclusivo vantaggio e non intende promuovere in alcun modo i contenuti, 
-i prodotti o i servizi che vi verranno offerti nel sito collegato.
+		<testo>ATTENZIONE: State per uscire da questo sito Web.
 		
 		
 			__Redirecting to__ [<xsl:value-of select="text()"/>&gt;__<xsl:value-of select="text()"/>__]

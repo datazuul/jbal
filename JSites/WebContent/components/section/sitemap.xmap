@@ -42,13 +42,12 @@
 	                    <map:transform src="sectionedit.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
 	                    	<map:parameter name="context" value="{context}"/>
+	                    	<map:parameter name="template" value="{global:template}"/>
 	                    </map:transform>
 	                    <map:transform type="cinclude" />
 	                    <map:serialize type="xml"/>
 	                </map:act>
 	            </map:match>
-	            
-	            
 	            
 	            <map:match pattern="save">
 					<map:generate type="internalSave"/>

@@ -14,6 +14,7 @@
 	<xsl:param name="extra" />
 	<xsl:param name="context" />
 	<xsl:param name="permission" />
+	<xsl:param name="template"/>
 	
 	<xsl:include href="edit.xslt" />
 
@@ -102,11 +103,11 @@
 			<br/>
 
 			<input type="text" size="8" name="startdate" value="{sql:rowset/sql:row/sql:startdate}" id="startdate" readonly="1" />
-			<img src="images/calendar.gif" id="f_trigger_c" style="cursor: pointer; border: 1px solid red;" title="Date selector"
+			<img src="./components/section/images/calendar.gif" id="f_trigger_c" style="cursor: pointer; border: 1px solid red;" title="Date selector"
       onmouseover="this.style.background='red';" onmouseout="this.style.background=''" />&#160;&#160;
 	
 			<input type="text" size="8" name="enddate" value="{sql:rowset/sql:row/sql:enddate}" id="enddate" readonly="1" />
-			<img src="images/calendar.gif" id="f_trigger_d" style="cursor: pointer; border: 1px solid red;" title="Date selector"
+			<img src="./components/section/images/calendar.gif" id="f_trigger_d" style="cursor: pointer; border: 1px solid red;" title="Date selector"
 	      onmouseover="this.style.background='red';" onmouseout="this.style.background=''" />&#160;&#160;
 		
 			
@@ -122,6 +123,14 @@
 			
 
 			<br/>
+			
+			<link type="text/css" rel="stylesheet" href="components/section/css/calendar.css" />
+			
+			
+			<script src="js/calendar.js" type="text/javascript"></script>
+			<script src="js/calendar-en.js" type="text/javascript"></script>
+			<script src="js/calendar-setup.js" type="text/javascript"></script>
+			
 			
 			<script type="text/javascript">
 			<![CDATA[

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map:selector name="host" logger="sitemap.selector.host" src="org.apache.cocoon.selection.HostSelector">
 	<host name="jopac2" value="www.jopac2" />
-
+	<host name="biblio" value="www.biblio" />
 </map:selector>

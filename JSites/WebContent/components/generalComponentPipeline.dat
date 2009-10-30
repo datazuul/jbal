@@ -31,7 +31,7 @@
             <map:serialize type="xml"/>
         </map:act>
     </map:match>
-  
+
     <map:match pattern="*">
         <map:act type="request">
             <map:parameter name="parameters" value="true"/>
