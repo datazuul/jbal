@@ -6,7 +6,14 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.io.FileUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import JSites.utils.DBGateway;
 
@@ -159,6 +166,40 @@ public class Setup {
 			"\t</jdbc>";
 		modifyContent(dbConnections, "<jdbc name=\""+nomeDb+"\">", "<datasources>", insert);
 		
+	}
+	
+	public static Document parseXmlFile(String filename, boolean validating) {
+        try {
+            // Create a builder factory
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setValidating(validating);
+
+            // Create the builder and parse the file
+            Document doc = factory.newDocumentBuilder().parse(new File(filename));
+            return doc;
+        } catch (SAXException e) {
+            // A parsing error occurred; the xml input is not valid
+        } catch (ParserConfigurationException e) {
+        } catch (IOException e) {
+        }
+        return null;
+    }
+
+	
+	public static String rilevaParametroDb(String sourcePath, String nomeDb, String parametro) throws IOException {
+		String r="";
+		Document doc = parseXmlFile(sourcePath+"/WEB-INF/dbConnections.xml", false);
+		String xpath="/datasources/jdbc[@name=\""+nomeDb+"\"]/"+parametro;
+		try {
+		    NodeList nodelist = org.apache.xpath.XPathAPI.selectNodeList(doc, xpath);
+		
+		    for (int i=0; i<nodelist.getLength(); i++) {
+		        Element elem = (Element)nodelist.item(i);
+		        r=elem.getTextContent();
+		    }
+		} catch (javax.xml.transform.TransformerException e) {
+		}
+		return r;
 	}
 
 	

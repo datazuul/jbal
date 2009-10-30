@@ -44,6 +44,9 @@ import org.apache.avalon.framework.component.ComponentException;
 import org.apache.cocoon.servlet.multipart.Part;
 import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.importers.DataImporter;
+
+import JSites.setup.Setup;
+
 import com.whirlycott.cache.Cache;
 import com.whirlycott.cache.CacheConfiguration;
 import com.whirlycott.cache.CacheManager;
@@ -151,12 +154,15 @@ public class ImportCatalog extends MyAbstractPageGenerator {
 				Connection[] conns=new Connection[max_conn];
 				
 				Connection tc=this.getConnection(dbname);
+				String sourcePath=this.getResource(".");
+				String dbUser=Setup.rilevaParametroDb(sourcePath, dbname, "user");
+				String dbPassword=Setup.rilevaParametroDb(sourcePath, dbname, "password");
 				
 				DbGateway dbg=DbGateway.getInstance(tc.toString(), console);
 				String dbUrl=tc.getMetaData().getURL();
 
 				for(int i=0;i<conns.length;i++) {
-					conns[i] = dbg.createConnection(dbUrl, "root", "");// this.getConnection(dbname);
+					conns[i] = dbg.createConnection(dbUrl, dbUser, dbPassword);// this.getConnection(dbname);
 				}
 				
 				DataImporter dataimporter=new DataImporter(in,format,JOpac2confdir, conns, catalog, true,cache, console); //,t);
