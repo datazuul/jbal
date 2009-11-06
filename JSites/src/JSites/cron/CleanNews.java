@@ -106,7 +106,7 @@ public class CleanNews extends ServiceableCronJob implements Configurable, Confi
 			Statement st = conn.createStatement();
 			while(rs.next()) {
 				try {
-					String sql1="update tblcontenuti set StateID=4 " +
+					String sql1="update tblcontenuti set StateID=2 " + // riporta in pending
 							"where CID="+rs.getString("CID");
 					String endDate=rs.getString("enddate");
 					
@@ -121,7 +121,7 @@ public class CleanNews extends ServiceableCronJob implements Configurable, Confi
 			stmt.close();
 		}
 		catch(Exception e) {
-			// TODO commentato perchè i cataloghi non hanno la tabella news. 
+			// TODO commentato perche' i cataloghi non hanno la tabella news. 
 			//      Da rivedere la selezione delle connessioni
 //			e.printStackTrace();
 		}
