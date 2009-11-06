@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import JSites.utils.DBGateway;
+
 public class DbSetupDerby extends DbSetup {
 	private static String postfix=""; //"DEFAULT CHARSET=utf8;";
 	
@@ -193,17 +195,42 @@ public class DbSetupDerby extends DbSetup {
 	public boolean existTable(Connection conn, String tablename)
 			throws SQLException {
 		boolean r=false;
-		Statement st=conn.createStatement();
-		String sql="show tables";
-		ResultSet rs=st.executeQuery(sql);
-		while(rs.next()) {
-			if(tablename.equalsIgnoreCase(rs.getString("TABLE_NAME"))) {
-				r=true;
-				break;
-			}
+		
+		try {
+			DBGateway.executeStatement(conn,"create table begintable (id int not null)");
+			DBGateway.executeStatement(conn, "drop table begintable");
 		}
-		rs.close();
-		st.close();
+		catch(SQLException e) {}
+		
+		String sql="select * from "+tablename;
+		ResultSet rs = null;
+		Statement st = null;
+		try {
+			st=conn.createStatement();
+			rs=st.executeQuery(sql);
+			if(rs.next()) r=true;
+		}
+		catch(SQLException e) {
+			// r=false;
+		}
+		finally {
+			if(rs!=null) rs.close();
+			if(st!=null) st.close();
+		}
+		
+		
+//		String sql="SHOW TABLES";
+		
+//		Statement st=conn.createStatement();
+//		ResultSet rs=st.executeQuery(sql);
+//		while(rs.next()) {
+//			if(tablename.equalsIgnoreCase(rs.getString("TABLE_NAME"))) {
+//				r=true;
+//				break;
+//			}
+//		}
+//		rs.close();
+//		st.close();
 		return r;
 	}
 
