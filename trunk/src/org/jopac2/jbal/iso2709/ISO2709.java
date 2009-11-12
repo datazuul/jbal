@@ -209,6 +209,16 @@ public abstract class ISO2709 implements RecordInterface {
 	}
     return bid;
   }
+  
+  private String getTag(byte[] record, String dirEntry) throws UnsupportedEncodingException {
+	    String t=dirEntry.substring(3,7);
+	    int FieldLength = Integer.parseInt(t);
+	    t=dirEntry.substring(7,12);
+	    int Starting = Integer.parseInt(t) + 1;
+	    t=new String(record,Starting-1,FieldLength,"utf-8");
+	    t=my_trim(t);
+	    return(t);
+  }
 
   private String getTag(String record, String DirEntry) {
 	//x.substring(start-1,start+len-1)
@@ -490,9 +500,11 @@ public Vector<Tag> getTags(String tag) {
     protected String baseAddressOfData="     "; // 5 bytes
     protected String additionalRecordDefinition="   "; // 3 bytes
     protected String directoryMap="    "; // 4 bytes
+    protected String characterEncodingScheme=" "; // 1 byte, a=utf8, blank=normal
 
   public void init(String stringa) {
     inString=stringa;
+    if(stringa.trim().length()==0) return;
 
     try {
     	/**
@@ -501,7 +513,8 @@ public Vector<Tag> getTags(String tag) {
     	 
 			Record length						5			0-4
 			Record status						1			5
-			Implementation codes				4			6-9
+			Implementation codes				4			6-8
+				Character encoding scheme			1			9 // aggiunto da http://www.loc.gov/marc/specifications/speccharconversion.html
 			Indicator length					1			10
 			Subfield identifier length			1			11
 			Base address of data				5			12-16
@@ -513,12 +526,30 @@ public Vector<Tag> getTags(String tag) {
     	
       recordlength = Long.parseLong((String)stringa.substring(0,5));
       if(recordlength > 0) {
+    	int stringLength=stringa.length();
+    	int byteLength=stringa.getBytes().length;
+    	
+    	
+    	/**
+    	 * RT: 12/11/2009
+    	 * Some systems code the record counting bytes instead of chars. This is an ambiguity in ISO2709 standard.
+    	 * I think the correct interpretation is for chars, because transport of the record should be independent from
+    	 * the charset coding. So jbal read and write in that sense.
+    	 * Anyway this is a silence patch to read byte coded records.
+    	 * I've posted a mail to IFLA to ask about this problem and I'm waiting for a copy of the ISO2709:2008.
+    	 * I will correct with the right interpretation iff I solve the question :-)
+    	 * Problem occurs only with utf8 data and in content part of the record.
+    	 */
+    	boolean byteCoded=false;  	
+    	if(recordlength==byteLength && byteLength!=stringLength) byteCoded=true;
+    	
     	// record status
         recordStatus = stringa.substring(5,6);
         // 4 bytes, are "Implementation Codes"
         implementationCodes=stringa.substring(6,10);
         recordType = implementationCodes.substring(0,1);
         recordBiblioLevel = implementationCodes.substring(1,2);
+        characterEncodingScheme=implementationCodes.substring(3,4);
         
         // indicatorLength
         indicatorLength = stringa.substring(10,11);
@@ -538,23 +569,29 @@ public Vector<Tag> getTags(String tag) {
         int ndir = 0;
         String DirEntry = stringa.substring(readed, readed+1);
         readed = readed + 1;
+        
+        byte[] recordBytes=stringa.getBytes();
 
         while (DirEntry.equals(ft)==false) {
-            //String t = Utils.mid(stringa, readed, 12);
-        	String t=stringa.substring(readed-1,readed+12-1);
+        	String t=null;
+        	if(byteCoded) t=new String(recordBytes, readed-1, 12, "utf-8");
+        	else t=stringa.substring(readed-1,readed+12-1);
+        	
             readed = readed + 12;
             Directory[ndir] = t;
             ndir = ndir + 1;
-            DirEntry = stringa.substring(readed-1, readed);
-            //DirEntry = Utils.mid(stringa, readed, 1);
+            
+            if(byteCoded) DirEntry=new String(recordBytes, readed-1, 1, "utf-8");
+            else DirEntry = stringa.substring(readed-1, readed);
         }
 
         String record=stringa.substring(readed);
-        //String record = Utils.mid(stringa, readed + 1);
         for(int z = 0; z<= ndir - 1;z++) {
-          String s = my_trim(getTag(record, Directory[z]));
+        	
+          String s = null;
+          if(byteCoded) s=my_trim(getTag(record.getBytes(), Directory[z]));
+          else s=my_trim(getTag(record, Directory[z]));
           String tag=Directory[z].substring(0,3);
-          //String tag = Utils.mid(Directory[z], 1, 3);
 
           dati.addElement(new Tag(tag+s,delimiters));
           if(tag.equals("001")) {
@@ -568,12 +605,13 @@ public Vector<Tag> getTags(String tag) {
 //      System.out.print("Codificato: "+stringa);
         
       /** todo
-       * Fare meglio questa parte, initCoded digerisce tutto, deve dare una eccezzione
+       * Fare meglio questa parte, initCoded digerisce tutto, deve dare una eccezione
        * se non e' codificato. Trovare un modo per verificare se e' codificato.
        */
-    	//e.printStackTrace();
+    	e.printStackTrace();
       initCoded(stringa);
     }
+    System.out.println("OK: "+stringa);
   }
 
   public void initCoded(String stringa) {
