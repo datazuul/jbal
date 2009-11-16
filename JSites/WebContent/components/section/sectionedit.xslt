@@ -98,17 +98,23 @@
 	
 	<xsl:template name="news">
 		<xsl:if test="$extra = 'news'">
+			<link type="text/css" rel="stylesheet" href="./components/section/css/dhtmlgoodies_calendar.css?random=20051112" media="screen"></link>
+			<script type="text/javascript" src="./components/section/js/dhtmlgoodies_calendar.js?random=20060118"></script>
+			
 			<b>Data inizio:</b>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
 			<b>Data fine:</b>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<b>Nelle liste</b>
 			<br/>
 
 			<input type="text" size="8" name="startdate" value="{sql:rowset/sql:row/sql:startdate}" id="startdate" readonly="1" />
-			<img src="./components/section/images/calendar.gif" id="f_trigger_c" style="cursor: pointer; border: 1px solid red;" title="Date selector"
-      onmouseover="this.style.background='red';" onmouseout="this.style.background=''" />&#160;&#160;
+			<!-- id="f_trigger_c" -->
+			<img src="./components/section/images/calendar.gif"  style="cursor: pointer; border: 1px solid red;" title="Date selector"
+      onmouseover="this.style.background='red';" onmouseout="this.style.background=''" 
+      onclick="displayCalendar(document.forms[0].startdate,'yyyymmdd',this)"/>&#160;&#160;
 	
 			<input type="text" size="8" name="enddate" value="{sql:rowset/sql:row/sql:enddate}" id="enddate" readonly="1" />
-			<img src="./components/section/images/calendar.gif" id="f_trigger_d" style="cursor: pointer; border: 1px solid red;" title="Date selector"
-	      onmouseover="this.style.background='red';" onmouseout="this.style.background=''" />&#160;&#160;
+			<img src="./components/section/images/calendar.gif" style="cursor: pointer; border: 1px solid red;" title="Date selector"
+	      onmouseover="this.style.background='red';" onmouseout="this.style.background=''" 
+	      onclick="displayCalendar(document.forms[0].enddate,'yyyymmdd',this)"/>&#160;&#160;
 		
 			
 
@@ -124,6 +130,10 @@
 
 			<br/>
 			
+			
+			
+			
+			<!-- 
 			<link type="text/css" rel="stylesheet" href="components/section/css/calendar.css" />
 			
 			
@@ -186,6 +196,8 @@
 			    });
 			   ]]>
 			</script>
+			
+			 -->
 		</xsl:if>
 	</xsl:template>
 	
