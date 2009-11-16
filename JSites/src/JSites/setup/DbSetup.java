@@ -80,7 +80,8 @@ public abstract class DbSetup {
 		"(9,'section',NULL,0,0)," +
 		"(10,'footerContent',NULL,0,0)," +
 		"(11,'navbar',NULL,1,0)," +
-		"(12,'sidebar',NULL,0,0)";
+		"(12,'sidebar',NULL,0,0)," +
+		"(13,'briciole',NULL,0,0)";
 		Statement st=conn.createStatement();
 		st.execute(sql);
 		st.close();
