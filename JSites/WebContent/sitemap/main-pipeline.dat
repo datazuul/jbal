@@ -98,6 +98,10 @@
 	    <map:match pattern="components/**/images/*">
 	       	<map:read src="../components/{1}/images/{2}" />
 	   	</map:match>
+	   	
+	   	<map:match pattern="components/**/js/*">
+	       	<map:read src="../components/{1}/js/{2}" />
+	   	</map:match>
 
 	</map:pipeline>
     
