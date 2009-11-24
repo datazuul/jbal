@@ -86,6 +86,7 @@ public class LoadData implements LoadDataInterface {
   private String[] chToIndex=null;
   
   PrintStream out=null;
+  PrintStream outputErrorRecords=out;
   
   public void appendNotizie() {
     try {
@@ -248,7 +249,7 @@ private boolean clearDatabase;
 		
 	}
 
-  public void process(String stringa, ParoleSpoolerInterface paroleSpooler) throws SQLException {
+  public void process(String stringa, ParoleSpoolerInterface paroleSpooler) throws Exception {
 	  RecordInterface notizia=null;
 	  Enumeration<TokenWord> tags=null;
   
@@ -259,6 +260,7 @@ private boolean clearDatabase;
 	  }
 	  catch(Exception e) {
 		  e.printStackTrace();
+		  throw e;
 	  }
 	if(notizia.toString()!=null) {
 	  	if(clearDatabase) {
@@ -365,7 +367,7 @@ private boolean clearDatabase;
           /* R.T. 05/06/2006: ciclo di lettura spostato nel RecordReader per
            * facilitare l'uso di SAXParser per dati in formato XML
            */
-          bf.parse(bf,this,out);
+          bf.parse(bf,this,out,this.outputErrorRecords);
           
           
           
@@ -393,12 +395,13 @@ private boolean clearDatabase;
   }
 
 
-  public LoadData(Connection conn[],String catalog, boolean clearDatabase, String confDir, PrintStream console) throws SQLException {
+  public LoadData(Connection conn[],String catalog, boolean clearDatabase, String confDir, PrintStream console, PrintStream outputRecordErrors) throws SQLException {
   	  this.conn=conn;
   	  this.catalog=catalog;
   	  this.clearDatabase=clearDatabase;
   	  this.confDir=confDir;
   	  out=console;
+  	  this.outputErrorRecords=outputRecordErrors;
   	  dbGateway=DbGateway.getInstance(conn[0].toString(),console);
   	  
   	  /**

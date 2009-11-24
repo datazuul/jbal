@@ -62,8 +62,9 @@ public class DataImporter extends Thread {
 	//Transliterator t=null;
 	String[] channels=null;
 	PrintStream out=null;
+	PrintStream outputErrorRecords=out;
 	
-	public DataImporter(InputStream f,String filetype,String JOpac2confdir,Connection[] conns, String catalog, boolean clearDatabase, Cache cache, PrintStream console) { //, Transliterator t) {
+	public DataImporter(InputStream f,String filetype,String JOpac2confdir,Connection[] conns, String catalog, boolean clearDatabase, Cache cache, PrintStream console, PrintStream outputErrorRecords) { //, Transliterator t) {
 		this.f=f;
 		this.filetype=filetype;
 		confdir=JOpac2confdir;
@@ -72,6 +73,7 @@ public class DataImporter extends Thread {
 		dbGateway=DbGateway.getInstance(conns[0].toString(),console);
 		this.cache=cache;
 		this.out=console;
+		this.outputErrorRecords=outputErrorRecords;
 		this.catalog=catalog;
 	}
 	
@@ -88,7 +90,7 @@ public class DataImporter extends Thread {
     private String[] loadData(InputStream f,String dbType, String temporaryDir) throws SQLException {
     	String[] r=null;
     	DbGateway.commitAll(conn);
-        LoadData ld=new LoadData(conn,catalog,clearDatabase,confdir,out);
+        LoadData ld=new LoadData(conn,catalog,clearDatabase,confdir,out,outputErrorRecords);
         r=ld.doJob(f,dbType,temporaryDir,cache); //,t);
         ld.destroy();
         return r;

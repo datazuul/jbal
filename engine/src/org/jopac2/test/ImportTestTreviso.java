@@ -1,10 +1,12 @@
 package org.jopac2.test;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -19,16 +21,17 @@ import org.jopac2.engine.utils.SearchResultSet;
 import org.junit.After;
 import org.junit.Before;
 
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 import junit.framework.TestCase;
 
-public class ImportTestMdb extends TestCase {
-	private static String sitename = "sebina";
+public class ImportTestTreviso extends TestCase {
+	private static String sitename = "treviso";
 	private InputStream in = null;
-	private static String filetype = "mdb";
+	private static String filetype = "sebina";
 	private static String JOpac2confdir = "src/org/jopac2/conf";
-	//private static String dbUrl = "jdbc:derby:db" + sitename + ";create=true";
-	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
+	private static String dbUrl = "jdbc:derby:/siti/jopac2/catalogs/db" + sitename + ";create=true";
+//	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
 	private static String dbUser = "root";
 	private static String dbPassword = "";
 	private static String catalog=sitename;
@@ -67,16 +70,16 @@ public class ImportTestMdb extends TestCase {
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
+		
 		if (!ru) {
-			File f=new File("/Users/romano/Desktop/banche_dati.mdb");
-
-			in = new FileInputStream(f);
-
+			in = new java.io.FileInputStream(new File("/java_jopac2/uniTV.txt"));
+			PrintStream errors=new PrintStream("/tmp/errors_derby");
 			JOpac2Import ji = new JOpac2Import(in, catalog, filetype, JOpac2confdir,
-					dbUrl, dbUser, dbPassword, true, System.out, System.out);
+					dbUrl, dbUser, dbPassword, true, System.out, errors);
 			ji.doJob(false);
 			// ji.wait();
 			ji.destroy(dbUrl);
+			errors.close();
 			ru = true;
 		}
 
@@ -133,6 +136,7 @@ public class ImportTestMdb extends TestCase {
 		return r;
 	}
 
+	@SuppressWarnings("unused")
 	private void outputJava(Vector<String> v1) {
 		for (int i = 0; v1 != null && i < v1.size(); i++) {
 			System.out.println("\"" + v1.elementAt(i) + "\",\n");
@@ -140,22 +144,26 @@ public class ImportTestMdb extends TestCase {
 	}
 
 	// **** inizio test ***//
-
+	  public void testSearchOrder() throws Exception {
+			SearchResultSet rs = doSearch("(TIT=in)|(TIT=der)");
+			long[] unordered = { 1, 3, 6, 7, 9, 10 };
+			long[] ordered = { 7, 6, 1, 10, 3, 9 };
+			boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
+			//SearchResultSet.dumpSearchResultSet(conn, rs);
+			DbGateway.orderBy(conn, catalog,"TIT", rs);
+			//SearchResultSet.dumpSearchResultSet(conn, rs);
+			boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
+			assertTrue("Done ", r1 && r2);
+		}
+	
+	
 	public void testTblTipiNotizie() throws Exception {
+		String[] tipi_notizie = {"1,bibliowin4", "2,comarc", "3,easyweb", 
+				"4,eutmarc", "5,isisbiblo", "6,pregresso", "7,sbnunix", 
+				"8,sebina", "9,sosebi", "10,mdb"};
 
-		/**
-		 * FROM l_classi_parole lcp," // QUESTA TABELLA DEVE ESSERE LA PRIMA +
-		 * "          l_classi_parole_notizie lcpn," +
-		 * "          anagrafe_parole a "
-		 */
 
-		String[] tipi_notizie = { "1,bibliowin4", "2,comarc", "3,easyweb",
-				"4,eutmarc", "5,isisbiblo", "6,pregresso", "7,sbnunix",
-				"8,sebina", "9,sosebi", "10,mdb" };
-
-		Vector<String> v1 = DbGateway.dumpTable(conn, "tipi_notizie");
-		
-		
+		Vector<String> v1 = DbGateway.dumpTable(conn, "je_"+catalog+"_tipi_notizie");
 		boolean r1 = checkStringSequence(v1, tipi_notizie);
 		if (!r1) {
 			System.out.println(v1);
@@ -163,53 +171,45 @@ public class ImportTestMdb extends TestCase {
 		assertTrue("Done ", r1);
 	}
 
+	
+	public void testTblAnagrafeParole() throws Exception {
+		Vector<String> v1 = DbGateway.dumpTable(conn, "je_"+catalog+"_anagrafe_parole order by id");
+		// outputJava(v1);
+		boolean r1 = checkStringSequence(v1, org.jopac2.test.Base64DataExample.anagrafe_parole);
+		if (!r1) {
+			System.out.println(v1);
+		}
+		assertTrue("Done ", r1);
+	}
 
 	
-//	  public void testSearchOrder() throws Exception {
-//		SearchResultSet rs = doSearch("(NomeRisorsa=business)|(NomeRisorsa=stampa)");
-//		long[] unordered = { 24, 25, 26, 27, 28, 29, 53, 59, 60 };
-//		long[] ordered = { 53, 24, 25, 26, 28, 29, 27, 59, 60 };
-//		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
-//		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
-//		DbGateway.orderBy(conn, "NomeRisorsa", rs);
-//		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
-//		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
-//		assertTrue("Done ", r1 && r2);
-//	}
-//
-//	public void testList() throws Exception {
-//		SearchResultSet rs = ListSearch.listSearch(conn, "NomeRisorsa",
-//				"English grammar in use", 10);
-//		long[] listres = { 106, 70, 22, 37, 42, 38, 43, 39, 35, 40, 36, 41, 44, 71, 17, 72, 56, 57 };
-//		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
-//		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
-//		assertTrue("Done ", r1);
-//	}
-	
-	public void testAida() throws Exception {
-		SearchResultSet rs = doSearch("(NomeRisorsa=aida)");
 
-		long[] unordered = { 1 };
-		long[] ordered = { 1 };
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
-		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
-		DbGateway.orderBy(conn, catalog,"NomeRisorsa", rs);
-		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
-		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
-		assertTrue("Done ", r1 && r2);
+
+	public void testListTIT() throws Exception {
+		SearchResultSet rs = ListSearch.listSearch(conn, catalog, "TIT",
+				"English grammar in use", 100);
+		long[] listres = { 1, 10, 2, 11, 17, 8, 5, 3, 4, 18, 20, 9 };
+//		SearchResultSet.dumpSearchResultSet(conn, rs);
+		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
+		assertTrue("Done ", r1);
 	}
 	
-	public void testScienzeFisiche() throws Exception {
-		SearchResultSet rs = doSearch("(AreaDisciplinare=scienze fisiche)");
-
-		long[] unordered = { 71 };
-		long[] ordered = { 71 };
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
-		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
-		DbGateway.orderBy(conn, catalog,"NomeRisorsa", rs);
-		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
-		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
-		assertTrue("Done ", r1 && r2);
+	public void testListAUT() throws Exception {
+		SearchResultSet rs = ListSearch.listSearch(conn, catalog, "AUT",
+				"a", 100);
+		long[] listres = { 17, 19, 6, 3, 8, 4, 11, 4, 9, 5, 7, 10, 15, 1, 15, 16, 2, 5, 8, 12, 10, 13, 10, 14, 7, 15, 6, 6 };
+		SearchResultSet.dumpSearchResultSet(conn, catalog, rs);
+		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
+		assertTrue("Done ", r1);
+	}
+	
+	public void testListTITBackward() throws Exception {
+		SearchResultSet rs = ListSearch.listSearchBackward(conn, catalog, "TIT",
+				"English grammar in use", 100);
+		long[] listres = { 16, 14, 15, 12, 13, 6, 7, 19 };
+		SearchResultSet.dumpSearchResultSet(conn, catalog, rs);
+		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
+		assertTrue("Done ", r1);
 	}
 
 }

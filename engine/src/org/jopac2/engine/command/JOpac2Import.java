@@ -21,7 +21,7 @@ public class JOpac2Import {
 	Connection[] conns;
 	boolean clearDatabase=true;
 	int max_conn=5;
-	private PrintStream out=null;
+	private PrintStream out=null,outputErrorRecords=out;
 	private String catalog="";
 	
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
@@ -29,12 +29,13 @@ public class JOpac2Import {
     
 	
 	public JOpac2Import(String inputFile, String catalog, String filetype, String JOpac2confdir, String dbUrl, String dbUser, 
-			String dbPassword, boolean clearDatabase,PrintStream console) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+			String dbPassword, boolean clearDatabase,PrintStream console,PrintStream outputErrorRecords) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		File fi=new File(inputFile);
 		this.inputFile=new FileInputStream(fi);
 		this.JOpac2confdir=JOpac2confdir;
 		this.filetype=filetype;
 		out=console;
+		this.outputErrorRecords=outputErrorRecords;
 		this.catalog=catalog;
 		conns=new Connection[max_conn];
 		String driver=_classMySQLDriver;
@@ -47,11 +48,13 @@ public class JOpac2Import {
 		}
 	}
 	
-	public JOpac2Import(InputStream in, String catalog, String filetype, String JOpac2confdir, String dbUrl, String dbUser, String dbPassword, boolean clearDatabase, PrintStream console) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+	public JOpac2Import(InputStream in, String catalog, String filetype, String JOpac2confdir, String dbUrl, String dbUser, String dbPassword, 
+				boolean clearDatabase, PrintStream console, PrintStream outputErrorRecords) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		this.inputFile=in;
 		this.JOpac2confdir=JOpac2confdir;
 		this.filetype=filetype;
 		out=console;
+		this.outputErrorRecords=outputErrorRecords;
 		this.catalog=catalog;
 		conns=new Connection[max_conn];
 		String driver=_classMySQLDriver;
@@ -71,7 +74,7 @@ public class JOpac2Import {
 	public void doJob(boolean background) {
 		//Transliterator t=Transliterator.getInstance("NFD; [:Nonspacing Mark:] Remove; NFC");
 
-		DataImporter dataimporter=new DataImporter(inputFile, filetype,JOpac2confdir, conns, catalog, clearDatabase,DbGateway.getCache(),out); //,t);
+		DataImporter dataimporter=new DataImporter(inputFile, filetype,JOpac2confdir, conns, catalog, clearDatabase,DbGateway.getCache(),out,outputErrorRecords); //,t);
 		if(background)
 			dataimporter.start();
 		else

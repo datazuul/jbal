@@ -408,6 +408,7 @@ public abstract class DbGateway {
         while(rs.next()) {
         	cancellaNotiziaFromJid(conn, catalog, rs.getLong("ID"));
         }
+        rs.close();
         qry.close();
     }
     
@@ -638,6 +639,29 @@ public abstract class DbGateway {
     	}
 
 		return jid;
+	}
+	
+	public static Vector<Long> getJIDbyBID(Connection conn, String catalog, String bid) throws SQLException {
+		Vector<Long> r=new Vector<Long>();
+		ResultSet rs=null;
+		Statement qry=null;
+		try {
+	    	qry=conn.createStatement();
+	    	rs=qry.executeQuery("select id from je_"+catalog+"_notizie where bid='"+bid+"'");
+	        while(rs.next()) {
+	        	r.addElement(rs.getLong("id"));
+	        }
+	        rs.close();
+	        qry.close();
+		}
+		catch(SQLException e) {
+			throw e;
+		}
+		finally {
+			if(rs!=null) rs.close();
+			if(qry!=null) qry.close();
+		}
+        return r;
 	}
 
 	

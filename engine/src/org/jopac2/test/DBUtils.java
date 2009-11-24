@@ -46,7 +46,7 @@ public class DBUtils {
 		for(int i=0;i<NUM_CONNESSIONI;i++)
 			connessioni[i]=CreadbMySql.CreaConnessione(DBNAME);
 		
-		DataImporter d = new DataImporter(is,ft,PATH+"WebContent/WEB-INF/conf",connessioni,catalog, true,null, System.out); //,null);
+		DataImporter d = new DataImporter(is,ft,PATH+"WebContent/WEB-INF/conf",connessioni,catalog, true,null, System.out, System.out); //,null);
 		System.out.println("caricamento dati...");
 		d.start();
 		try {

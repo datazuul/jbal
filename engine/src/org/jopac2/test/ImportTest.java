@@ -78,7 +78,7 @@ public class ImportTest extends TestCase {
 			in = new ByteArrayInputStream(inFile.getBytes());
 
 			JOpac2Import ji = new JOpac2Import(in, catalog, filetype, JOpac2confdir,
-					dbUrl, dbUser, dbPassword, true, System.out);
+					dbUrl, dbUser, dbPassword, true, System.out, System.out);
 			ji.doJob(false);
 			// ji.wait();
 			ji.destroy(dbUrl);
