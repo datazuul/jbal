@@ -7,4 +7,5 @@ import org.jopac2.jbal.abstractStructure.Field;
 public interface ClassificationInterface {
 	public Vector<Field> getData();
 	public String getClassificationName();
+	public String toString();
 }

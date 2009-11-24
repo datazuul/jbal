@@ -100,7 +100,7 @@ public abstract class XmlHandler extends DefaultHandler {
 
                 try {
 					data.process("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n"+currentRecord.toString(),paroleSpooler); //tipoNotizia,idTipo,
-				} catch (SQLException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 

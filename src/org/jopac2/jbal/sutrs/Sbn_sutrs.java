@@ -28,6 +28,7 @@ package org.jopac2.jbal.sutrs;
 * @version 19/07/2005
 */
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.jopac2.jbal.RecordFactory;
@@ -44,7 +45,7 @@ public class Sbn_sutrs extends Sutrs {
   /*public int delimiterPosition=27;
   public char delimiter=':';
   */
-  public Sbn_sutrs(String notizia,String dTipo,String livello) {
+  public Sbn_sutrs(String notizia,String dTipo,String livello) throws Exception  {
     this.iso2709Costruttore(notizia,dTipo,Integer.parseInt(livello));
   }
  
@@ -60,7 +61,7 @@ public void clearSignatures() throws JOpac2Exception {
 
 
 
-public void init(String stringa) {
+public void init(String stringa) throws Exception {
   	inString="";
   	stringa = stringa.replaceAll("\\|                    "," ");
   	stringa = stringa.replaceAll("\n    ", " ");

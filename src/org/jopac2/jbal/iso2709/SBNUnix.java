@@ -46,11 +46,11 @@ import org.jopac2.utils.*;
 
 public class SBNUnix extends Unimarc {
 
-  public SBNUnix(String stringa,String dTipo) {
+  public SBNUnix(String stringa,String dTipo)  throws Exception {
     super(stringa,dTipo);
   }
 
-  public SBNUnix(String stringa,String dTipo,String livello) {
+  public SBNUnix(String stringa,String dTipo,String livello)  throws Exception {
     super(stringa,dTipo,livello);
   }
   

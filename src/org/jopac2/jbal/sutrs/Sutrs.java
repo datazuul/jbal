@@ -49,7 +49,7 @@ public class Sutrs extends ISO2709Impl {
   public int delimiterPosition=27;
   public char delimiter=':';
 
-  public Sutrs(String notizia,String dTipo,String livello) {
+  public Sutrs(String notizia,String dTipo,String livello) throws Exception  {
     this.iso2709Costruttore(notizia,dTipo,Integer.parseInt(livello));
   }
   
@@ -69,7 +69,7 @@ public class Sutrs extends ISO2709Impl {
   	this.delimiterPosition=delimiterPosition;
   }
 
-  public Sutrs(String notizia,String dTipo) {
+  public Sutrs(String notizia,String dTipo) throws Exception  {
     this.iso2709Costruttore(notizia,dTipo,0);
   }
 
@@ -110,7 +110,7 @@ public class Sutrs extends ISO2709Impl {
   	return label.substring(0,i+1);
   }
   
-  public void init(String stringa) {
+  public void init(String stringa) throws Exception {
   	inString=stringa;
   	String[] in=stringa.split("\n");
   	StringTokenizer st = new StringTokenizer(stringa,"\\|\n");

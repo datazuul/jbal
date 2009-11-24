@@ -35,11 +35,11 @@ import org.jopac2.utils.Utils;
 
 public class Cobiss_sutrs extends Sutrs {
 
-  public Cobiss_sutrs(String notizia,String dTipo,String livello) {
+  public Cobiss_sutrs(String notizia,String dTipo,String livello)  throws Exception {
     this.iso2709Costruttore(notizia,dTipo,Integer.parseInt(livello));
   }
 
-  public Cobiss_sutrs(String notizia,String dTipo) {
+  public Cobiss_sutrs(String notizia,String dTipo)  throws Exception {
     this.iso2709Costruttore(notizia,dTipo,0);
   }
 

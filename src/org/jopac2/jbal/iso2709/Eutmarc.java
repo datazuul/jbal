@@ -28,11 +28,11 @@ public class Eutmarc extends Unimarc {
 	
         private int maxx=104, maxy=150;
 
-        public Eutmarc(String stringa, String tipo) {
+        public Eutmarc(String stringa, String tipo)  throws Exception {
                 super(stringa, tipo);
         }
         
-        public Eutmarc(String stringa, String tipo, String livello) {
+        public Eutmarc(String stringa, String tipo, String livello)  throws Exception {
             super(stringa, tipo, livello);
         }
         

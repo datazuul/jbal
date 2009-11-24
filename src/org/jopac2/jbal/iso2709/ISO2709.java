@@ -502,7 +502,7 @@ public Vector<Tag> getTags(String tag) {
     protected String directoryMap="    "; // 4 bytes
     protected String characterEncodingScheme=" "; // 1 byte, a=utf8, blank=normal
 
-  public void init(String stringa) {
+  public void init(String stringa) throws Exception {
     inString=stringa;
     if(stringa.trim().length()==0) return;
 
@@ -608,10 +608,15 @@ public Vector<Tag> getTags(String tag) {
        * Fare meglio questa parte, initCoded digerisce tutto, deve dare una eccezione
        * se non e' codificato. Trovare un modo per verificare se e' codificato.
        */
-    	e.printStackTrace();
-      initCoded(stringa);
+    	if(stringa.charAt(0)=='4') {
+    		initCoded(stringa);
+    	}
+    	else {
+    		throw e;
+    	}
+      
     }
-    System.out.println("OK: "+stringa);
+//    System.out.println("OK: "+stringa);
   }
 
   public void initCoded(String stringa) {
@@ -651,7 +656,7 @@ public Vector<Tag> getTags(String tag) {
     }
   }
 
-  public void iso2709Costruttore(String notizia,String dTipo,int livello) {
+  public void iso2709Costruttore(String notizia,String dTipo,int livello) throws Exception {
     Directory=new String[1000];
     dati=new Vector<Tag>();
     tw=new Vector<TokenWord>();
@@ -756,11 +761,11 @@ public Vector<Tag> getTags(String tag) {
     return ft+rt+dl;
   }
   
-  public ISO2709(String notizia,String dTipo,String livello) {
+  public ISO2709(String notizia,String dTipo,String livello) throws Exception {
     this.iso2709Costruttore(notizia,dTipo,Integer.parseInt(livello));
   }
 
-  public ISO2709(String notizia,String dTipo) {
+  public ISO2709(String notizia,String dTipo) throws Exception {
     this.iso2709Costruttore(notizia,dTipo,0);
   }
   
@@ -811,7 +816,7 @@ public Vector<Tag> getTags(String tag) {
 		return tw.elements();
 	}
   
-  public String getPublicationNature(){ return  null;}
+  public String getPublicationNature(){ return  recordType;}
   
 	public String getField(String field) {
 		return null;

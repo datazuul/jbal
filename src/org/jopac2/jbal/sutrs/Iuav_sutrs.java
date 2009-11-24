@@ -42,7 +42,7 @@ public class Iuav_sutrs extends Sutrs {
   /*public int delimiterPosition=27;
   public char delimiter=':';
   */
-  public Iuav_sutrs(String notizia,String dTipo,String livello) {
+  public Iuav_sutrs(String notizia,String dTipo,String livello)  throws Exception {
     this.iso2709Costruttore(notizia,dTipo,Integer.parseInt(livello));
   }
 

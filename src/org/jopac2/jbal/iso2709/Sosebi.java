@@ -53,11 +53,11 @@ import org.jopac2.utils.*;
 
 public class Sosebi extends Unimarc {
 
-  public Sosebi(String stringa,String dTipo) {
+  public Sosebi(String stringa,String dTipo)  throws Exception {
     super(stringa,dTipo);
   }
 
-  public Sosebi(String stringa,String dTipo,String livello) {
+  public Sosebi(String stringa,String dTipo,String livello)  throws Exception {
     super(stringa,dTipo,livello);
   }
   

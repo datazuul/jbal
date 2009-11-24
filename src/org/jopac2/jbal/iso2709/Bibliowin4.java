@@ -53,11 +53,11 @@ import org.jopac2.utils.*;
 public class Bibliowin4 extends Unimarc {
 	private String rawRecord=null;
 	
-	  public Bibliowin4(String stringa,String dTipo) {
+	  public Bibliowin4(String stringa,String dTipo)  throws Exception {
 		    super(stringa,dTipo);
 		  }
 
-		  public Bibliowin4(String stringa,String dTipo,String livello) {
+		  public Bibliowin4(String stringa,String dTipo,String livello)  throws Exception {
 		    super(stringa,dTipo,livello);
 		  }
 		  
@@ -90,10 +90,11 @@ public class Bibliowin4 extends Unimarc {
 	 * $a20000201d1983 m u0itaa01 ba 200 1 $aCASA DI GUERRA$fBossi Fedrigotti,
 	 * Isabella 210 $aMilano$cLonganesi & C.$d1983 676 $a853.91 700 0 $aBossi
 	 * Fedrigotti, Isabella 950 $a0000002278$b20000201$c13756$e853.91 BOSS$jCNGL
+	 * @throws Exception 
 	 * 
 	 */
 
-	public void init(String stringa) {
+	public void init(String stringa) throws Exception {
 		setTerminator(null, "$", "$");
 		
 		rawRecord=stringa;

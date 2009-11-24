@@ -41,7 +41,7 @@ import org.jopac2.utils.JOpac2Exception;
 
 public class PregressoImages_sutrs extends Sutrs {
 	
-  public PregressoImages_sutrs(String notizia,String dTipo,String livello) {
+  public PregressoImages_sutrs(String notizia,String dTipo,String livello)  throws Exception {
     this.iso2709Costruttore(notizia,dTipo,Integer.parseInt(livello));
   }
   

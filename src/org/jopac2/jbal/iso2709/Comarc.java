@@ -49,11 +49,11 @@ import org.jopac2.utils.JOpac2Exception;
 
 public class Comarc extends Unimarc {
 
-  public Comarc(String stringa,String dTipo) {
+  public Comarc(String stringa,String dTipo)  throws Exception {
     super(stringa,dTipo);
   }
 
-  public Comarc(String stringa,String dTipo,String livello) {
+  public Comarc(String stringa,String dTipo,String livello)  throws Exception {
     super(stringa,dTipo,livello);
   }
   
