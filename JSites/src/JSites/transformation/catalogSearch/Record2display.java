@@ -132,7 +132,15 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
 
     
     private void includeData(Vector<RecordInterface> v, String name) throws SAXException {
-    	includeData(v,name,"isbd");
+    	super.startElement("",name,name,new AttributesImpl());
+    	for(int i=0; v!=null & i<v.size();i++) {
+    		contentHandler.startElement("","record","record",new AttributesImpl());
+    		sendElement("isbd",v.elementAt(i).getISBD());
+    		sendElement("bid",v.elementAt(i).getBid());
+    		sendElement("jid",Long.toString(v.elementAt(i).getJOpacID()));
+	        contentHandler.endElement("","record","record");
+    	}
+    	super.endElement("",name,name);
     }
     
     private void includeData(Vector<RecordInterface> v, String name, String tag) throws SAXException {
@@ -172,6 +180,7 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
 		AttributesImpl a = new AttributesImpl();
 		
 		String nat = ma2.getPublicationNature();
+		sendElement("nature",nat);
 		if(nat != null && nat.length()==1)
 			a.addCDATAAttribute("nature", nat);
 		
@@ -231,7 +240,7 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
             super.startElement("","classifications","classifications",new AttributesImpl());
 
             for(int i=0;i<vc.size();i++) {
-            	sendElement("classification",(String)vc.elementAt(i).getClassificationName());
+            	sendElement("classification",(String)vc.elementAt(i).toString());
             }
 
             super.endElement("","classifications","classifications");
@@ -330,7 +339,7 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
         if (namespaceURI.equals("") && localName.equals("record")) {
         	String id=buffer.toString().replaceAll("[\n\r]", "").trim();
             if(isRecord) {
-            	sendElement("id",id);
+            	sendElement("jid",id);
             	sendElement("db",catalog);
             	
             	Connection myConnection;

@@ -125,7 +125,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		}
 		else if(catalogQuery!=null && catalogQuery.length()>0) {
 			catalogQuery = catalogQuery.replaceAll("\\(.*\\)", "").trim();
-			if(catalogQuery.toLowerCase().startsWith("jid=")){
+			if(catalogQuery.toLowerCase().startsWith("jid=")) {
 				int e = catalogQuery.indexOf("&");
 				if(e<0)e=catalogQuery.length();
 				
@@ -135,7 +135,16 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 				recordIDs.add(id);
 				result.setRecordIDs(recordIDs);
 			}
-			else{
+			else if(catalogQuery.toLowerCase().startsWith("bid=")) {
+				int e = catalogQuery.indexOf("&");
+				if(e<0)e=catalogQuery.length();
+				
+				String bid = catalogQuery.substring(4, e);
+				result = new SearchResultSet();
+				Vector<Long> recordIDs = org.jopac2.engine.dbGateway.DbGateway.getJIDbyBID(conn, catalogConnection, bid);
+				result.setRecordIDs(recordIDs);
+			}
+			else {
 				StaticDataComponent sd = new StaticDataComponent();
 				
 				sd.init(JSites.utils.DirectoryHelper.getPath()+"/WEB-INF/conf/");

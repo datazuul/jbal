@@ -165,7 +165,7 @@ public class ImportCatalog extends MyAbstractPageGenerator {
 					conns[i] = dbg.createConnection(dbUrl, dbUser, dbPassword);// this.getConnection(dbname);
 				}
 				
-				DataImporter dataimporter=new DataImporter(in,format,JOpac2confdir, conns, catalog, true,cache, console); //,t);
+				DataImporter dataimporter=new DataImporter(in,format,JOpac2confdir, conns, catalog, true,cache, console,console); //,t);
 				if(background) {
 					dataimporter.start();
 				}

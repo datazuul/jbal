@@ -40,6 +40,7 @@ public class FileManager extends MyAbstractPageGenerator {
 	                "mp3",
 	                "ogg",
 	                "mid",
+	                "gif",
 	                "avi",
 	                "mpg",
 	                "mpeg",

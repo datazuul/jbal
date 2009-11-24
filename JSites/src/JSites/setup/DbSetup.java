@@ -80,8 +80,8 @@ public abstract class DbSetup {
 		"(9,'section',NULL,0,0)," +
 		"(10,'footerContent',NULL,0,0)," +
 		"(11,'navbar',NULL,1,0)," +
-		"(12,'sidebar',NULL,0,0)," +
-		"(13,'briciole',NULL,0,0)";
+		"(12,'sidebar',NULL,0,0)"; //," +
+//		"(13,'briciole',NULL,0,0)";
 		Statement st=conn.createStatement();
 		st.execute(sql);
 		st.close();
@@ -135,12 +135,12 @@ public abstract class DbSetup {
 	public abstract void createTableTblStati(Connection conn) throws SQLException;
 
 	public void loadTableTblStati(Connection conn) throws SQLException {
-		String sql="INSERT INTO tblstati (StateName,Scope) VALUES " +
-				"('WRK','modifica')," +
-				"('PND','modifica')," +
-				"('ACT','validazione')," +
-				"('OLD','archivio')," +
-				"('DEL','cancellazione')";
+		String sql="INSERT INTO tblstati (StateID,StateName,Scope) VALUES " +
+				"(1,'WRK','modifica')," +
+				"(2,'PND','modifica')," +
+				"(3,'ACT','validazione')," +
+				"(4,'OLD','archivio')," +
+				"(5,'DEL','cancellazione')";
 		Statement st=conn.createStatement();
 		st.execute(sql);
 		st.close();

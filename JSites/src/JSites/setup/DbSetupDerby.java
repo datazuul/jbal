@@ -43,7 +43,7 @@ public class DbSetupDerby extends DbSetup {
 		dropTable(conn,"tblstati");
 		Statement st=conn.createStatement();		
 		String sql="CREATE TABLE tblstati (" +
-				"StateID int NOT NULL generated always as identity," +
+				"StateID int NOT NULL," +
 				"StateName varchar(5) NOT NULL," +
 				"Scope varchar(45) NOT NULL," +
 				"PRIMARY KEY  (StateID)) "  + postfix;
