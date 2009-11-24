@@ -40,7 +40,7 @@ public class Sol_sutrs extends Sutrs {
   /*public int delimiterPosition=27;
   public char delimiter=':';
   */
-  public Sol_sutrs(String notizia,String dTipo,String livello) {
+  public Sol_sutrs(String notizia,String dTipo,String livello)  throws Exception {
     this.iso2709Costruttore(notizia,dTipo,Integer.parseInt(livello));
   }
 

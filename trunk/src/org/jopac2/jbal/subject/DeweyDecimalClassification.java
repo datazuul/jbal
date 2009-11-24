@@ -3,6 +3,7 @@ package org.jopac2.jbal.subject;
 import java.util.Vector;
 
 import org.jopac2.jbal.abstractStructure.Field;
+import org.jopac2.jbal.abstractStructure.Tag;
 
 /*
 676 DEWEY DECIMAL CLASSIFICATION
@@ -72,6 +73,12 @@ public class DeweyDecimalClassification implements SubjectInterface {
 	private Vector<Field> fields=new Vector<Field>();
 	private char indicator1,indicator2;
 	
+	public void setData(Tag tag) {
+		this.indicator1=tag.getModifier1();
+		this.indicator2=tag.getModifier2();
+		this.fields=tag.getFields();
+	}
+	
 /**
  * Indicator 1: blank (not defined)
  * Indicator 2: blank (not defined)
@@ -79,6 +86,17 @@ public class DeweyDecimalClassification implements SubjectInterface {
 	public DeweyDecimalClassification() {
 		indicator1=' ';
 		indicator2=' ';
+	}
+	
+	public SubjectInterface clone() {
+		SubjectInterface c=new DeweyDecimalClassification();
+		for(int i=0;fields!=null && i<fields.size();i++)
+			c.setField(fields.elementAt(i)); // clone?
+		return c;
+	}
+	
+	public void setField(Field field) {
+		fields.addElement(field);
 	}
 	
 /**

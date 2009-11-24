@@ -49,11 +49,11 @@ public class Marc21 extends ISO2709Impl {
 	/*
 	 * TODO Marc21 e' tutto da fare!!!
 	 */
-  public Marc21(String stringa,String dTipo) {
+  public Marc21(String stringa,String dTipo)  throws Exception {
     super(stringa,dTipo);
   }
 
-  public Marc21(String stringa,String dTipo,String livello) {
+  public Marc21(String stringa,String dTipo,String livello)  throws Exception {
     super(stringa,dTipo,livello);
   }
   

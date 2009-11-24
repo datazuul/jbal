@@ -3,6 +3,7 @@ package org.jopac2.x2uni;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
 import org.jopac2.jbal.RecordFactory;
@@ -58,7 +59,7 @@ public class X2uni {
 
 	}
 
-	private static RecordInterface record2Unimarc(RecordInterface ma) throws SecurityException, IllegalArgumentException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+	private static RecordInterface record2Unimarc(RecordInterface ma) throws SecurityException, IllegalArgumentException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		RecordInterface uni=RecordFactory.buildRecord(0, "", "sebina", 0);
 		uni.setType(ma.getType());
 		

@@ -57,11 +57,11 @@ import org.jopac2.utils.JOpac2Exception;
 public abstract class ISO2709Impl extends ISO2709 {
   //public Vector<String> dati;
 
-  public ISO2709Impl(String notizia,String dTipo,String livello) {
+  public ISO2709Impl(String notizia,String dTipo,String livello) throws Exception {
     this.iso2709Costruttore(notizia,dTipo,Integer.parseInt(livello));
   }
 
-  public ISO2709Impl(String notizia,String dTipo) {
+  public ISO2709Impl(String notizia,String dTipo) throws Exception {
     this.iso2709Costruttore(notizia,dTipo,0);
   }
 
@@ -71,49 +71,9 @@ public abstract class ISO2709Impl extends ISO2709 {
       //dati=new Vector();
   }
 
-  /*
-  public String getEdition() {
-  	return null;
-  }
   
-  public String getAbstract() {
-  	return null;
-  }
-
-  public Vector<String> getAuthors() {
-		return null;
-	}
-
-	public Vector<String> getSubjects() {
-		return null;
-	}
-
-	public Vector<String> getClassifications() {
-		return null;
-	}
-
-	public Vector<String> getEditors() {
-		return null;
-	}
-
-	public String getPublicationPlace() {
-		return null;
-	}
-
-	public String getPublicationDate() {
-		return null;
-	}
-
-	public Vector<BookSignature> getSignatures() {
-		return null;
-	}
-
-	public void clearSignatures() throws JOpac2Exception {
-		throw new JOpac2Exception(
-				"Error: method clearSignatures is not implemented");
-	}
 	
-	*/
+
 	
 	/* (non-Javadoc)
 	 * @see JOpac2.dataModules.iso2709.ISO2709Impl#getHash()
@@ -138,28 +98,7 @@ public abstract class ISO2709Impl extends ISO2709 {
 		return channels;
 	}
 
-	// public abstract String getAuthors(String separator, boolean html) {return
-	// "Error: method getAuthors is by ISO2709";}
-	/*
-	public String getTitle() {
-		return "Error: method getAuthors is by ISO2709";
-	}
-
-	public String getISBD() {
-		return "Error: method getISBD is by ISO2709";
-	}
-	*/
-  
-
-/* (non-Javadoc)
- * @see JOpac2.dataModules.ISO2709#getDescription()
- */
-	/*
-	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-*/
+	
 
 	public RecordReader getRecordReader(InputStream dataFile) throws UnsupportedEncodingException {
 		RecordReader r=new IsoRecordReader(dataFile,ft,rt);
@@ -232,13 +171,7 @@ public abstract class ISO2709Impl extends ISO2709 {
 		return null;
 	}
 
-	/*
-	@Override
-	
-	public Vector<RecordInterface> getLinked(String tag) throws JOpac2Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}*/
+
 
 	/**
 	 * Use tag.checkNSBNSE(...) instead
@@ -253,73 +186,5 @@ public abstract class ISO2709Impl extends ISO2709 {
 		}
 	}*/
 
-	/*
-	public void setTitle(String title)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
 	
-	public void setTitle(String title, boolean significant)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void addAuthor(String author)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void addClassification(String classification)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void addComment(String comment)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void addEditor(String editor)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void addPart(RecordInterface part)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void addPartOf(RecordInterface partof)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void addSerie(RecordInterface serie)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void addSubject(String subject)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void setAbstract(String abstractText)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void setDescription(String description)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void setEdition(String edition)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void setISBD(String isbd)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void setPublicationDate(String publicationDate)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void setPublicationPlace(String publicationPlace)  throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-
-	public void setStandardNumber(String standardNumber) throws JOpac2Exception {
-		throw new JOpac2Exception("No such method defined!");
-	}
-	*/
 }

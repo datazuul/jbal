@@ -1,5 +1,7 @@
 package org.jopac2.jbal.abstractStructure;
 
+import java.io.UnsupportedEncodingException;
+
 public class Field {
 	private String fieldCode;
 	private String delimiter=String.valueOf((char)0x1f);
@@ -37,5 +39,23 @@ public class Field {
 	
 	public String toString() {
 		return delimiter+fieldCode+content;
+	}
+	
+	public static String printableNSBNSE(String string) {
+		String nse=String.valueOf((char)0x1b)+"I";
+		String nsb=String.valueOf((char)0x1b)+"H";
+		string = string.replaceAll(nsb, "").replaceAll(nse, "*");
+		
+		byte[] _nsb = {-62, -120};
+		byte[] _nse = {-62, -119};
+		
+		try {
+			nsb = new String(_nsb,"utf8");
+			nse = new String(_nse,"utf8");
+			
+		} catch (UnsupportedEncodingException e) {
+		}
+		string = string.replaceAll(nsb, "").replaceAll(nse, "*");
+		return string;
 	}
 }

@@ -17,7 +17,7 @@ public class unimarcViewer {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
-		String filename="/java_sba/colloca/docs/diprova.uni";
+		String filename="/java_jopac2/uniTV.txt";
 		String tipo="sebina";
 		
 		if(args.length>0) {

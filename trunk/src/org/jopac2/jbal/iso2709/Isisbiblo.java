@@ -59,7 +59,7 @@ public class Isisbiblo extends ISO2709Impl {
 	
 
 
-    public Isisbiblo(String stringa, String dTipo) {
+    public Isisbiblo(String stringa, String dTipo)  throws Exception {
     super();
     setTerminator("#","#","^");
     iso2709Costruttore(stringa,dTipo,0);
@@ -68,7 +68,7 @@ public class Isisbiblo extends ISO2709Impl {
     initLinkSerie();
   }
 
-    public Isisbiblo(String stringa, String dTipo, String livello) {
+    public Isisbiblo(String stringa, String dTipo, String livello)  throws Exception {
     super();
     setTerminator("#","#","^");
     iso2709Costruttore(stringa,dTipo,Integer.parseInt(livello));

@@ -5,6 +5,6 @@ import java.sql.SQLException;
 public interface LoadDataInterface {
 
 	void process(String linea, 
-			ParoleSpoolerInterface paroleSpooler) throws SQLException; //String tipoNotizia, long idTipo,
+			ParoleSpoolerInterface paroleSpooler) throws SQLException, Exception; //String tipoNotizia, long idTipo,
 
 }

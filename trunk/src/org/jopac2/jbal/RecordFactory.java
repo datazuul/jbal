@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,7 +40,7 @@ public class RecordFactory {
 	public static final RecordInterface buildRecord(long id, String codedData,
 			String type, String syntax, long level) throws SecurityException,
 			IllegalArgumentException, NoSuchMethodException,
-			InstantiationException, IllegalAccessException {
+			InstantiationException, IllegalAccessException, InvocationTargetException {
 		RecordInterface ma = null;
 		if (syntax != null && syntax.length() > 0) {
 			ma = buildRecord(id, codedData, syntax, level);
@@ -56,7 +57,7 @@ public class RecordFactory {
 	public static final RecordInterface buildRecord(long id, String codedData,
 			String type, long level) throws SecurityException,
 			NoSuchMethodException, IllegalArgumentException,
-			InstantiationException, IllegalAccessException {
+			InstantiationException, IllegalAccessException, InvocationTargetException {
 		RecordInterface ma = null;
 		String fl = type.substring(0, 1).toUpperCase();
 		String type_upper = fl + type.substring(1);
@@ -89,6 +90,7 @@ public class RecordFactory {
 			System.out.println("id=" + id + "\nnotizia raw=" + codedData
 					+ "\ntipo notizia=" + type + "\nlivello=" + level);
 			te.printStackTrace();
+			throw te;
 		}
 		return ma;
 	}

@@ -44,7 +44,17 @@ import org.jopac2.jbal.abstractStructure.Field;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.classification.DDC;
+import org.jopac2.jbal.subject.CorporateBodyNameSubject;
+import org.jopac2.jbal.subject.FamilyNameSubject;
+import org.jopac2.jbal.subject.FormGenrePhysicalCharacteristicHeading;
+import org.jopac2.jbal.subject.GeographicalNameSubject;
+import org.jopac2.jbal.subject.NameAndTitleSubject;
+import org.jopac2.jbal.subject.PersonalNameSubject;
+import org.jopac2.jbal.subject.PlaceAccess;
+import org.jopac2.jbal.subject.SubjectCategory_Provisional;
 import org.jopac2.jbal.subject.SubjectInterface;
+import org.jopac2.jbal.subject.TitleSubject;
+import org.jopac2.jbal.subject.TopicalNameSubject;
 import org.jopac2.jbal.subject.UncontrolledSubjectTerms;
 import org.jopac2.utils.*;
 
@@ -168,21 +178,22 @@ public void initLinkUp() {
 	 * 
      */
   public String getTitle() {
-    String r=null;
+    String r="";
     Tag tag=getFirstTag("200");
     Vector<Field> a=tag.getFields("a");
-    r=a.elementAt(0).getContent();
-    for(int i=1;i<a.size();i++) r+=" ; "+a.elementAt(i).getContent();
-    r+=Utils.ifExists(" [] ",tag.getField("b"));
-    r+=Utils.ifExists(" . ",tag.getField("c"));
-    r+=Utils.ifExists(" = ",tag.getField("d"));
-    r+=Utils.ifExists(" : ",tag.getField("e"));
-    r+=Utils.ifExists(" / ",tag.getField("f"));
-    r+=Utils.ifExists(" ; ",tag.getField("g"));
-    r+=Utils.ifExists(" . ",tag.getField("h"));
-    r+=Utils.ifExists(" , ",tag.getField("i"));
-
-    return r;
+    if(a!=null && a.size()>0) {
+	    r=a.elementAt(0).getContent();
+	    for(int i=1;i<a.size();i++) r+=" ; "+a.elementAt(i).getContent();
+	    r+=Utils.ifExists(" [] ",tag.getField("b"));
+	    r+=Utils.ifExists(" . ",tag.getField("c"));
+	    r+=Utils.ifExists(" = ",tag.getField("d"));
+	    r+=Utils.ifExists(" : ",tag.getField("e"));
+	    r+=Utils.ifExists(" / ",tag.getField("f"));
+	    r+=Utils.ifExists(" ; ",tag.getField("g"));
+	    r+=Utils.ifExists(" . ",tag.getField("h"));
+	    r+=Utils.ifExists(" , ",tag.getField("i"));
+    }
+    return Field.printableNSBNSE(r);
   }
 
   public String getISBD() {
@@ -272,25 +283,56 @@ public void initLinkUp() {
   
 	public Vector<SubjectInterface> getSubjects() {
 		Vector<SubjectInterface> r=new Vector<SubjectInterface>();
-		Vector<Tag> v=getTags("610");
+		
+		addSubject(r,"600",new PersonalNameSubject(true));
+		addSubject(r,"601",new CorporateBodyNameSubject(' ', ' '));
+		addSubject(r,"602",new FamilyNameSubject());
+		addSubject(r,"604",new NameAndTitleSubject());
+		addSubject(r,"605",new TitleSubject());
+		addSubject(r,"606",new TopicalNameSubject(' '));
+		addSubject(r,"607",new GeographicalNameSubject(' '));
+		addSubject(r,"608",new FormGenrePhysicalCharacteristicHeading(' '));
+		
+		addSubject(r,"610",new UncontrolledSubjectTerms('0'));
+		addSubject(r,"615",new SubjectCategory_Provisional());
+		addSubject(r,"620",new PlaceAccess(' '));
+		
+		
+	    return r;
+	}
+
+	private void addSubject(Vector<SubjectInterface> r, String tag,
+			SubjectInterface subject) {
+		
+		Vector<Tag> v=getTags(tag);
 		  for(int i=0;v!=null && i<v.size();i++) {
-			  UncontrolledSubjectTerms sub=new UncontrolledSubjectTerms('0');
-			  Vector<Field> s=v.elementAt(i).getFields("a");
-			  for(int j=0;s!=null && j<s.size();j++) {
-				  sub.setSubjectData(s.elementAt(j).getContent());
-			  }
+			  SubjectInterface sub=subject.clone();
+			  sub.setData(v.elementAt(i));
 			  r.addElement(sub);
 		  }
-	      return r;
+		
 	}
 
 	public Vector<ClassificationInterface> getClassifications() {
 		Vector<ClassificationInterface> r=new Vector<ClassificationInterface>();
 		Vector<Tag> t=getTags("676");
 		for(int i=0;t!=null && i<t.size();i++) {
-			Field s=t.elementAt(i).getField("a");
-			if(s!=null) {
-				r.addElement(new DDC(s.getContent(),"",""));
+			/**
+			 * 		$a Number (not repeatable)
+			 *      $c Description // dedotto da sebina
+			 * 		$v Edition (not repeatable)
+			 * 		$z Language of edition (not repeatable)
+			 */
+			Field num=t.elementAt(i).getField("a");
+			Field desc=t.elementAt(i).getField("c");
+			Field ed=t.elementAt(i).getField("v");
+			Field lan=t.elementAt(i).getField("z");
+			
+			if(num!=null) {
+				r.addElement(new DDC(num!=null?num.getContent():null,
+						desc!=null?desc.getContent():null,
+						ed!=null?ed.getContent():null,
+						lan!=null?lan.getContent():null));
 			}
 		}
 		return r;
@@ -886,12 +928,12 @@ public void initLinkUp() {
 
   
   
-  public Unimarc(String stringa,String dTipo) {
+  public Unimarc(String stringa,String dTipo)  throws Exception {
     super(stringa,dTipo,"0");
     this.marcCostruttore(stringa,dTipo,0);
   }
 
-  public Unimarc(String stringa,String dTipo,String livello) {
+  public Unimarc(String stringa,String dTipo,String livello)  throws Exception {
     super(stringa,dTipo,livello);
     this.marcCostruttore(stringa,dTipo,Integer.parseInt(livello));
   }

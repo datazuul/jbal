@@ -67,6 +67,10 @@ public abstract  class RecordReader extends BufferedReader {
 	public void destroy(Connection conn) {}
 	
 	public void parse(RecordReader f, LoadDataInterface data, PrintStream console) throws IOException {
+		parse(f, data, console, console);
+	}
+	
+	public void parse(RecordReader f, LoadDataInterface data, PrintStream console, PrintStream outputRecordErrors) throws IOException {
 		String linea="";
 		long start_time=System.currentTimeMillis();
 		long i=0;
@@ -77,8 +81,9 @@ public abstract  class RecordReader extends BufferedReader {
 
 			try {
 				data.process(linea,paroleSpooler); //tipoNotizia,idTipo,
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				e.printStackTrace(console);
+				if(outputRecordErrors!=null) outputRecordErrors.println(linea);
 			}
 
             i++;

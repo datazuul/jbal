@@ -1,6 +1,8 @@
 package org.jopac2.test;
 
 
+import java.lang.reflect.InvocationTargetException;
+
 import junit.framework.TestCase;
 
 import org.jopac2.jbal.RecordFactory;
@@ -100,7 +102,7 @@ public class CreationTest extends TestCase {
 
 
 	
-	private String rebuild(String record, String type) {
+	private String rebuild(String record, String type) throws InvocationTargetException {
 		RecordInterface ma=null;
 		try {
 			ma = RecordFactory.buildRecord(0, record, type, 0);

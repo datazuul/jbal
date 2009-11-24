@@ -60,7 +60,7 @@ public class Pregresso extends ISO2709Impl {
     //private static String ft=String.valueOf((char)0x1e);
     //private static String dl=String.valueOf((char)0x1f);        //' delimiter
 
-  public Pregresso(String stringa,String dTipo) {
+  public Pregresso(String stringa,String dTipo)  throws Exception {
     super();
     iso2709Costruttore(stringa,dTipo,0);
     initLinkUp();
@@ -68,7 +68,7 @@ public class Pregresso extends ISO2709Impl {
     initLinkSerie();
   }
 
-  public Pregresso(String stringa,String dTipo,String livello) {
+  public Pregresso(String stringa,String dTipo,String livello)  throws Exception {
     super();
     iso2709Costruttore(stringa,dTipo,Integer.parseInt(livello));
     initLinkUp();

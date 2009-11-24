@@ -3,6 +3,7 @@ package org.jopac2.jbal.subject;
 import java.util.Vector;
 
 import org.jopac2.jbal.abstractStructure.Field;
+import org.jopac2.jbal.abstractStructure.Tag;
 
 /*
 605 TITLE USED AS SUBJECT
@@ -121,6 +122,23 @@ EX 7
 public class TitleSubject implements SubjectInterface {
 	private Vector<Field> fields=new Vector<Field>();
 	private char indicator1,indicator2;
+	
+	public void setData(Tag tag) {
+		this.indicator1=tag.getModifier1();
+		this.indicator2=tag.getModifier2();
+		this.fields=tag.getFields();
+	}
+	
+	public SubjectInterface clone() {
+		SubjectInterface c=new TitleSubject();
+		for(int i=0;fields!=null && i<fields.size();i++)
+			c.setField(fields.elementAt(i)); // clone?
+		return c;
+	}
+	
+	public void setField(Field field) {
+		fields.addElement(field);
+	}
 	
 /**
  * No indicators

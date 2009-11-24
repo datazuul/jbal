@@ -63,7 +63,7 @@ import org.jopac2.utils.*;
 
 public class Easyweb extends ISO2709Impl {
 
-  public Easyweb(String stringa,String dTipo) {
+  public Easyweb(String stringa,String dTipo) throws Exception {
     super();
     setTerminator("#","#","^");
     iso2709Costruttore(stringa,dTipo,0);
@@ -72,7 +72,7 @@ public class Easyweb extends ISO2709Impl {
     initLinkSerie();
   }
 
-  public Easyweb(String stringa,String dTipo,String livello) {
+  public Easyweb(String stringa,String dTipo,String livello) throws Exception {
     super();
     setTerminator("#","#","^");
     iso2709Costruttore(stringa,dTipo,Integer.parseInt(livello));
@@ -399,7 +399,7 @@ public String quote(String t) {
 	  Vector<Tag> v=getTags("740");
 	  Vector<ClassificationInterface> r=new Vector<ClassificationInterface>();
 	  for(int i=0;v!=null && i<v.size();i++) {
-		  r.addElement(new DDC(Utils.ifExists("", v.elementAt(i).getField("a")),"","ITA"));
+		  r.addElement(new DDC(Utils.ifExists("", v.elementAt(i).getField("a")),"","","ITA"));
 		  //r.addElement(Utils.ifExists("", v.elementAt(i).getField("a")));
 	  }
       return r;

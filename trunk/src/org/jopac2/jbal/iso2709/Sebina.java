@@ -46,11 +46,11 @@ import org.jopac2.utils.*;
 
 public class Sebina extends Unimarc {
 
-  public Sebina(String stringa,String dTipo) {
+  public Sebina(String stringa,String dTipo)  throws Exception {
     super(stringa,dTipo);
   }
 
-  public Sebina(String stringa,String dTipo,String livello) {
+  public Sebina(String stringa,String dTipo,String livello)  throws Exception {
     super(stringa,dTipo,livello);
   }
   
