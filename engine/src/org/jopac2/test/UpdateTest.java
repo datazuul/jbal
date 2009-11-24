@@ -92,7 +92,7 @@ public class UpdateTest extends TestCase {
 			// carica con la procedura il primo record, per creare tutto il db, i canali di ricerca, le liste
 			InputStream in1 = new ByteArrayInputStream(rec.getBytes());
 			JOpac2Import ji = new JOpac2Import(in1, catalog, filetype, JOpac2confdir,
-					dbUrl, dbUser, dbPassword, true, System.out);
+					dbUrl, dbUser, dbPassword, true, System.out, System.out);
 			ji.doJob(false);
 			// ji.wait();
 			ji.destroy(dbUrl);
