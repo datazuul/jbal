@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Map;
@@ -26,7 +25,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.apache.cocoon.xml.AttributesImpl;
 
-import JSites.generation.ImportCatalog;
 import JSites.transformation.MyAbstractPageTransformer;
 import JSites.utils.Util;
 

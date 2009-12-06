@@ -301,7 +301,7 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
        
         sendElement("prezzo", ma2.getPrice());
         sendElement("bid",ma2.getBid());
-    	sendElement("jid", String.valueOf(ma2.getJOpacID()));
+//    	sendElement("jid", String.valueOf(ma2.getJOpacID()));
 	}
 
 	

@@ -217,7 +217,13 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 				// String pritableRecordXML=XML2String(document);
 				// System.out.println(pritableRecordXML);
 	
-				String rRecord = parseTemplate(template, document);
+//				String rRecord = parseTemplate(template, document);
+				String rRecord=null;
+				try {
+					rRecord = Templator.parseContext(document, "{{/:"+template+"}}");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				super.startElement("", "record", "record", this.emptyAttrs);
 				if (rRecord != null && rRecord.length() > 0)
 					super.characters(rRecord.toCharArray(), 0, rRecord.length());
@@ -281,7 +287,17 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 
 	
 	
-	
+	/**
+	 * @deprecated
+	 * 
+	 * NON CANCELLARE
+	 * 
+	 * TODO controllare sequenza output
+	 * 
+	 * @param template2
+	 * @param document2
+	 * @return
+	 */
 	private String parseTemplate(String template2, Document document2) {
 		Document templateDocument = null;
 		try {
@@ -640,6 +656,85 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 		return string;
 	}
 	
+	public static void groupPair(Document doc, String separator, String child, String... elements) {
+		Object result=null;
+		XPath xpath = XPathFactory.newInstance().newXPath();
+	    XPathExpression expr=null;
+		try {
+			expr = xpath.compile(elements[0]);
+			result = expr.evaluate(doc, XPathConstants.NODESET);
+		} catch (XPathExpressionException e2) {
+			e2.printStackTrace();
+		}
+		
+
+	    NodeList nodes = (NodeList) result;
+
+	    for (int j = 0; j < nodes.getLength(); j++) {
+	    	Node parent=nodes.item(j).getParentNode();
+	    	moveElements(doc,parent,separator,child,elements);
+	    }
+	}
+	
+	
+	private static void moveElements(Document doc, Node parent, String separator, String child,
+			String[] elements) {
+		
+		Node[] sub=getChildren(doc,parent,elements);
+		
+		int k=1;
+		int p=0;
+		while(k!=-1) {
+			Node c=doc.createElement(child);
+			
+			k=-1;
+			for(int i=0;i<elements.length;i++) {
+				int z=appendSubChild(c,separator,sub[i],p);
+				if(z>k) k=z;
+			}
+			if(k!=-1) parent.appendChild(c);
+			p++;
+		}
+		for(int j=0;j<elements.length;j++) {
+			if(sub[j]!=null) parent.removeChild(sub[j]);
+		}
+		
+	}
+
+
+	private static int appendSubChild(Node node, String sep, Node value, int p) {
+		Node sc=node.getOwnerDocument().createElement(value.getNodeName());
+		String[] v=value.getTextContent().split(sep);
+		int z=-1;
+		if(p<v.length) {
+			z=v.length;
+			sc.setTextContent(v[p].trim());
+			node.appendChild(sc);
+		}
+		return z;
+	}
+
+
+	private static Node[] getChildren(Document doc, Node parent, String[] elements) {
+		Node[] r=new Node[elements.length];
+		for(int i=0;i<elements.length;i++) {
+			Object result=null;
+			XPath xpath = XPathFactory.newInstance().newXPath();
+		    XPathExpression expr=null;
+			try {
+				expr = xpath.compile(elements[i]);
+				result = expr.evaluate(doc, XPathConstants.NODESET);
+			} catch (XPathExpressionException e2) {
+				e2.printStackTrace();
+			}
+			
+		    NodeList nodes = (NodeList) result;
+		    if(nodes.getLength()>0) r[i]=nodes.item(0);
+		    else r[i]=null;
+		}
+		return r;
+	}
+	
 	
 	public static String parseContext(Document doc, String in) throws Exception {
 		StringBuffer buffer=new StringBuffer();
@@ -683,7 +778,14 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 					}
 					else if(o==be) {
 						int z=in.indexOf("]]",o)+2;
-						buffer.append(parseElement(doc,context,in.substring(o,z)));
+						String element=in.substring(o,z);
+						if(element.startsWith("[[//")) {
+							// ahah, l'elemento non ha contesto!
+							buffer.append(parseContext(doc,"{{"+element.substring(2,element.length()-2)+":[[.]]}}"));
+						}
+						else {
+							buffer.append(parseElement(doc,context,element));
+						}
 						c=z;
 					}
 				}
@@ -701,7 +803,7 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 	 * @param o
 	 * @return
 	 */
-	public static int closeBracket(String in, int o) {
+	private static int closeBracket(String in, int o) {
 		int i=o;
 		int count=0;
 		
@@ -723,11 +825,24 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 		return i;
 	}
 
-	public static String parseElement(Document doc, String context, String element) {
+	private static String parseElement(Document doc, String context, String element) {
 		String value="";
 		String sep=" - ";
+		int n=-1;
+		
 		element=element.substring(2, element.length()-2);
-		element=context+"/"+element;
+		if(element.equals(".") && context.startsWith("//") && context.endsWith("]")) {
+			int y=context.indexOf("[");
+			String p=context.substring(y+1, context.indexOf("]"));
+			element=context.substring(0,y);
+			n=Integer.parseInt(p);
+		}
+		else {
+			if(!context.equals("/") || !element.startsWith("/")) {
+				if(context.endsWith("/")) element=context+element;
+				else element=context+"/"+element;
+			}
+		}
 		Object result=null;
 		XPath xpath = XPathFactory.newInstance().newXPath();
 	    XPathExpression expr=null;
@@ -740,15 +855,20 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 		
 
 	    NodeList nodes = (NodeList) result;
-	    if(nodes.getLength()>0) value=nodes.item(0).getTextContent();
-	    for (int j = 1; j < nodes.getLength(); j++) {
-	    	value=value+sep+nodes.item(j).getTextContent();;
+	    if(n==-1) {
+		    if(nodes.getLength()>0) value=nodes.item(0).getTextContent();
+		    for (int j = 1; j < nodes.getLength(); j++) {
+		    	value=value+sep+nodes.item(j).getTextContent();;
+		    }
+	    }
+	    else {
+	    	value=nodes.item(n-1).getTextContent();
 	    }
 		return value;
 	}
 	
 
-	static void listNodes(Node node, String indent) {
+	public static void listNodes(Node node, String indent) {
 		String nodeName = node.getNodeName();
 		System.out.println(indent + nodeName + " Node, type is "
 				+ node.getClass().getName() + ":");
