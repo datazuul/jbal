@@ -96,11 +96,18 @@ public class SearchResultSet {
 		Vector<Long> v = rs.getRecordIDs();
 		System.out.println(v);
 		for (int i = 0; i < v.size(); i++) {
-			RecordInterface m = DbGateway.getNotiziaByJID(conn, catalog, v.elementAt(i).toString());
-			String o=null;
-			if(f!=null) o=m.getField(f);
-			if(o==null) o=m.getTitle();
-			System.out.println(o);
+			RecordInterface m=null;
+			try {
+				m = DbGateway.getNotiziaByJID(conn, catalog, v.elementAt(i).toString());
+				String o=null;
+				if(f!=null) o=m.getField(f);
+				if(o==null) o=m.getTitle();
+				System.out.println(o);
+			}
+			catch(Exception e) {}
+			finally {
+				if(m!=null) m.destroy();
+			}
 		}
 	}
 }

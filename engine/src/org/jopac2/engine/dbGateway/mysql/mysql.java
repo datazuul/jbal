@@ -78,10 +78,12 @@ public class mysql extends DbGateway {
     public long getIDwhere(Connection conn, String tableName, String fieldName, String fieldValue) {
         long currentID=-1;
         fieldValue=fieldValue.toLowerCase();
+        Statement stmt=null;
+        ResultSet r=null;
         try {
-            Statement stmt=conn.createStatement();
+            stmt=conn.createStatement();
 
-            ResultSet r=stmt.executeQuery("select id from "+tableName+" "+
+            r=stmt.executeQuery("select id from "+tableName+" "+
                 "where ("+fieldName+"='"+fieldValue+"')");
             if(r.next()) currentID=r.getLong("id");
             r.close();
@@ -94,11 +96,14 @@ public class mysql extends DbGateway {
                 currentID=r.getLong(1);
                 r.close();
             }
-            stmt.close();
         }
         catch (Exception e) {
         	e.printStackTrace();
             currentID=-1;
+        }
+        finally {
+        	if(stmt!=null) try{stmt.close();}catch(Exception e1){}
+        	if(r!=null) try{r.close();}catch(Exception e1){}
         }
         return currentID;
     }
@@ -185,10 +190,8 @@ public class mysql extends DbGateway {
 				"ENGINE = MYISAM " +
 				"CHARACTER SET utf8";
 
-		Statement stmt=conn.createStatement();
-		stmt.execute(sql1);
-		stmt.execute(sql2);
-		stmt.close();
+		execute(conn,sql1);
+		execute(conn,sql2);
 		
 		createIndex(conn,"je_"+catalog+"_ricerche_dettaglio_idx1", "je_"+catalog+"_ricerche_dettaglio", "id_ricerca");		
 	}
@@ -224,9 +227,7 @@ public class mysql extends DbGateway {
 		dropTable(conn, "je_"+catalog+"_"+nomeTableListe(classe));
 		String sql1="CREATE TABLE je_"+catalog+"_"+nomeTableListe(classe)+" (id INT NOT NULL auto_increment, id_notizia INT NOT NULL,testo varchar(50)," +
 				    "PRIMARY KEY(id)) ENGINE = MYISAM CHARACTER SET utf8";
-		Statement stmt=conn.createStatement();
-		stmt.execute(sql1);
-		stmt.close();
+		execute(conn,sql1);
     	createIndex(conn,"je_"+catalog+"_"+nomeTableListe(classe)+"_x1", "je_"+catalog+"_"+nomeTableListe(classe), "testo(50)", false);//CR_LISTE
 
 	}
@@ -242,17 +243,26 @@ public class mysql extends DbGateway {
 			"where testo "+d+" ?  order by testo limit ?) c "+ 
 			"where b.testo=c.testo order by b.testo"+(forward?"":" desc");
 
-		PreparedStatement stmt = conn.prepareStatement(sql);
-		stmt.setString(1, parole);
-		stmt.setLong(2, limit);
-		ResultSet rs = stmt.executeQuery();
-		int id_notizia;
-		while (rs.next()) {
-			id_notizia = rs.getInt("id_notizia");
-			listResult.addElement(new Long(id_notizia));
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, parole);
+			stmt.setLong(2, limit);
+			rs = stmt.executeQuery();
+			int id_notizia;
+			while (rs.next()) {
+				id_notizia = rs.getInt("id_notizia");
+				listResult.addElement(new Long(id_notizia));
+			}
 		}
-		rs.close();
-		stmt.close();
+		catch(SQLException e) {
+			throw e;
+		}
+		finally {
+			if(rs!=null) rs.close();
+			if(stmt!=null) stmt.close();
+		}
 		SearchResultSet result=new SearchResultSet();
 		result.setRecordIDs(listResult);
 		return result;

@@ -83,13 +83,10 @@ public class derby extends DbGateway {
 				  //", INDEX jsession_idx(jsession_id) " +
 				") ";
 
-		Statement stmt=conn.createStatement();
-		stmt.execute(sql1);
-		stmt.execute(sql2);
+		DbGateway.execute(conn, sql1);
+		DbGateway.execute(conn, sql2);
 		
 		execute(conn, "create index je_"+catalog+"_jsession_idx on je_"+catalog+"_ricerche (jsession_id)");
-
-		stmt.close();
 	}
 	
 	/**
@@ -106,27 +103,32 @@ public class derby extends DbGateway {
         
         fieldValue=fieldValue.toLowerCase();
         
+        Statement stmt=null;
+        ResultSet r=null;
         try {
-            Statement stmt=conn.createStatement();
+            stmt=conn.createStatement();
 
-            ResultSet r=stmt.executeQuery("select id from "+tableName+" "+
+            r=stmt.executeQuery("select id from "+tableName+" "+
                 "where ("+fieldName+"='"+fieldValue+"')");
             if(r.next()) currentID=r.getLong("id");
             r.close();
             
             if((currentID==-1)) {
-                stmt.execute("insert into "+tableName+" ("+fieldName+") "+
+                execute(conn,"insert into "+tableName+" ("+fieldName+") "+
                     "values('"+fieldValue+"')");
                 r = stmt.executeQuery("VALUES IDENTITY_VAL_LOCAL()");
                 r.next();
                 currentID=r.getLong(1);
                 r.close();
             }
-            stmt.close();
         }
         catch (Exception e) {
         	e.printStackTrace();
             currentID=-1;
+        }
+        finally {
+        	if(r!=null) try{r.close();}catch(Exception e1){}
+        	if(stmt!=null) try{stmt.close();}catch(Exception e1){}
         }
         return currentID;
     }
@@ -238,12 +240,9 @@ public class derby extends DbGateway {
 	public void createTableListe(Connection conn, String catalog, String classe) throws SQLException {//CR_LISTE
 		dropTable(conn, "je_"+catalog+"_"+nomeTableListe(classe));
 		String sql1="CREATE TABLE je_"+catalog+"_"+nomeTableListe(classe)+" (id INT NOT NULL "+autoincrement1+", id_notizia INT NOT NULL,testo varchar(50)," +
-				    "PRIMARY KEY(id))";
-		Statement stmt=conn.createStatement();
-		stmt.execute(sql1);
-		stmt.close();
+				    "PRIMARY KEY(id))";		
+		execute(conn,sql1);
     	createIndex(conn,"je_"+catalog+"_"+nomeTableListe(classe)+"_x1", "je_"+catalog+"_"+nomeTableListe(classe), "testo(50)", false);//CR_LISTE
-
 	}
 	
 	public SearchResultSet listSearchFB(Connection conn, String catalog, String classe,String parole,int limit,boolean forward) throws SQLException {
@@ -272,17 +271,26 @@ public class derby extends DbGateway {
 					"where b.testo=c.testo " +
 					"order by b.testo"+(forward?"":" desc");
 
-		PreparedStatement stmt = conn.prepareStatement(sql);
-		stmt.setString(1, parole);
-		stmt.setLong(2, limit);
-		ResultSet rs = stmt.executeQuery();
-		int id_notizia;
-		while (rs.next()) {
-			id_notizia = rs.getInt("id_notizia");
-			listResult.addElement(new Long(id_notizia));
+		PreparedStatement stmt = null;
+		ResultSet rs=null;
+		try {
+			stmt=conn.prepareStatement(sql);
+			stmt.setString(1, parole);
+			stmt.setLong(2, limit);
+			rs = stmt.executeQuery();
+			int id_notizia;
+			while (rs.next()) {
+				id_notizia = rs.getInt("id_notizia");
+				listResult.addElement(new Long(id_notizia));
+			}
 		}
-		rs.close();
-		stmt.close();
+		catch(SQLException e) {
+			throw e;
+		}
+		finally {
+			if(rs!=null) rs.close();
+			if(stmt!=null) stmt.close();
+		}
 		SearchResultSet result=new SearchResultSet();
 		result.setRecordIDs(listResult);
 		return result;

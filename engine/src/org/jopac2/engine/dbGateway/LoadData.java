@@ -88,31 +88,39 @@ public class LoadData implements LoadDataInterface {
   PrintStream out=null;
   PrintStream outputErrorRecords=out;
   
-  public void appendNotizie() {
+  public void appendNotizie() throws SQLException {
+	  Statement stmt=null;
+	  ResultSet rs=null;
     try {
-      Statement stmt=conn[0].createStatement();
-      ResultSet rs=stmt.executeQuery("SELECT Max(je_"+catalog+"_notizie.id) AS MaxOfid FROM je_"+catalog+"_notizie");
+      stmt=conn[0].createStatement();
+      rs=stmt.executeQuery("SELECT Max(je_"+catalog+"_notizie.id) AS MaxOfid FROM je_"+catalog+"_notizie");
       if(rs.next()) {
         id_nz_f=rs.getInt(1);
         inz=id_nz_f;
       }
-      rs.close();
     }
-    catch (Exception ex) {
-      ex.printStackTrace();
+    catch (SQLException ex) {
+    	throw ex;
+    }
+    finally {
+    	if(rs!=null) rs.close();
+    	if(stmt!=null) rs.close();
     }
     
     try {
-        Statement stmt=conn[0].createStatement();
-        ResultSet rs=stmt.executeQuery("SELECT Max(je_"+catalog+"_anagrafe_parole.id) AS MaxOfid FROM je_"+catalog+"_anagrafe_parole");
+        stmt=conn[0].createStatement();
+        rs=stmt.executeQuery("SELECT Max(je_"+catalog+"_anagrafe_parole.id) AS MaxOfid FROM je_"+catalog+"_anagrafe_parole");
         if(rs.next()) {
           id_ap_f=rs.getInt(1);
           //inz=id_nz_f;
         }
-        rs.close();
       }
-      catch (Exception ex) {
-        ex.printStackTrace();
+      catch (SQLException ex) {
+        throw ex;
+      }
+      finally {
+      	if(rs!=null) rs.close();
+      	if(stmt!=null) rs.close();
       }
   }
 
@@ -189,7 +197,9 @@ private boolean clearDatabase;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		preparedTempLCP[currentPrepTempLCP].clearParameters();
+		finally {
+			preparedTempLCP[currentPrepTempLCP].clearParameters();
+		}
 		currentPrepTempLCP=(++currentPrepTempLCP)%preparedTempLCP.length;
 	}
   }
@@ -216,17 +226,24 @@ private boolean clearDatabase;
   
   public Long getDbParola(String parola) {
 	  Long r=null;
+	  Statement stmt=null;
+	  ResultSet rs=null;
 	  try {
-		  Statement stmt=conn[0].createStatement();
-		  ResultSet rs = stmt.executeQuery("select id from je_"+catalog+"_anagrafe_parole where parola = '"+parola+"'");
+		  stmt=conn[0].createStatement();
+		  rs = stmt.executeQuery("select id from je_"+catalog+"_anagrafe_parole where parola = '"+parola+"'");
 	
 	      if(rs.next()) { // c'e' un record
 	        r=rs.getLong(1);
 	      }
-	      rs.close();
-	      stmt.close();
 	  }
       catch(Exception e) {}
+      finally {
+    	  try {
+	    	  if(rs!=null) rs.close();
+		      if(rs!=null) stmt.close();
+    	  }
+    	  catch(SQLException e) {}
+      }
       return r;
   }
   
@@ -316,9 +333,7 @@ private boolean clearDatabase;
 		  String tempLCP="insert into je_"+catalog+"_temp_lcpn (id_notizia,id_parola,id_classe) values ("+
 		  	arTempLCP[i].getFirst()+","+arTempLCP[i].getSecond()+","+arTempLCP[i].getThird()+")";
 		  try {
-			Statement st=conn[0].createStatement();
-			st.execute(tempLCP);
-			st.close();
+			DbGateway.execute(conn[0], tempLCP);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -389,7 +404,9 @@ private boolean clearDatabase;
 	} catch (SQLException e) {
 		e.printStackTrace();
 	}
-    
+
+	if(n!=null) n.destroy();
+	
     out.println("tempo totale minuti:"+(System.currentTimeMillis()-start_time)/(60000.0));
     return chToIndex;
   }

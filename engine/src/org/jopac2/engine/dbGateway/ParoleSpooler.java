@@ -141,22 +141,22 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 		}
 		if(r==null) {
 			
-//			Statement stmt;
+			ResultSet rs=null;
 			try {
 				preparedSelectID.setString(1,parola);
-				ResultSet rs=preparedSelectID.executeQuery();
-//				stmt = c.createStatement();
-//				ResultSet rs = stmt.executeQuery("select id from je_"+catalog+"_anagrafe_parole where parola = '"+parola+"'");
+				rs=preparedSelectID.executeQuery();
 
 				if(rs.next()) { // c'e' un record
 					r=rs.getLong(1);
 					cache.store(parola, r);
 				}
-				rs.close();
-//				stmt.close();
-				rs=null; //stmt=null;
+				
 			} catch (SQLException e) {
 				e.printStackTrace(out);
+			}
+			finally {
+				try {rs.close();} catch(Exception e) {}
+				rs=null; 
 			}
 		}
 		return r==null?-1:r.longValue();
@@ -170,13 +170,19 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 				Long id=(Long)buffer.get(p);
 				boolean is=false;
 				
-				Statement stmt=c.createStatement();
-
-	            ResultSet r=stmt.executeQuery("select id from je_"+catalog+"_anagrafe_parole "+
-	                "where (parola='"+p+"')");
-	            if(r.next()) is=true;
-	            r.close();
-	            stmt.close();
+				Statement stmt=null;
+				ResultSet r=null;
+				try {
+					stmt=c.createStatement();
+		            r=stmt.executeQuery("select id from je_"+catalog+"_anagrafe_parole "+
+		                "where (parola='"+p+"')");
+		            if(r.next()) is=true;
+				}
+				catch(Exception e1) {}
+				finally {
+		            r.close();
+		            stmt.close();
+				}
 				
 				if(!is) DbGateway.InsertParola(c, catalog, p, stemmer.radice(p), id);
 			}
