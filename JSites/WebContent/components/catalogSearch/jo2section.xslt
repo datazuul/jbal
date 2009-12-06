@@ -16,7 +16,7 @@
    <xsl:template match="listRecord" />
    
 	<xsl:template match="queryData">
-		<xsl:if test="string-length(/root/listRecord) = 0">
+		<xsl:if test="string-length(/root/listRecord) = 0 and queryCount !=0">
 			<DIV class="queryData">
 				<xsl:value-of select="queryCount" />
 				<xsl:text> </xsl:text>

@@ -69,27 +69,35 @@
 							    
 							    <fieldset>
 							    <legend>Search</legend>
+							    <table border="0">
 							    <xsl:for-each select="//search">
 							    	<xsl:if test="string-length(@checked)>0">
-							    		<label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label><input id="{@name}" type="text" /><br/>
+							    		<tr><td style="font-size: 10px; text-align: right;"><label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label></td><td><input id="{@name}" type="text" /></td></tr>
 							    	</xsl:if>
 							    </xsl:for-each>
+							    </table>
 							    <input type="submit" value="Cerca"/>
 							    </fieldset>
 							</form>
 							</td>
 							<td>
 							
+							<table border="0">
 							<xsl:for-each select="//list">
 								<xsl:if test="string-length(@checked)>0">
+									
 									<form method="post" action="pageview?pid={$pid}">
 										<!--  <input name="pid" id="pid" type="hidden" value="{$pid}"/> -->
+										<tr><td style="font-size: 10px; text-align: right;">
 								    	<label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label>
+								    	</td><td>
 								    	<input name="list{@name}" type="text" />
 								    	<input type="submit" value="List" />
+								    	</td></tr>
 							    	</form>
 							    </xsl:if>
 						    </xsl:for-each>
+						    </table>
 						    </td>
 					    </tr>
 				    </table>
