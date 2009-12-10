@@ -1,0 +1,9 @@
+This product includes software developed by
+The Apache Software Foundation (http://www.apache.org/).
+
+This product includes software (A2J and JZKit) developed by
+Knowledge Integration Ltd (http://www.k-int.com/) under the GPL licence.
+
+This product includes Jetty (see LEGAL/jetty-licence.txt)
+
+See LEGAL dir for details.
