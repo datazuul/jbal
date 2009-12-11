@@ -1,5 +1,30 @@
 package JSites.transformation.uploadparsing;
 
+/*******************************************************************************
+*
+*  JOpac2 (C) 2002-2009 JOpac2 project
+*
+*     This file is part of JOpac2. http://www.jopac2.org
+*
+*  JOpac2 is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2 of the License, or
+*  (at your option) any later version.
+*
+*  JOpac2 is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with JOpac2; if not, write to the Free Software
+*  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*
+*  Please, see NOTICE.txt AND LEGAL directory for more info. Different licences
+*  may apply for components included in JOpac2.
+*
+*******************************************************************************/
+
 import java.io.*;
 import java.util.Calendar;
 import java.util.Date;
@@ -273,7 +298,7 @@ public class TableUploadParser extends MyAbstractPageTransformer {
 		AttributesImpl emptyAttrs = new AttributesImpl();
 		
 		String row = br.readLine(); //prima riga - Intestazioni
-		if ( row == null )return; // se è vuota -> esco
+		if ( row == null )return; // se ï¿½ vuota -> esco
 		String[] fields = row.split(";",-1);
 		//columnCount = fields.length-1; //guardo quante colonne ho
 		
@@ -299,7 +324,7 @@ public class TableUploadParser extends MyAbstractPageTransformer {
 			super.endElement("", node+"style", node+"style");
 		}
 		
-		row = br.readLine(); //leggo la seconda riga (che è la prima con i dati)
+		row = br.readLine(); //leggo la seconda riga (che ï¿½ la prima con i dati)
 		while(row!=null){	 //per questa ed ogni seguente riga
 
 			fields = row.split(";",-1);

@@ -1,5 +1,29 @@
 package JSites.test;
 
+/*******************************************************************************
+*
+*  JOpac2 (C) 2002-2009 JOpac2 project
+*
+*     This file is part of JOpac2. http://www.jopac2.org
+*
+*  JOpac2 is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2 of the License, or
+*  (at your option) any later version.
+*
+*  JOpac2 is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with JOpac2; if not, write to the Free Software
+*  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*
+*  Please, see NOTICE.txt AND LEGAL directory for more info. Different licences
+*  may apply for components included in JOpac2.
+*
+*******************************************************************************/
 
 import JSites.transformation.WikiTransformer3;
 import junit.framework.TestCase;
@@ -207,7 +231,7 @@ public class WikiTest extends TestCase {
 	public void testSection1665() throws Exception {
 		String ret=doWiki("[img:http://biblio44.units.it/Biblioteche/info/serciv/units.jpg>Universita' di Trieste]" +
 				"[img:http://biblio44.units.it/Biblioteche/info/serciv/scn.jpg>Servizio Civile Nazionale] " +
-				"[http://biblio44.units.it/Biblioteche/info/serciv/manifesto2006.pdf>__BANDO per la selezione di n. 22 volontari per il progetto dell'Università degli Studi di Trieste \"ALLARGHIAMO LA BIBLIOTECA\"__]" +
+				"[http://biblio44.units.it/Biblioteche/info/serciv/manifesto2006.pdf>__BANDO per la selezione di n. 22 volontari per il progetto dell'Universitï¿½ degli Studi di Trieste \"ALLARGHIAMO LA BIBLIOTECA\"__]" +
 				"[http://biblio44.units.it/Biblioteche/info/serciv/ALLEGATO 2.doc>__Allegato 2__]" +
 				"[http://biblio44.units.it/Biblioteche/info/serciv/ALLEGATO 3.doc>__Allegato 3__]" +
 				"__SCADENZA: 2 OTTOBRE 2006__");
@@ -215,7 +239,7 @@ public class WikiTest extends TestCase {
 		assertTrue("OK",ret.equals("<img src=\"http://biblio44.units.it/Biblioteche/info/serciv/units.jpg\" alt=\"Universita' di Trieste\"></img>" +
 				"<img src=\"http://biblio44.units.it/Biblioteche/info/serciv/scn.jpg\" alt=\"Servizio Civile Nazionale\"></img> " +
 				"<a href=\"http://biblio44.units.it/Biblioteche/info/serciv/manifesto2006.pdf\">" +
-					"<b>BANDO per la selezione di n. 22 volontari per il progetto dell'Università degli Studi di Trieste \"ALLARGHIAMO LA BIBLIOTECA\"</b>" +
+					"<b>BANDO per la selezione di n. 22 volontari per il progetto dell'Universitï¿½ degli Studi di Trieste \"ALLARGHIAMO LA BIBLIOTECA\"</b>" +
 				"</a>" +
 				"<a href=\"http://biblio44.units.it/Biblioteche/info/serciv/ALLEGATO 2.doc\">" +
 					"<b>Allegato 2</b>" +

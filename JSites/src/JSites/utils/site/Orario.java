@@ -1,5 +1,28 @@
 package JSites.utils.site;
-
+/*******************************************************************************
+*
+*  JOpac2 (C) 2002-2009 JOpac2 project
+*
+*     This file is part of JOpac2. http://www.jopac2.org
+*
+*  JOpac2 is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2 of the License, or
+*  (at your option) any later version.
+*
+*  JOpac2 is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with JOpac2; if not, write to the Free Software
+*  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*
+*  Please, see NOTICE.txt AND LEGAL directory for more info. Different licences
+*  may apply for components included in JOpac2.
+*
+*******************************************************************************/
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -17,8 +40,8 @@ public class Orario extends Table {
 		       "<hfield type=\"tabella_area\">Apertura Mattino</hfield>" + "<hfield type=\"tabella_area\">Chiusura Mattino</hfield>"+
 		       "<hfield type=\"tabella_area\">Apertura Pomeriggio</hfield><hfield type=\"tabella_area\">Chiusura Pomeriggio</hfield>"+
                "</upper><left>"+
-               "<hfield type=\"\">" + HtmlCodec.encode("Lunedì") + "</hfield><hfield type=\"\">" + HtmlCodec.encode("Martedì") + "</hfield><hfield type=\"\">" + HtmlCodec.encode("Mercoledì") + "</hfield>"+
-               "<hfield type=\"\">" + HtmlCodec.encode("Giovedì") + "</hfield><hfield type=\"\">" + HtmlCodec.encode("Venerdì") + "</hfield><hfield type=\"\">" + HtmlCodec.encode("Sabato") + "</hfield>"+
+               "<hfield type=\"\">" + HtmlCodec.encode("Lunedï¿½") + "</hfield><hfield type=\"\">" + HtmlCodec.encode("Martedï¿½") + "</hfield><hfield type=\"\">" + HtmlCodec.encode("Mercoledï¿½") + "</hfield>"+
+               "<hfield type=\"\">" + HtmlCodec.encode("Giovedï¿½") + "</hfield><hfield type=\"\">" + HtmlCodec.encode("Venerdï¿½") + "</hfield><hfield type=\"\">" + HtmlCodec.encode("Sabato") + "</hfield>"+
                "</left></header><body>"+
                "<record><field>" + rs.getString("LUmaI") + "</field><field>" + rs.getString("LUmaF") + "</field>" +
                "<field>" + rs.getString("LUpoI") + "</field><field>" + rs.getString("LUpoF") + "</field></record>" + 

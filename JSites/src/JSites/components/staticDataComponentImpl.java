@@ -1,9 +1,9 @@
 package JSites.components;
 /*******************************************************************************
 *
-*  JOpac2 (C) 2002-2005 JOpac2 project
+*  JOpac2 (C) 2002-2009 JOpac2 project
 *
-*     This file is part of JOpac2. http://jopac2.sourceforge.net
+*     This file is part of JOpac2. http://www.jopac2.org
 *
 *  JOpac2 is free software; you can redistribute it and/or modify
 *  it under the terms of the GNU General Public License as published by
@@ -18,6 +18,9 @@ package JSites.components;
 *  You should have received a copy of the GNU General Public License
 *  along with JOpac2; if not, write to the Free Software
 *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*
+*  Please, see NOTICE.txt AND LEGAL directory for more info. Different licences
+*  may apply for components included in JOpac2.
 *
 *******************************************************************************/
 
