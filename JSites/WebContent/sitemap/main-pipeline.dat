@@ -97,6 +97,8 @@
 	   	
 	    <map:match pattern="components/**/images/*">
 	       	<map:read src="../components/{1}/images/{2}" />
+	       	<map:parameter name="byte-ranges" value="false" />
+   			<map:parameter name="buffer-size" value="163840" />
 	   	</map:match>
 	   	
 	   	<map:match pattern="components/**/js/*">

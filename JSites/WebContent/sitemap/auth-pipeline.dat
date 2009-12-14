@@ -7,7 +7,7 @@
         <map:act type="auth-loggedIn">
           <map:parameter name="handler" value="JSitesHandler"/>
         </map:act> 
-        <map:generate src="../docs/login.xml"/>
+        <map:generate src="../login.xml"/>
         <map:transform src="../stylesheets/auth/simple-page2html.xsl">
         	<map:parameter name="resource" value="{request-param:resource}"/>
         </map:transform> 
