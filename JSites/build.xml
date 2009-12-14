@@ -145,18 +145,25 @@
             <fileset dir="WebContent/WEB-INF" />
         </copy>
 		
+		<copy includeemptydirs="false" todir="dist/JSites/LEGAL">
+			<fileset dir="LEGAL" />
+		</copy>
+		
 		<copy file="WebContent/sitemap.xmap" todir="dist/JSites"/>
 		<copy file="WebContent/flow.xmap" todir="dist/JSites"/>
 		<copy file="WebContent/ListPagesQuery.xml" todir="dist/JSites"/>
 		<copy file="WebContent/not-found.xml" todir="dist/JSites"/>
 		<copy file="WebContent/ok.xml" todir="dist/JSites"/>
 		<copy file="WebContent/uploadfile.xml" todir="dist/JSites"/>
+		<copy file="GPL.txt" todir="dist/JSites"/>
+		<copy file="LICENCE.txt" todir="dist/JSites"/>
+		<copy file="NOTICE.TXT" todir="dist/JSites"/>
+		<copy file="Readme.txt" todir="dist/JSites"/>
+		<copy file="WebContent/login.xml" todir="dist/JSites"/>
 		
 		<delete file="dist/JSites/WEB-INF/dbConnections.xml" />
 		<echo file="dist/JSites/WEB-INF/dbConnections.xml">
-<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-
-<datasources>
+<![CDATA[<datasources>
 	<jdbc name="dbjopac2">
 		<pool-controller max="500" min="50" />
 		<auto-commit>true</auto-commit>
@@ -170,8 +177,7 @@
 		
 		<delete file="dist/JSites/sitemap/virtualhosts.xml" />
 		<echo file="dist/JSites/sitemap/virtualhosts.xml">
-<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<map:selector name="host" logger="sitemap.selector.host" src="org.apache.cocoon.selection.HostSelector">
+<![CDATA[<map:selector name="host" logger="sitemap.selector.host" src="org.apache.cocoon.selection.HostSelector">
 	<host name="jopac2" value="www.jopac2" />
 </map:selector>]]>
 		</echo>
@@ -210,6 +216,13 @@ java -cp ../../../jettylib/jetty-6.1.20.jar:../../../jettylib/jetty-util-6.1.20.
 java -cp ..\..\..\jettylib\jetty-6.1.20.jar;..\..\..\jettylib\jetty-util-6.1.20.jar;..\..\..\jettylib\servlet-api-2.5-20081211.jar;.  JSites.main.Start
 ]]>
 		</echo>
+	</target>
+	
+	<target depends="prepare-standalone" name="distribution">
+		<zip destfile="dist/JOpac2.zip" 
+			basedir="dist"
+			includes="jettylib/**,JSites/**,jopac2.bat,jopac2.sh" />
+			
 	</target>
 	
     <target name="clean">
