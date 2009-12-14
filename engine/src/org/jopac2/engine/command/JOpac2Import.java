@@ -26,6 +26,8 @@ public class JOpac2Import {
 	
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
     private static String _classDerbyDriver = "org.apache.derby.jdbc.EmbeddedDriver";
+//    private static String _classDerbyDriver = "org.apache.derby.jdbc.ClientDriver";
+
     
 	
 	public JOpac2Import(String inputFile, String catalog, String filetype, String JOpac2confdir, String dbUrl, String dbUser, 

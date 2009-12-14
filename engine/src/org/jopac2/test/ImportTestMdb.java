@@ -23,19 +23,22 @@ import org.junit.Before;
 import junit.framework.TestCase;
 
 public class ImportTestMdb extends TestCase {
+	private static String filename="/Users/romano/Desktop/biblio.mdb";
 	private static String sitename = "sebina";
 	private InputStream in = null;
 	private static String filetype = "mdb";
 	private static String JOpac2confdir = "src/org/jopac2/conf";
-	//private static String dbUrl = "jdbc:derby:db" + sitename + ";create=true";
-	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
+//	private static String dbUrl = "jdbc:derby://localhost:1527/db"+sitename+";create=true";
+	private static String dbUrl = "jdbc:derby:/tmp/db" + sitename + ";create=true";
+//	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
 	private static String dbUser = "root";
-	private static String dbPassword = "";
+	private static String dbPassword = "root";
 	private static String catalog=sitename;
-
+	
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
-	private static String _classHSQLDBDriver = "org.hsqldb.jdbcDriver";
 	private static String _classDerbyDriver = "org.apache.derby.jdbc.EmbeddedDriver";
+//	private static String _classDerbyDriver = "org.apache.derby.jdbc.ClientDriver";
+
 	private DoSearchNew doSearchNew;
 	private static boolean ru = false;
 	private Connection conn;
@@ -43,8 +46,6 @@ public class ImportTestMdb extends TestCase {
 	public Connection CreaConnessione() throws SQLException {
 		Connection conn = null;
 		String driver = _classMySQLDriver;
-		if (dbUrl.contains(":hsqldb:"))
-			driver = _classHSQLDBDriver;
 		if (dbUrl.contains(":derby:"))
 			driver = _classDerbyDriver;
 
@@ -68,7 +69,7 @@ public class ImportTestMdb extends TestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		if (!ru) {
-			File f=new File("/Users/romano/Desktop/banche_dati.mdb");
+			File f=new File(filename);
 
 			in = new FileInputStream(f);
 
@@ -153,7 +154,7 @@ public class ImportTestMdb extends TestCase {
 				"4,eutmarc", "5,isisbiblo", "6,pregresso", "7,sbnunix",
 				"8,sebina", "9,sosebi", "10,mdb" };
 
-		Vector<String> v1 = DbGateway.dumpTable(conn, "tipi_notizie");
+		Vector<String> v1 = DbGateway.dumpTable(conn, "je_"+catalog+"_tipi_notizie");
 		
 		
 		boolean r1 = checkStringSequence(v1, tipi_notizie);
@@ -186,30 +187,40 @@ public class ImportTestMdb extends TestCase {
 //		assertTrue("Done ", r1);
 //	}
 	
-	public void testAida() throws Exception {
-		SearchResultSet rs = doSearch("(NomeRisorsa=aida)");
-
-		long[] unordered = { 1 };
-		long[] ordered = { 1 };
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
-		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
-		DbGateway.orderBy(conn, catalog,"NomeRisorsa", rs);
-		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
-		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
-		assertTrue("Done ", r1 && r2);
-	}
 	
-	public void testScienzeFisiche() throws Exception {
-		SearchResultSet rs = doSearch("(AreaDisciplinare=scienze fisiche)");
-
-		long[] unordered = { 71 };
-		long[] ordered = { 71 };
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
-		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
-		DbGateway.orderBy(conn, catalog,"NomeRisorsa", rs);
-		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
-		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
-		assertTrue("Done ", r1 && r2);
-	}
+	public void testList() throws Exception {
+	SearchResultSet rs = ListSearch.listSearch(conn, catalog, "Titolo",
+			"a", 10);
+	long[] listres = { 1,2 };
+	SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "Titolo");
+	boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
+	assertTrue("Done ", r1);
+}
+	
+//	public void testAida() throws Exception {
+//		SearchResultSet rs = doSearch("(NomeRisorsa=aida)");
+//
+//		long[] unordered = { 1 };
+//		long[] ordered = { 1 };
+//		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
+//		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
+//		DbGateway.orderBy(conn, catalog,"NomeRisorsa", rs);
+//		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
+//		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
+//		assertTrue("Done ", r1 && r2);
+//	}
+//	
+//	public void testScienzeFisiche() throws Exception {
+//		SearchResultSet rs = doSearch("(AreaDisciplinare=scienze fisiche)");
+//
+//		long[] unordered = { 71 };
+//		long[] ordered = { 71 };
+//		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
+//		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
+//		DbGateway.orderBy(conn, catalog,"NomeRisorsa", rs);
+//		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
+//		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
+//		assertTrue("Done ", r1 && r2);
+//	}
 
 }

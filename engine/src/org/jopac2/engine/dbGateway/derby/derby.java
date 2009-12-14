@@ -101,7 +101,7 @@ public class derby extends DbGateway {
     public long getIDwhere(Connection conn, String tableName, String fieldName, String fieldValue) {
         long currentID=-1;
         
-        fieldValue=fieldValue.toLowerCase();
+        if(!tableName.endsWith("_classi")) fieldValue=fieldValue.toLowerCase();
         
         Statement stmt=null;
         ResultSet r=null;
@@ -238,6 +238,7 @@ public class derby extends DbGateway {
     }
     
 	public void createTableListe(Connection conn, String catalog, String classe) throws SQLException {//CR_LISTE
+		catalog=catalog.trim();
 		dropTable(conn, "je_"+catalog+"_"+nomeTableListe(classe));
 		String sql1="CREATE TABLE je_"+catalog+"_"+nomeTableListe(classe)+" (id INT NOT NULL "+autoincrement1+", id_notizia INT NOT NULL,testo varchar(50)," +
 				    "PRIMARY KEY(id))";		
@@ -247,6 +248,7 @@ public class derby extends DbGateway {
 	
 	public SearchResultSet listSearchFB(Connection conn, String catalog, String classe,String parole,int limit,boolean forward) throws SQLException {
 		Vector<Long> listResult=new Vector<Long>();
+		catalog=catalog.trim();
 		
 		/**
 		 * SELECT * FROM (
@@ -275,7 +277,7 @@ public class derby extends DbGateway {
 		ResultSet rs=null;
 		try {
 			stmt=conn.prepareStatement(sql);
-			stmt.setString(1, parole);
+			stmt.setString(1, parole.toLowerCase());
 			stmt.setLong(2, limit);
 			rs = stmt.executeQuery();
 			int id_notizia;

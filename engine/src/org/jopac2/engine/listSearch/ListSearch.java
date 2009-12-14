@@ -9,21 +9,21 @@ public class ListSearch {
 
 	public static SearchResultSet listSearch(Connection conn, String catalog, String classe,String parole,int limit) throws SQLException {
 		DbGateway db=DbGateway.getInstance(conn.toString(),null);
-		return db.listSearch(conn,catalog,classe,parole,limit);
+		return db.listSearch(conn,catalog.trim(),classe,parole,limit);
 	}
 	
 	public static SearchResultSet listSearchBackward(Connection conn, String catalog, String classe,String parole,int limit) throws SQLException {
 		DbGateway db=DbGateway.getInstance(conn.toString(),null);
-		return db.listSearchBackward(conn,catalog,classe,parole,limit);
+		return db.listSearchBackward(conn,catalog.trim(),classe,parole,limit);
 	}
 	
 	public static SearchResultSet listSearch(Connection conn, String catalog, String classe,long jid,int limit) throws SQLException {
-		String testo=DbGateway.getClassContentFromJID(conn, catalog, classe, jid);
-		return listSearch(conn, catalog, classe, testo, limit);
+		String testo=DbGateway.getClassContentFromJID(conn, catalog.trim(), classe, jid);
+		return listSearch(conn, catalog.trim(), classe, testo, limit);
 	}
 	
 	public static SearchResultSet listSearchBackward(Connection conn, String catalog, String classe,long jid,int limit) throws SQLException {
-		String testo=DbGateway.getClassContentFromJID(conn, catalog, classe, jid);
-		return listSearchBackward(conn, catalog, classe, testo,limit);
+		String testo=DbGateway.getClassContentFromJID(conn, catalog.trim(), classe, jid);
+		return listSearchBackward(conn, catalog.trim(), classe, testo,limit);
 	}
 }

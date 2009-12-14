@@ -1186,7 +1186,7 @@ public abstract class DbGateway {
 	
 	public static String nomeTableListe(String classe){//CR_LISTE
 		if(classe.contains("/")) classe=classe.substring(classe.lastIndexOf("/")+1); // per Mdb
-		return classe+"_NDX";
+		return classe.trim().toLowerCase()+"_ndx";
 	}
 	
 	public abstract void createTableListe(Connection conn,String catalog, String classe) throws SQLException;
@@ -1205,7 +1205,7 @@ public abstract class DbGateway {
 				testo=testo.replaceAll(dl+"I", ""); // rimuove delimitatori asterisco
 				testo=testo.replaceAll(dl+"H", "");
 				if(testo.length()>50) testo=testo.substring(0,49);
-				pst.setString(2, testo);
+				pst.setString(2, testo.toLowerCase());
 				pst.execute();
 			}
 			catch(SQLException e) {
@@ -1341,6 +1341,8 @@ public abstract class DbGateway {
 		Statement st = null;
 		ResultSet rs = null;
 		int newId=-1;
+		
+		catalog=catalog.trim();
 
 		try {
 			stmt=myConnection.prepareStatement("insert into je_"+catalog+"_ricerche (jsession_id,testo_ricerca) values(?,?)");

@@ -77,7 +77,9 @@ public class mysql extends DbGateway {
 	 */
     public long getIDwhere(Connection conn, String tableName, String fieldName, String fieldValue) {
         long currentID=-1;
-        fieldValue=fieldValue.toLowerCase();
+        
+        if(!tableName.endsWith("_classi")) fieldValue=fieldValue.toLowerCase();
+        
         Statement stmt=null;
         ResultSet r=null;
         try {

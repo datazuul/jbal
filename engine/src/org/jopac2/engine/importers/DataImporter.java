@@ -74,7 +74,7 @@ public class DataImporter extends Thread {
 		this.cache=cache;
 		this.out=console;
 		this.outputErrorRecords=outputErrorRecords;
-		this.catalog=catalog;
+		this.catalog=catalog.trim();
 	}
 	
 
