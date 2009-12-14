@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <catalogSearch>
-	<catalogName>DB Sebina</catalogName>
-	<catalogConnection>dbsebina</catalogConnection>
-	<catalogFormat>sebina</catalogFormat>
+	<catalogName>DB Name</catalogName>
+	<catalogConnection>dbconn</catalogConnection>
+	<catalogFormat>Mdb</catalogFormat>
 	<catalogFile></catalogFile>
 	<dbType></dbType >
+	<!-- 
 	<search name="AUT" desc="Autore" checked="true" />
 	<search name="TIT" desc="Titolo" />
 	<search name="SBJ" desc="Soggetto" />
@@ -15,5 +16,6 @@
 	<list name="TIT" desc="Titolo" />
 	<list name="SBJ" desc="Soggetto" />
 	<list name="DTE" desc="Data" checked="true" />
+	 -->
 	<template></template>
 </catalogSearch>
