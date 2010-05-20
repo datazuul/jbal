@@ -23,7 +23,7 @@
 				record trovati in
 				<xsl:value-of select="queryTime" />
 				<xsl:text> </xsl:text>
-				secondi.
+				secondi. (<xsl:value-of select="query"/>)
 			</DIV>
 		</xsl:if>
 	</xsl:template>

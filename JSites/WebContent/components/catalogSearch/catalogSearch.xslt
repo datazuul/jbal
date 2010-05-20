@@ -66,6 +66,7 @@
 								<!-- <input name="pid" id="pid" type="hidden" value="{$pid}"/>  -->
 							    <input name="query" id="query" type="hidden" value=""/>
 							    <input id="page" name="page" type="hidden" value="0"/>
+							    <input name="orderby" id="orderby" type="hidden" value="{//catalogOrder}" />
 							    
 							    <fieldset>
 							    <legend>Search</legend>
@@ -129,6 +130,7 @@
 	</xsl:template>
 	
 	<xsl:template match="catalogFormat"></xsl:template>
+	<xsl:template match="catalogOrder"></xsl:template>
 	
 	<xsl:template match="search">
 	    
@@ -170,7 +172,7 @@
 	</xsl:template>
 	
 	<xsl:template name="listnav">
-		<xsl:if test="root/sjid > 1">
+		<xsl:if test="root/sjid > 0">
 			<div class="ricerca_nav" style="text-align: center;">
 				<xsl:variable name="ejid"><xsl:value-of select="root/ejid"/></xsl:variable>
 				<xsl:variable name="list"><xsl:value-of select="root/listRecord"/></xsl:variable>

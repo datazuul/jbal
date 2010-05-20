@@ -4,18 +4,8 @@
 	<catalogConnection>dbconn</catalogConnection>
 	<catalogFormat>Mdb</catalogFormat>
 	<catalogFile></catalogFile>
-	<dbType></dbType >
-	<!-- 
-	<search name="AUT" desc="Autore" checked="true" />
-	<search name="TIT" desc="Titolo" />
-	<search name="SBJ" desc="Soggetto" />
-	<search name="DTE" desc="Data" checked="true" />
+	<catalogOrder></catalogOrder>
 	<search name="ANY" desc="Parole chiave" checked="true" />
-
-	<list name="AUT" desc="Autore" checked="true" />
-	<list name="TIT" desc="Titolo" />
-	<list name="SBJ" desc="Soggetto" />
-	<list name="DTE" desc="Data" checked="true" />
-	 -->
+	<dbType></dbType >
 	<template></template>
 </catalogSearch>

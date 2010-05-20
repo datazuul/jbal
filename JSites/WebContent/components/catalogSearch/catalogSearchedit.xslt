@@ -69,19 +69,50 @@
 				</fieldset>
 				
 				<fieldset>
-				 <legend>Canali ricerca attivati</legend>
-				 	<xsl:for-each select="search">
-				 		<input type="checkbox" name="search-{@name}" value="true">
-				 			<xsl:if test="string-length(@checked) != 0">
-				 				<xsl:attribute name="checked">checked</xsl:attribute>
-				 			</xsl:if>
-				 		</input>
-				 		<xsl:value-of select="@desc" />
-				 		<br/>
-				 	</xsl:for-each>
+				 <legend>Canali attivati</legend>
+				 <style>
+					table.catedit { font-size: 12px; padding: 0px; border: none; border: 1px solid #789DB3;}
+					table.catedit td { border: none; border: 1px solid #789DB3; 
+					vertical-align: middle; padding: 2px; font-weight: bold; }
+				</style>
+				 	<table class="catedit">
+				 		<thead>
+				 			<th>Order by</th><th>Search</th><th>List</th><th>Name</th><th>Label</th>
+				 		</thead>
+				 		
+					 	<xsl:for-each select="search">
+					 		<tr>
+						 		<td>
+						 			<xsl:if test="@name != 'ANY' ">
+							 			<input type="radio" name="catalogOrder" value="{@name}">
+								 			<xsl:if test="@name=//catalogOrder">
+								 				<xsl:attribute name="checked">checked</xsl:attribute>
+								 			</xsl:if>
+							 			</input>
+						 			</xsl:if>
+						 		</td>
+						 		<td><input type="checkbox" name="search-{@name}" value="true">
+						 			<xsl:if test="string-length(@checked) != 0">
+						 				<xsl:attribute name="checked">checked</xsl:attribute>
+						 			</xsl:if>
+						 		</input></td>
+						 		<td>
+						 		<xsl:if test="@name != 'ANY' ">
+							 		<input type="checkbox" name="list-{@name}" value="true">
+							 			<xsl:if test="string-length(@checked) != 0">
+							 				<xsl:attribute name="checked">checked</xsl:attribute>
+							 			</xsl:if>
+							 		</input>
+						 		</xsl:if>
+						 		</td>
+						 		<td><xsl:value-of select="@name" /></td>
+						 		<td><input type="text" name="name-{@name}" value="{@desc}"/></td>
+					 		</tr>
+					 	</xsl:for-each>
+				 	</table>
 				</fieldset>
 				
-				<fieldset>
+<!-- 				<fieldset>
 				 <legend>Canali liste attivati</legend>
 					 <xsl:for-each select="list">
 				 		<input type="checkbox" name="list-{@name}" value="true">
@@ -93,6 +124,7 @@
 				 		<br/>
 				 	</xsl:for-each>
 				</fieldset>
+				-->
 				
 				<xsl:apply-templates select="template" />
 			</div>		
