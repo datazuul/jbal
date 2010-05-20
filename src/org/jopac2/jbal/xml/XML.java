@@ -263,6 +263,10 @@ public abstract class XML implements RecordInterface {
   public String toReadableString() {
 	  return toString();
   }
+  
+  public String toXML() {
+	  return toString();
+  }
 
   public abstract Vector<String> getAuthors(); // Autori
   public abstract Vector<SubjectInterface> getSubjects(); // Soggetti

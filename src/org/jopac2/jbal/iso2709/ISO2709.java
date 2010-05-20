@@ -688,11 +688,93 @@ public Vector<Tag> getTags(String tag) {
 	  return r.toString();
   }
   
+  
+  /**
+   * 28/12/2009 - RT 
+   *            Prende una istanza ISO2709 e la salva in formato XML MARC restituendo una stringa
+   *            
+   * http://www.bncf.firenze.sbn.it/progetti/unimarc/slim/documentation/unimarcslim.html
+   *        SECONDO ME LO SCHEMA BNCF E' MORTO, ho mandato una mail il 28/12/2009
+   * http://www.loc.gov/standards/marcxml/
+   * http://didattica.spbo.unibo.it/bibliotime/num-viii-3/bassi.htm
+   * http://www.rba.ru/rusmarc/
+   * http://www.loc.gov/standards/
+   *            
+   * @throws Exception 
+   */
+  public String toXML() throws Exception {
+	  /**
+  	 * http://www.ifla.org/VI/3/p1996-1/uni.htm
+  	 * 
+  	 
+			Record length						5			0-4
+			Record status						1			5
+			Implementation codes				4			6-9
+			Indicator length					1			10
+			Subfield identifier length			1			11
+			Base address of data				5			12-16
+			Additional record definition		3			17-19
+			Directory map						4			20-23
+
+  	 */
+    String r=null;
+	try {
+	  	String leader = recordStatus + 
+	  					recordType + 
+	                    recordBiblioLevel + 
+	                    implementationCodes.substring(2) +
+	                    indicatorLength +
+	                    subfieldIdentifierLength ;
+	
+	    int ba=27;
+	    String directory="";
+	    String data="";
+	
+	    long temp = 24 + 12 * getRows() + 1;             // base address of data
+	    leader = leader.concat(Utils.pad("00000",temp));
+	    
+	    leader=leader.concat(additionalRecordDefinition);                  // implementation defined
+	    leader=leader.concat(directoryMap);                 // entry map
+	    
+	    Vector<Tag> t=this.getTags();
+	    Collections.sort(t);
+	
+	    
+	    
+	    ba+=this.getRows()*12;
+	    long c=0;
+	    for(int z=0;z<t.size();z++) {
+	    	String k=t.elementAt(z).toString();
+	        directory=directory.concat(k.substring(0,3));
+	        directory=directory.concat(Utils.pad("0000",k.length()-2));
+	        directory=directory.concat(Utils.pad("00000",c));
+	        c+=k.length()-2;
+	        ba+=k.length()-2;	
+	        data=data+t.elementAt(z).toXML();
+	    }
+	    
+	        
+	    leader=Utils.pad("00000", ba-1).concat(leader);
+	    r="<record>\n" + 
+	    	"\t<leader>"+leader+"</leader>\n" + 
+//	    	directory + 
+	    	data + 
+	    	"\n</record>";
+	}
+	catch(java.lang.StringIndexOutOfBoundsException e) {
+		r=null;
+	}
+	catch(Exception e) {
+		throw new Exception("ISO2709.toXML Exception: JID="+JOpacID+" Type="+this.getTipo());
+	}
+    return r;
+}
+  
+  
   /**
    * 01/10/2003 - RT 
    *            Prende una istanza ISO2709 e la salva in formato ISO2709 restituendo una stringa
-   *            DA FARE: che venga ritornato opzionalmente in formato XML
- * @throws Exception 
+   * @throws Exception 
    */
   protected String toISO2709() throws Exception {
 	  /**

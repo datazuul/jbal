@@ -230,6 +230,8 @@ public interface RecordInterface {
 	public String toReadableString();
 	
 	public String toEncapsulatedRecordFormat();
+	
+	public String toXML() throws Exception;
 
 	/**
 	 * Restituisce un vettore di autori
