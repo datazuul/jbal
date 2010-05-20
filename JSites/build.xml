@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project basedir="." default="build" name="JSites">
+	<tstamp>
+      <format property="TODAY" pattern="yyyyMMdd-HHmm" />
+    </tstamp>
     <property environment="env"/>
     
     <property name="debuglevel" value="source,lines,vars"/>
@@ -157,7 +160,7 @@
 		<copy file="WebContent/uploadfile.xml" todir="dist/JSites"/>
 		<copy file="GPL.txt" todir="dist/JSites"/>
 		<copy file="LICENCE.txt" todir="dist/JSites"/>
-		<copy file="NOTICE.TXT" todir="dist/JSites"/>
+		<copy file="NOTICE.txt" todir="dist/JSites"/>
 		<copy file="Readme.txt" todir="dist/JSites"/>
 		<copy file="WebContent/login.xml" todir="dist/JSites"/>
 		
@@ -194,10 +197,68 @@
 </map:select>]]>
 		</echo>
 		
+		
+		<delete file="dist/JSites/jopac2/sitemap.xmap" />
+		<echo file="dist/JSites/jopac2/sitemap.xmap">
+<![CDATA[
+			<!DOCTYPE map:sitemap [
+			<!ENTITY generalpipeline SYSTEM "../sitemap/generalpipeline.dat">
+			<!ENTITY auth-manager SYSTEM "../sitemap/auth-manager.dat">
+			<!ENTITY auth-pipeline SYSTEM "../sitemap/auth-pipeline.dat">
+			<!ENTITY main-pipeline SYSTEM "../sitemap/main-pipeline.dat">
+			<!ENTITY auth-method SYSTEM "../sitemap/auth-method.dat">
+			]>
+			<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+				<!-- PLEASE MODIFY ONLY THE PART BELOW -->
+				
+				<map:pipelines>
+
+					<map:component-configurations>
+
+						&auth-manager;
+
+						<global-variables>
+							<db>dbjopac2</db>
+							<sitename>jopac2</sitename>
+							<data-directory>/siti/jopac2</data-directory>
+							<showAreasInFirstLevelPages>true</showAreasInFirstLevelPages>
+							<template>jopac2</template>
+						</global-variables>
+						
+					</map:component-configurations>
+					
+					<map:pipeline internal-only="true">
+						<!-- This is the authentication resource -->
+						<map:match pattern="authenticate">
+							<map:generate src="auth/userlist.xml"/>
+							<map:transform src="../stylesheets/auth/authenticate.xsl">
+								<map:parameter name="use-request-parameters" value="true"/>
+							</map:transform>
+							<map:serialize type="xml"/>
+						</map:match>
+					</map:pipeline>
+					
+					<!-- PLEASE MODIFY ONLY THE PART ABOVE -->
+					
+					&auth-pipeline;
+					&auth-method;
+					&main-pipeline;
+					&generalpipeline;
+					
+				</map:pipelines>					
+			</map:sitemap>
+]]>
+		</echo>
+		
+		
+		
 	</target>
 	
 	<target depends="build-project,prepare-dist" name="war">
-		<war destfile="dist/JSites.war" >
+		
+
+		<war destfile="dist/JSites-${TODAY}.war" >
 		  <fileset dir="dist/JSites"/>
 		</war>
 	</target>
@@ -219,10 +280,9 @@ java -cp ..\..\..\jettylib\jetty-6.1.20.jar;..\..\..\jettylib\jetty-util-6.1.20.
 	</target>
 	
 	<target depends="prepare-standalone" name="distribution">
-		<zip destfile="dist/JOpac2.zip" 
+		<zip destfile="dist/JOpac2-${TODAY}.zip" 
 			basedir="dist"
 			includes="jettylib/**,JSites/**,jopac2.bat,jopac2.sh" />
-			
 	</target>
 	
     <target name="clean">
@@ -260,7 +320,7 @@ java -cp ..\..\..\jettylib\jetty-6.1.20.jar;..\..\..\jettylib\jetty-util-6.1.20.
     <target name="Start">
         <java classname="JSites.main.Start" failonerror="true" fork="yes">
             <classpath refid="JSites.classpath"/>
-        	<classpath refid="Jetty.classpath"/>
+        	<classpath refid="Jetty.libraryclasspath"/>
         </java>
     </target>
 
