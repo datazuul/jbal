@@ -54,9 +54,6 @@ public class Start {
 		
 		server.start();
 		server.join();
-
-		
-
 	}
 	
 

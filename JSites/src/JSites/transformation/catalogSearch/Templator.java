@@ -57,6 +57,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
 import org.apache.cocoon.xml.AttributesImpl;
+import org.apache.commons.lang.ArrayUtils;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -290,36 +291,36 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 
 	
 	
-	/**
-	 * @deprecated
-	 * 
-	 * NON CANCELLARE
-	 * 
-	 * TODO controllare sequenza output
-	 * 
-	 * @param template2
-	 * @param document2
-	 * @return
-	 */
-	private String parseTemplate(String template2, Document document2) {
-		Document templateDocument = null;
-		try {
-			templateDocument = String2XML("<div class=\"resultSet\">"+template+"</div>");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		parseTemplate(templateDocument, document2);
-
-		purgeEmptyElements(templateDocument, "a");
-		purgeEmptyAttribute(templateDocument, "a","href");
-		swapTagOrder(templateDocument,"a","string");
-		swapTagOrder(templateDocument,"a","span");
-
-		String output = XML2String(templateDocument);
-
-		return output;
-	}
+//	/**
+//	 * @deprecated
+//	 * 
+//	 * NON CANCELLARE
+//	 * 
+//	 * TODO controllare sequenza output
+//	 * 
+//	 * @param template2
+//	 * @param document2
+//	 * @return
+//	 */
+//	private String parseTemplate(String template2, Document document2) {
+//		Document templateDocument = null;
+//		try {
+//			templateDocument = String2XML("<div class=\"resultSet\">"+template+"</div>");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//		parseTemplate(templateDocument, document2);
+//
+//		purgeEmptyElements(templateDocument, "a");
+//		purgeEmptyAttribute(templateDocument, "a","href");
+//		swapTagOrder(templateDocument,"a","string");
+//		swapTagOrder(templateDocument,"a","span");
+//
+//		String output = XML2String(templateDocument);
+//
+//		return output;
+//	}
 
 	
 	/**
@@ -468,196 +469,196 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 	}
 
 	
-	/**
-	 * @deprecated
-	 * @param node
-	 * @param document2
-	 */
-	private void parseTemplate(Node node, Document document2) {
-		parseTemplate(node, document2, -1);
-	}
+//	/**
+//	 * @deprecated
+//	 * @param node
+//	 * @param document2
+//	 */
+//	private void parseTemplate(Node node, Document document2) {
+//		parseTemplate(node, document2, -1);
+//	}
 
-	/**
-	 * @deprecated
-	 * @param node
-	 * @param document2
-	 * @param k
-	 */
-	private void parseTemplate(Node node, Document document2, int k) {
-		if(node==null) return;
-		int splittableNode = isSplittableNode(node, document2, k);
-		if (splittableNode > 1) {
-			// deve duplicare il nodo tante volte quante sono le entry
-			Node[] nc = new Node[splittableNode - 1];
-			Node parent = node.getParentNode();
-			for (int i = 1; i < splittableNode; i++) {
-				nc[i - 1] = node.cloneNode(true);
-				parent.appendChild(nc[i - 1]);
-				Node space = node.getOwnerDocument().createTextNode(" ");
-				parent.appendChild(space);
-				// ownerDocument.insertBefore(nc[i-1],node);
-				parseTemplate(nc[i - 1], document2, i);
-			}
-			parseTemplate(node, document2, 0);
-		} else {
-			NodeList nl = node.getChildNodes();
-			for (int i = 0; nl != null && i < nl.getLength(); i++) {
-				if (nl.item(i).getNodeType() == Node.ELEMENT_NODE)
-					parseTemplate(nl.item(i), document2);
-			}
-		}
+//	/**
+//	 * @deprecated
+//	 * @param node
+//	 * @param document2
+//	 * @param k
+//	 */
+//	private void parseTemplate(Node node, Document document2, int k) {
+//		if(node==null) return;
+//		int splittableNode = isSplittableNode(node, document2, k);
+//		if (splittableNode > 1) {
+//			// deve duplicare il nodo tante volte quante sono le entry
+//			Node[] nc = new Node[splittableNode - 1];
+//			Node parent = node.getParentNode();
+//			for (int i = 1; i < splittableNode; i++) {
+//				nc[i - 1] = node.cloneNode(true);
+//				parent.appendChild(nc[i - 1]);
+//				Node space = node.getOwnerDocument().createTextNode(" ");
+//				parent.appendChild(space);
+//				// ownerDocument.insertBefore(nc[i-1],node);
+//				parseTemplate(nc[i - 1], document2, i);
+//			}
+//			parseTemplate(node, document2, 0);
+//		} else {
+//			NodeList nl = node.getChildNodes();
+//			for (int i = 0; nl != null && i < nl.getLength(); i++) {
+//				if (nl.item(i).getNodeType() == Node.ELEMENT_NODE)
+//					parseTemplate(nl.item(i), document2);
+//			}
+//		}
+//
+//	}
 
-	}
+//	/**
+//	 * @deprecated
+//	 * @param node
+//	 * @param document2
+//	 * @param nn
+//	 * @return
+//	 */
+//	private int isSplittableNode(Node node, Document document2, int nn) {
+//		int r = 1;
+//		NamedNodeMap attributes = node.getAttributes();
+//
+//		for (int a = 0; attributes != null && a < attributes.getLength(); a++) {
+//			Node theAttribute = attributes.item(a);
+//			int k = isSplittableContent(theAttribute, document2, nn);
+//			r = k > r ? k : r;
+//		}
+//
+//		if (node.getNodeType() == Node.ELEMENT_NODE) {
+//			NodeList nl = node.getChildNodes();
+//			/**
+//			 * Loop al contrario perche' viene inserito un nodo
+//			 * processingInstruction per disabilitare l'escaping dell'output
+//			 */
+//			if (nl != null)
+//				for (int i = nl.getLength(); i >= 0; i--) {
+//					if (nl.item(i) != null
+//							&& nl.item(i).getNodeType() == Node.TEXT_NODE) {
+//						int k = isSplittableContent(nl.item(i), document2, nn);
+//						r = k > r ? k : r;
+//					}
+//				}
+//		}
+//		return r;
+//	}
 
-	/**
-	 * @deprecated
-	 * @param node
-	 * @param document2
-	 * @param nn
-	 * @return
-	 */
-	private int isSplittableNode(Node node, Document document2, int nn) {
-		int r = 1;
-		NamedNodeMap attributes = node.getAttributes();
+//	/**
+//	 * @deprecated
+//	 * @param node
+//	 * @param document2
+//	 * @param nn
+//	 * @return
+//	 */
+//	private int isSplittableContent(Node node, Document document2, int nn) {
+//		int r = 1;
+//		String c = "";
+//		if (node.getNodeType() == Node.TEXT_NODE) {
+//			c = node.getTextContent();
+//		} else {
+//			c = node.getNodeValue();
+//		}
+//		String[] blocks = c.split("\\[\\[");
+//		String output = blocks[0];
+//		for (int i = 1; i < blocks.length; i++) {
+//			if (blocks[i].contains("]]")) {
+//				String value = "";
+//				int p = blocks[i].indexOf("]]");
+//				String nodeName = blocks[i].substring(0, p);
+//				nodeName=nodeName.replaceAll("\\\\:", "&#58;");
+//				nodeName=nodeName.replaceAll("\\\\n", "<br/>");
+//				String pre="",post="";
+//				
+//				String[] toki=nodeName.split(":");
+//				if(toki.length==2) {pre=toki[0];nodeName=toki[1];}
+//				else if(toki.length==3) {pre=toki[0];nodeName=toki[1];post=toki[2];}
+//					
+//				
+//				blocks[i] = blocks[i].substring(p + 2);
+//				boolean m = nodeName.contains(",");
+//				String sep = " - ",rep = " - ";
+//				String origNodeName=nodeName;
+//				if (m) {
+//					String[] parts=nodeName.split(",");
+//					if(parts.length>1)
+//						sep = parts[1];
+//					if(parts.length>2)
+//						rep = parts[2];
+//					nodeName = parts[0];
+//				}
+//				
+//				Object result=null;
+//				XPath xpath = XPathFactory.newInstance().newXPath();
+//			    XPathExpression expr=null;
+//				try {
+//					expr = xpath.compile(nodeName);
+//					result = expr.evaluate(document2, XPathConstants.NODESET);
+//				} catch (XPathExpressionException e2) {
+//					e2.printStackTrace();
+//				}
+//				
+//
+//			    NodeList nodes = (NodeList) result;
+//			    if(nodes.getLength()>0) value=nodes.item(0).getTextContent();
+//			    for (int j = 1; j < nodes.getLength(); j++) {
+//			    	value=value+sep+nodes.item(j).getTextContent();;
+//			    }
+//				if(value==null || value.length()==0) {
+//					value = para.get(nodeName);
+//					if (value == null)
+//						value = "";
+//				}
+//				
+//				if (m) {
+//					String[] values = value.split(sep);
+//					if (nn == -1) {
+//						value=values[0];
+//						for(int z=1;z<values.length;z++) value=value+rep+values[z];
+//					}
+//					else if (nn >= 0 || values.length == 1) {
+//
+//						if (nn < values.length) {
+//							value = values[nn]+rep;
+//						}
+//					} else {
+//						value = "[[" + origNodeName + "]]";
+//						r = values.length;
+//					}
+//				}
+//				if(value.trim().length()>0) {
+//					value=parse(pre)+value+parse(post);
+//				}
+//				output += value;
+//			}
+//			output += blocks[i];
+//		}
+//
+//		if (node.getNodeType() == Node.TEXT_NODE) {
+//			output = output.replaceAll("&gt;", ">").replaceAll("&lt;", "<")
+//					.replaceAll("&amp;", "&");
+//			node.setTextContent(markWord(output));
+//			ProcessingInstruction pi = node.getOwnerDocument()
+//					.createProcessingInstruction(
+//							Result.PI_DISABLE_OUTPUT_ESCAPING, "");
+//			node.getParentNode().insertBefore(pi, node);
+//		} else {
+//			node.setNodeValue(output);
+//		}
+//
+//		return r;
+//	}
 
-		for (int a = 0; attributes != null && a < attributes.getLength(); a++) {
-			Node theAttribute = attributes.item(a);
-			int k = isSplittableContent(theAttribute, document2, nn);
-			r = k > r ? k : r;
-		}
-
-		if (node.getNodeType() == Node.ELEMENT_NODE) {
-			NodeList nl = node.getChildNodes();
-			/**
-			 * Loop al contrario perche' viene inserito un nodo
-			 * processingInstruction per disabilitare l'escaping dell'output
-			 */
-			if (nl != null)
-				for (int i = nl.getLength(); i >= 0; i--) {
-					if (nl.item(i) != null
-							&& nl.item(i).getNodeType() == Node.TEXT_NODE) {
-						int k = isSplittableContent(nl.item(i), document2, nn);
-						r = k > r ? k : r;
-					}
-				}
-		}
-		return r;
-	}
-
-	/**
-	 * @deprecated
-	 * @param node
-	 * @param document2
-	 * @param nn
-	 * @return
-	 */
-	private int isSplittableContent(Node node, Document document2, int nn) {
-		int r = 1;
-		String c = "";
-		if (node.getNodeType() == Node.TEXT_NODE) {
-			c = node.getTextContent();
-		} else {
-			c = node.getNodeValue();
-		}
-		String[] blocks = c.split("\\[\\[");
-		String output = blocks[0];
-		for (int i = 1; i < blocks.length; i++) {
-			if (blocks[i].contains("]]")) {
-				String value = "";
-				int p = blocks[i].indexOf("]]");
-				String nodeName = blocks[i].substring(0, p);
-				nodeName=nodeName.replaceAll("\\\\:", "&#58;");
-				nodeName=nodeName.replaceAll("\\\\n", "<br/>");
-				String pre="",post="";
-				
-				String[] toki=nodeName.split(":");
-				if(toki.length==2) {pre=toki[0];nodeName=toki[1];}
-				else if(toki.length==3) {pre=toki[0];nodeName=toki[1];post=toki[2];}
-					
-				
-				blocks[i] = blocks[i].substring(p + 2);
-				boolean m = nodeName.contains(",");
-				String sep = " - ",rep = " - ";
-				String origNodeName=nodeName;
-				if (m) {
-					String[] parts=nodeName.split(",");
-					if(parts.length>1)
-						sep = parts[1];
-					if(parts.length>2)
-						rep = parts[2];
-					nodeName = parts[0];
-				}
-				
-				Object result=null;
-				XPath xpath = XPathFactory.newInstance().newXPath();
-			    XPathExpression expr=null;
-				try {
-					expr = xpath.compile(nodeName);
-					result = expr.evaluate(document2, XPathConstants.NODESET);
-				} catch (XPathExpressionException e2) {
-					e2.printStackTrace();
-				}
-				
-
-			    NodeList nodes = (NodeList) result;
-			    if(nodes.getLength()>0) value=nodes.item(0).getTextContent();
-			    for (int j = 1; j < nodes.getLength(); j++) {
-			    	value=value+sep+nodes.item(j).getTextContent();;
-			    }
-				if(value==null || value.length()==0) {
-					value = para.get(nodeName);
-					if (value == null)
-						value = "";
-				}
-				
-				if (m) {
-					String[] values = value.split(sep);
-					if (nn == -1) {
-						value=values[0];
-						for(int z=1;z<values.length;z++) value=value+rep+values[z];
-					}
-					else if (nn >= 0 || values.length == 1) {
-
-						if (nn < values.length) {
-							value = values[nn]+rep;
-						}
-					} else {
-						value = "[[" + origNodeName + "]]";
-						r = values.length;
-					}
-				}
-				if(value.trim().length()>0) {
-					value=parse(pre)+value+parse(post);
-				}
-				output += value;
-			}
-			output += blocks[i];
-		}
-
-		if (node.getNodeType() == Node.TEXT_NODE) {
-			output = output.replaceAll("&gt;", ">").replaceAll("&lt;", "<")
-					.replaceAll("&amp;", "&");
-			node.setTextContent(markWord(output));
-			ProcessingInstruction pi = node.getOwnerDocument()
-					.createProcessingInstruction(
-							Result.PI_DISABLE_OUTPUT_ESCAPING, "");
-			node.getParentNode().insertBefore(pi, node);
-		} else {
-			node.setNodeValue(output);
-		}
-
-		return r;
-	}
-
-	/**
-	 * @deprecated
-	 * @param string
-	 * @return
-	 */
-	private String parse(String string) {
-		string=string.replaceAll("\\|\\|", "<").replaceAll("!!",">");
-		return string;
-	}
+//	/**
+//	 * @deprecated
+//	 * @param string
+//	 * @return
+//	 */
+//	private String parse(String string) {
+//		string=string.replaceAll("\\|\\|", "<").replaceAll("!!",">");
+//		return string;
+//	}
 	
 	public static void groupPair(Document doc, String separator, String child, String... elements) {
 		Object result=null;
@@ -748,6 +749,10 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 		context=in.substring(2, u);
 		in=in.substring(u+1,in.length()-2);
 		
+		if(context.startsWith("^")) {
+			return parseFunction(doc,context,in);
+		}
+		
 		Object result=null;
 		XPath xpath = XPathFactory.newInstance().newXPath();
 	    XPathExpression expr=null;
@@ -798,6 +803,30 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 	}
 
 	/**
+	 * TODO: fare in modo che le funzioni siano pluggable
+	 * @param doc
+	 * @param context
+	 * @param in
+	 * @return
+	 * @throws Exception 
+	 */
+	private static String parseFunction(Document doc, String context, String in) throws Exception {
+		int i=context.indexOf("(");
+		int f=context.indexOf(")");
+		String fName=context.substring(1,i);
+		String fArguments=context.substring(i+1,f);
+		String[] args=fArguments.split("\\|");
+		String ret="";
+		if(fName.equals("Group")) {
+			Templator.groupPair(doc, args[0],args[1],(String[]) ArrayUtils.subarray(args, 2,args.length));
+			String newContext=args[2];
+			newContext=newContext.substring(0,newContext.lastIndexOf("/")+1)+args[1];
+			ret=parseContext(doc,"{{"+newContext+":"+in+"}}");
+		}
+		return ret;
+	}
+
+	/**
 	 * ....{{......{{......{{....}}.....{{....}}......}}......}}.....
 	 * 
 	 * ......{{....}}......{{....}}....             // non va bene lastIndexOf
@@ -833,6 +862,13 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 		String sep=" - ";
 		int n=-1;
 		
+		
+		if(element.equals("[[*RAW*]]")) {
+			
+			value="<pre>"+XML2String(doc).replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</pre>";
+			return value;
+		}
+		
 		element=element.substring(2, element.length()-2);
 		if(element.equals(".") && context.startsWith("//") && context.endsWith("]")) {
 			int y=context.indexOf("[");
@@ -867,7 +903,7 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 	    else {
 	    	value=nodes.item(n-1).getTextContent();
 	    }
-		return value;
+		return value.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
 	}
 	
 

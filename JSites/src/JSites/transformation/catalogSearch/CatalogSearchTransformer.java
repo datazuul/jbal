@@ -126,6 +126,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		
 		String catalogQuery = getQuery(o);
 		String orderBy= o.getParameter("orderby");
+		if(orderBy!=null) orderBy=orderBy.trim();
 		
 		if(checkListParameter("list")) {
 			String[] list=getListParameter("list");
@@ -172,6 +173,12 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 				
 				sd.init(JSites.utils.DirectoryHelper.getPath()+"/WEB-INF/conf/");
 				DoSearchNew doSearchNew = new DoSearchNew(conn,catalogConnection, sd);
+				
+				
+//				/**
+//				 * use * for input query, % in engine query
+//				 */
+//				catalogQuery=catalogQuery.replaceAll("\\*", "%");
 				
 				boolean useStemmer=false;
 	
@@ -314,6 +321,11 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 				ret = URLDecoder.decode(ret, "UTF-8");
 		} catch (UnsupportedEncodingException e) { }
 		
+		
+		/**
+		 * use * for input query, % in engine query
+		 */
+		if(ret!=null) ret=ret.replaceAll("\\*", "%");
 		return ret;
 	}
 

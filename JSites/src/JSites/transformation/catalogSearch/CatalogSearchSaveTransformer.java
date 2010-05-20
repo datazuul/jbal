@@ -26,6 +26,7 @@ package JSites.transformation.catalogSearch;
 *******************************************************************************/
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Enumeration;
@@ -36,6 +37,7 @@ import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.SourceResolver;
 import org.jopac2.engine.dbGateway.DbGateway;
+import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.xml.Mdb;
 import org.xml.sax.Attributes;
@@ -53,7 +55,6 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 	
 	StringBuffer sb = new StringBuffer();
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
 		super.setup(arg0, arg1, arg2, arg3);
@@ -96,6 +97,7 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 			String[] chr=null;
 			String catalogFormat=o.getParameter("catalogFormat");
 			String catalog=o.getParameter("catalogConnection");
+			
 			if(catalogFormat.equalsIgnoreCase("mdb")) {
 				Connection conn;
 				try {
@@ -109,6 +111,14 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
+			}
+			else {
+				try {
+					RecordInterface ma=RecordFactory.buildRecord(0, "", catalogFormat, 0);
+					chr=ma.getChannels();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} 
 			}
 			
 			for(int k=0;chr!=null && k<chr.length;k++) {
@@ -125,6 +135,9 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 				String chn=i.nextElement();
 				Channel ch=searchChannel.get(chn);
 				String t=o.getParameter("search-"+ch.getName());
+				String desc=o.getParameter("name-"+ch.getName());
+				if(desc==null) desc=ch.getName();
+				ch.setDesc(desc);
 				if(t!=null && t.length()>0) ch.setChecked("true");
 				sendElement("search",ch);
 			}
@@ -134,6 +147,9 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 				String chn=i.nextElement();
 				Channel ch=listChannel.get(chn);
 				String t=o.getParameter("list-"+ch.getName());
+				String desc=o.getParameter("name-"+ch.getName());
+				if(desc==null) desc=ch.getName();
+				ch.setDesc(desc);
 				if(t!=null && t.length()>0) ch.setChecked("true");
 				sendElement("list",ch);
 			}

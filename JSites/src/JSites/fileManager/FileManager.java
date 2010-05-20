@@ -52,7 +52,11 @@ public class FileManager extends MyAbstractPageGenerator {
 	String context=null;
 	String pid=null;
 	
-	String[] file_type = {"File","Image","Flash","Media"};
+	/**
+	 * TODO: prendere le liste da un file di properties
+	 */
+	
+	String[] file_type = {"File","Image","Media"};
 
 	String[] file_class = {
 	                "jpg",
@@ -68,10 +72,13 @@ public class FileManager extends MyAbstractPageGenerator {
 	                "gif",
 	                "avi",
 	                "mpg",
+	                "mp4",
 	                "mpeg",
 	                "pdf",
 	                "png",
-	                "jpeg"
+	                "jpeg",
+	                "sfw",
+	                "flv"
 	};
 	
 	private String format_filename(String filename) {
