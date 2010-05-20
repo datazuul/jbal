@@ -1,4 +1,6 @@
 <map:pipeline>
+	<map:parameter name="outputBufferSize" value="4096"/>
+	
 		
 	<map:match pattern="profile.html">
 		<map:redirect-to uri="cocoon://profile.html"/>
