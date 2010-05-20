@@ -38,7 +38,7 @@ public class Field {
 	}
 	
 	public String toString() {
-		return delimiter+fieldCode+content;
+		return delimiter+fieldCode+content.replaceAll("\n", "");
 	}
 	
 	public static String printableNSBNSE(String string) {
@@ -57,5 +57,9 @@ public class Field {
 		}
 		string = string.replaceAll(nsb, "").replaceAll(nse, "*");
 		return string;
+	}
+
+	public String toXML() {
+		return "<subfield code=\""+fieldCode+"\">"+content+"</subfield>";
 	}
 }

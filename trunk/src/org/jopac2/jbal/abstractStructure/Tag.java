@@ -220,6 +220,31 @@ public class Tag implements Comparable<Tag> {
 	}
 	
 	/**
+	 * 
+	 * @return XML fragment for this tag
+	 */
+	public String toXML() {
+		String r="";
+		if (fields != null) {
+			r = "<datafield tag=\"" + tagName;
+			if(modifier1>0) {
+				r+= " ind1=\""+modifier1 + "\" ind2=\"" + modifier2 + "\"";
+			}
+			r=r+ "\">\n";
+			
+			for (int i = 0; fields != null && i < fields.size(); i++) {
+				r += "\t\t"+fields.elementAt(i).toXML()+"\n";
+			}
+			
+			r=r+"</datafield>\n";
+			
+		} else {
+			r = "<controlfield tag=\"" + tagName + "\">" + rawContent + "</controlfield>\n";
+		}
+		return r;
+	}
+	
+	/**
 	 * Get raw content of Tag. This value is significant if and only if there are no Field in Tag
 	 * @return
 	 */

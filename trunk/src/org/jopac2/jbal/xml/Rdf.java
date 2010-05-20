@@ -72,6 +72,8 @@ public class Rdf extends ISO2709Impl {
 
   RdfData record;
   
+  private String originalData="";
+  
   public Rdf(RdfData r) {
   	record=r;
   }
@@ -82,6 +84,10 @@ public class Rdf extends ISO2709Impl {
 
   public Rdf(String stringa, String dTipo, String livello) {
   	init(stringa);
+  }
+  
+  public String toXML() {
+	  return originalData;
   }
   
 	public Hashtable<String, List<Tag>> getRecordMapping() {
@@ -271,6 +277,7 @@ public class Rdf extends ISO2709Impl {
 
   public void parse(String in,RdfData record) {  
     try{
+    	originalData=in;
     	in=in.replaceAll("&#13;","");
     	in=in.replaceAll("&#10;","");
     	in=in.replaceAll("&#9;","");
