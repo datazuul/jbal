@@ -753,7 +753,7 @@ public abstract class DbGateway {
 
 	}
 	
-	public static void rebuildDatabase(Connection[] conn, String catalog, PrintStream console) throws SQLException {
+	public void rebuildDatabase(Connection[] conn, String catalog, PrintStream console) throws SQLException {
 		Hashtable<Integer,String> tipiNotizie=new Hashtable<Integer,String>(); 
 
 		Statement stmt = null;
@@ -763,14 +763,35 @@ public abstract class DbGateway {
 
 		try {
 			stmt = conn[0].createStatement();
-			stmt.execute("truncate table je_"+catalog+"_l_parole_de");
-			stmt.execute("truncate table je_"+catalog+"_l_classi_parole");
-			stmt.execute("truncate table je_"+catalog+"_l_classi_parole_notizie");
-			stmt.execute("truncate table je_"+catalog+"_l_parole_de");
-			stmt.execute("truncate table je_"+catalog+"_data_element");
-			stmt.execute("truncate table je_"+catalog+"_anagrafe_parole");
+			try {
+				stmt.execute("truncate table je_"+catalog+"_classi");
+			}
+			catch(Exception e) {}
+			try {
+				stmt.execute("truncate table je_"+catalog+"_classi_dettaglio");
+			}
+			catch(Exception e) {}
+			try {
+				stmt.execute("truncate table je_"+catalog+"_l_parole_de");}
+			catch(Exception e) {}
+			try {
+				stmt.execute("truncate table je_"+catalog+"_l_classi_parole");}
+			catch(Exception e) {}
+			try {
+				stmt.execute("truncate table je_"+catalog+"_l_classi_parole_notizie");}
+			catch(Exception e) {}
+			try {
+				stmt.execute("truncate table je_"+catalog+"_l_parole_de");}
+			catch(Exception e) {}
+			try {
+				stmt.execute("truncate table je_"+catalog+"_data_element");}
+			catch(Exception e) {}
+			try {
+				stmt.execute("truncate table je_"+catalog+"_anagrafe_parole");}
+			catch(Exception e) {}
+			
 			// TODO ciclare su tutte le classi
-			stmt.execute("truncate table je_"+catalog+"_"+nomeTableListe("TIT"));  //CR_LISTE
+//			stmt.execute("truncate table je_"+catalog+"_"+nomeTableListe("TIT"));  //CR_LISTE
 					
 			rs=stmt.executeQuery("select * from je_"+catalog+"_tipi_notizie");
 			while(rs.next()) {
@@ -782,13 +803,24 @@ public abstract class DbGateway {
 			
 	    	paroleSpooler=new ParoleSpooler(conn,catalog,conn.length,cache,console);
 			
+	    	boolean first=true;
+	    	
 			rs=stmt.executeQuery("select * from je_"+catalog+"_notizie");
 			while(rs.next()) {
 				int idTipo=rs.getInt("id_tipo");
-				String tipo=tipiNotizie.get(new Integer(idTipo));
+//				String tipo=tipiNotizie.get(new Integer(idTipo));
 				RecordInterface ma=null;
 				try {
-					ma=RecordFactory.buildRecord(0,rs.getString("notizia"),tipo,0);
+					long jid=rs.getLong("id");
+					ma=DbGateway.getNotiziaByJID(conn[0], catalog, jid);
+					if(first) {
+						first=false;
+						importClassiDettaglio(ma.getChannels(),conn[0],catalog,console);
+					}
+					
+					ma.setJOpacID(jid);
+					execute(conn[0],"delete from je_"+catalog+"_notizie where id='"+jid+"'");
+					insertTableNotizie(conn[0], catalog, ma, idTipo, ma.getJOpacID());
 					insertNotizia(conn,catalog,ma,idTipo,rs.getLong("id"),paroleSpooler); //ISO2709 notizia, long idTipo, long jid
 				} catch (Exception e) {
 					e.printStackTrace();

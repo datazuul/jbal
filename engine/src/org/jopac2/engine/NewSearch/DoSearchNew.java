@@ -40,13 +40,13 @@ public class DoSearchNew {
 
 	private Vector<Long> resultSet;
 	private Connection conn = null;
-	protected StaticDataComponent staticdata;
+//	protected StaticDataComponent staticdata;
 	private String[] channels=null;
 	private String catalog="";
 	
 	public DoSearchNew(Connection c, String catalog, StaticDataComponent d) {
 		this.conn = c;
-		this.staticdata = d;
+//		this.staticdata = d;
 		this.catalog = catalog;
 		this.resultSet = new Vector<Long>();
 		RecordInterface ma=DbGateway.getNotiziaByJID(c, catalog, 1);

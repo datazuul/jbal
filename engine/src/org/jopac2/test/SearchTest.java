@@ -22,19 +22,19 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 import junit.framework.TestCase;
 
-public class ImportTest extends TestCase {
-	private static String sitename = "demo";
+public class SearchTest extends TestCase {
+	private static String sitename = "eut";
 	private InputStream in = null;
-	private static String filetype = "sebina";
+	private static String filetype = "eutmarc";
 	private static String JOpac2confdir = "src/org/jopac2/conf";
 	/**
 	 * 
 	 * */
 //	private static String dbUrl = "jdbc:derby:/Java_src/java_master/prestito/derbydb/db" + sitename + ";create=true";
-	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
+	private static String dbUrl = "jdbc:mysql://140.105.147.166/db" + sitename;
 	private static String dbUser = "root";
-	private static String dbPassword = "";
-	private static String catalog=sitename;
+	private static String dbPassword = "%op01rt!";
+	private static String catalog="eutmarc";
 
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
 	private static String _classDerbyDriver = "org.apache.derby.jdbc.EmbeddedDriver";
@@ -69,21 +69,21 @@ public class ImportTest extends TestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		
-		if (!ru) {
-			String inFile = new String(
-					Base64
-							.decode(org.jopac2.test.Base64DataExample.unimarcBase64DataExample),
-					"utf-8");
-
-			in = new ByteArrayInputStream(inFile.getBytes());
-
-			JOpac2Import ji = new JOpac2Import(in, catalog, filetype, JOpac2confdir,
-					dbUrl, dbUser, dbPassword, true, System.out, System.out);
-			ji.doJob(false);
-			// ji.wait();
-			ji.destroy(dbUrl);
-			ru = true;
-		}
+//		if (!ru) {
+//			String inFile = new String(
+//					Base64
+//							.decode(org.jopac2.test.Base64DataExample.unimarcBase64DataExample),
+//					"utf-8");
+//
+//			in = new ByteArrayInputStream(inFile.getBytes());
+//
+//			JOpac2Import ji = new JOpac2Import(in, catalog, filetype, JOpac2confdir,
+//					dbUrl, dbUser, dbPassword, true, System.out, System.out);
+//			ji.doJob(false);
+//			// ji.wait();
+//			ji.destroy(dbUrl);
+//			ru = true;
+//		}
 
 		StaticDataComponent sd = new StaticDataComponent();
 		sd.init("src/org/jopac2/conf/commons/");
@@ -147,83 +147,71 @@ public class ImportTest extends TestCase {
 
 	// **** inizio test ***//
 	  public void testSearchOrder() throws Exception {
-			SearchResultSet rs = doSearch("(TIT=in)|(TIT=der)");
+			SearchResultSet rs = doSearch("(AUT=rossi)");
 			long[] unordered = { 1, 3, 6, 7, 9, 10 };
 			long[] ordered = { 7, 6, 1, 10, 3, 9 };
 			boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
 			//SearchResultSet.dumpSearchResultSet(conn, rs);
-			DbGateway.orderBy(conn, catalog,"TIT", rs);
+			DbGateway.orderBy(conn, catalog,"AUT", rs);
 			//SearchResultSet.dumpSearchResultSet(conn, rs);
 			boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
 			assertTrue("Done ", r1 && r2);
 		}
 	
-	
-	public void testTblTipiNotizie() throws Exception {
-		String[] tipi_notizie = {"1,bibliowin4", "2,comarc", "3,easyweb", 
-				"4,eutmarc", "5,isisbiblo", "6,pregresso", "7,sbnunix", 
-				"8,sebina", "9,sosebi", "10,mdb"};
-
-
-		Vector<String> v1 = DbGateway.dumpTable(conn, "je_"+catalog+"_tipi_notizie");
-		boolean r1 = checkStringSequence(v1, tipi_notizie);
-		if (!r1) {
-			System.out.println(v1);
-		}
-		assertTrue("Done ", r1);
-	}
-
-	
-	public void testTblAnagrafeParole() throws Exception {
-		Vector<String> v1 = DbGateway.dumpTable(conn, "je_"+catalog+"_anagrafe_parole order by id");
-		// outputJava(v1);
-		boolean r1 = checkStringSequence(v1, org.jopac2.test.Base64DataExample.anagrafe_parole);
-		if (!r1) {
-			System.out.println(v1);
-		}
-		assertTrue("Done ", r1);
-	}
-
-	
-
-
-	public void testListTIT() throws Exception {
-		SearchResultSet rs = ListSearch.listSearch(conn, catalog, "TIT",
-				"English grammar in use", 100);
-		long[] listres = { 1, 10, 2, 11, 17, 8, 5, 3, 4, 18, 20, 9 };
-//		SearchResultSet.dumpSearchResultSet(conn, rs);
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
-		assertTrue("Done ", r1);
-	}
-	
-	public void testListAUT() throws Exception {
-		SearchResultSet rs = ListSearch.listSearch(conn, catalog, "AUT",
-				"a", 100);
-		long[] listres = { 17, 19, 6, 3, 8, 4, 11, 4, 9, 5, 7, 10, 15, 1, 15, 16, 2, 5, 8, 12, 10, 13, 10, 14, 7, 15, 6, 6 };
-		SearchResultSet.dumpSearchResultSet(conn, catalog, rs);
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
-		assertTrue("Done ", r1);
-	}
-	
-	public void testListTITBackward() throws Exception {
-		SearchResultSet rs = ListSearch.listSearchBackward(conn, catalog, "TIT",
-				"English grammar in use", 100);
-		long[] listres = { 16, 14, 15, 12, 13, 6, 7, 19 };
-		SearchResultSet.dumpSearchResultSet(conn, catalog, rs);
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
-		assertTrue("Done ", r1);
-	}
-	
-	  public void testSearchTronc() throws Exception {
-			SearchResultSet rs = doSearch("(TIT=deut%)&(TIT=aus%)");
-			
-			long[] tronc = { 12, 13 };
-			boolean r1 = checkIdSequence(rs.getRecordIDs(), tronc);
-			
-			System.out.println("Tronc: "+rs.getRecordIDs());
-			SearchResultSet.dumpSearchResultSet(conn, catalog, rs);
-			
-			assertTrue("Done ", r1);
-		}
+//	
+//	public void testTblTipiNotizie() throws Exception {
+//		String[] tipi_notizie = {"1,bibliowin4", "2,comarc", "3,easyweb", 
+//				"4,eutmarc", "5,isisbiblo", "6,pregresso", "7,sbnunix", 
+//				"8,sebina", "9,sosebi", "10,mdb"};
+//
+//
+//		Vector<String> v1 = DbGateway.dumpTable(conn, "je_"+catalog+"_tipi_notizie");
+//		boolean r1 = checkStringSequence(v1, tipi_notizie);
+//		if (!r1) {
+//			System.out.println(v1);
+//		}
+//		assertTrue("Done ", r1);
+//	}
+//
+//	
+//	public void testTblAnagrafeParole() throws Exception {
+//		Vector<String> v1 = DbGateway.dumpTable(conn, "je_"+catalog+"_anagrafe_parole order by id");
+//		// outputJava(v1);
+//		boolean r1 = checkStringSequence(v1, org.jopac2.test.Base64DataExample.anagrafe_parole);
+//		if (!r1) {
+//			System.out.println(v1);
+//		}
+//		assertTrue("Done ", r1);
+//	}
+//
+//	
+//
+//
+//	public void testListTIT() throws Exception {
+//		SearchResultSet rs = ListSearch.listSearch(conn, catalog, "TIT",
+//				"English grammar in use", 100);
+//		long[] listres = { 1, 10, 2, 11, 17, 8, 5, 3, 4, 18, 20, 9 };
+////		SearchResultSet.dumpSearchResultSet(conn, rs);
+//		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
+//		assertTrue("Done ", r1);
+//	}
+//	
+//	public void testListAUT() throws Exception {
+//		SearchResultSet rs = ListSearch.listSearch(conn, catalog, "AUT",
+//				"a", 100);
+//		long[] listres = { 17, 19, 6, 3, 8, 4, 11, 4, 9, 5, 7, 10, 15, 1, 15, 16, 2, 5, 8, 12, 10, 13, 10, 14, 7, 15, 6, 6 };
+//		SearchResultSet.dumpSearchResultSet(conn, catalog, rs);
+//		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
+//		assertTrue("Done ", r1);
+//	}
+//	
+//	public void testListTITBackward() throws Exception {
+//		SearchResultSet rs = ListSearch.listSearchBackward(conn, catalog, "TIT",
+//				"English grammar in use", 100);
+//		long[] listres = { 16, 14, 15, 12, 13, 6, 7, 19 };
+//		SearchResultSet.dumpSearchResultSet(conn, catalog, rs);
+//		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
+//		assertTrue("Done ", r1);
+//	}
 
 }

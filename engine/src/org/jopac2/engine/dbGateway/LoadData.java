@@ -73,7 +73,7 @@ public class LoadData implements LoadDataInterface {
 
   private Vector<ClasseDettaglio> cl_dettaglio;
   
-  private String confDir=null;
+//  private String confDir=null;
   private String dbType=null;
   public String tipoNotizia="ISO2709";
   public long idTipo=-1;
@@ -412,11 +412,11 @@ private boolean clearDatabase;
   }
 
 
-  public LoadData(Connection conn[],String catalog, boolean clearDatabase, String confDir, PrintStream console, PrintStream outputRecordErrors) throws SQLException {
+  public LoadData(Connection conn[],String catalog, boolean clearDatabase, PrintStream console, PrintStream outputRecordErrors) throws SQLException {
   	  this.conn=conn;
   	  this.catalog=catalog;
   	  this.clearDatabase=clearDatabase;
-  	  this.confDir=confDir;
+//  	  this.confDir=confDir;
   	  out=console;
   	  this.outputErrorRecords=outputRecordErrors;
   	  dbGateway=DbGateway.getInstance(conn[0].toString(),console);

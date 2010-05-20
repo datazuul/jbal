@@ -90,7 +90,7 @@ public class DataImporter extends Thread {
     private String[] loadData(InputStream f,String dbType, String temporaryDir) throws SQLException {
     	String[] r=null;
     	DbGateway.commitAll(conn);
-        LoadData ld=new LoadData(conn,catalog,clearDatabase,confdir,out,outputErrorRecords);
+        LoadData ld=new LoadData(conn,catalog,clearDatabase,out,outputErrorRecords);
         r=ld.doJob(f,dbType,temporaryDir,cache); //,t);
         ld.destroy();
         return r;
