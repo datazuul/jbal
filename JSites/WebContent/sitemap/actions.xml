@@ -53,6 +53,7 @@
     <map:action name="erase-page" src="JSites.action.ErasePage"/>
     <map:action name="manage-users" src="JSites.action.ManageUsers"/>
     <map:action name="authorize-users" src="JSites.action.AuthorizationAction"/>
+    <map:action name="PageCodeAction" src="JSites.action.PageCodeAction"/>
     
 	<map:action name="ImageDateAction" src="JSites.action.ImageDateAction"/>
     

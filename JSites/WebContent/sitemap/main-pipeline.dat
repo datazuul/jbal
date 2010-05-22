@@ -4,7 +4,10 @@
     <!--    MATCH PRINCIPALE CON AUTENTICAZIONE    -->
     
     <map:match pattern="pageview">
-	    <map:redirect-to uri="cocoon:/doview?db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/>
+    	<map:act type="PageCodeAction" src="{global:db}">
+    		<map:redirect-to uri="{pagecode}" />
+	    	<!-- <map:redirect-to uri="cocoon:/doview?db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/> -->
+	    </map:act>
 	</map:match>
 
 	<map:match pattern="page*">
