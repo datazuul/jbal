@@ -51,6 +51,7 @@ public class ActivatePage extends PageAction {
 				conn = this.getConnection(dbname);
 				if(cid!=0)DBGateway.activateComponent(cid, conn);
 				else DBGateway.activatePage(pid, conn);
+				if(conn!=null) conn.close();
 			}
 			catch(Exception e){e.printStackTrace();}
 			

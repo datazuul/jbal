@@ -50,6 +50,12 @@ public class ManageUsers extends PageAction {
 			try{
 				conn = this.getConnection(this.dbname);
 				String pid = o.getParameter("pid"); 
+				String pcode = o.getParameter("pcode");
+				
+				if(pid==null || pid.length()==0) {
+					pid=Long.toString(DBGateway.getPidFrom(pcode, conn));
+				}
+				
 				Enumeration<?> params = o.getParameterNames();
 				while(params.hasMoreElements()){
 					String name = (String)params.nextElement();
