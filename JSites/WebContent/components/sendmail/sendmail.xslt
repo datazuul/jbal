@@ -120,6 +120,9 @@
       </xsl:if>
   	</xsl:template>
   	
+  	<xsl:template match="parameters"></xsl:template>
+  	<xsl:template match="required"></xsl:template>
+  	
   	<xsl:template name="check-tokens">
       <xsl:param name="list" />
       <xsl:if test="string-length(normalize-space($list))!=0">
