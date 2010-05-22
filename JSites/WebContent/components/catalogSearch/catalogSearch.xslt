@@ -63,7 +63,7 @@
 						<tr>
 						<td>
 							<form method="post" action="pageview?pid={$pid}" onsubmit="readParam()" id="catalogForm" style="float: left;">
-								<!-- <input name="pid" id="pid" type="hidden" value="{$pid}"/>  -->
+								<!--  <input name="pid" id="pid" type="hidden" value="{$pid}"/>  -->
 							    <input name="query" id="query" type="hidden" value=""/>
 							    <input id="page" name="page" type="hidden" value="0"/>
 							    <input name="orderby" id="orderby" type="hidden" value="{//catalogOrder}" />
