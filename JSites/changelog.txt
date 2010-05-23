@@ -1,0 +1,7 @@
+20/05/2010 - Indirizzamento pagine per codice pagina (http://sito.mio/codice_pagina)
+			 invece che per pid (http://sito.mio/pageview?pid=xxx).
+14/05/2010 - Componente catalogo, nuova maschera selezione canali ricerca / liste.
+04/05/2010 - Componente catalogo riscritta, rappresentazione dei dati che tengono 
+			 conto dei contesti.
+
+			 
