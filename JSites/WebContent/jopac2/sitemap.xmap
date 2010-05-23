@@ -38,54 +38,6 @@
 		</map:pipeline>
 		
 		<!-- PLEASE DO MODIFY ONLY THE PART ABOVE -->
-
-	 <!--  		
-	   		
-			<map:match pattern="/js/tiny_mce/**">
-				<map:read src="/js/tiny_mce/{1}" />
-			</map:match>
-		
-			<map:match pattern="Tree/*.html">
-				<map:read mime-type="text/html" src="../Tree/{1}.html" />
-			</map:match>
-			
-			<map:match pattern="Tree/src/*.js">
-      			<map:read mime-type="text/javascript" src="../Tree/src/{1}.js"/>
-			</map:match>
-			
-			<map:match pattern="Tree/src/*/*.js">
-      			<map:read mime-type="text/javascript" src="../Tree/src/{1}/{2}.js"/>
-			</map:match>
-			
-			<map:match pattern="Tree/*.js">
-      			<map:read mime-type="text/javascript" src="../Tree/{1}.js"/>
-			</map:match>
-			
-			<map:match pattern="Tree/**/*.css">
-      			<map:read mime-type="text/css" src="../Tree/{1}/{2}.css"/>
-			</map:match>
-			
-			<map:match pattern="Tree/getChildren">
-				<map:generate type="request" />
-				<map:transform type="JSONReadData" />
-				<map:serialize type="text" />
-			</map:match>
-			
-			<map:match pattern="Tree/*">
-      			<map:read mime-type="text/txt" src="../Tree/{1}"/>
-			</map:match>
-			
-			<map:match pattern="Tree/static/*.*">
-      			<map:read mime-type="images/{2}" src="../Tree/static/{1}.{2}"/>
-			</map:match>
-			
-			<map:match pattern="Tree/**/images/**/*.*">
-      			<map:read mime-type="images/{4}" src="../Tree/{1}/images/{2}/{3}.{4}"/>
-			</map:match>
-			
-		</map:pipeline>
-		
-		-->
 		
 		&auth-pipeline;
 		&auth-method;
