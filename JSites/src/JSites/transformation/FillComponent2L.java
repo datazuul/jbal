@@ -275,6 +275,7 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 		attrib.addCDATAAttribute("action",action);
 		attrib.addCDATAAttribute("name","editform");
 		attrib.addCDATAAttribute("id","editform");
+		attrib.addCDATAAttribute("onsubmit","validate()");
 		attrib.addCDATAAttribute("enctype","multipart/form-data");
 		//-----------------------------*/
 		
