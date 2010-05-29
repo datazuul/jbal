@@ -43,6 +43,7 @@ import org.jopac2.jbal.xml.Mdb;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.apache.cocoon.xml.AttributesImpl;
+import org.apache.commons.lang.ArrayUtils;
 
 import JSites.transformation.MyAbstractPageTransformer;
 
@@ -54,6 +55,7 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 	Hashtable<String,El> fields=null;
 	
 	StringBuffer sb = new StringBuffer();
+	StringBuffer order=new StringBuffer();
 	
 	@Override
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
@@ -129,11 +131,32 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 				if(!searchChannel.containsKey(tc)) searchChannel.put(tc, new Channel(tc,tc,""));
 				if(!listChannel.containsKey(tc)) listChannel.put(tc, new Channel(tc,tc,""));
 			}
+	
+//			Enumeration<String> i=searchChannel.keys();
+//			String[] ord=new String[searchChannel.size()];
+//			
+//			@SuppressWarnings("unchecked")
+//			Enumeration<String> e=o.getParameterNames();
+//			int ii=0;
+//			while(e.hasMoreElements()) {
+//				String nam=e.nextElement();
+//				if(nam.startsWith("search-")) {
+//					ord[ii++]=nam.substring(7);
+//				}
+//			}
+//			
+//			while(i.hasMoreElements()) {
+//				String nam=i.nextElement();
+//				if(!ArrayUtils.contains(ord, nam)) {
+//					ord[ii++]=nam;
+//				}
+//			}
 			
-			Enumeration<String> i=searchChannel.keys();
-			while(i.hasMoreElements()) {
-				String chn=i.nextElement();
-				Channel ch=searchChannel.get(chn);
+			String order=o.getParameter("neworder").trim();
+			String[] ord=order.split(" ");
+			
+			for(int iz=0;iz<ord.length;iz++) {
+				Channel ch=searchChannel.get(ord[iz].trim());
 				String t=o.getParameter("search-"+ch.getName());
 				String desc=o.getParameter("name-"+ch.getName());
 				if(desc==null) desc=ch.getName();
@@ -142,7 +165,19 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 				sendElement("search",ch);
 			}
 			
-			i=listChannel.keys();
+			
+//			while(i.hasMoreElements()) {
+//				String chn=i.nextElement();
+//				Channel ch=searchChannel.get(chn);
+//				String t=o.getParameter("search-"+ch.getName());
+//				String desc=o.getParameter("name-"+ch.getName());
+//				if(desc==null) desc=ch.getName();
+//				ch.setDesc(desc);
+//				if(t!=null && t.length()>0) ch.setChecked("true");
+//				sendElement("search",ch);
+//			}
+						
+			Enumeration<String> i=listChannel.keys();
 			while(i.hasMoreElements()) {
 				String chn=i.nextElement();
 				Channel ch=listChannel.get(chn);
