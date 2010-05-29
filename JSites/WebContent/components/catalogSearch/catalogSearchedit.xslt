@@ -75,38 +75,139 @@
 					table.catedit td { border: none; border: 1px solid #789DB3; 
 					vertical-align: middle; padding: 2px; font-weight: bold; }
 				</style>
+				
+				<script type="text/javascript">
+<![CDATA[
+var count=]]><xsl:value-of select="count(search)" /><![CDATA[;
+
+function exchange(el1,el2) {
+	var v1=el1.value;
+	var v2=el2.value;
+	var n1=el1.name;
+	var n2=el2.name;
+	var c1=el1.checked;
+	var c2=el2.checked;
+	var d1=el1.disabled;
+	var d2=el2.disabled;
+
+	//alert("el1 "+el1.nodeName+" "+n1+" "+v1+" "+el1.type+" "+el1.checked);
+	//alert("el2 "+el2.nodeName+" "+n2+" "+v2+" "+el2.type+" "+el2.checked);
+
+	el1.value=v2;
+	el2.value=v1;
+
+	el1.name=n2;
+	el2.name=n1;
+
+	el1.checked=c2;
+	el2.checked=c1;
+	
+	el1.disabled=d2;
+	el2.disabled=d1;
+
+	if(el1.nodeName=='SPAN') {
+		var t1=el1.firstChild;
+		var t2=el2.firstChild;
+		var t=t1.nodeValue;
+		t1.nodeValue=t2.nodeValue;
+		t2.nodeValue=t;
+	}
+}
+
+
+function down(elid) {
+	move(elid,1);
+}
+
+function up(elid) {
+	move(elid,-1);
+}
+
+function move(elid,p) {
+	
+	var morder1=document.getElementById("order"+elid);
+	var msearch1=document.getElementById("search"+elid);
+	var mlist1=document.getElementById("list"+elid);
+	var mnome1=document.getElementById("nome"+elid);
+	var mlabel1=document.getElementById("label"+elid);
+
+	elidn=(elid+p);
+	if(elidn>count) elidn=1;
+	if(elidn<1) elidn=count;
+
+	var morder2=document.getElementById("order"+elidn);
+	var msearch2=document.getElementById("search"+elidn);
+	var mlist2=document.getElementById("list"+elidn);
+	var mnome2=document.getElementById("nome"+elidn);
+	var mlabel2=document.getElementById("label"+elidn);
+
+	exchange(morder1,morder2);
+	exchange(msearch1,msearch2);
+	exchange(mlist1,mlist2);
+	exchange(mnome1,mnome2);
+	exchange(mlabel1,mlabel2);
+}
+
+function validate() {
+	var o="";
+	for(i=1;i<count+1;i++) {
+		var v=document.getElementById("nome"+i);
+		o=o+" "+v.firstChild.nodeValue;
+	}
+	var s=document.getElementById("neworder");
+	s.value=o;
+}
+
+
+
+
+]]>
+</script>
+					<input type="hidden" id="neworder" name="neworder" value="" />
+
 				 	<table class="catedit">
 				 		<thead>
-				 			<th>Order by</th><th>Search</th><th>List</th><th>Name</th><th>Label</th>
+				 			<th></th><th>Order by</th><th>Search</th><th>List</th><th>Name</th><th>Label</th>
 				 		</thead>
 				 		
 					 	<xsl:for-each select="search">
 					 		<tr>
+					 			<td>
+					 				<img src="./components/catalogSearch/images/ButtonUp.png" onClick="up({position()})"/>
+					 				<img src="./components/catalogSearch/images/ButtonDown.png" onClick="down({position()})"/>
+					 			</td>
 						 		<td>
-						 			<xsl:if test="@name != 'ANY' ">
-							 			<input type="radio" name="catalogOrder" value="{@name}">
-								 			<xsl:if test="@name=//catalogOrder">
-								 				<xsl:attribute name="checked">checked</xsl:attribute>
-								 			</xsl:if>
-							 			</input>
-						 			</xsl:if>
+						 			
+						 			<input type="radio" name="catalogOrder" value="{@name}" id="order{position()}">
+							 			<xsl:if test="@name=//catalogOrder">
+							 				<xsl:attribute name="checked">checked</xsl:attribute>
+							 			</xsl:if>
+							 			<xsl:if test="@name = 'ANY' ">
+							 				<xsl:attribute name="disabled">disabled</xsl:attribute>
+							 			</xsl:if>
+						 			</input>
+						 			
 						 		</td>
-						 		<td><input type="checkbox" name="search-{@name}" value="true">
+						 		<td><input type="checkbox" name="search-{@name}" value="true" id="search{position()}">
 						 			<xsl:if test="string-length(@checked) != 0">
 						 				<xsl:attribute name="checked">checked</xsl:attribute>
 						 			</xsl:if>
 						 		</input></td>
 						 		<td>
-						 		<xsl:if test="@name != 'ANY' ">
-							 		<input type="checkbox" name="list-{@name}" value="true">
-							 			<xsl:if test="string-length(@checked) != 0">
+						 		
+						 			<xsl:variable name="na"><xsl:value-of select="@name" /></xsl:variable>
+							 		<input type="checkbox" name="list-{@name}" value="true" id="list{position()}">							 			
+							 			<xsl:if test="string-length(//list[@name=$na]/@checked) != 0">
 							 				<xsl:attribute name="checked">checked</xsl:attribute>
 							 			</xsl:if>
+							 			<xsl:if test="@name = 'ANY' ">
+							 				<xsl:attribute name="disabled">disabled</xsl:attribute>
+							 			</xsl:if>
 							 		</input>
-						 		</xsl:if>
+						 		
 						 		</td>
-						 		<td><xsl:value-of select="@name" /></td>
-						 		<td><input type="text" name="name-{@name}" value="{@desc}"/></td>
+						 		<td><span id="nome{position()}"><xsl:value-of select="@name" /></span></td>
+						 		<td><input type="text" name="name-{@name}" value="{@desc}" id="label{position()}"/></td>
 					 		</tr>
 					 	</xsl:for-each>
 				 	</table>
