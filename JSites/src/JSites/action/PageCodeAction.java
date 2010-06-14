@@ -97,10 +97,23 @@ public class PageCodeAction implements Action, Composable, Disposable {
 				if(conn!=null) try{conn.close();} catch(Exception e) {}
 			}
 		}
-		else if(pcode==null || pcode.length()==0) {
+		else if((pcode==null || pcode.length()==0) && !pid.equals("0") ) {
 			try {
 				conn=getConnection(dbname);
 				pcode=DBGateway.getPageCode(Long.parseLong(pid), conn);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+			finally {
+				if(conn!=null) try{conn.close();} catch(Exception e) {}
+			}
+		}
+		
+		if(!pid.equals("0")) {
+			try {
+				conn=getConnection(dbname);
+				pname=DBGateway.getPageName(Long.parseLong(pid), conn);
 			}
 			catch(Exception e) {e.printStackTrace();}
 			finally {
@@ -108,14 +121,7 @@ public class PageCodeAction implements Action, Composable, Disposable {
 			}
 		}
 		
-		try {
-			conn=getConnection(dbname);
-			pname=DBGateway.getPageName(Long.parseLong(pid), conn);
-		}
-		catch(Exception e) {e.printStackTrace();}
-		finally {
-			if(conn!=null) try{conn.close();} catch(Exception e) {}
-		}
+		if(pcode==null) pcode="_null";
 				
 		request.setAttribute("pageid", pid);
 		request.setAttribute("pagecode", pcode);
