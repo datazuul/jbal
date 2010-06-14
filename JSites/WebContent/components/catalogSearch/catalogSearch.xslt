@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:sql="http://apache.org/cocoon/SQL/2.0"
+<xsl:stylesheet version="2.0" xmlns:sql="http://apache.org/cocoon/SQL/2.0"
 							xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:include href="../../stylesheets/xslt/editlinks.xslt" />
@@ -25,7 +25,7 @@
 	<xsl:template match="/">
 		<div class="{$time}">
 			<div class="catalogSearch" id="{$cid}" wiki="false">
-				
+			 	
 				<script type="text/javascript" wiki="false">
 				<![CDATA[
 				function readParam(){
@@ -48,8 +48,20 @@
 				    document.getElementById("query").value = escape(q);
 				  
 				}
+				
+				
+				function list(nome) {					
+					var l=document.getElementById("lista");
+					l.name="list"+nome;
+					var el=document.getElementById(nome);
+					l.value=el.value;
+					var f=document.getElementById('listForm');
+					f.submit();
+				}
+				
 				]]>
 				</script>
+				 
 				<xsl:variable name="countSearch">
 					<xsl:value-of select="count(//search/@checked)" />
 				</xsl:variable>
@@ -58,12 +70,15 @@
 				</xsl:variable>
 								
 				<xsl:if test="$countSearch &gt; 0">
-				
+				 	<form method="post" action="." id="listForm">
+						<input type="hidden" id="lista" name="lista" value="" />
+					</form>
+								
 					<table border="0" class="searchtableform">
 						<tr>
 						<td>
-							<form method="post" action="pageview?pid={$pid}" onsubmit="readParam()" id="catalogForm" style="float: left;">
-								<!--  <input name="pid" id="pid" type="hidden" value="{$pid}"/>  -->
+							<form method="post" action="." onsubmit="readParam()" id="catalogForm" style="float: left;">
+								<input name="pid" id="pid" type="hidden" value="{$pid}"/>
 							    <input name="query" id="query" type="hidden" value=""/>
 							    <input id="page" name="page" type="hidden" value="0"/>
 							    <input name="orderby" id="orderby" type="hidden" value="{//catalogOrder}" />
@@ -73,7 +88,20 @@
 							    <table border="0">
 							    <xsl:for-each select="//search">
 							    	<xsl:if test="string-length(@checked)>0">
-							    		<tr><td style="font-size: 10px; text-align: right;"><label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label></td><td><input id="{@name}" type="text" /></td></tr>
+							    		<tr>
+							    			<td style="font-size: 10px; text-align: right;">
+							    				<label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label>
+							    				
+							    			</td>
+							    			<td>
+							    				<input id="{@name}" type="text" size="60%"/>
+							    				<xsl:variable name="lname"><xsl:value-of select="@name" /></xsl:variable>
+							    				<xsl:variable name="ck"><xsl:value-of select="//list[@name=$lname]/@checked" /></xsl:variable>
+							    				<xsl:if test="string-length($ck)>0">
+						    						<input type="button" value="List" onClick="list('{$lname}')" />
+							    				</xsl:if>
+							    			</td>
+							    		</tr>
 							    	</xsl:if>
 							    </xsl:for-each>
 							    </table>
@@ -81,14 +109,14 @@
 							    </fieldset>
 							</form>
 							</td>
-							<td>
+<!--  							<td>
 							
 							<table border="0">
 							<xsl:for-each select="//list">
 								<xsl:if test="string-length(@checked)>0">
 									
 									<form method="post" action="pageview?pid={$pid}">
-										<!--  <input name="pid" id="pid" type="hidden" value="{$pid}"/> -->
+										<input name="pid" id="pid" type="hidden" value="{$pid}"/>
 										<tr><td style="font-size: 10px; text-align: right;">
 								    	<label class="searchlabel"><xsl:value-of select="@desc" />:&#160;</label>
 								    	</td><td>
@@ -100,15 +128,19 @@
 						    </xsl:for-each>
 						    </table>
 						    </td>
+-->
 					    </tr>
 				    </table>
+				    
 				</xsl:if>
 				
-				<!-- form method="post" action="pageview?pid={$pid}">
-				    Titolo: <input name="listTIT" type="text"/>&#160;&#160;
-				    <input type="submit" value="List" />
-				</form-->
 				
+				<!-- 
+				<form method="post" action="http://localhost:8080/JSites/HMPy">
+				    Query: <input name="query" type="text"/>&#160;&#160;
+				    <input type="submit" value="Submit" />
+				</form>
+				 -->
 				<!--  <xsl:apply-templates select="section/lang[@code=$lang]"/> -->
 				<div id="resultSet">
 					<xsl:apply-templates />

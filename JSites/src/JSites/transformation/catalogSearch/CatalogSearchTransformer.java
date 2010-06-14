@@ -125,7 +125,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		SearchResultSet result=null;
 		
 		String catalogQuery = getQuery(o);
-		String orderBy= o.getParameter("orderby");
+		String orderBy= Util.getRequestData(o, "orderby");
 		if(orderBy!=null) orderBy=orderBy.trim();
 		
 		if(checkListParameter("list")) {
@@ -199,6 +199,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 	
 	@SuppressWarnings("unchecked")
 	private String[] getListParameter(String p) {
+		boolean found=false;
 		String[] r=new String[2];
 		Enumeration<String> e=o.getParameterNames();
 		while(e.hasMoreElements()) {
@@ -206,7 +207,19 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 			if(n.startsWith(p)) {
 				r[0]=n.substring(p.length());
 				r[1]=o.getParameter(n);
+				found=true;
 				break;
+			}
+		}
+		if(!found) {
+			e=o.getAttributeNames();
+			while(e.hasMoreElements()) {
+				String n=e.nextElement();
+				if(n.startsWith(p)) {
+					r[0]=n.substring(p.length());
+					r[1]=(String)o.getAttribute(n);
+					break;
+				}
 			}
 		}
 		return r;
@@ -222,6 +235,16 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 			if(n.startsWith(p)) {
 				r=true;
 				break;
+			}
+		}
+		if(!r) {
+			e=o.getAttributeNames();
+			while(e.hasMoreElements()) {
+				String n=e.nextElement();
+				if(n.startsWith(p)) {
+					r=true;
+					break;
+				}
 			}
 		}
 		return r;
@@ -315,7 +338,13 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 
 	private String getQuery(Request o) {
 		
-		String ret = o.getParameter("query");
+		String ret = Util.getRequestData(o,"query");
+		
+//		if(ret==null) {
+////			ret=((Map<String,String>)o.getSession().getAttribute("redirectfrom")).get("query");
+//			
+//		}
+		
 		try {
 			if(ret!=null)
 				ret = URLDecoder.decode(ret, "UTF-8");

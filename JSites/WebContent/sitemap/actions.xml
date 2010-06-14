@@ -54,7 +54,7 @@
     <map:action name="manage-users" src="JSites.action.ManageUsers"/>
     <map:action name="authorize-users" src="JSites.action.AuthorizationAction"/>
     <map:action name="PageCodeAction" src="JSites.action.PageCodeAction"/>
-    
+    <map:action name="RedirectFromRequestRestoreAction" src="JSites.action.RedirectFromRequestRestoreAction"/>
 	<map:action name="ImageDateAction" src="JSites.action.ImageDateAction"/>
     
 </map:actions>

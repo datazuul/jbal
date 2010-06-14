@@ -31,8 +31,12 @@
 						<tr><td><b>parameters:</b></td><td><input type="text" size="40" name="parameters" value="{parameters/text()}" /></td></tr>
 						<tr><td><b>required:</b></td><td><input type="text" size="40" name="required" value="{required/text()}" /></td></tr>
 						<tr><td><b>smtphost:</b></td><td><input type="text" size="40" name="smtphost" value="{smtphost/text()}" /></td></tr>
-						<tr><td><b>smtpuser:</b></td><td><input type="text" size="40" name="smtpuser" value="{smtpuser/text()}" /></td></tr>
-						<tr><td><b>smtppassword:</b></td><td><input type="text" size="40" name="smtppassword" value="{smtppassword/text()}" /></td></tr>
+						<tr><td><b>welcome message:</b></td><td><input type="text" size="40" name="welcome" value="{welcome/text()}" /></td></tr>
+						<tr><td><b>mail sent message:</b></td><td><input type="text" size="40" name="mailsent" value="{mailsent/text()}" /></td></tr>
+						<tr><td><b>mail error message:</b></td><td><input type="text" size="40" name="mailerror" value="{mailerror/text()}" /></td></tr>
+						<tr><td><b>missing parameter message:</b></td><td><input type="text" size="40" name="missingparameter" value="{missingparameter/text()}" /></td></tr>
+						<tr><td><b>recap sent data to user:</b></td><td><input type="checkbox" name="recap" value="{recap/text()}" /></td></tr>
+						<tr><td><b>field containing user email to send cc:</b></td><td><input type="text" size="40" name="cc" value="{cc}" /></td></tr>
 					</table>
 				</div>
 			</div>		

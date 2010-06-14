@@ -25,6 +25,8 @@ package JSites.utils;
 *******************************************************************************/
 import java.io.UnsupportedEncodingException;
 
+import org.apache.cocoon.environment.Request;
+
 public class Util {
 	
 	public static String readRequestParameter(String a){
@@ -99,6 +101,12 @@ public class Util {
 		else {
 			return null;
 		}
+	}
+
+	public static String getRequestData(Request o, String p) {
+		String r=o.getParameter(p);
+		if(r==null) r=(String)o.getAttribute(p);
+		return r;
 	}
 
 }

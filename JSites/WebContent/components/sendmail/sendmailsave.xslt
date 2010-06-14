@@ -42,16 +42,40 @@
 		</smtphost>
 	</xsl:template>
 	
-	<xsl:template match="smtpuser">
-		<smtpuser>
+	<xsl:template match="welcome">
+		<welcome>
 			<xsl:value-of select="text()"/>
-		</smtpuser>
+		</welcome>
 	</xsl:template>
 	
-	<xsl:template match="smtppassword">
-		<smtppassword>
+	<xsl:template match="mailsent">
+		<mailsent>
 			<xsl:value-of select="text()"/>
-		</smtppassword>
+		</mailsent>
+	</xsl:template>
+	
+	<xsl:template match="mailerror">
+		<mailerror>
+			<xsl:value-of select="text()"/>
+		</mailerror>
+	</xsl:template>
+	
+	<xsl:template match="missingparameter">
+		<missingparameter>
+			<xsl:value-of select="text()"/>
+		</missingparameter>
+	</xsl:template>
+	
+	<xsl:template match="recap">
+		<recap>
+			<xsl:value-of select="text()"/>
+		</recap>
+	</xsl:template>
+	
+	<xsl:template match="cc">
+		<cc>
+			<xsl:value-of select="text()"/>
+		</cc>
 	</xsl:template>
 	
 	<xsl:template match="parameters">

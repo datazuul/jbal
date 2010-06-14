@@ -153,6 +153,15 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 //			}
 			
 			String order=o.getParameter("neworder").trim();
+			
+			Enumeration<String> i=listChannel.keys();
+			while(i.hasMoreElements()) {
+				String chn=i.nextElement();
+				if(!order.contains(chn)) order=order+" "+chn;
+			}
+			
+			
+			
 			String[] ord=order.split(" ");
 			
 			for(int iz=0;iz<ord.length;iz++) {
@@ -177,7 +186,7 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 //				sendElement("search",ch);
 //			}
 						
-			Enumeration<String> i=listChannel.keys();
+			i=listChannel.keys();
 			while(i.hasMoreElements()) {
 				String chn=i.nextElement();
 				Channel ch=listChannel.get(chn);

@@ -65,12 +65,16 @@ public class Tutil extends MyAbstractPageTransformer {
 		 }
 		 System.out.println("REQUEST QUERY = " + o.getQueryString());
 		 
-		 Enumeration e = o.getParameterNames();
+		 System.out.println("Request parameters:");
+		 Enumeration<String> e = o.getParameterNames();
 		 while(e.hasMoreElements()){
 			 name = (String)e.nextElement();
 			 value = o.getParameter(name);
 			 System.out.println(name + " = " + value);
 		 }
+		 
+		 
+		 
 		 try{
 			 String oc = (String)arg3.getParameter("only-cid");
 			 if(oc!=null){

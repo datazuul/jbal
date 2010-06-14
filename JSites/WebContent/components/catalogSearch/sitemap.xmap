@@ -24,23 +24,27 @@
 			<map:pipeline internal-only="false">
 
 				<map:match pattern="view">
-	                <map:act type="request">
-	                    <map:parameter name="parameters" value="true" />
-	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/catalogSearch{cid}.xml"/>
+					<map:act type="request">
+					 	<map:parameter name="parameters" value="true" /> 
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/catalogSearch{request-param:cid}.xml"/>
+	                    <!-- map:transform type="tutil" src="/t/template" / -->
 	                    <map:transform type="catalogSearch" />
 	                    
+	                    
 	                    <map:transform type="record2display"/>
-
+	
 	                    <map:transform type="catalogTemplator"/>
-	                    <!-- map:transform type="tutil" src="/t/template" / -->
-
+	                
+	                	
+	                    
+					
 	                    <map:transform src="catalogSearch.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
-	                 	
-	                    <map:transform type="wikitrans"/>
-	                    <map:serialize type="xml"/>
-	                </map:act>
+	                </map:act> 	
+                    <map:transform type="wikitrans"/>
+                    <map:serialize type="xml"/>
+	                
 	            </map:match>
 	            
 	            <map:match pattern="save">

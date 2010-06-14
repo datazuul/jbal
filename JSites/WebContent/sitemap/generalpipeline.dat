@@ -218,6 +218,12 @@
 	<map:match pattern="js/**">
        	<map:read src="../js/{1}" />
    	</map:match>
+   	
+   	<map:match pattern="_internal/*">
+   		<map:act type="RedirectFromRequestRestoreAction">
+   			<map:redirect-to uri="cocoon:/doview?pcode={../1}&amp;db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/>
+   		</map:act>
+    </map:match>
 
 	<map:match pattern="">
 		<map:redirect-to uri="cocoon:/pageview?pid=1&amp;lang=it" />
@@ -228,10 +234,14 @@
     </map:match>
     
 	<map:match pattern="*">
-		<map:redirect-to uri="cocoon:/doview?pcode={1}&amp;db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/>
-		
+		<map:redirect-to uri="cocoon:/_internal/{1}" />
+<!--		<map:act type="RedirectFromRequestRestoreAction"> 
+			<map:redirect-to uri="cocoon:/doview?pcode={1}&amp;db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/>
+		</map:act> -->
         <!-- <map:redirect-to uri="cocoon:/pageview?pcode={1}"/> -->
     </map:match>
+    
+
     
     <map:match pattern="*/">
     	<map:redirect-to uri="{1}" />

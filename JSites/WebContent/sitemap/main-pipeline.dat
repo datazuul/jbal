@@ -4,16 +4,20 @@
     <!--    MATCH PRINCIPALE CON AUTENTICAZIONE    -->
     
     <map:match pattern="pageview">
+
     	<map:act type="PageCodeAction" src="{global:db}">
-    		<map:redirect-to uri="{pagecode}" />
-	    	<!-- <map:redirect-to uri="cocoon:/doview?db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/> -->
+    		<map:redirect-to uri="{request-attr:pagecode}" />
 	    </map:act>
+<!--	    <map:redirect-to uri="cocoon:/doview?db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/> -->
+	    
 	</map:match>
 
 	<map:match pattern="page*">
 		<map:act type="auth-protect">
 			<map:parameter name="handler" value="JSitesHandler"/>
-			<map:redirect-to uri="cocoon:/do{../1}?db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/>
+			<map:act type="PageCodeAction" src="{global:db}">
+				<map:redirect-to uri="cocoon:/do{../../1}?db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/>
+			</map:act>
 	    </map:act>
         <!-- something was wrong, redirect to login page -->
         <map:redirect-to uri="login"/>
@@ -315,6 +319,7 @@
     <!-- Pipeline per la semplice visualizzazione di una pagina -->
     <map:pipeline internal-only="true">    	
 	    <map:match pattern="do*">
+	    	
 	        <map:aggregate element="page">
 	        	 <map:part src="cocoon:/csscontent?action={1}"/>
 	        	 <map:part src="cocoon:/viewheader">

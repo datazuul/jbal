@@ -334,7 +334,6 @@ public class HtmlCodec {
         specialChars.put("rsaquo",   "\u203a"); // single right-pointing angle quotation mark, U+203A ISO proposed
         // rsaquo is proposed but not yet ISO standardized
         specialChars.put("#8364",     "\u20ac"); // euro sign, U+20AC NEW;
-        //specialChars.put("degree",     "°"); // euro sign, U+20AC NEW;//
 	}
 	
 	public static String decode(String s){

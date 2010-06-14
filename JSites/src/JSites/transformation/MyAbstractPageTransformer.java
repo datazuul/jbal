@@ -46,6 +46,7 @@ import org.apache.cocoon.transformation.AbstractTransformer;
 import org.apache.cocoon.webapps.session.SessionManager;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.SourceResolver;
+import org.apache.cocoon.environment.http.HttpRequest;
 import org.apache.avalon.framework.parameters.ParameterException;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.xml.sax.SAXException;
@@ -64,6 +65,7 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
 	@SuppressWarnings("unchecked")
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
 		o = (Request)arg1.get("request");
+	
 		dbname = o.getParameter("db");
 		
 		try { dbname = dbname == null ? arg3.getParameter("db") : dbname; } catch (ParameterException e) {

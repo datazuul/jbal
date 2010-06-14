@@ -15,13 +15,24 @@
 						  	<map:part src="cocoon:/request"/>
 						 </map:aggregate>
 	                    
-	                    <!-- map:transform type="tutil" src="/t/send" / -->
-	                    
-	                    <map:transform src="sendmail.xslt">
-	                        <map:parameter name="use-request-parameters" value="true"/>
+	                    <!-- map:transform type="tutil" src="/t/sendbefore" / -->
+	                   
+	                    <map:act type="PageCodeAction" src="{global:db}" >
+		                    <map:transform src="sendmail.xslt">
+		                        <map:parameter name="use-request-parameters" value="true"/>
+		                        <map:parameter name="pagecode" value="{request-attr:pagecode}" />
+		                        <map:parameter name="pagerequest" value="{request-attr:pagerequest}"/>
+		                    </map:transform>
+	                    </map:act>
+	                    <map:transform type="sendmail">
+	                    	<map:parameter name="sendpartial" value="true" />
 	                    </map:transform>
 	                    
-	                    <map:transform type="sendmail"/>
+	                    <!-- map:transform type="tutil" src="/t/sendafter0" / -->
+	                    
+	                    <map:transform src="sendmailresult.xslt" />
+	                    
+	                    <!-- map:transform type="tutil" src="/t/sendafter1" / -->
 	                    
 	                    <map:transform type="wikitrans"/>
 	                    <map:serialize type="xml"/>

@@ -42,12 +42,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.HashMap;
 
 import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.Request;
+import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.environment.SourceResolver;
 
 import JSites.utils.DBGateway;
@@ -61,13 +64,24 @@ public class PageCodeAction implements Action, Composable, Disposable {
 	
 	@SuppressWarnings("unchecked")
 	public Map act(Redirector redirector, SourceResolver resolver,
-			Map objectModel, String source, Parameters params) {
-		Map<String, String> sitemapParams = new HashMap<String, String>();
-		
+			Map objectModel, String source, Parameters params) {	
 
+		Map<String,String> lastdata=new Hashtable<String,String>();
 		Request request = ObjectModelHelper.getRequest(objectModel);
 		String pid=request.getParameter("pid");
 		String pcode=request.getParameter("pcode");
+		
+		Session session=request.getSession();
+		
+		Enumeration<String> ee=request.getParameterNames();
+		while(ee.hasMoreElements()) {
+			String s=ee.nextElement();
+//			System.out.println("** "+s+" = "+request.getParameter(s));
+			lastdata.put(s, request.getParameter(s));
+		}
+		
+		
+		
 		String pname="";
 		String dbname=source;
 		
@@ -102,11 +116,23 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		finally {
 			if(conn!=null) try{conn.close();} catch(Exception e) {}
 		}
+				
+		request.setAttribute("pageid", pid);
+		request.setAttribute("pagecode", pcode);
+		request.setAttribute("pagename", pname);
 		
-		sitemapParams.put("pageid", pid);
-		sitemapParams.put("pagecode", pcode);
-		sitemapParams.put("pagename", pname);
-		return sitemapParams;
+		lastdata.put("pageid", pid);
+		lastdata.put("pagecode", pcode);
+		lastdata.put("pagename", pname);
+		
+		
+		String ru=request.getRequestURI();
+		if(ru.contains("/")) ru=ru.substring(0, ru.lastIndexOf("/"));
+		ru=ru+"/"+pcode;
+		lastdata.put("pagerequest", ru);
+		
+		session.setAttribute("redirectfrom", lastdata);
+		return objectModel;
 	}
 	
 	public void compose(ComponentManager cm) throws ComponentException {

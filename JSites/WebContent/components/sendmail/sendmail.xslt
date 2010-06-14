@@ -17,26 +17,39 @@
     <xsl:param name="disabling"/>
     <xsl:param name="time"/>
     <xsl:param name="extra" />
+    <xsl:param name="pagecode" />
     <xsl:param name="type" />
+    <xsl:param name="pagerequest" />
     
 	<xsl:template match="root">
 		<content>
-			<xsl:if test="contains(h:request/h:requestHeaders/h:header[@name='referer']/text(),concat('pid=',$pid))">
+			<xsl:variable name="urlrequest">http://<xsl:value-of select="h:request/h:requestHeaders/h:header[@name='host']" /><xsl:value-of select="$pagerequest" /></xsl:variable>
+			
+			<xsl:if test="not(contains(h:request/h:requestHeaders/h:header[@name='referer']/text(),$urlrequest))">
+				<xsl:value-of select="//welcome" />
+			</xsl:if>
+			
+			<xsl:if test="contains(h:request/h:requestHeaders/h:header[@name='referer']/text(),$urlrequest)">
 				<xsl:variable name="r">
 					<xsl:call-template name="check-tokens">
 		            	<xsl:with-param name="list"><xsl:value-of select="sendmail/required" /></xsl:with-param>
 		        	</xsl:call-template>
 				</xsl:variable>
 								
-				<xsl:if test="not(contains($r,'1'))">
+				<xsl:if test="string-length(normalize-space($r)) > 0">
+					<xsl:value-of select="//missingparameter" />&#160;<xsl:value-of select="$r" />
+				</xsl:if>			
+				
+				<xsl:if test="string-length(normalize-space($r)) = 0">
 					<xsl:variable name="body">
 						<xsl:apply-templates select="h:request"/>
 					</xsl:variable>
 					<sendmail:sendmail>		
+						<!-- 
 						<sendmail:from>
 							<xsl:value-of select="sendmail/email" />
 						</sendmail:from>
-						
+						-->
 						<xsl:apply-templates select="sendmail" />
 						
 						<sendmail:body>
@@ -54,10 +67,13 @@
 						</sendmail:body>
 			
 					</sendmail:sendmail>
-					Sono state inviate le seguenti informazioni:<br/>
-					<futiz>
-					<xsl:value-of select="normalize-space($body)" disable-output-escaping="no"/>
-					</futiz>
+					
+					<xsl:if test="contains(//recap,'true')">
+						Sono state inviate le seguenti informazioni:<br/>
+						<futiz>
+						<xsl:value-of select="normalize-space($body)" disable-output-escaping="no"/>
+						</futiz>
+					</xsl:if>
 				</xsl:if>
 			</xsl:if>
 		</content>
@@ -131,7 +147,7 @@
 	      <xsl:variable name="remaining" select="substring-after($newlist, ' ')" />
 	      
 	
-		  <xsl:if test="string-length(normalize-space(/root/h:request/h:requestParameters/h:parameter[@name=$first]/h:value))=0">1</xsl:if>
+		  <xsl:if test="string-length(normalize-space(/root/h:request/h:requestParameters/h:parameter[@name=$first]/h:value))=0">&#160;<xsl:value-of select="$first" /></xsl:if>
 	
 			
 	      <xsl:if test="$remaining">
@@ -157,9 +173,15 @@
 		<![CDATA[</td></tr>]]>
 	</xsl:template>
 	
+	<xsl:template match="cc">
+		<xsl:variable name="node"><xsl:value-of select="//cc" /></xsl:variable>
+		<sendmail:from><xsl:value-of select="/root/h:request/h:requestParameters/h:parameter[@name=$node]/h:value"/></sendmail:from>
+	</xsl:template>
 	
 	<xsl:template match="email">
 		<sendmail:to><xsl:value-of select="."/></sendmail:to>
+		<xsl:variable name="node"><xsl:value-of select="//cc" /></xsl:variable>
+		<sendmail:to><xsl:value-of select="/root/h:request/h:requestParameters/h:parameter[@name=$node]/h:value"/></sendmail:to>
 	</xsl:template>
 	
 	<xsl:template match="subject">
@@ -178,5 +200,25 @@
    	<!-- 	<sendmail:smtppassword><xsl:value-of select="."/></sendmail:smtppassword>  -->
 	</xsl:template>
 	
+	
+	<xsl:template match="welcome">
+	<!-- 	<xsl:value-of select="." />  -->
+	</xsl:template>
+	
+	<xsl:template match="mailsent">
+		<mailsent>
+			<xsl:value-of select="." />
+		</mailsent>
+	</xsl:template>
+	
+	<xsl:template match="mailerror">
+		<mailerror>
+			<xsl:value-of select="." />
+		</mailerror>
+	</xsl:template>
+	
+	<xsl:template match="missingparameter">
+	<!--  <xsl:value-of select="." />  -->
+	</xsl:template>
 	
 </xsl:stylesheet>
