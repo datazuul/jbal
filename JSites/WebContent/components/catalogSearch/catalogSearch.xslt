@@ -70,14 +70,14 @@
 				</xsl:variable>
 								
 				<xsl:if test="$countSearch &gt; 0">
-				 	<form method="post" action="." id="listForm">
+				 	<form method="post" action="pageview?pid={$pid}" id="listForm">
 						<input type="hidden" id="lista" name="lista" value="" />
 					</form>
 								
 					<table border="0" class="searchtableform">
 						<tr>
 						<td>
-							<form method="post" action="." onsubmit="readParam()" id="catalogForm" style="float: left;">
+							<form method="post" action="pageview?pid={$pid}" onsubmit="readParam()" id="catalogForm" style="float: left;">
 								<input name="pid" id="pid" type="hidden" value="{$pid}"/>
 							    <input name="query" id="query" type="hidden" value=""/>
 							    <input id="page" name="page" type="hidden" value="0"/>
