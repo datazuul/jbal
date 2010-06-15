@@ -24,10 +24,22 @@
 	</xsl:template>
 	
 	<xsl:template match="dir">
+		<xsl:variable name="ddir">
+			<xsl:call-template name="basepath"><xsl:with-param name="path" select="text()" /></xsl:call-template>
+		</xsl:variable>
 		<dir>
-			<xsl:value-of select="text()"/>
+			<xsl:value-of select="$ddir"/>
 		</dir>
 	</xsl:template>
+	
+	<xsl:template name="basepath">
+      <xsl:param name="path" />
+      <xsl:if test="string-length(normalize-space($path))!=0">
+   		<xsl:if test="contains($path,'/')">
+  			<xsl:value-of select="substring-before($path,'/')" />/<xsl:call-template name="basepath"><xsl:with-param name="path" select="substring-after($path,'/')" /></xsl:call-template>
+   		</xsl:if>
+      </xsl:if>
+  	</xsl:template>
 	
 	<xsl:template match="title">
 		<titolo>

@@ -48,6 +48,7 @@
 	
 	                    <map:transform src="galleryedit.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
+	                    	<map:parameter name="context" value="{context}"/>
 	                    </map:transform>
 	                    
 	                    <map:transform type="cinclude" />
