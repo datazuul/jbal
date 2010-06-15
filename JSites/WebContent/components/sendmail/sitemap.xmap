@@ -6,7 +6,7 @@
 
 	<map:pipelines>
 		
-		<map:pipeline internal-only="false"> 
+		<map:pipeline internal-only="false" type="noncaching"> 
 	            
 	            <map:match pattern="view">
 	                <map:act type="request">	                
