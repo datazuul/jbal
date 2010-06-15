@@ -25,7 +25,8 @@
 
 				<map:match pattern="view">
 					<map:act type="request">
-					 	<map:parameter name="parameters" value="true" /> 
+					 	<map:parameter name="parameters" value="true" />
+					 
 	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/catalogSearch{request-param:cid}.xml"/>
 	                    <!-- map:transform type="tutil" src="/t/template" / -->
 	                    <map:transform type="catalogSearch" />
@@ -34,12 +35,12 @@
 	                    <map:transform type="record2display"/>
 	
 	                    <map:transform type="catalogTemplator"/>
-	                
-	                	
-	                    
 					
 	                    <map:transform src="catalogSearch.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
+	                    	<map:parameter name="page" value="{request-attr:page}"/>
+	                    	<map:parameter name="query" value="{request-attr:query}"/>
+	                    	<map:parameter name="orderby" value="{request-attr:orderby}"/>
 	                    </map:transform>
 	                </map:act> 	
                     <map:transform type="wikitrans"/>

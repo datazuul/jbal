@@ -170,11 +170,17 @@
 	</xsl:template>			    
 			
 	<xsl:template name="nav">
+		<xsl:variable name="count"><xsl:value-of select="root/queryData/queryCount"/></xsl:variable>
+		<!--  
+		Query: <xsl:value-of select="$query" /><br/>
+		Page: <xsl:value-of select="$page" /><br/>
+		Count: <xsl:value-of select="$count" /><br/>
+		Pid: <xsl:value-of select="$pid" /><br/>
+		Orderby: <xsl:value-of select="$orderby" /><br/>
+		-->
 		<xsl:if test="string-length($query) > 0">
 			<xsl:if test="string-length($page) > 0">
 				<div class="ricerca_nav" style="text-align: center;">
-						<xsl:variable name="count"><xsl:value-of select="root/queryData/queryCount"/></xsl:variable>
-					
 					<xsl:if test="$page > 0">
 						<a accesskey="I" href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page={$page+(-1)}">&lt;&lt; Indietro</a>
 					</xsl:if>
@@ -188,9 +194,7 @@
 				<div class="clearer">&#160;</div>
 			</xsl:if>
 			<xsl:if test="string-length($page) = 0">
-				<div class="ricerca_nav" style="text-align: center;">
-						<xsl:variable name="count"><xsl:value-of select="root/queryData/queryCount"/></xsl:variable>
-					
+				<div class="ricerca_nav" style="text-align: center;">					
 					&#160;pagina&#160;1&#160;di&#160;<xsl:value-of select="floor($count div 10)+1"/>&#160;
 					<xsl:if test="10 &lt; $count ">
 						<a accesskey="A"  href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page=1">Avanti &gt;&gt;</a>
