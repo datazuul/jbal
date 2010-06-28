@@ -18,9 +18,14 @@
 	
 	<xsl:template match="dir:file">
 		<xsl:if test="@width &gt; 0">
+<![CDATA[			']]><xsl:value-of select="@name" /><![CDATA[': { caption: ']]><xsl:value-of select="@name" /><![CDATA['},
+]]>
+			
+	      <!-- 
 			<a href="{$context}{$base}/{@name}">
 				<img src="{$context}/{$base}/{@name}" width="100px" /><xsl:text> </xsl:text>
 			</a>
+		   -->
 		</xsl:if>
 	</xsl:template>
 	
