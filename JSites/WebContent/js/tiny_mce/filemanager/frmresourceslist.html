@@ -109,10 +109,15 @@ function OpenFolder( folderPath )
 
 function OpenFile( fileUrl )
 {
-	window.top.opener.tinyfck.document.forms[0].elements[window.top.opener.tinyfck_field].value = fileUrl;
+	// window.top.opener.tinyfck.document.forms[0].elements[window.top.opener.tinyfck_field].value = fileUrl;
+	window.top.opener.tinyfck.document.getElementById(window.top.opener.tinyfck_field).value = fileUrl;
 	
-	if (window.top.opener.tinyfck.document.forms[0].elements[window.top.opener.tinyfck_field].onchange != null) {
-		window.top.opener.tinyfck.document.forms[0].elements[window.top.opener.tinyfck_field].onchange();
+	// if (window.top.opener.tinyfck.document.forms[0].elements[window.top.opener.tinyfck_field].onchange != null) {
+	//	window.top.opener.tinyfck.document.forms[0].elements[window.top.opener.tinyfck_field].onchange();
+	// }
+
+	if (window.top.opener.tinyfck.document.getElementById(window.top.opener.tinyfck_field).onchange != null) {
+		window.top.opener.tinyfck.document.getElementById(window.top.opener.tinyfck_field).onchange();
 	}
 	
 	window.top.close();
