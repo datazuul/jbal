@@ -24,12 +24,13 @@
 			<form action="pageedit">
 				<select name="type">
 					<option value="section" selected="">sezione</option>
-					<option value="box">box</option>
-					<option value="table">tabella</option>
+					<!--  <option value="box">box</option> -->
+					<!--  <option value="table">tabella</option> -->
 					<option value="section:news">avviso</option>
 					<option value="newslist">lista avvisi</option>
-					<option value="excel">foglio excel</option>
+					<!--  <option value="excel">foglio excel</option> -->
 					<option value="gallery">foto gallery</option>
+					<option value="slideshow">slideshow</option>
 					<option value="catalogSearch">ricerca catalogo</option>
 					<option value="sendmail">invio form per email</option>
 				</select>
