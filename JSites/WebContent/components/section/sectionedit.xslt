@@ -109,12 +109,12 @@
 			<!-- id="f_trigger_c" -->
 			<img src="./components/section/images/calendar.gif"  style="cursor: pointer; border: 1px solid red;" title="Date selector"
       onmouseover="this.style.background='red';" onmouseout="this.style.background=''" 
-      onclick="displayCalendar(document.forms[0].startdate,'yyyymmdd',this)"/>&#160;&#160;
+      onclick="displayCalendar(document.getElementById('startdate'),'yyyymmdd',this)"/>&#160;&#160;
 	
 			<input type="text" size="8" name="enddate" value="{sql:rowset/sql:row/sql:enddate}" id="enddate" readonly="1" />
 			<img src="./components/section/images/calendar.gif" style="cursor: pointer; border: 1px solid red;" title="Date selector"
 	      onmouseover="this.style.background='red';" onmouseout="this.style.background=''" 
-	      onclick="displayCalendar(document.forms[0].enddate,'yyyymmdd',this)"/>&#160;&#160;
+	      onclick="displayCalendar(document.getElementById('enddate'),'yyyymmdd',this)"/>&#160;&#160;
 		
 			
 
