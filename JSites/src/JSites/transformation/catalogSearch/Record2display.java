@@ -74,8 +74,12 @@ import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.BookSignature;
 
+import com.ibm.icu.impl.duration.impl.Utils;
+import com.mysql.jdbc.Util;
+
 import JSites.generation.ImportCatalog;
 import JSites.transformation.MyAbstractPageTransformer;
+
 
 import java.sql.*;
 
@@ -354,7 +358,22 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
     	            myConnection.close();
     	            if(ma!=null) { 
     	            	ma.setJOpacID(Long.parseLong(id));
-    	            	if(ma.getTipo().equals("mdb")) {
+    	            	String display=JSites.utils.Util.getRequestData(o, "display");
+    	            	if(display!=null && display.equals("iso")) {
+    	            		sendElement("bid",ma.getBid());
+    	                	sendElement("jid", String.valueOf(ma.getJOpacID()));
+    	                	sendElement("data",ma.toString());
+    	            	}
+    	            	else if(display!=null && display.equals("xml")) {
+    	            		sendElement("bid",ma.getBid());
+    	                	sendElement("jid", String.valueOf(ma.getJOpacID()));
+    	                	try {
+								sendElement("data",ma.toXML());
+							} catch (Exception e) {
+								sendElement("error",e.getMessage());
+							}
+    	            	}
+    	            	else if(ma.getTipo().equals("mdb")) {
     	            		sendMdb(ma);
     	            	}
     	            	else {

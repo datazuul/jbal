@@ -124,14 +124,25 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 
 		SearchResultSet result=null;
 		
+		if(catalogConnection==null || catalogConnection.equals("dbconn")) {
+			String t=Util.getRequestData(o, "catalog");
+			if(t!=null && t.length()>0) catalogConnection=t;
+		}
+		
 		String catalogQuery = getQuery(o);
 		String orderBy= Util.getRequestData(o, "orderby");
 		if(orderBy!=null) orderBy=orderBy.trim();
+		String descendant=Util.getRequestData(o, "descendant");
 		
 		if(checkListParameter("list")) {
 			String[] list=getListParameter("list");
 			if(list[1]!=null && list[1].length()>0) {
-				result=ListSearch.listSearch(conn, catalogConnection, list[0], list[1], 100);
+				if(descendant!=null && descendant.equalsIgnoreCase("true")) {
+					result=ListSearch.listSearchBackward(conn, catalogConnection, list[0], list[1], 100);
+				}
+				else {
+					result=ListSearch.listSearch(conn, catalogConnection, list[0], list[1], 100);
+				}
 				throwField("listRecord", list[0]);
 				
 				throwResults(conn, catalogQuery, result);
@@ -141,7 +152,14 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 			String[] list=getListParameter("nlist");
 			if(list[1]!=null && list[1].length()>0) {
 				long sjid=Long.parseLong(list[1]);
-				result=ListSearch.listSearch(conn, catalogConnection, list[0], sjid, 100);
+				
+				if(descendant!=null && descendant.equalsIgnoreCase("true")) {
+					result=ListSearch.listSearchBackward(conn, catalogConnection, list[0], sjid, 100);
+				}
+				else {
+					result=ListSearch.listSearch(conn, catalogConnection, list[0], sjid, 100);
+				}
+				
 				throwField("listRecord", list[0]);
 				
 				throwResults(conn, catalogQuery, result);
@@ -181,6 +199,9 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 //				catalogQuery=catalogQuery.replaceAll("\\*", "%");
 				
 				boolean useStemmer=false;
+				
+				String t=Util.getRequestData(o, "stemmer");
+				if(t!=null && t.equalsIgnoreCase("true")) useStemmer=true;
 	
 				try {
 					result = doSearchNew.executeSearch(catalogQuery, useStemmer);
@@ -253,7 +274,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 
 	private void throwResults(Connection conn, String catalogQuery, SearchResultSet result) throws SAXException {
 		int page = 0;
-		String sPage = o.getParameter("page");
+		String sPage = Util.getRequestData(o, "page");
 		if( sPage != null ) {
 			try {
 				page = Integer.parseInt(sPage);
