@@ -1,3 +1,9 @@
+01/07/2010 - catalogSearch: dati in xml ..../components/catalogSearch/viewxml?catalog=xxx
+01/07/2010 - catalogSearch: parametro descendant=true per avere i dati in ordine decrescente
+01/07/2010 - catalogSearch: parametro stemmer=true per attivare la ricerca con stemmer
+01/07/2010 - aggiornata jbal-engine.jar
+01/07/2010 - accesso dall'esterno a components/**
+25/06/2010 - componente slideshow
 29/05/2010 - Possibile ordinamento dei campi di ricerca in catalogSearch
 28/05/2010 - Bug corretto: tornando in modifica delle componente catalogo perde
 			 l'informazione se visualizzare la ricerca per lista su un canale.
