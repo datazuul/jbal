@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project basedir="." default="build" name="JSites">
+<project basedir="." default="build" name="JOpac2">
 	<tstamp>
       <format property="TODAY" pattern="yyyyMMdd-HHmm" />
     </tstamp>
