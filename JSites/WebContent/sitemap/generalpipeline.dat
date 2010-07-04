@@ -262,7 +262,7 @@
 		    
 </map:pipeline>
 
-<map:pipeline internal-only="true">
+<map:pipeline> <!--  internal-only="true" -->
 	<map:match pattern="*/**">
 		<map:mount check-reload="yes" src="context://{1}/" uri-prefix="{1}" />
 	</map:match>
