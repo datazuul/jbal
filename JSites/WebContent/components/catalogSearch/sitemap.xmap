@@ -48,6 +48,7 @@
 	                    	<map:parameter name="page" value="{request-attr:page}"/>
 	                    	<map:parameter name="query" value="{request-attr:query}"/>
 	                    	<map:parameter name="orderby" value="{request-attr:orderby}"/>
+	                    	<map:parameter name="rxp" value="{request-attr:rxp}"/>
 	                    </map:transform>
 	                </map:act> 	
                     <map:transform type="wikitrans"/>

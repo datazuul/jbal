@@ -57,10 +57,11 @@ import JSites.utils.Util;
 public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 	
 	String catalogConnection = null, dbType=null;
+	String rxp=null;
 	StringBuffer sb = new StringBuffer();
 	String dbUrl=null;
 	
-	boolean readCatalogConnection = false, readDbType = false;
+	boolean readCatalogConnection = false, readDbType = false, isRxp = false;
 	//boolean readLinks = false;
 	
 	@SuppressWarnings("unchecked")
@@ -79,6 +80,9 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		else if(loc.equals("dbType")){
 			readDbType = true;
 		}
+		else if(loc.equals("rxp")) {
+			isRxp=true;
+		}
 		else if(loc.equals("catalogSearch"))
 			super.startElement("", "root", "root", a);
 		else
@@ -87,7 +91,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 
 	@Override
 	public void characters(char[] c, int start, int len) throws SAXException {
-		if(readCatalogConnection || readDbType)
+		if(readCatalogConnection || readDbType || isRxp)
 			sb.append(c,start,len);
 		else
 			super.characters(c, start, len);
@@ -105,11 +109,20 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 			dbType = sb.toString().trim();
 			sb.delete(0, sb.length());
 		}
+		else if(loc.equals("rxp")) {
+			isRxp = false;
+			rxp = sb.toString().trim();
+			sb.delete(0, sb.length());
+			String t=Util.getRequestData(o, "rxp");
+			if(t!=null && t.trim().length()>0) rxp=t;
+		}
 		else if(loc.equals("catalogSearch")) {
 			try {
 				throwResults();
 			} 
-			catch (Exception e) { e.printStackTrace();} 
+			catch (Exception e) { e.printStackTrace();}
+			if(rxp == null || rxp.length()==0) rxp="10";
+			throwField("rxp",rxp);
 			super.endElement("", "root", "root");
 		}
 		else {
@@ -292,9 +305,16 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		
         Vector<Long> v = result.getRecordIDs();
 		
+        int rxpn=10;
+        
+        try {
+        	rxpn=Integer.parseInt(rxp);
+        }
+        catch(Exception e) {}
+        
 		int nrec = v.size();
-		int start = (page * 10) + 0;
-		int end = (page * 10) + 9;
+		int start = (page * rxpn) + 0;
+		int end = (page * rxpn) + (rxpn-1);
 		
 		if(end>nrec-1) end = nrec-1;
 		

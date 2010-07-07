@@ -29,6 +29,12 @@
 					<xsl:apply-templates select="catalogName" />
 					<xsl:apply-templates select="catalogConnection" />
 					<xsl:apply-templates select="catalogFormat" />
+					
+					<tr>
+					<td><label class="cat_data_label">Numero record per pagina</label></td>
+					<td><input type="text" size="40" name="rxp" id="rxp" value="{rxp}" /></td>
+					</tr>
+					
 					<!--   <xsl:apply-templates select="dbType" /> -->
 					</table>
 					<script type="text/javascript" wiki="false">

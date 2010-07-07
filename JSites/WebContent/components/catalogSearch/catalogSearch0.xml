@@ -8,4 +8,5 @@
 	<search name="ANY" desc="Parole chiave" checked="true" />
 	<dbType></dbType >
 	<template></template>
+	<rxp>10</rxp>
 </catalogSearch>

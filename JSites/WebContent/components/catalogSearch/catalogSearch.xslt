@@ -20,9 +20,14 @@
     <xsl:param name="query" />
     <xsl:param name="orderby" />
     <xsl:param name="page" />
+    <xsl:param name="rxp" /> <!-- results per page -->
     
     
 	<xsl:template match="/">
+		<xsl:variable name="rxp1">
+			<xsl:if test="string-length($rxp)>0"><xsl:value-of select="$rxp" /></xsl:if>
+			<xsl:if test="string-length($rxp)=0"><xsl:value-of select="//rxp" /></xsl:if>
+		</xsl:variable>
 		<div class="{$time}">
 			<div class="catalogSearch" id="{$cid}" wiki="false">
 			 	
@@ -70,6 +75,7 @@
 				</xsl:variable>
 								
 				<xsl:if test="$countSearch &gt; 0">
+					
 				 	<form method="post" action="pageview?pid={$pid}" id="listForm">
 						<input type="hidden" id="lista" name="lista" value="" />
 					</form>
@@ -81,6 +87,7 @@
 								<input name="pid" id="pid" type="hidden" value="{$pid}"/>
 							    <input name="query" id="query" type="hidden" value=""/>
 							    <input id="page" name="page" type="hidden" value="0"/>
+							    <input id="rxp" name="rxp" type="hidden" value="{$rxp1}" />
 							    <input name="orderby" id="orderby" type="hidden" value="{//catalogOrder}" />
 							    
 							    <fieldset>
@@ -147,10 +154,14 @@
 				</div>
 				<div class="clearer">&#160;</div>
 				<xsl:if test="string-length(root/listRecord) = 0">
-					<xsl:call-template name="nav"/>
+					<xsl:call-template name="nav">
+						<xsl:with-param name="rxp"><xsl:value-of select="$rxp1" /></xsl:with-param>
+					</xsl:call-template>
 				</xsl:if>
 				<xsl:if test="string-length(root/listRecord) > 0">
-					<xsl:call-template name="listnav"/>
+					<xsl:call-template name="listnav">
+						<xsl:with-param name="rxp"><xsl:value-of select="$rxp1" /></xsl:with-param>
+					</xsl:call-template>
 				</xsl:if>
 			</div>
 		</div>
@@ -163,6 +174,8 @@
 	
 	<xsl:template match="catalogFormat"></xsl:template>
 	<xsl:template match="catalogOrder"></xsl:template>
+		<xsl:template match="rxp"></xsl:template>
+	
 	
 	<xsl:template match="search">
 	    
@@ -170,6 +183,7 @@
 	</xsl:template>			    
 			
 	<xsl:template name="nav">
+		<xsl:param name="rxp" />
 		<xsl:variable name="count"><xsl:value-of select="root/queryData/queryCount"/></xsl:variable>
 		<!--  
 		Query: <xsl:value-of select="$query" /><br/>
@@ -182,11 +196,11 @@
 			<xsl:if test="string-length($page) > 0">
 				<div class="ricerca_nav" style="text-align: center;">
 					<xsl:if test="$page > 0">
-						<a accesskey="I" href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page={$page+(-1)}">&lt;&lt; Indietro</a>
+						<a accesskey="I" href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page={$page+(-1)}&amp;rxp={$rxp}">&lt;&lt; Indietro</a>
 					</xsl:if>
-					&#160;pagina&#160;<xsl:value-of select="$page +1"/>&#160;di&#160;<xsl:value-of select="floor($count div 10)+1"/>&#160;
-					<xsl:if test="(($page+1) * 10) &lt; $count ">
-						<a accesskey="A" href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page={$page+1}">Avanti &gt;&gt;</a>
+					&#160;pagina&#160;<xsl:value-of select="$page +1"/>&#160;di&#160;<xsl:value-of select="floor($count div $rxp)+1"/>&#160;
+					<xsl:if test="(($page+1) * $rxp) &lt; $count ">
+						<a accesskey="A" href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page={$page+1}&amp;rxp={$rxp}">Avanti &gt;&gt;</a>
 					</xsl:if>
 					
 					<br/>
@@ -195,11 +209,10 @@
 			</xsl:if>
 			<xsl:if test="string-length($page) = 0">
 				<div class="ricerca_nav" style="text-align: center;">					
-					&#160;pagina&#160;1&#160;di&#160;<xsl:value-of select="floor($count div 10)+1"/>&#160;
-					<xsl:if test="10 &lt; $count ">
-						<a accesskey="A"  href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page=1">Avanti &gt;&gt;</a>
+					&#160;pagina&#160;1&#160;di&#160;<xsl:value-of select="floor($count div $rxp)+1"/>&#160;
+					<xsl:if test="$rxp &lt; $count ">
+						<a accesskey="A"  href="pageview?pid={$pid}&amp;orderby={$orderby}&amp;query={$query}&amp;page=1&amp;rxp={$rxp}">Avanti &gt;&gt;</a>
 					</xsl:if>
-					
 					<br/>
 				</div>
 				<div class="clearer">&#160;</div>
@@ -208,11 +221,15 @@
 	</xsl:template>
 	
 	<xsl:template name="listnav">
+		<xsl:param name="rxp" />
+		<xsl:variable name="c"><xsl:value-of select="count(/root/resultSet/record)" /></xsl:variable>
 		<xsl:if test="root/sjid > 0">
 			<div class="ricerca_nav" style="text-align: center;">
 				<xsl:variable name="ejid"><xsl:value-of select="root/ejid"/></xsl:variable>
 				<xsl:variable name="list"><xsl:value-of select="root/listRecord"/></xsl:variable>
-				<a accesskey="P" href="pageview?pid={$pid}&amp;nlist{$list}={$ejid}">Prossimi risultati &gt;&gt;</a>				
+				<xsl:if test="$c = $rxp">
+					<a accesskey="P" href="pageview?pid={$pid}&amp;nlist{$list}={$ejid}">Prossimi risultati &gt;&gt;</a>
+				</xsl:if>		
 				<br/>
 			</div>
 			<div class="clearer">&#160;</div>
