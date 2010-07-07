@@ -1,3 +1,4 @@
+07/07/2010 - catalogSearch: parametro record per pagina
 01/07/2010 - catalogSearch: dati in xml ..../components/catalogSearch/viewxml?catalog=xxx
 01/07/2010 - catalogSearch: parametro descendant=true per avere i dati in ordine decrescente
 01/07/2010 - catalogSearch: parametro stemmer=true per attivare la ricerca con stemmer
