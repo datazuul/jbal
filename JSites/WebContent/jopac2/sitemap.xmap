@@ -21,7 +21,7 @@
 				<sitename>jopac2</sitename>
 				<data-directory>/siti/jopac2</data-directory>
 				<showAreasInFirstLevelPages>true</showAreasInFirstLevelPages>
-				<template>units</template>
+				<template>jopac2</template>
 			</global-variables>
 			
 		</map:component-configurations>
