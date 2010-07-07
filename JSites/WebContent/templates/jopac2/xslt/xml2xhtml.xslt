@@ -161,7 +161,7 @@
 			<div class="wrapper">
 				<div align="center">
 					<A class="nounder" title="{text}" href="/">
-						<IMG id="jopac" alt="{leftImg/@alt}" src="./templates/{$template}/{leftImg}"/>
+						<IMG id="jopac" alt="{leftImg/@alt}" src="./templates/{$template}/images/jopac.png"/>
 					</A>
 				</div>
 			</div>
