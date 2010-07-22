@@ -56,12 +56,12 @@ import JSites.utils.Util;
 
 public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 	
-	String catalogConnection = null, dbType=null;
+	String catalogConnection = null, dbType=null, defaultQuery=null, catalogOrder=null;
 	String rxp=null;
 	StringBuffer sb = new StringBuffer();
 	String dbUrl=null;
 	
-	boolean readCatalogConnection = false, readDbType = false, isRxp = false;
+	boolean readCatalogConnection = false, readDbType = false, isRxp = false, isDefaultQuery = false, isCatalogOrder=false;
 	//boolean readLinks = false;
 	
 	@SuppressWarnings("unchecked")
@@ -80,6 +80,12 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		else if(loc.equals("dbType")){
 			readDbType = true;
 		}
+		else if(loc.equals("defaultQuery")){
+			isDefaultQuery = true;
+		}
+		else if(loc.equals("catalogOrder")){
+			isCatalogOrder = true;
+		}
 		else if(loc.equals("rxp")) {
 			isRxp=true;
 		}
@@ -91,7 +97,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 
 	@Override
 	public void characters(char[] c, int start, int len) throws SAXException {
-		if(readCatalogConnection || readDbType || isRxp)
+		if(readCatalogConnection || readDbType || isRxp || isDefaultQuery || isCatalogOrder)
 			sb.append(c,start,len);
 		else
 			super.characters(c, start, len);
@@ -107,6 +113,16 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		else if(loc.equals("dbType")){
 			readDbType = false;
 			dbType = sb.toString().trim();
+			sb.delete(0, sb.length());
+		}
+		else if(loc.equals("defaultQuery")){
+			isDefaultQuery = false;
+			defaultQuery = sb.toString().trim();
+			sb.delete(0, sb.length());
+		}
+		else if(loc.equals("catalogOrder")){
+			isCatalogOrder = false;
+			catalogOrder = sb.toString().trim();
 			sb.delete(0, sb.length());
 		}
 		else if(loc.equals("rxp")) {
@@ -143,8 +159,13 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		}
 		
 		String catalogQuery = getQuery(o);
+		
 		String orderBy= Util.getRequestData(o, "orderby");
+		
 		if(orderBy!=null) orderBy=orderBy.trim();
+		
+		if(orderBy==null || orderBy.length()==0) orderBy=catalogOrder;
+		
 		String descendant=Util.getRequestData(o, "descendant");
 		
 		if(checkListParameter("list")) {
@@ -385,6 +406,8 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 ////			ret=((Map<String,String>)o.getSession().getAttribute("redirectfrom")).get("query");
 //			
 //		}
+		
+		if(ret==null || ret.length()==0) ret=defaultQuery;
 		
 		try {
 			if(ret!=null)
