@@ -9,4 +9,5 @@
 	<dbType></dbType >
 	<template></template>
 	<rxp>10</rxp>
+	<defaultQuery></defaultQuery>
 </catalogSearch>

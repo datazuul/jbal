@@ -35,6 +35,11 @@
 					<td><input type="text" size="40" name="rxp" id="rxp" value="{rxp}" /></td>
 					</tr>
 					
+					<tr>
+					<td><label class="cat_data_label">Default Query</label></td>
+					<td><input type="text" size="40" name="defaultQuery" id="defaultQuery" value="{defaultQuery}" /></td>
+					</tr>
+					
 					<!--   <xsl:apply-templates select="dbType" /> -->
 					</table>
 					<script type="text/javascript" wiki="false">

@@ -17,10 +17,12 @@
     <xsl:param name="time"/>
     <xsl:param name="extra" />
     <xsl:param name="type" />
-    <xsl:param name="query" />
+    
     <xsl:param name="orderby" />
     <xsl:param name="page" />
     <xsl:param name="rxp" /> <!-- results per page -->
+    
+    <xsl:variable name="query"><xsl:value-of select="/root/queryData/requestQuery" /></xsl:variable>
     
     
 	<xsl:template match="/">
@@ -189,6 +191,7 @@
 		Query: <xsl:value-of select="$query" /><br/>
 		Page: <xsl:value-of select="$page" /><br/>
 		Count: <xsl:value-of select="$count" /><br/>
+		Rxp: <xsl:value-of select="$rxp" /><br/>
 		Pid: <xsl:value-of select="$pid" /><br/>
 		Orderby: <xsl:value-of select="$orderby" /><br/>
 		-->
