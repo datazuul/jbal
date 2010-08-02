@@ -1,3 +1,5 @@
+02/08/2010 - core: bug corretto, eccezione con db vuoto: quando il db era vuoto andava in 
+			 eccezione invece di creare le tabelle
 21/07/2010 - catalogSearch: defaultQuery e orderBy da configuraione per eseguire ricerche 
 		 	 automaticamente al caricamento della pagina
 07/07/2010 - catalogSearch: parametro record per pagina
