@@ -90,7 +90,12 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		if(pid==null || pid.length()==0) {
 			try {
 				conn=getConnection(dbname);
-				pid=Long.toString(DBGateway.getPidFrom(pcode, conn));
+				if(pcode!=null) {
+					pid=Long.toString(DBGateway.getPidFrom(pcode, conn));
+				}
+				else { // db probabily empty, go to homepage
+					pid="0";pcode="";
+				}
 			}
 			catch(Exception e) {e.printStackTrace();}
 			finally {
