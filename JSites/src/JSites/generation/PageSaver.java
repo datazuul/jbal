@@ -41,6 +41,7 @@ import org.apache.avalon.framework.component.ComponentException;
 import org.apache.cocoon.xml.AttributesImpl;
 import org.xml.sax.SAXException;
 
+import JSites.authentication.Authentication;
 import JSites.authentication.Permission;
 
 import JSites.utils.DBGateway;
@@ -56,6 +57,7 @@ public class PageSaver extends MyAbstractPageGenerator{
 
 	public void processChild(long id, Connection conn) throws SAXException, SQLException {
 		
+// resumed		
 		if(! (containerType.equals("content"))){
 			super.processChild(id, conn);
 			return;
@@ -66,10 +68,12 @@ public class PageSaver extends MyAbstractPageGenerator{
 			boolean isActive = false;
 			try { 
 				isActive = DBGateway.getState(newcid, conn)==3;
-				if(newcid==0 || isActive){		//se il componente deve essere validato (stato PND)							//o se il componente � una new entry	
+				if(newcid==0 || isActive){		//se il componente deve essere validato (stato PND)							
+					//o se il componente e' una new entry	
 					newcid = DBGateway.getNewFreeCid(conn);		//cerca un nuovo CID nel DB
 					DBGateway.saveDBComponentAndRelationship(newcid, save_componentType, 0, save_pacid, save_cid, 
-							new java.util.Date(), statecode, pageId, request.getParameter("url"), order, conn);
+							new java.util.Date(), statecode, pageId, request.getParameter("url"), order, 
+							Authentication.getUsername(session), request.getRemoteAddr(), conn);
 				}
 				else if (statecode==2){	DBGateway.setPending(newcid, conn); }
 				else if (statecode==1){	DBGateway.setWorking(newcid, conn); }
@@ -120,7 +124,7 @@ public class PageSaver extends MyAbstractPageGenerator{
 	}
 
 	protected void subClassProcess(String componentType, long id, AttributesImpl attrCid, boolean hasChildren, Connection conn) throws SAXException, SQLException {
-
+// resumed
 		if(! (containerType.equals("content"))){
 			super.subClassProcess(componentType, id, attrCid, hasChildren, conn);
 			return;
@@ -138,10 +142,12 @@ public class PageSaver extends MyAbstractPageGenerator{
 	    	ResultSet rs = st.executeQuery("select CID from tblcontenuti where PaCID=" + id +" and StateID<4 order by OrderNumber"); // ho tolto and IDStato=3
 			while(rs.next()){
 				long childId = rs.getLong(1);
+// resumer outer if
 				if(this.containerType.equals("content")){
 					if(childId==newcid) saveChild(childId,id, conn);
 				}
-				else processChild(childId, conn);
+				else 
+					processChild(childId, conn);
 
 			}
 			rs.close();
@@ -154,7 +160,10 @@ public class PageSaver extends MyAbstractPageGenerator{
 	
 
 	private long getPacid(Connection conn) throws SQLException, ComponentException {
-		long ret = Long.parseLong(request.getParameter("pacid"));
+		
+		long ret = 0;
+		String pc=request.getParameter("pacid");
+		if(pc!=null) ret=Long.parseLong(pc);
 		if(ret == 0){
 			Long l = (Long) session.getAttribute("newPacid");
 			if(l!=null) ret = l.longValue();
@@ -162,7 +171,8 @@ public class PageSaver extends MyAbstractPageGenerator{
 		if(ret==0){
 			ret = DBGateway.getNewFreeCid(conn);
 			session.setAttribute("newPacid",new Long(ret));
-			DBGateway.saveDBComponent(ret,"content",1,0,new Date(), pageId, request.getParameter("url"), conn);
+			DBGateway.saveDBComponent(ret,"content",1,0,new Date(), pageId, request.getParameter("url"), 
+					Authentication.getUsername(session), request.getRemoteAddr(), conn);
 			DBGateway.linkPageContainers(ret, pageId, conn);
 		}
 		return ret;

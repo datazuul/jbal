@@ -35,15 +35,17 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.transformation.AbstractTransformer;
 import org.apache.cocoon.xml.AttributesImpl;
+import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import JSites.transformation.catalogSearch.Templator;
 import JSites.utils.HtmlCodec;
 
-public class WikiTransformer3 extends AbstractTransformer{
+public class WikiTransformer3 extends MyAbstractPageTransformer{
 	
 	private StringBuffer readbuffer;
 	private final OutputNode paragraph=new OutputNode("br",new AttributesImpl());
@@ -62,6 +64,8 @@ public class WikiTransformer3 extends AbstractTransformer{
 	Stack<Integer> wikiChange = new Stack<Integer>();
 	int xmlDepth = 0;
 	
+	private Document metadata=null;
+	
 	@Override
 	public void endDocument() throws SAXException {
 		if(!xmlParsing)
@@ -78,9 +82,15 @@ public class WikiTransformer3 extends AbstractTransformer{
 
 	@SuppressWarnings("unchecked")
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
+		super.setup(arg0, arg1, arg2, arg3);
 		readbuffer = new StringBuffer(10240);
 		isHtml = false;
 		xmlParsing = false;
+		
+		if(request.getAttribute("metadata")!=null) {
+			 metadata=(Document)request.getAttribute("metadata");
+//			 System.out.println(XMLUtil.XML2String(metadata));
+		}
 	}
 	
 	public void startElement(String namespaceURI, String localName, String qName, Attributes attributes) throws SAXException {
@@ -143,9 +153,9 @@ public class WikiTransformer3 extends AbstractTransformer{
 		if(s.length()>0 && s.charAt(0)=='<') {
 			isHtml=true;
 			try {
-				doFinalHtml(s);
-			} catch (IOException e) {
-				e.printStackTrace();
+				doFinalHtml(s.toString());
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
 			isHtml=false;
 		}
@@ -155,7 +165,7 @@ public class WikiTransformer3 extends AbstractTransformer{
 	}
 
 	
-	public void doFinalHtml(StringBuffer s) throws SAXException, IOException {
+	public void doFinalHtml(String s) throws SAXException, IOException {
 
 		xmlParsing = true;
 		
@@ -165,7 +175,7 @@ public class WikiTransformer3 extends AbstractTransformer{
         //TODO la dichiarazione meglio se venisse salvata nel file xml cosi'
         // e' anche un buon pattern per riconoscere
         // la dichiarazione non va messa
-        String temp = normalizeEntities(s.toString());
+        String temp = normalizeEntities(s);
         
         StringReader sr= new StringReader("<futiz>"+temp+"</futiz>");
         

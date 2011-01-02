@@ -44,7 +44,7 @@ public class CheckContentLenghtTransformer extends MyAbstractPageTransformer {
 	@Override
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
 		super.setup(arg0, arg1, arg2, arg3);
-		componentType = o.getParameter("type");		
+		componentType = request.getParameter("type");		
 		readbuffer = new StringBuffer();
 		alert = false;
 	}

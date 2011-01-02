@@ -40,6 +40,9 @@ import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.environment.SourceResolver;
+import org.w3c.dom.Document;
+
+import JSites.utils.XMLUtil;
 
 public class RedirectFromRequestRestoreAction implements Action, Composable, Disposable {
 	
@@ -64,6 +67,14 @@ public class RedirectFromRequestRestoreAction implements Action, Composable, Dis
 
 			session.removeAttribute("redirectfrom");
 		}
+		
+		Object m=session.getAttribute("metadata");
+		if(m!=null) {
+//			System.out.println(XMLUtil.XML2String((Document)m));
+			request.setAttribute("metadata", m);
+		}
+		
+		
 		return objectModel;
 	}
 	

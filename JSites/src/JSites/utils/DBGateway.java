@@ -23,19 +23,31 @@ package JSites.utils;
 *  may apply for components included in JOpac2.
 *
 *******************************************************************************/
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.avalon.framework.component.ComponentException;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.Session;
+import org.hsqldb.Types;
 import org.jopac2.utils.JOpac2Exception;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import com.ibm.icu.util.Calendar;
 
 import JSites.setup.DbSetup;
 import JSites.utils.site.NewsItem;
@@ -61,7 +73,77 @@ public class DBGateway {
 		}
 	}
 	
-    public static void activateComponent(long cid, Connection conn) throws SQLException, ComponentException {
+	public static void updateTblComponentiForUsernameRemoteip(Connection conn) throws SQLException {
+		String sql="ALTER TABLE tblcomponenti " +
+			"ADD COLUMN username VARCHAR(50)  NOT NULL DEFAULT 'unknown', " +
+			"ADD COLUMN remoteip VARCHAR(20)  NOT NULL DEFAULT 'unknown', " +
+			"ADD INDEX Index_3(username), " +
+			"ADD INDEX Index_4(remoteip)";
+		
+		DBGateway.executeStatement(conn,sql);
+	}
+	
+	public static void updateTblPagineForUsernameRemoteip(Connection conn) throws SQLException {
+		String sql="ALTER TABLE tblpagine " +
+			"ADD COLUMN resp VARCHAR(50)  NOT NULL DEFAULT 'unknown', " +
+			"ADD COLUMN username VARCHAR(50)  NOT NULL DEFAULT 'unknown', " +
+			"ADD COLUMN remoteip VARCHAR(20)  NOT NULL DEFAULT 'unknown', " +
+			"ADD COLUMN insertdate datetime NOT NULL default '0000-00-00 00:00:00', " +
+			"ADD INDEX Index_resp(resp), " +
+			"ADD INDEX Index_username(username), " +
+			"ADD INDEX Index_remoteip(remoteip)," +
+			"ADD INDEX Index_insertdate(insertdate)";
+		
+		DBGateway.executeStatement(conn,sql);
+	}
+	
+	public static void updateComponentCid(long cid, String username, String remoteip, Connection conn) throws SQLException {
+		// current_timestamp
+		String sql="update tblcomponenti " +
+				"set username = '"+username+"', " +
+					"remoteip = '"+remoteip+"', " +
+					"InsertDate = current_timestamp " +
+				"where CID="+cid;
+		DBGateway.executeStatement(conn, sql);
+		long pid=DBGateway.getPidFromCid(cid,conn);
+		DBGateway.updateComponentPid(pid, username, remoteip, conn);
+	}
+	
+	private static long getPidFromCid(long cid, Connection conn) throws SQLException {
+		long pid=-1;
+		String sql="select PID from tblstrutture s,tblcontenuti c " +
+				"where c.PaCID=s.CID and " +
+				"c.CID="+cid;
+		ResultSet rs=null;
+    	Statement st=null;
+    	try {
+	    	st=conn.createStatement();
+	    	rs=st.executeQuery(sql);
+	    	if(rs.next()){
+	    		pid = rs.getLong(1);
+	    	}
+    	}
+    	catch(SQLException e) {
+	    	throw e;
+    	}
+    	finally {
+    		if(rs!=null) rs.close();
+    		if(st!=null) st.close();
+    	}
+		return pid;
+	}
+
+	public static void updateComponentPid(long pid, String username, String remoteip, Connection conn) throws SQLException {
+		// current_timestamp
+		String sql="update tblpagine " +
+				"set username = '"+username+"', " +
+					"remoteip = '"+remoteip+"', " +
+					"insertdate = current_timestamp " +
+				"where PID="+pid;
+		DBGateway.executeStatement(conn, sql);
+	}
+	
+    public static void activateComponent(long cid, String username, String remoteip, Connection conn) throws SQLException, ComponentException {
     	ResultSet rs=null;
     	Statement st=null;
     	try {
@@ -72,6 +154,7 @@ public class DBGateway {
 	    		long hCid = rs.getLong(1);
 	    		executeStatement(conn,"update tblcontenuti set StateID=4 where CID="+hCid);
 	    	}
+	    	updateComponentCid(cid, username, remoteip, conn);
     	}
     	catch(SQLException e) {
 	    	throw e;
@@ -82,12 +165,14 @@ public class DBGateway {
     	}
 	}
 
-	public static void activatePage(long pid, Connection conn) throws SQLException, ComponentException {
+	public static void activatePage(long pid, String username, String remoteip, Connection conn) throws SQLException, ComponentException {
 		executeStatement(conn, "update tblpagine set Valid=1 where PID="+pid);
+		updateComponentPid(pid, username, remoteip, conn);
 	}
 	
-	public static void deleteComponent(long cid, Connection conn) throws SQLException, ComponentException {
+	public static void deleteComponent(long cid, String username, String remoteip, Connection conn) throws SQLException, ComponentException {
 		executeStatement(conn, "update tblcontenuti set StateID=5 where CID="+cid);
+		updateComponentCid(cid, username, remoteip, conn);
 		long pacid = DBGateway.getPacid(cid, conn);
     	OrdinaDB.normalizeDB(pacid, conn);
 	}
@@ -194,12 +279,14 @@ public class DBGateway {
 		return a>0;
 	}
 
-	public static void disableComponent(long cid, Connection conn) throws SQLException, ComponentException {
+	public static void disableComponent(long cid, String username, String remoteip, Connection conn) throws SQLException, ComponentException {
 		executeStatement(conn, "update tblcontenuti set StateID=2 where CID="+cid);
+		updateComponentCid(cid, username, remoteip, conn);
 	}
 
-	public static void disablePage(long pid, Connection conn) throws SQLException, ComponentException {
+	public static void disablePage(long pid, String username, String remoteip, Connection conn) throws SQLException, ComponentException {
 		executeStatement(conn, "update tblpagine set Valid=0 where PID="+pid);
+		updateComponentCid(pid, username, remoteip, conn);
 	}
 
 	public static String getAreaName(long pid, Connection conn) throws SQLException{
@@ -653,6 +740,77 @@ public class DBGateway {
 		return ret;
 	}
 	
+	public static Document getPageMetadata(String l, Map<String, String> lastdata, Connection conn) throws SQLException, SAXException, IOException, ParserConfigurationException {
+		String sql="select * from tblpagine where pcode='"+l+"'";
+		return _getPageMetadata(sql, lastdata, conn);
+	}
+	
+	public static Document getPageMetadata(long pid, Map<String, String> lastdata, Connection conn) throws SQLException, SAXException, IOException, ParserConfigurationException {
+		String sql="select * from tblpagine where PID="+pid;
+		return _getPageMetadata(sql, lastdata, conn);
+	}
+	
+	
+	private static Document _getPageMetadata(String sql, Map<String, String> lastdata, Connection conn) throws SQLException, SAXException, IOException, ParserConfigurationException {
+		ResultSet temp = null;
+		Statement st = null;
+		
+		StringBuffer d=new StringBuffer("<metadata>\n");
+		
+		try {
+			st=conn.createStatement();
+			temp=st.executeQuery(sql);
+			if(temp.next()) {
+				ResultSetMetaData meta=temp.getMetaData();
+				for(int i=1;i<=meta.getColumnCount();i++) {
+					String column=meta.getColumnName(i).toLowerCase();
+					int type=meta.getColumnType(i);
+					String value="";
+					if(type==Types.TIMESTAMP) {
+						try {
+							Timestamp date=temp.getTimestamp(i);
+							value=date.toString();
+							GregorianCalendar gc = new GregorianCalendar();
+							gc.setTimeInMillis(date.getTime());
+							lastdata.put(column+"_YEAR", Integer.toString(gc.get(GregorianCalendar.YEAR)));
+							lastdata.put(column+"_MONTH", Integer.toString(gc.get(GregorianCalendar.MONTH)));
+							lastdata.put(column+"_DAY", Integer.toString(gc.get(GregorianCalendar.DAY_OF_MONTH)));
+							lastdata.put(column+"_HOUR", Integer.toString(gc.get(GregorianCalendar.HOUR_OF_DAY)));
+							lastdata.put(column+"_MINUTE", Integer.toString(gc.get(GregorianCalendar.MINUTE)));
+							lastdata.put(column+"_SECOND", Integer.toString(gc.get(GregorianCalendar.SECOND)));
+							d.append("<"+column+">\n");
+							d.append("<year>"+Integer.toString(gc.get(GregorianCalendar.YEAR))+"</year>\n");
+							d.append("<month>"+Integer.toString(gc.get(GregorianCalendar.MONTH))+"</month>\n");
+							d.append("<day>"+Integer.toString(gc.get(GregorianCalendar.DAY_OF_MONTH))+"</day>\n");
+							d.append("<hour>"+Integer.toString(gc.get(GregorianCalendar.HOUR_OF_DAY))+"</hour>\n");
+							d.append("<minute>"+Integer.toString(gc.get(GregorianCalendar.MINUTE))+"</minute>\n");
+							d.append("<second>"+Integer.toString(gc.get(GregorianCalendar.SECOND))+"</second>\n");
+							d.append("</"+column+">\n");
+						}
+						catch(Exception e) {}
+					}
+					else {
+						
+						value=temp.getString(i);
+					}
+					if(value!=null) {
+						d.append("<"+column+">"+value+"</"+column+">\n");
+						lastdata.put(column, value);
+					}
+				}
+			}
+		}
+		catch(SQLException e) {
+			throw e;
+		}
+		finally {
+			if(temp!=null) temp.close();
+			if(st!=null) st.close();
+		}
+		d.append("</metadata>");
+		return XMLUtil.String2XML(d.toString());
+	}
+	
 	public static String getPageCode(long pid, Connection conn) throws SQLException {
 		ResultSet temp = null;
 		String ret = null;
@@ -694,6 +852,11 @@ public class DBGateway {
 	public static void setPageCode(long pid, String newCode, Connection conn) throws SQLException {
 		executeStatement(conn, "update tblpagine set PCode='"+newCode+"'where PID="+pid);
 	}
+
+	public static void setPageResp(long pid, String newCode, Connection conn) throws SQLException {
+		executeStatement(conn, "update tblpagine set resp='"+newCode+"'where PID="+pid);
+	}
+
 	
 	public static boolean pageExists(long pid, Connection conn) throws SQLException {
 		ResultSet temp =null;
@@ -829,7 +992,7 @@ public class DBGateway {
 		return url;
 	}
 	
-	public static void erasePage(long pid, Connection conn) throws SQLException{
+	public static void erasePage(long pid, String username, String remoteip, Connection conn) throws SQLException{
 		String q = "select CID from tblstrutture where PID="+pid;
 		Statement st = null;
 		ResultSet containers = null;
@@ -841,7 +1004,7 @@ public class DBGateway {
 			while(containers.next()){
 				long cid = containers.getLong(1);
 				if(uniquePageRelation(pid, cid, conn)){
-					eraseContent(cid, conn);
+					eraseContent(cid, username, remoteip, conn);
 				}
 			}
 			
@@ -850,8 +1013,9 @@ public class DBGateway {
 			childPages = st.executeQuery(q);
 			while(childPages.next()){
 				long childpid = childPages.getLong(1);
-				erasePage(childpid,conn);
+				erasePage(childpid,username,remoteip,conn);
 			}
+			updateComponentPid(pid, username, remoteip, conn);
 		}
 		catch(SQLException e) {
 			throw e;
@@ -868,7 +1032,7 @@ public class DBGateway {
     	executeStatement(conn,"delete from tblroles where PID="+pid);
 	}
 
-	private static void eraseContent(long cid, Connection conn) throws SQLException {
+	private static void eraseContent(long cid, String username, String remoteip, Connection conn) throws SQLException {
 		String q = "select CID from tblcontenuti where PaCID="+cid;
 		ResultSet children = null;
 		Statement st = null;
@@ -878,8 +1042,9 @@ public class DBGateway {
 			children = st.executeQuery(q);
 			while(children.next()){
 				long childId = children.getLong(1);
-				eraseComponent(childId, conn);
-			}		
+				eraseComponent(childId, username, remoteip, conn);
+			}
+			updateComponentCid(cid, username, remoteip, conn);
 		}
 		catch(SQLException e) {
 			throw e;
@@ -893,7 +1058,7 @@ public class DBGateway {
 		executeStatement(conn,"delete from tblcomponenti where CID="+cid);
 	}
 
-	private static void eraseComponent(long cid, Connection conn) throws SQLException {
+	private static void eraseComponent(long cid, String username, String remoteip, Connection conn) throws SQLException {
 		ResultSet hCid = null;
 		Statement st = null;
 		try {
@@ -902,9 +1067,11 @@ public class DBGateway {
 			if(hCid.next()){
 				long historyCid = hCid.getLong(1);
 				if(historyCid!=0){
-					eraseComponent(historyCid, conn);
+					updateComponentCid(historyCid, username, remoteip, conn);
+					eraseComponent(historyCid, username, remoteip, conn);
 				}
 			}
+			updateComponentCid(cid, username, remoteip, conn);
 		}
 		catch(SQLException e) {
 			throw e;
@@ -1032,11 +1199,11 @@ public class DBGateway {
 	}
 	
 	public static void saveDBComponent(long cid, String componentType, int hasChild, long historycid, Date date, 
-			long pid, String url, Connection conn) throws SQLException, ComponentException{
+			long pid, String url, String user, String remoteIp, Connection conn) throws SQLException, ComponentException{
 //		java.sql.Date sqlDate = new java.sql.Date(date.getTime());
 		
-		String sqlComponenteNuovo = "INSERT INTO tblcomponenti (InsertDate,CID,Type,Attributes,HasChildren,HistoryCid)" + // ,InsertDate
-									"VALUES (current_timestamp," + cid + ",'" + componentType + "',null,"+ hasChild+"," + historycid + ")"; // ,'" + sqlDate + "'
+		String sqlComponenteNuovo = "INSERT INTO tblcomponenti (InsertDate,CID,Type,Attributes,HasChildren,HistoryCid, username, remoteip)" + // ,InsertDate
+									"VALUES (current_timestamp," + cid + ",'" + componentType + "',null,"+ hasChild+"," + historycid+",'" + user+"','" + remoteIp + "')"; // ,'" + sqlDate + "'
 		executeStatement(conn,sqlComponenteNuovo);
 		
 		if(componentType.equals("externalLink")){
@@ -1053,7 +1220,7 @@ public class DBGateway {
 	}
 	
 	public static void saveDBComponentAndRelationship(long id, String componentType, int hasChild, long pacid, 
-			long historycid, Date date, long intStatecode, long pid, String url, long order, Connection conn) throws SQLException, ComponentException {
+			long historycid, Date date, long intStatecode, long pid, String url, long order, String user, String remoteIp, Connection conn) throws SQLException, ComponentException {
 		
 		long orderNumber = 1;
 		if(order == -1)
@@ -1062,7 +1229,7 @@ public class DBGateway {
 			orderNumber = order;
 			updateOrder(order, pacid, conn);
 		}
-		saveDBComponent(id, componentType,hasChild,historycid,date,pid,url,conn);
+		saveDBComponent(id, componentType,hasChild,historycid,date,pid,url,user,remoteIp,conn);
 		
 		if(intStatecode==0){
 			System.out.println("Wait... there's a problem\nState Code is 0... Couldn't be!");
@@ -1265,5 +1432,29 @@ public class DBGateway {
 		
 	}
 
+	public static String getLastModifiedPID(long pageId, Connection conn) throws SQLException {
+		String r = "";
+		String query =	"SELECT last PID FROM tblpagine where PaPID="+pageId;
+		ResultSet rs = null;
+		Statement st = null;
+		
+		try {
+			st=conn.createStatement();
+			rs=st.executeQuery(query);
+			while(rs.next()){
+				r=rs.getString(1);
+			}
+		}
+		catch(SQLException e) {
+			throw e;
+		}
+		finally {
+			if(rs!=null) rs.close();
+			if(st!=null) st.close();
+		}
+		return r;
+		
+	}
+	
 
 }

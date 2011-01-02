@@ -52,11 +52,11 @@ public class SaveOrder extends PageAction {
 			String pid = "";
 
 			
-			Enumeration<String> en = o.getParameterNames();
+			Enumeration<String> en = request.getParameterNames();
 			while(en.hasMoreElements()){
 				String name = en.nextElement();
 				if(name.matches("cid\\d+")){
-					String value = o.getParameterValues(name)[0];
+					String value = request.getParameterValues(name)[0];
 					if(oNums.contains(value)){
 						orderOk = false;
 						break;
@@ -67,7 +67,7 @@ public class SaveOrder extends PageAction {
 					}
 				}
 				else if(name.matches("pid")){
-					pid = o.getParameterValues(name)[0];
+					pid = request.getParameterValues(name)[0];
 					if(!(pid.matches("\\d+"))) pid = "";
 				}
 			}

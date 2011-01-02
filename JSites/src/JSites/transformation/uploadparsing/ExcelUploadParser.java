@@ -68,7 +68,7 @@ public class ExcelUploadParser extends MyAbstractPageTransformer {
 				super.startElement(namespaceURI, localName, qName, attributes);
 		}
 		else{
-			if(localName.equals("save") && o.getParameter("upload-file") == null)
+			if(localName.equals("save") && request.getParameter("upload-file") == null)
 				super.startElement("", "nosave", "nosave", attributes);
 			else
 				super.startElement(namespaceURI, localName, qName, attributes);
@@ -99,7 +99,7 @@ public class ExcelUploadParser extends MyAbstractPageTransformer {
 				super.endElement(namespaceURI, localName, qName);
 		}
 		else{
-			if(localName.equals("save") && o.getParameter("upload-file") == null)
+			if(localName.equals("save") && request.getParameter("upload-file") == null)
 				super.endElement("", "nosave", "nosave");
 			else
 				super.endElement(namespaceURI, localName, qName);
@@ -141,7 +141,7 @@ public class ExcelUploadParser extends MyAbstractPageTransformer {
 			
 			HSSFSheet sheet = wb.getSheetAt(ns);
 			
-			String clear = o.getParameter("clean");
+			String clear = request.getParameter("clean");
 			if(clear!=null && clear.equals("on"))
 				clearSheet(sheet);
 			

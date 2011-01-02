@@ -44,6 +44,7 @@ import JSites.authentication.Authentication;
 import JSites.authentication.Permission;
 
 import JSites.utils.DBGateway;
+import JSites.utils.Page;
 import JSites.utils.PageTree;
 
 public class NavbarGenerator extends MyAbstractPageGenerator {
@@ -55,6 +56,8 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 	private boolean toggle = true;
 	private boolean showAreasInFirstLevelPages = false;
 	
+	public static String aggiungiPagina="[ aggiungi pagina ]", aggiungiLink="[ aggiungi link esterno ]";
+	
 	public void generate() throws SAXException {
 	
 		activePids = new Vector<Long>();
@@ -64,7 +67,7 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 		contentHandler.startElement("","navigator","navigator", new AttributesImpl());
 		
 		contentHandler.startElement("","id","id", new AttributesImpl());
-		contentHandler.characters("navbar".toCharArray(),0,"navbar".length());
+//		contentHandler.characters("navbar".toCharArray(),0,"navbar".length());
 		contentHandler.endElement("","id","id");
 		
 		Connection conn = null;
@@ -75,21 +78,30 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
  			try{ newpage = Boolean.parseBoolean((String) request.getParameter("newpage")); }
  			catch(Exception e){ newpage = false;}
 
-			PageTree tree = createPageTree(pageId, conn);
+//			PageTree tree = createPageTree(pageId, conn);
 			
-			contentHandler.startElement("","area","area", new AttributesImpl());
-			
+			AttributesImpl hrefAttrs = new AttributesImpl();
 			if(pageId!=1){
 				String areaName = DBGateway.getAreaName(pageId, conn);
-				AttributesImpl hrefAttrs = new AttributesImpl();
+				
 				hrefAttrs.addCDATAAttribute("href","pageview?pid="+DBGateway.getStartFromPid(pageId, conn));
-				contentHandler.startElement("","a","a", hrefAttrs);
-				contentHandler.characters(areaName.toCharArray(),0,areaName.length());
-				contentHandler.endElement("","a","a");	
+				hrefAttrs.addCDATAAttribute("areaname",areaName);
 			}
-			contentHandler.endElement("","area","area");
+			contentHandler.startElement("","selectedarea","selectedarea", hrefAttrs);
+			contentHandler.endElement("","selectedarea","selectedarea");
+			
+			int level=1;
+			
+			String username=Authentication.getUsername(session);
+			boolean authenticated=true;
+			
+			if(username==null || username.length()==0 || username.equals("guest"))
+				authenticated=false;
+			
+			generateTree(1,level,authenticated,conn);
+			
 						
-			processTree(tree,0,conn);
+//			processTree(tree,0,conn);
 
 		}catch(Exception e) {e.printStackTrace();}
 			
@@ -99,6 +111,7 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 		contentHandler.endDocument();
 	}
 	
+
 	@SuppressWarnings("unchecked")
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par) throws ProcessingException, SAXException, IOException{
 		
@@ -127,8 +140,16 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 		else showAreasInFirstLevelPages = false;
 	}
 
-	
+	/**
+	 * @deprecated
+	 * @param pid
+	 * @param conn
+	 * @return
+	 * @throws SQLException
+	 * @throws JOpac2Exception
+	 */
 	private PageTree createPageTree(long pid, Connection conn) throws SQLException, JOpac2Exception {
+		
 		long padre = DBGateway.getPapid(pid, conn);
 		TreeSet<PageTree> zii = getChildren(DBGateway.getPapid(padre,conn),conn);
 		TreeSet<PageTree> figli = null;
@@ -227,6 +248,15 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 		return ret;
 	}
 	
+	
+	/**
+	 * @deprecated
+	 * @param me
+	 * @param conn
+	 * @return
+	 * @throws SQLException
+	 * @throws JOpac2Exception
+	 */
 	private PageTree getPadre(PageTree me, Connection conn) throws SQLException, JOpac2Exception {
 		long padre = DBGateway.getPapid(me.getRootPid(), conn);
 		TreeSet<PageTree> fratelli = getChildren(padre, conn);
@@ -238,6 +268,15 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 		return ret;
 	}
 
+	/**
+	 * @deprecated
+	 * @param areaChildrenL2
+	 * @param nonno
+	 * @param conn
+	 * @return
+	 * @throws SQLException
+	 * @throws JOpac2Exception
+	 */
 	private TreeSet<PageTree> fill2L(TreeSet<PageTree> areaChildrenL2, PageTree nonno, Connection conn) throws SQLException, JOpac2Exception{
 		
 		Iterator<PageTree> ai = areaChildrenL2.iterator();
@@ -255,11 +294,169 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 	}
 
 
+	/**
+	 * @deprecated
+	 * @param pid
+	 * @param conn
+	 * @return
+	 * @throws SQLException
+	 * @throws JOpac2Exception
+	 */
 	private TreeSet<PageTree> getChildren(long pid, Connection conn) throws SQLException, JOpac2Exception {
 		return getChildren(pid,1,conn);
 	}
+	
+	
+	private void generateTree(int pid, int level, boolean authenticated, Connection conn) throws SQLException, JOpac2Exception, SAXException {
+		String pageName=DBGateway.getPageName(pid, conn);
+		String pageCode=DBGateway.getPageCode(pid, conn);
+		
+		createNavPage(pageName,pageCode,pid,level);
+		
+		Statement st = conn.createStatement();
+		ResultSet rs = st.executeQuery("Select PID,PCode,Name,HasChild,Valid,InSidebar from tblpagine where PaPID=" +  pid);
+		while(rs.next()){
+			int dbid = rs.getInt("PID");
+			
+			Permission tempperm = null;
+			if(authenticated) {
+				tempperm = Authentication.assignPermissions(session, dbid, conn);
+				if( (rs.getBoolean("Valid") && rs.getBoolean("InSidebar")) || 
+						tempperm.hasPermission(Permission.EDITABLE) || 
+						tempperm.hasPermission(Permission.VALIDABLE)) {
+					if(rs.getBoolean("haschild")) {
+							generateTree(dbid, level+1, authenticated, conn);
+					}
+					else {
+						createNavPage(rs.getString("Name"),rs.getString("PCode"),rs.getInt("PID"),level+1);
+						contentHandler.endElement("","navpage","navpage");
+					}
+				}
+			}
+			else {
+				if(rs.getBoolean("Valid") && rs.getBoolean("InSidebar")) {
+					if(rs.getBoolean("haschild")) {
+						generateTree(dbid, level+1, authenticated, conn);
+					}
+					else {
+						createNavPage(rs.getString("Name"),rs.getString("PCode"),rs.getInt("PID"),level+1);
+						contentHandler.endElement("","navpage","navpage");
+					}
+				}
+			}
+		}
+		
+		if(authenticated) {
+			Permission tempperm = Authentication.assignPermissions(session, pid, conn);
+			if(DBGateway.getPageLevel(pid,0, conn)<4 && tempperm.hasPermission(Permission.EDITABLE)){
+				addAddPage(aggiungiPagina, "pagecreate?papid="+pid+"&pid=0&type=section");
+				addAddPage(aggiungiLink, "pagecreate?papid="+pid+"&pid=0&type=externalLink");
+			}
+		}
+			
+		rs.close();
+		st.close();
+		
+		contentHandler.endElement("","navpage","navpage");
+	}
+	
+	
+	
+	private void createNavPage(String pageName, String pageCode, int pid,
+			int level) throws SAXException {
+		AttributesImpl hrefAttrs = new AttributesImpl();
+		
+		hrefAttrs.addCDATAAttribute("name",pageName);
+		hrefAttrs.addCDATAAttribute("code",pageCode);
+		hrefAttrs.addCDATAAttribute("pid",Integer.toString(pid));
+		hrefAttrs.addCDATAAttribute("level",Integer.toString(level));
+		hrefAttrs.addCDATAAttribute("link",pageCode);
+		if(pid==pageId) {
+			hrefAttrs.addCDATAAttribute("selected","true");
+		}
 
-	/*
+		contentHandler.startElement("","navpage","navpage", hrefAttrs);
+		
+	}
+
+
+	private void generateTreeNew(int pid, int level, boolean authenticated, Connection conn) throws SQLException, JOpac2Exception, SAXException {
+		String pageName=DBGateway.getPageName(pid, conn);
+		String pageCode=DBGateway.getPageCode(pid, conn);
+		
+		AttributesImpl hrefAttrs = new AttributesImpl();
+			
+		hrefAttrs.addCDATAAttribute("name",pageName);
+		hrefAttrs.addCDATAAttribute("code",pageCode);
+		hrefAttrs.addCDATAAttribute("pid",Integer.toString(pid));
+		hrefAttrs.addCDATAAttribute("level",Integer.toString(level));
+		hrefAttrs.addCDATAAttribute("link",pageCode);
+		if(pid==pageId) {
+			hrefAttrs.addCDATAAttribute("selected","true");
+		}
+		
+		TreeSet<Page> tree=new TreeSet<Page>();
+
+		contentHandler.startElement("","navpage","navpage", hrefAttrs);
+		
+		Statement st = conn.createStatement();
+		ResultSet rs = st.executeQuery("Select * from tblpagine");
+		while(rs.next()){
+			Page page=new Page(rs.getInt("pid"),rs.getInt("papid"),rs.getString("name"),rs.getString("pcode"),
+					rs.getBoolean("valid"),rs.getBoolean("haschild"),rs.getBoolean("insidebar"),
+					rs.getString("username"),rs.getString("remoteip"),rs.getString("resp"),rs.getDate("insertdate"));
+			
+			
+			int dbid = rs.getInt("PID");
+			
+			Permission tempperm = null;
+			if(authenticated) {
+				tempperm = Authentication.assignPermissions(session, dbid, conn);
+				if( (rs.getBoolean("Valid") && rs.getBoolean("InSidebar")) || 
+						tempperm.hasPermission(Permission.EDITABLE) || 
+						tempperm.hasPermission(Permission.VALIDABLE)) {
+							generateTree(dbid, level+1, authenticated, conn);
+				}
+			}
+			else {
+				if(rs.getBoolean("Valid") && rs.getBoolean("InSidebar")) {
+					generateTree(dbid, level+1, authenticated, conn);
+				}
+			}
+		}
+		
+		if(authenticated) {
+			Permission tempperm = Authentication.assignPermissions(session, pid, conn);
+			if(DBGateway.getPageLevel(pid,0, conn)<4 && tempperm.hasPermission(Permission.EDITABLE)){
+				addAddPage(aggiungiPagina, "pagecreate?papid="+pid+"&pid=0&type=section");
+				addAddPage(aggiungiLink, "pagecreate?papid="+pid+"&pid=0&type=externalLink");
+			}
+		}
+			
+		rs.close();
+		st.close();
+		
+		contentHandler.endElement("","navpage","navpage");
+	}
+	
+	
+	/**
+	 * @param pageName
+	 * @param link
+	 * @throws SAXException
+	 */
+	private void addAddPage(String pageName, String link) throws SAXException {
+		AttributesImpl hrefAttrs = new AttributesImpl();
+		
+		hrefAttrs.addCDATAAttribute("name",pageName);
+		hrefAttrs.addCDATAAttribute("link",link);
+
+		contentHandler.startElement("","navpage","navpage", hrefAttrs);
+		contentHandler.endElement("","navpage","navpage");
+	}
+
+	/**
+	 * @deprecated
 	 * long c = 0 se vogliamo nipoti, 
 	 * altrimenti: se vogliamo solo i figli, allora c = 1
 	 */
@@ -276,7 +473,7 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 				PageTree pt = null;
 				TreeSet<PageTree> v1 = null;
 				if(c==0){
-					v1 = getChildren(dbid,1, conn);
+					v1 = getChildren(dbid,0, conn);
 					//v1.add(new PageTree(new Vector(),true, aggiungiPagina, tempPid));
 				}
 				else v1 = new TreeSet<PageTree>();
@@ -295,11 +492,34 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 		return v;
 	}
 
+	/**
+	 * @deprecated
+	 * @param tree
+	 * @param level
+	 * @param conn
+	 * @throws SAXException
+	 * @throws SQLException
+	 */
 	private void processTree(PageTree tree, long level, Connection conn) throws SAXException, SQLException {
 		
 		String text = tree.getRootName();
 		
 		AttributesImpl attrs = new AttributesImpl();
+		
+		
+//		AttributesImpl hrefAttrs = new AttributesImpl();
+//		
+//		hrefAttrs.addCDATAAttribute("name",text); //pageName
+//		hrefAttrs.addCDATAAttribute("code",pageCode);
+//		hrefAttrs.addCDATAAttribute("pid",Integer.toString(pid));
+//		hrefAttrs.addCDATAAttribute("level",Integer.toString(level));
+//		hrefAttrs.addCDATAAttribute("link",pageCode);
+//		if(pid==pageId) {
+//			hrefAttrs.addCDATAAttribute("selected","true");
+//		}
+
+		
+		
 		attrs.addCDATAAttribute("text",text);
 		
 		boolean haschild = false;
@@ -332,7 +552,7 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 			}
 		}
 		if(level>0)
-			contentHandler.startElement("","voce","voce", attrs);
+			contentHandler.startElement("","navpage","navpage", attrs);
 		
 		Iterator<PageTree> iter = tree.getChilds().iterator();
 		long childLevel = level + 1;
@@ -341,7 +561,7 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 			processTree(pt,childLevel, conn);
 		}	
 		if(level>0)
-			contentHandler.endElement("","voce","voce");
+			contentHandler.endElement("","navpage","navpage");
 	}
 
 }

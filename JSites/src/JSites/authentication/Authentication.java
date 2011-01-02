@@ -50,7 +50,7 @@ public class Authentication {
 		return UID;
 	}
 
-	private static String getUsername(Session s) {
+	public static String getUsername(Session s) {
 		String UID=getUserData(s,"ID");
 		
 		if(UID == null)UID="guest";

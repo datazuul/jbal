@@ -81,7 +81,7 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 	protected String dbname = "";
 	protected SitemapVariableHolder sitemapVariables = null;
 	protected String _source="";
-    
+	    
 	public void compose(ComponentManager manager) throws ComponentException {
 		this.manager = manager;
         dbselector = (ComponentSelector) manager.lookup(DataSourceComponent.ROLE + "Selector");
@@ -92,6 +92,8 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 
     	contentHandler.startDocument();
     	Connection conn = null;
+    	boolean content=true;
+    	
 		try {
 			conn = this.getConnection(dbname);
 			logger.log(Level.CONFIG, dbname + ": "+ "Connesso a DB: " + dbname);
@@ -101,20 +103,43 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 				return;
 			}
 			
-			PreparedStatement ps = 
-				conn.prepareStatement("SELECT tblstrutture.PID, tblstrutture.CID, tblcomponenti.Type\n" +
-			"FROM tblcomponenti INNER JOIN tblstrutture ON tblcomponenti.CID = tblstrutture.CID\n" +
-			"WHERE (((tblstrutture.PID)=?) AND ((tblcomponenti.Type)=?))");
+			PreparedStatement ps = conn.prepareStatement("SELECT tblstrutture.PID, tblstrutture.CID, tblcomponenti.Type\n" +
+					"FROM tblcomponenti INNER JOIN tblstrutture ON tblcomponenti.CID = tblstrutture.CID\n" +
+					"WHERE (((tblstrutture.PID)=?) AND ((tblcomponenti.Type)=?))");
 			
-			ps.setLong(1, pageId);
-			ps.setString(2, containerType);
+			if(containerType.equals("content")) {
+				ps.setLong(1, pageId);
+				ps.setString(2, containerType);
+			}
+			else {
+				long tpid=DBGateway.getPidFrom("_"+containerType, conn);
+				if(tpid!=1) { // 1 = sempre HOMEPAGE, ed e' il default restituito se la pagina non esiste
+					ps.setLong(1, tpid);
+					ps.setString(2, "content");
+					content=false;
+				}
+				else {
+					ps.setLong(1, pageId);
+					ps.setString(2, containerType);
+				}
+			}
 				
+//			if(!content) {
+//				contentHandler.startElement("",containerType,containerType,new AttributesImpl());
+//			}
+			
+			
 			ResultSet rs1 = ps.executeQuery();
 			while(rs1.next()){
 				long cid = rs1.getLong("CID");
 				logger.log(Level.CONFIG, dbname + ": "+ "Processing CID: " + cid);
 				processChild(cid, conn);
 			}
+			
+//			if(!content) {
+//				contentHandler.endElement("",containerType, containerType);
+//			}
+			
 			rs1.close();
 			ps.close();
 
@@ -188,7 +213,9 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 			if(componentType.length>1)
 				attrCid.addCDATAAttribute("extra", componentType[1]);
 			
-			subClassProcess(componentType[0], id, attrCid, hasChildren, conn);
+			attrCid.addCDATAAttribute("container", containerType);
+			
+			subClassProcess(componentType[0], id, attrCid, hasChildren, conn); // was componentType[0]
 		}
 
 	}
@@ -253,7 +280,12 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
     
     protected void subClassProcess(String componentType, long id, AttributesImpl attrCid, boolean hasChildren, Connection conn) throws SAXException, SQLException {
 
-    	attrCid = doColor(id, attrCid, conn);
+    	if(componentType.equals("content") && !containerType.equals("content")) { //shift content on footer, header, ...
+    		componentType=containerType;
+    	}
+    	
+    	if(permission.getPermissionCode()>Permission.ACCESSIBLE)
+    		attrCid = doColor(id, attrCid, conn);
     	
 		String queryString = queryString4Children(id);
 
@@ -268,7 +300,9 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 			attrCid.addCDATAAttribute("sfa",String.valueOf(permission.hasPermission(Permission.SFA)));
 			attrCid.addCDATAAttribute("pageTitle",String.valueOf(DBGateway.getPageName(pageId, conn)   ));
 		}
+		
 		contentHandler.startElement("",componentType,componentType,attrCid);
+		
 		if(componentType.equals("content") && (permission.hasPermission(Permission.VALIDABLE) ) ){
 			AttributesImpl dbAttrs = new AttributesImpl();
 			dbAttrs.addCDATAAttribute("order", "0");
@@ -392,4 +426,6 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 			contentHandler.characters(content.toCharArray(), 0, content.length());
 		contentHandler.endElement("",element,element);
 	}
+	
+
 }

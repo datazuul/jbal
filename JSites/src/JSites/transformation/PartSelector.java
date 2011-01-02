@@ -53,17 +53,17 @@ public class PartSelector extends MyAbstractPageTransformer {
 		write = true;   
 		try{
 			 long pageId=1;
-			 String stringPid = o.getParameter("pid");
+			 String stringPid = request.getParameter("pid");
 			 if(stringPid != null)
 				 pageId = Long.parseLong(stringPid);
-			 String stringCid = o.getParameter("cid");
+			 String stringCid = request.getParameter("cid");
 			 if(stringCid != null)
 				 cid = Long.parseLong(stringCid);
 			 
 			 Connection conn = null; 
 			 try{
 				 conn = this.getConnection(dbname);
-				 Session session = this.sessionManager.getSession(true);
+//				 Session session = this.sessionManager.getSession(true);
 				 permission = Authentication.assignPermissions(session, pageId, conn);
 			 }catch(Exception e) {e.printStackTrace();}
 				

@@ -86,8 +86,8 @@ public class DbSetupDerby extends DbSetup {
 				"Username varchar(50) NOT NULL," +
 				"PermissionCode int NOT NULL default 0," +
 				"PID int NOT NULL default 0) " + postfix;
-//				"KEY Index_2 (User)," +
-//				"KEY Index_3 USING BTREE (User))" + postfix;
+//				"KEY Index_2 (Username)," +
+//				"KEY Index_3 USING BTREE (Username))" + postfix;
 //				"ENGINE=MyISAM DEFAULT CHARSET=latin1;";
 		st.execute(sql);
 		sql="create index tblroles_Index_2 on tblroles(Username)";
@@ -121,11 +121,31 @@ public class DbSetupDerby extends DbSetup {
 				"HasChild int NOT NULL default 0," +
 				"PCode varchar(20) NOT NULL," +
 				"InSidebar int  NOT NULL default 1," + 
+				"resp varchar(50)" +
+				"insertdate datetime NOT NULL default '0000-00-00 00:00:00'," +
+				"username varchar(50) NOT NULL default 'unknown'," +
+				"remoteip varchar(20) NOT NULL default 'unknown'," +
+//				"KEY index_username (username))," +
+//				"KEY index_remoteip (remoteip))," +
+//				"KEY index_insertdate (insertdate)" +
+//				"KEY index_resp (resp)" +
+//				
 				"PRIMARY KEY  (PID)) " + postfix;
 //				"UNIQUE KEY Codice USING BTREE (PCode)," +
 //				"KEY Index_2 USING BTREE (PaPID)) " + postfix;
 //				"ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;";
 		st.execute(sql);
+		
+		sql="create index tblpagine_Index_Resp on tblpagine(resp)";
+		st.execute(sql);
+		sql="create index tblpagine_Index_Insertdate on tblpagine(insertdate)";
+		st.execute(sql);
+		sql="create index tblpagine_Index_Username on tblpagine(username)";
+		st.execute(sql);
+		sql="create index tblpagine_Index_Remoteip on tblpagine(remoteip)";
+		st.execute(sql);
+		
+		
 		
 		sql="create index tblpagine_Index_Codice on tblpagine(PCode)";
 		st.execute(sql);
@@ -188,7 +208,7 @@ public class DbSetupDerby extends DbSetup {
 	}
 	
 	public void createTableTblComponenti(Connection conn) throws SQLException {
-		dropTable(conn,"tblcomponenti");		
+		dropTable(conn,"tblcomponenti");
 		Statement st=conn.createStatement();
 		String sql="CREATE TABLE tblcomponenti (CID int NOT NULL, " + // default '0'," +
 				"Type varchar(45) NOT NULL ," + // default ''
@@ -196,11 +216,15 @@ public class DbSetupDerby extends DbSetup {
 				"HasChildren int NOT NULL ," + // default '0'
 				"HistoryCid int NOT NULL," + // default '0'
 				"InsertDate timestamp NOT NULL default CURRENT_TIMESTAMP ," + //default '0000-00-00 00:00:00'
+				"username varchar(50)," +
+				"remoteip varchar(20)," +
 				"PRIMARY KEY  (CID)) " + postfix;
 //				"KEY Index_2 (Type)) "+postfix;
 		st.execute(sql);
 		
 		sql="create index tblcomponenti_Index_2 on tblcomponenti(Type)";
+		sql="create index tblcomponenti_Index_3 on tblcomponenti(username)";
+		sql="create index tblcomponenti_Index_4 on tblcomponenti(remoteip)";
 		st.execute(sql);
 		st.close();
 	}

@@ -50,7 +50,7 @@ public class Tutil extends MyAbstractPageTransformer {
 	@SuppressWarnings("unchecked")
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
 		//super.setup(arg0, arg1, arg2, arg3);
-		 o = (Request)arg1.get("request");
+		 request = (Request)arg1.get("request");
 		//System.out.println("Setting up");
 		 filename=arg2;
 		 Set arg1Keys = arg1.keySet();
@@ -137,7 +137,7 @@ public class Tutil extends MyAbstractPageTransformer {
 		for(int i=0;i<end;i++){
 			String name = attributes.getLocalName(i);
 			String value = attributes.getValue(i);
-			s = s + name + "=\"" + value + "\" ";
+			s = s + name + "=\"" + value.replaceAll("&", "&amp;") + "\" ";
 		}
 		s = s + ">";
 		if(this.only_cid == 0 || (only_cid!=0 && this.cid == only_cid ) )

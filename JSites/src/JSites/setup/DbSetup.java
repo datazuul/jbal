@@ -69,7 +69,6 @@ public abstract class DbSetup {
 	public abstract void createTableNews(Connection conn) throws SQLException;
 	public abstract void createTableInfo(Connection conn) throws SQLException;
 
-
 	public void loadTableInfo(Connection conn) {
 	}
 	

@@ -32,10 +32,10 @@ public class EmptySession extends MyAbstractPageTransformer {
 	
 	public void endDocument() throws SAXException{
 		
-		Session s = this.sessionManager.getSession(false);
-		if(s!=null){
-			s.removeAttribute("newPageID");
-			s.removeAttribute("newPacid");
+//		Session s = this.sessionManager.getSession(false);
+		if(session!=null){
+			session.removeAttribute("newPageID");
+			session.removeAttribute("newPacid");
 		}
 
 		super.endDocument();

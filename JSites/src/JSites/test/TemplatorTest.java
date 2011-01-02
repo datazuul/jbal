@@ -36,6 +36,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import JSites.transformation.catalogSearch.Templator;
+import JSites.utils.XMLUtil;
 import junit.framework.TestCase;
 
 
@@ -133,9 +134,9 @@ public class TemplatorTest extends TestCase {
 				"<item><primo>b</primo><secondo>2</secondo></item>" +
 				"<item><primo>c</primo><secondo>3</secondo></item>" +
 				"</record>";
-		Document doc=Templator.String2XML(xml2);
+		Document doc=XMLUtil.String2XML(xml2);
 		Templator.groupPair(doc, ",", "item", "/record/primo", "/record/secondo");
-		String ret=Templator.XML2String(doc);
+		String ret=XMLUtil.XML2String(doc);
 		System.out.println(ret);
 		assertTrue("OK",ret.equals(out));
 	}
@@ -149,7 +150,7 @@ public class TemplatorTest extends TestCase {
 				"</record>";
 		String in="{{/record/item:<a href='[[primo]]'>[[secondo]]</a>}}";
 		String out="<a href='a'>1</a><a href='b'>2</a><a href='c'>3</a>";
-		Document doc=Templator.String2XML(indoc);
+		Document doc=XMLUtil.String2XML(indoc);
 		String ret=Templator.parseContext(doc, in);
 		System.out.println(ret);
 		assertTrue("OK",ret.equals(out));
@@ -159,7 +160,7 @@ public class TemplatorTest extends TestCase {
 	public void test1p_group() throws Exception {
 		String in="{{^Group(,|item|/record/primo|/record/secondo):<a href='[[primo]]'>[[secondo]]</a>}}";
 		String out="<a href='a'>1</a><a href='b'>2</a><a href='c'>3</a>";
-		Document doc=Templator.String2XML(xml2);
+		Document doc=XMLUtil.String2XML(xml2);
 		String ret=Templator.parseContext(doc, in);
 
 		System.out.println(ret);
@@ -170,7 +171,7 @@ public class TemplatorTest extends TestCase {
 		String in="{{^Group(,|item|/record/primo):<a href='[[primo]]'>[[primo]]</a>}}";
 		String out="<a href='a'>a</a><a href='b'>b</a><a href='c'>c</a>";
 
-		Document doc=Templator.String2XML(xml2);
+		Document doc=XMLUtil.String2XML(xml2);
 		String ret=Templator.parseContext(doc, in);
 
 		System.out.println(ret);
@@ -181,7 +182,7 @@ public class TemplatorTest extends TestCase {
 		String in="<p>{{/record/haspart/record:<b><a href='[[bid]]'>[[isbd]]</a></b>}}</p>"; // se c'e' haspart/record, per ogni record fa quello indicato
 		String out="<p><b><a href='RA4353750'>Filosofia, epistemologia, logica / saggi di Barone ... [et al.]. - Milano : Edizioni di Comunita , 1958. - XI, 340 p. ; 25 cm</a></b>" +
 				"<b><a href='RA4353751'>Scienze sociali / saggi di Barbano ... [et al.]. - Milano : Edizioni di Comunita , 1958. - XI, 390 p. ; 25 cm</a></b></p>";
-		Document doc=Templator.String2XML(xml1);
+		Document doc=XMLUtil.String2XML(xml1);
 		String ret=Templator.parseContext(doc, "{{/:"+in+"}}");
 		
 		System.out.println(ret);
@@ -191,7 +192,7 @@ public class TemplatorTest extends TestCase {
 	public void test2k() throws Exception {
 		String in="<p>{{/record/haspart:<b>ciao</b>}}</p>"; // se c'e' haspart, per ogni haspart fa quello indicato
 		String out="<p><b>ciao</b></p>";
-		Document doc=Templator.String2XML(xml1);
+		Document doc=XMLUtil.String2XML(xml1);
 		String ret=Templator.parseContext(doc, "{{/:"+in+"}}");
 		
 		System.out.println(ret);
@@ -201,7 +202,7 @@ public class TemplatorTest extends TestCase {
 	public void test3k() throws Exception {
 		String in="<p>{{/record/haspart:<b>ciao{{/:<i>[[record/ISBD]]</i>}}</b>}}</p>"; 
 		String out="<p><b>ciao<i>Il *pensiero americano contemporaneo / direzione dell'opera Ferruccio Rossi-Landi. - Milano : Edizioni di Comunita. - 2 v. ; 25 cm. - In testa al front.: Centro di studi metodologici di Torino</i></b></p>";
-		Document doc=Templator.String2XML(xml1);
+		Document doc=XMLUtil.String2XML(xml1);
 		String ret=Templator.parseContext(doc, "{{/:"+in+"}}");
 		
 		System.out.println(ret);
@@ -211,7 +212,7 @@ public class TemplatorTest extends TestCase {
 	public void test4k() throws Exception {
 		String in="<p>{{//bid:<b>[[.]]</b>}}</p>"; 
 		String out="<p><b>RA4353750</b><b>RA4353751</b><b>RA4388959</b></p>";
-		Document doc=Templator.String2XML(xml1);
+		Document doc=XMLUtil.String2XML(xml1);
 		String ret=Templator.parseContext(doc, "{{/:"+in+"}}");
 		
 		System.out.println(ret);
@@ -221,7 +222,7 @@ public class TemplatorTest extends TestCase {
 	public void test5k() throws Exception {
 		String in="<p>{{/:<b>[[//bid]]</b>}}</p>"; 
 		String out="<p><b>RA4353750RA4353751RA4388959</b></p>";
-		Document doc=Templator.String2XML(xml1);
+		Document doc=XMLUtil.String2XML(xml1);
 		String ret=Templator.parseContext(doc, "{{/:"+in+"}}");
 		
 		System.out.println(ret);
@@ -231,7 +232,7 @@ public class TemplatorTest extends TestCase {
 	public void testRAW() throws Exception {
 		String in="[[*RAW*]]"; 
 		String out="<pre><?xml version=\"1.0\" encoding=\"UTF-8\"?><record>	<primo>a, b, c</primo>	<secondo>1, 2, 3</secondo></record></pre>";
-		Document doc=Templator.String2XML(xml2);
+		Document doc=XMLUtil.String2XML(xml2);
 		String ret=Templator.parseContext(doc, "{{/:"+in+"}}");
 		ret=ret.replaceAll("&lt;", "<").replaceAll("&gt;", ">");
 		System.out.println(ret);

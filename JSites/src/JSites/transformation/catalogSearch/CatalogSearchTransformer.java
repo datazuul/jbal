@@ -129,7 +129,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 			isRxp = false;
 			rxp = sb.toString().trim();
 			sb.delete(0, sb.length());
-			String t=Util.getRequestData(o, "rxp");
+			String t=Util.getRequestData(request, "rxp");
 			if(t!=null && t.trim().length()>0) rxp=t;
 		}
 		else if(loc.equals("catalogSearch")) {
@@ -154,19 +154,19 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		SearchResultSet result=null;
 		
 		if(catalogConnection==null || catalogConnection.equals("dbconn")) {
-			String t=Util.getRequestData(o, "catalog");
+			String t=Util.getRequestData(request, "catalog");
 			if(t!=null && t.length()>0) catalogConnection=t;
 		}
 		
-		String catalogQuery = getQuery(o);
+		String catalogQuery = getQuery(request);
 		
-		String orderBy= Util.getRequestData(o, "orderby");
+		String orderBy= Util.getRequestData(request, "orderby");
 		
 		if(orderBy!=null) orderBy=orderBy.trim();
 		
 		if(orderBy==null || orderBy.length()==0) orderBy=catalogOrder;
 		
-		String descendant=Util.getRequestData(o, "descendant");
+		String descendant=Util.getRequestData(request, "descendant");
 		
 		if(checkListParameter("list")) {
 			String[] list=getListParameter("list");
@@ -234,7 +234,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 				
 				boolean useStemmer=false;
 				
-				String t=Util.getRequestData(o, "stemmer");
+				String t=Util.getRequestData(request, "stemmer");
 				if(t!=null && t.equalsIgnoreCase("true")) useStemmer=true;
 	
 				try {
@@ -256,23 +256,23 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 	private String[] getListParameter(String p) {
 		boolean found=false;
 		String[] r=new String[2];
-		Enumeration<String> e=o.getParameterNames();
+		Enumeration<String> e=request.getParameterNames();
 		while(e.hasMoreElements()) {
 			String n=e.nextElement();
 			if(n.startsWith(p)) {
 				r[0]=n.substring(p.length());
-				r[1]=o.getParameter(n);
+				r[1]=request.getParameter(n);
 				found=true;
 				break;
 			}
 		}
 		if(!found) {
-			e=o.getAttributeNames();
+			e=request.getAttributeNames();
 			while(e.hasMoreElements()) {
 				String n=e.nextElement();
 				if(n.startsWith(p)) {
 					r[0]=n.substring(p.length());
-					r[1]=(String)o.getAttribute(n);
+					r[1]=(String)request.getAttribute(n);
 					break;
 				}
 			}
@@ -284,7 +284,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 	@SuppressWarnings("unchecked")
 	private boolean checkListParameter(String p) {
 		boolean r=false;
-		Enumeration<String> e=o.getParameterNames();
+		Enumeration<String> e=request.getParameterNames();
 		while(e.hasMoreElements()) {
 			String n=e.nextElement();
 			if(n.startsWith(p)) {
@@ -293,7 +293,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 			}
 		}
 		if(!r) {
-			e=o.getAttributeNames();
+			e=request.getAttributeNames();
 			while(e.hasMoreElements()) {
 				String n=e.nextElement();
 				if(n.startsWith(p)) {
@@ -308,7 +308,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 
 	private void throwResults(Connection conn, String catalogQuery, SearchResultSet result) throws SAXException {
 		int page = 0;
-		String sPage = Util.getRequestData(o, "page");
+		String sPage = Util.getRequestData(request, "page");
 		if( sPage != null ) {
 			try {
 				page = Integer.parseInt(sPage);

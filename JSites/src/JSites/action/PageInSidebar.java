@@ -43,8 +43,7 @@ public class PageInSidebar extends PageAction {
 		
 		if(parameters.getParameter("containerType").equals("content")){
 			
-			long pid = Long.parseLong(o.getParameter("pid"));
-			boolean insidebar = Boolean.parseBoolean(o.getParameter("insidebar"));
+			boolean insidebar = Boolean.parseBoolean(request.getParameter("insidebar"));
 			
 			Connection conn = null;
 			try{

@@ -97,8 +97,8 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 	public void endElement(String uri, String loc, String raw) throws SAXException {
 		if(loc.equals("catalogSearch")) {
 			String[] chr=null;
-			String catalogFormat=o.getParameter("catalogFormat");
-			String catalog=o.getParameter("catalogConnection");
+			String catalogFormat=request.getParameter("catalogFormat");
+			String catalog=request.getParameter("catalogConnection");
 			
 			if(catalogFormat.equalsIgnoreCase("mdb")) {
 				Connection conn;
@@ -152,7 +152,7 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 //				}
 //			}
 			
-			String order=o.getParameter("neworder").trim();
+			String order=request.getParameter("neworder").trim();
 			
 			Enumeration<String> i=listChannel.keys();
 			while(i.hasMoreElements()) {
@@ -166,8 +166,8 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 			
 			for(int iz=0;iz<ord.length;iz++) {
 				Channel ch=searchChannel.get(ord[iz].trim());
-				String t=o.getParameter("search-"+ch.getName());
-				String desc=o.getParameter("name-"+ch.getName());
+				String t=request.getParameter("search-"+ch.getName());
+				String desc=request.getParameter("name-"+ch.getName());
 				if(desc==null) desc=ch.getName();
 				ch.setDesc(desc);
 				if(t!=null && t.length()>0) ch.setChecked("true");
@@ -190,8 +190,8 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 			while(i.hasMoreElements()) {
 				String chn=i.nextElement();
 				Channel ch=listChannel.get(chn);
-				String t=o.getParameter("list-"+ch.getName());
-				String desc=o.getParameter("name-"+ch.getName());
+				String t=request.getParameter("list-"+ch.getName());
+				String desc=request.getParameter("name-"+ch.getName());
 				if(desc==null) desc=ch.getName();
 				ch.setDesc(desc);
 				if(t!=null && t.length()>0) ch.setChecked("true");
@@ -201,7 +201,7 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 			while(i.hasMoreElements()) {
 				String chn=i.nextElement();
 				El el=fields.get(chn);
-				String t=o.getParameter(el.getName());
+				String t=request.getParameter(el.getName());
 				if(t!=null && t.length()>0) el.setContent(t);
 				super.startElement("", el.getName(), el.getName(), el.getAttr());
 				super.characters(el.getContent().toCharArray(), 0, el.getContent().length());

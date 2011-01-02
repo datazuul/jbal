@@ -106,6 +106,12 @@ public class PageEditor extends MyAbstractPageGenerator {
 		    		newChild(order);
 				else
 					editChild(editedcid,id,conn);
+// resumed				
+//				else {
+//					long pacid=DBGateway.getPacid(editedcid, conn);
+//					if(pacid!=4) pacid=id;
+//					editChild(editedcid,pacid,conn);
+//				}
 
 			contentHandler.endElement("",componentType,componentType);	
 		}

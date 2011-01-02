@@ -29,9 +29,13 @@ import java.sql.Connection;
 import java.util.Map;
 
 import org.apache.avalon.framework.parameters.Parameters;
+import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Redirector;
+import org.apache.cocoon.environment.Request;
+import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.environment.SourceResolver;
 
+import JSites.authentication.Authentication;
 import JSites.utils.DBGateway;
 
 public class DeleteComponent extends PageAction {
@@ -41,13 +45,16 @@ public class DeleteComponent extends PageAction {
 		
 		super.act(redirector, resolver, objectModel, source, parameters);
 		if(parameters.getParameter("containerType").equals("content")){
-
-			long cid = Long.parseLong(o.getParameter("cid"));
+			Request request=ObjectModelHelper.getRequest(objectModel);
+			Session session=request.getSession(true);
+			
+			String username=Authentication.getUsername(session);
+			String remoteAddr=request.getRemoteAddr();
 			
 			Connection conn = null;
 			try{
 				conn = this.getConnection(dbname);
-				if(cid!=0)DBGateway.deleteComponent(cid, conn);
+				if(cid!=0)DBGateway.deleteComponent(cid, username, remoteAddr, conn);
 			}catch(Exception e){e.printStackTrace();}
 			
 			try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}

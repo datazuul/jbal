@@ -61,7 +61,11 @@ public class DbSetupMysql extends DbSetup {
 				"HasChildren tinyint(1) unsigned NOT NULL default '0'," +
 				"HistoryCid int(10) unsigned NOT NULL default '0'," +
 				"InsertDate datetime NOT NULL default '0000-00-00 00:00:00'," +
+				"username varchar(50) NOT NULL default 'unknown'," +
+				"remoteip varchar(20) NOT NULL default 'unknown'," +
 				"PRIMARY KEY  (CID)," +
+				"KEY Index_3 (username)," +
+				"KEY Index_4 (remoteip)," +
 				"KEY Index_2 (Type)) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 		try {
 			st.execute(sql);
@@ -134,6 +138,14 @@ public class DbSetupMysql extends DbSetup {
 				"HasChild tinyint(1) unsigned NOT NULL default '0'," +
 				"PCode varchar(20) NOT NULL," +
 				"InSidebar tinyint(1) unsigned NOT NULL default '1'," +
+				"resp varchar(50), " +
+				"insertdate datetime NOT NULL default '0000-00-00 00:00:00'," +
+				"username varchar(50) NOT NULL default 'unknown'," +
+				"remoteip varchar(20) NOT NULL default 'unknown'," +
+				"KEY index_username (username)," +
+				"KEY index_remoteip (remoteip)," +
+				"KEY index_insertdate (insertdate)," +
+				"KEY index_resp (resp)," +
 				"PRIMARY KEY  (PID)," +
 				"UNIQUE KEY Codice USING BTREE (PCode)," +
 				"KEY Index_2 USING BTREE (PaPID)" +

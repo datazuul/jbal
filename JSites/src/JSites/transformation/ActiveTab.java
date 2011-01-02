@@ -47,7 +47,7 @@ public class ActiveTab extends MyAbstractPageTransformer {
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
 		super.setup(arg0, arg1, arg2, arg3);
 
-		activePid = Long.parseLong(o.getParameter("pid"));
+		activePid = Long.parseLong(request.getParameter("pid"));
 
 		Connection conn = null;
 		try{

@@ -50,7 +50,7 @@ public class Setup {
 	public static void main(String[] args) {
 		String sourcePath=getPath();
 		String dataComponentsDir="/siti";
-		String siteName="prova";
+		String siteName="mna";
 		String dbName="db"+siteName.toLowerCase();
 		String virtualDomainName="www."+siteName+".it";
 		String dbUrl="jdbc:mysql://localhost/";

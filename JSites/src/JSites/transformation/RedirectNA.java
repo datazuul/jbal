@@ -56,14 +56,14 @@ public class RedirectNA extends MyAbstractPageTransformer {
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
 		 super.setup(arg0, arg1, arg2, arg3);
 		 redirect = true;
-		 String q = o.getRequestURI();
+		 String q = request.getRequestURI();
 		 if(q.contains("view"))
 			 isView = true;
 		 Connection conn=null;
 		 try{
 			 long pageId=1;
-			 String pCode = o.getParameter("pcode");
-			 String stringPid = o.getParameter("pid");
+			 String pCode = request.getParameter("pcode");
+			 String stringPid = request.getParameter("pid");
 			 if(stringPid != null && !(stringPid.equals("0"))){
 				 if(stringPid.matches("\\d+"))
 					 pageId = Long.parseLong(stringPid);
@@ -71,7 +71,7 @@ public class RedirectNA extends MyAbstractPageTransformer {
 					 System.out.println("Ooouuu, i ga richiesto >> pid="+stringPid + " << ... ma semo mati?");
 				 }
 			 }
-			 else if(o.getParameter("papid")!=null && (permission.hasPermission(Permission.ACCESSIBLE)||permission.hasPermission(Permission.EDITABLE))){
+			 else if(request.getParameter("papid")!=null && (permission.hasPermission(Permission.ACCESSIBLE)||permission.hasPermission(Permission.EDITABLE))){
 				 redirect = false;
 			 }
 			 
@@ -81,7 +81,7 @@ public class RedirectNA extends MyAbstractPageTransformer {
 				if (pCode != null)
 					pageId = DBGateway.getPidFrom(pCode, conn);
 
-				Session session = this.sessionManager.getSession(true);
+//				Session session = this.sessionManager.getSession(true);
 				permission = Authentication.assignPermissions(session, pageId, conn);
 //				try {
 //					permission = Authentication.assignPermissions(session, pageId, conn);
@@ -132,12 +132,12 @@ public class RedirectNA extends MyAbstractPageTransformer {
 		 
 		 if(!redirect){
 			 try{
-				 String uri = o.getParameter("action");
+				 String uri = request.getParameter("action");
 				 if(uri!=null){
 					 if(uri.contains("save")){
-						 String pid = o.getParameter("pid");
+						 String pid = request.getParameter("pid");
 						 if(pid==null)
-							 pid = o.getParameter("papid");
+							 pid = request.getParameter("papid");
 						 if(pid!=null){
 							 redirURL = "pageview?pid="+pid;
 							 redirect = true;

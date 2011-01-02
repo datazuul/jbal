@@ -49,22 +49,20 @@ public class ManageUsers extends PageAction {
 			Connection conn= null;
 			try{
 				conn = this.getConnection(this.dbname);
-				String pid = o.getParameter("pid"); 
-				String pcode = o.getParameter("pcode");
+				String pcode = request.getParameter("pcode");
 				
-				if(pid==null || pid.length()==0) {
-					pid=Long.toString(DBGateway.getPidFrom(pcode, conn));
+				if(pid==-1 || pid==0) {
+					pid=DBGateway.getPidFrom(pcode, conn);
 				}
 				
-				Enumeration<?> params = o.getParameterNames();
+				Enumeration<?> params = request.getParameterNames();
 				while(params.hasMoreElements()){
 					String name = (String)params.nextElement();
 					if(name.startsWith("utente")){
 						String index = name.replaceAll("utente","");
 		
-						String username = o.getParameter(name);
-						String editable = o.getParameter("editable" + index);
-						String validable = o.getParameter("validable" + index);
+						String editable = request.getParameter("editable" + index);
+						String validable = request.getParameter("validable" + index);
 						
 						boolean atLeastOne = false;
 						
@@ -82,16 +80,20 @@ public class ManageUsers extends PageAction {
 						if(atLeastOne)
 							p.setPermission(Permission.ACCESSIBLE);
 	
-						if(pid != null && username.length()>0)
-							DBGateway.setPermission(Long.parseLong(pid), username, p, conn);					
+						if(pid != -1 && username.length()>0)
+							DBGateway.setPermission(pid, username, p, conn);					
 					}
 					else if(name.equals("pageTitle")){
-						String titolo = Util.readRequestParameter(o.getParameter(name));
-						DBGateway.setPageName(Long.parseLong(pid), titolo, conn);
+						String titolo = Util.readRequestParameter(request.getParameter(name));
+						DBGateway.setPageName(pid, titolo, conn);
 					}
 					else if(name.equals("pageCode")){
-						String code = o.getParameter(name);
-						DBGateway.setPageCode(Long.parseLong(pid), code, conn);
+						String code = request.getParameter(name);
+						DBGateway.setPageCode(pid, code, conn);
+					}
+					else if(name.equals("resp")){
+						String code = request.getParameter(name);
+						DBGateway.setPageResp(pid, code, conn);
 					}
 				}
 				

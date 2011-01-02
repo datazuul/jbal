@@ -45,9 +45,7 @@ import JSites.utils.DBGateway;
  */
 
 public class AuthorizationAction extends PageAction  {
-	
-	private SessionManager sessionManager;
-	
+		
 	@SuppressWarnings("unchecked")
 	public Map act(Redirector redirector, SourceResolver resolver, Map objectModel, String source, Parameters parameters) throws Exception {
 		
@@ -60,22 +58,20 @@ public class AuthorizationAction extends PageAction  {
 		try{
 			conn = this.getConnection(dbname);
 			long pageId;
-			String pcode = o.getParameter("pcode");
+			String pcode = request.getParameter("pcode");
 			
 			if(pcode != null) pageId = DBGateway.getPidFrom(pcode, conn);
 			else{
-				String pid = o.getParameter("pid");
-				if(pid == null){
+				if(pid == -1){
 					if(parameters.isParameter("pid"))
-						pid = parameters.getParameter("pid");
-					else pid="1";
+						pid = Long.parseLong(parameters.getParameter("pid"));
+					else pid=1;
 				}
-				pageId = Long.parseLong(pid);
+				pageId = pid;
 			}
 			
 			String permissionCode = "";
 			
-			Session session = sessionManager.getSession(true);
 			Permission permission = Authentication.assignPermissions(session, pageId, conn);
 			
 			permissionCode = String.valueOf((int)permission.getPermissionCode());
@@ -91,7 +87,6 @@ public class AuthorizationAction extends PageAction  {
 	
 	public void compose(ComponentManager manager) throws ComponentException {
 		super.compose(manager);
-        sessionManager = (SessionManager) manager.lookup(SessionManager.ROLE);
     }
 	
 }

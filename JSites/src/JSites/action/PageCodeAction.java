@@ -44,16 +44,20 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.environment.SourceResolver;
+import org.w3c.dom.Document;
 
 import JSites.utils.DBGateway;
+import JSites.utils.Page;
 
 
 public class PageCodeAction implements Action, Composable, Disposable {
@@ -70,6 +74,7 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		Request request = ObjectModelHelper.getRequest(objectModel);
 		String pid=request.getParameter("pid");
 		String pcode=request.getParameter("pcode");
+		Document metadata=null;
 		
 		Session session=request.getSession();
 		
@@ -87,11 +92,22 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		
 		Connection conn=null;
 		
+		if(pid==null && pcode==null) {
+			String uri=request.getRequestURI();
+			int k=uri.lastIndexOf('/');
+			pcode=uri.substring(k+1);
+		}
+		
+		if(pid==null && pcode.length()==0) pid="1"; // homepage
+		
 		if(pid==null || pid.length()==0) {
 			try {
 				conn=getConnection(dbname);
 				if(pcode!=null) {
-					pid=Long.toString(DBGateway.getPidFrom(pcode, conn));
+					metadata=DBGateway.getPageMetadata(pcode, lastdata, conn);
+					pid=lastdata.get("pid");
+					
+//					pid=Long.toString(DBGateway.getPidFrom(pcode, conn));
 				}
 				else { // db probabily empty, go to homepage
 					pid="0";pcode="";
@@ -105,7 +121,10 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		else if((pcode==null || pcode.length()==0) && !pid.equals("0") ) {
 			try {
 				conn=getConnection(dbname);
-				pcode=DBGateway.getPageCode(Long.parseLong(pid), conn);
+				metadata=DBGateway.getPageMetadata(Long.parseLong(pid), lastdata, conn);
+				pcode=lastdata.get("pcode");
+				
+//				pcode=DBGateway.getPageCode(Long.parseLong(pid), conn);
 			}
 			catch(Exception e) {
 				e.printStackTrace();
@@ -115,26 +134,35 @@ public class PageCodeAction implements Action, Composable, Disposable {
 			}
 		}
 		
-		if(!pid.equals("0")) {
-			try {
-				conn=getConnection(dbname);
-				pname=DBGateway.getPageName(Long.parseLong(pid), conn);
-			}
-			catch(Exception e) {e.printStackTrace();}
-			finally {
-				if(conn!=null) try{conn.close();} catch(Exception e) {}
-			}
-		}
+//		if(!pid.equals("0")) {
+//			try {
+//				conn=getConnection(dbname);
+//				pname=DBGateway.getPageName(Long.parseLong(pid), conn);
+//				DBGateway.getPageMetadata(Long.parseLong(pid), request, lastdata, conn);
+//			}
+//			catch(Exception e) {e.printStackTrace();}
+//			finally {
+//				if(conn!=null) try{conn.close();} catch(Exception e) {}
+//			}
+//		}
 		
 		if(pcode==null) pcode="_null";
 				
 		request.setAttribute("pageid", pid);
 		request.setAttribute("pagecode", pcode);
-		request.setAttribute("pagename", pname);
+//		request.setAttribute("pagename", pname);
 		
-		lastdata.put("pageid", pid);
-		lastdata.put("pagecode", pcode);
-		lastdata.put("pagename", pname);
+		if(pid!=null) lastdata.put("pageid", pid);
+		if(pcode!=null) lastdata.put("pagecode", pcode);
+//		lastdata.put("pagename", pname);
+		
+		Set<String> set=lastdata.keySet();
+		Iterator<String> i=set.iterator();
+		
+		while(i.hasNext()) {
+			String t=i.next();
+			request.setAttribute(t, lastdata.get(t));
+		}
 		
 		
 		String ru=request.getRequestURI();
@@ -143,6 +171,7 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		lastdata.put("pagerequest", ru);
 		
 		session.setAttribute("redirectfrom", lastdata);
+		if(metadata!=null) session.setAttribute("metadata", metadata);
 		return objectModel;
 	}
 	

@@ -31,7 +31,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -45,6 +48,7 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.transformation.AbstractTransformer;
 import org.apache.cocoon.webapps.session.SessionManager;
 import org.apache.cocoon.environment.Request;
+import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.environment.http.HttpRequest;
 import org.apache.avalon.framework.parameters.ParameterException;
@@ -57,27 +61,30 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
 	
 	public ComponentSelector dbselector;
 	public ComponentManager manager;
-	public SessionManager sessionManager;
-	protected Request o;
+//	public SessionManager sessionManager;
+	protected Request request;
+	protected Session session;
 	protected String dbname = null;
 	protected AttributesImpl emptyAttrs = new AttributesImpl();
+	protected boolean debug=false;
 	
 	@SuppressWarnings("unchecked")
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
-		o = (Request)arg1.get("request");
+		request = (Request)arg1.get("request");
+		session = request.getSession(true);
 	
-		dbname = o.getParameter("db");
+		dbname = request.getParameter("db");
 		
 		try { dbname = dbname == null ? arg3.getParameter("db") : dbname; } catch (ParameterException e) {
 			System.out.println(e.getMessage());
-			System.out.println("Request was: " + o.getQueryString());
+			System.out.println("Request was: " + request.getQueryString());
 		}
 	}
 	
 	public void compose(ComponentManager manager) throws ComponentException {
 		this.manager = manager;
         dbselector = (ComponentSelector) manager.lookup(DataSourceComponent.ROLE + "Selector");
-        sessionManager = (SessionManager) manager.lookup(SessionManager.ROLE);
+//        sessionManager = (SessionManager) manager.lookup(SessionManager.ROLE);
     }
 	
 	public void dispose() {
@@ -88,13 +95,65 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
     	return ((DataSourceComponent)dbselector.select(db)).getConnection();
     }
     
+	public void printRequestData(Map arg1, Parameters arg3) {
+		Set arg1Keys = arg1.keySet();
+		 Iterator iter = arg1Keys.iterator();
+		 String name = "";
+		 String value = "";
+		 
+		 while(iter.hasNext()){
+			 name = (String)iter.next();
+			 value = arg1.get(name).toString();
+			 System.out.println(name + " = " + value);
+		 }
+		 System.out.println("REQUEST QUERY = " + request.getQueryString());
+		 
+		 System.out.println("Request parameters:");
+		 Enumeration<String> e = request.getParameterNames();
+		 while(e.hasMoreElements()){
+			 name = (String)e.nextElement();
+			 value = request.getParameter(name);
+			 System.out.println(name + " = " + value);
+		 }
+
+
+		 System.out.println("--------------------");
+		 		 
+		 System.out.println("Request attributes:");
+		 e = request.getAttributeNames();
+		 while(e.hasMoreElements()){
+			 name = (String)e.nextElement();
+			 value = request.getAttribute(name).toString();
+			 System.out.println(name + " = " + value);
+		 }
+
+
+		 System.out.println("--------------------");
+		 
+		 
+		 
+		 String[] arg3Keys = arg3.getNames();
+		 
+		 for(int i=0;i<arg3Keys.length;i++){
+			 name = arg3Keys[i];
+			 try {
+				value = arg3.getParameter(name);
+				System.out.println(name + " = " + value);
+			} catch (Exception e1) {
+				System.out.println("Exception parameter: "+ name);
+				e1.printStackTrace();
+			}
+			 
+		 }
+	}
+    
     protected String saveImgFile(RecordInterface ri) {
 		
 		if(ri.getImage()==null)return "images/pubimages/NS.jpg";
 		
-		File dir = new File(this.o.getParameter("datadir") + "/images/pubimages");
+		File dir = new File(this.request.getParameter("datadir") + "/images/pubimages");
 		if(!dir.exists())dir.mkdirs();
-		String imgstr = this.o.getParameter("datadir") + "/images/pubimages/eut" + ri.getJOpacID() + ".jpg";
+		String imgstr = this.request.getParameter("datadir") + "/images/pubimages/eut" + ri.getJOpacID() + ".jpg";
 		try {
 			FileOutputStream imgfile = new FileOutputStream(imgstr);
 			ImageIO.write(ri.getImage(), "jpeg", imgfile);

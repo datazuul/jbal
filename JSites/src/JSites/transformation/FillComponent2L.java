@@ -236,7 +236,7 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 		long pacid = 0;
 		
 		if(sPacid!=null)pacid = Long.parseLong(sPacid);
-		else{
+		else {
 			
 			Connection conn = null;
 			
@@ -262,8 +262,8 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 				
 		String tCompType = extra==null?componentType:componentType+":"+extra;
 		
-		if(pacid==0)action = "pagesave?papid=" + paPid + "&pacid=" + pacid + "&cid=" + cid + "&type=" + tCompType + "&order=" + order;
-		else action = "pagesave?pid=" + pageId + "&pacid=" + pacid + "&cid=" + cid + "&type=" + tCompType + "&order=" + order;
+		if(pacid==0)action = "pagesave?papid=" + paPid + "&cid=" + cid + "&type=" + tCompType + "&order=" + order; // + "&pacid=" + pacid 
+		else action = "pagesave?pid=" + pageId + "&cid=" + cid + "&type=" + tCompType + "&order=" + order; //  + "&pacid=" + pacid
 		
 		
 		AttributesImpl attrs = new AttributesImpl();
@@ -280,6 +280,13 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 		//-----------------------------*/
 		
 		super.startElement("","form","form",attrib);
+		
+		AttributesImpl attribPacid=new AttributesImpl();
+		attribPacid.addCDATAAttribute("type", "hydden");
+		attribPacid.addCDATAAttribute("name", "pacid");
+		attribPacid.addCDATAAttribute("value", Long.toString(pacid));
+		super.startElement("","input","input",attribPacid);
+		super.endElement("", "input", "input");
 		
 		super.startElement("http://apache.org/cocoon/include/1.0", "include", "include", attrs);
 		super.endElement("http://apache.org/cocoon/include/1.0", "include", "include");
@@ -330,7 +337,7 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 		    super.endElement("","OrderManager","OrderManager");
 		    super.endElement("",newTagName,newTagName);
 		}
-		else if(localName.equals("content")){
+		else if(localName.equals("content")||localName.equals("footer")){
 			if(permission.hasPermission(Permission.EDITABLE) || permission.hasPermission(Permission.VALIDABLE) ) {
 				super.startElement("", "managers", "managers", this.emptyAttr);
 				if(permission.hasPermission(Permission.EDITABLE)){

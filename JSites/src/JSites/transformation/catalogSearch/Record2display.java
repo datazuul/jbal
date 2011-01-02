@@ -214,6 +214,7 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
 
         
         sendElement("ISBD",ma2.getISBD());
+        sendElement("description",ma2.getDescription());
         
         super.startElement("","editors","editors",new AttributesImpl());
         v=ma2.getEditors();
@@ -358,7 +359,7 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
     	            myConnection.close();
     	            if(ma!=null) { 
     	            	ma.setJOpacID(Long.parseLong(id));
-    	            	String display=JSites.utils.Util.getRequestData(o, "display");
+    	            	String display=JSites.utils.Util.getRequestData(request, "display");
     	            	if(display!=null && display.equals("iso")) {
     	            		sendElement("bid",ma.getBid());
     	                	sendElement("jid", String.valueOf(ma.getJOpacID()));

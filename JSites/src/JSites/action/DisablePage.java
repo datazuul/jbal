@@ -29,9 +29,13 @@ import java.sql.Connection;
 import java.util.Map;
 
 import org.apache.avalon.framework.parameters.Parameters;
+import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Redirector;
+import org.apache.cocoon.environment.Request;
+import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.environment.SourceResolver;
 
+import JSites.authentication.Authentication;
 import JSites.utils.DBGateway;
 
 public class DisablePage extends PageAction {
@@ -42,14 +46,14 @@ public class DisablePage extends PageAction {
 		super.act(redirector, resolver, objectModel, source, parameters);
 		if(parameters.getParameter("containerType").equals("content")){
 			
-			long pid = Long.parseLong(o.getParameter("pid"));
-			long cid = Long.parseLong(o.getParameter("cid"));
-			
+			long pid = Long.parseLong(request.getParameter("pid"));
+			long cid = Long.parseLong(request.getParameter("cid"));
+
 			Connection conn = null;
 			try{
 				conn = this.getConnection(dbname);
-				if(cid!=0)DBGateway.disableComponent(cid, conn);
-				else DBGateway.disablePage(pid, conn);
+				if(cid!=0)DBGateway.disableComponent(cid, username, remoteAddr, conn);
+				else DBGateway.disablePage(pid, username, remoteAddr, conn);
 			}catch(Exception e){e.printStackTrace();}
 			
 			try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
