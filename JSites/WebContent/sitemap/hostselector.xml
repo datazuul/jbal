@@ -1,4 +1,12 @@
 <map:select type="host">
+	<map:when test="mna">
+		<map:mount uri-prefix="" src="mna/sitemap.xmap" />
+	</map:when>
+
+	<map:when test="dbmna">
+		<map:mount uri-prefix="" src="dbmna/sitemap.xmap" />
+	</map:when>
+
 	<map:when test="jopac2">
 		<map:mount uri-prefix="" src="jopac2/sitemap.xmap" />
 	</map:when>

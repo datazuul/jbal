@@ -42,5 +42,13 @@
         </map:act>
         <map:redirect-to uri="{request-param:resource}"/>
       </map:match>
+      
+      <map:match pattern="logout">
+        <map:act type="auth-protect">
+          <map:parameter name="handler" value="JSitesHandler"/> 
+          <map:act type="auth-logout"/>
+        </map:act>
+        <map:redirect-to uri="{request-param:resource}"/>
+      </map:match>
 	
 	</map:pipeline>
