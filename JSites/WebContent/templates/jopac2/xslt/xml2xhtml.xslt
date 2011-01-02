@@ -8,11 +8,39 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	
 	<xsl:param name="template"/>
+	<xsl:param name="context"/>
+	<xsl:param name="sitename"/>
+	
+	<xsl:param name="pid"/>
+	
+	<xsl:param name="pageid"/>
+	<xsl:param name="pagecode"/>
+	<xsl:param name="name"/>
+	<xsl:param name="pageusername"/>
+	<xsl:param name="pagechangeip"/>
+	<xsl:param name="pagedate"/>
+	<xsl:param name="pageresp"/>
+	
+	<!-- 
+	<map:parameter name="context" value="{context}"/>
+	<map:parameter name="pid" value="{request-param:pid}"/>
+   	<map:parameter name="template" value="{global:template}"/>
+   	<map:parameter name="sitename" value="{global:sitename}"/>
+   	<map:parameter name="pageid" value="{request-attr:pid}"/>
+   	<map:parameter name="pagecode" value="{request-attr:pcode}"/>
+   	<map:parameter name="pagename" value="{request-attr:name}"/>
+   	<map:parameter name="pageusername" value="{request-attr:username}"/>
+   	<map:parameter name="pagechangeip" value="{request-attr:remoteip}"/>
+   	<map:parameter name="pagedate" value="{request-attr:insertdate}"/>
+   	<map:parameter name="pageresp" value="{request-attr:resp}"/>
+   	
+	 -->
+	
 	
 	<xsl:template match="/page">
 		<html lang="it">
 			<HEAD>
-				<TITLE>Jopac2</TITLE>
+				<title><xsl:value-of select="$sitename" /> - <xsl:value-of select="/page/content/@pageTitle" /></title>
 				<META content="catalogo on line per biblioteche" name="description" />
 				<META content="biblioteca, libro, ricerca, opac" name="keywords" />
 				<META content="index, follow" name="robots" />
@@ -90,6 +118,13 @@
 		<!--  </div> -->
 
 	</xsl:template>
+	
+	<xsl:template match="navpage">
+		<li><a href="{@link}"><xsl:value-of select="@name" /></a></li>
+		<ul>
+		<xsl:apply-templates />
+		</ul>
+	</xsl:template>
 
 	<xsl:template match="content">
 		<!--Begin Main Content Area-->
@@ -102,7 +137,11 @@
 								<DIV class="moduletable">
 									<H3>Main Menu</H3>
 									<A class="mainlevel" id="active_menu" href=".">Home</A>
-									<xsl:for-each select="/page/navbar/a"><!-- sublevel -->
+									<ul>
+									<xsl:apply-templates select="/page/navbar/navigator/navpage"/>
+									</ul>
+									<!--  
+									<xsl:for-each select="/page/navbar/navigator/page">
 										<xsl:if test="@class = 'navbar1lev'">
 											<a href="{@href}" class="mainlevel">
 												<xsl:value-of select="text()" />
@@ -124,6 +163,7 @@
 											</a>
 										</xsl:if>
 									</xsl:for-each>
+									-->
 								</DIV>
 							</DIV>
 						</DIV>
@@ -157,14 +197,10 @@
 	</xsl:template>
 
 	<xsl:template match="footer">
-		<div id="bottom">
-			<div class="wrapper">
-				<div align="center">
-					<A class="nounder" title="{text}" href="/">
-						<IMG id="jopac" alt="{leftImg/@alt}" src="./templates/{$template}/images/jopac.png"/>
-					</A>
-				</div>
-			</div>
+		<div id="footer">
+			<xsl:copy-of select="*" />
+			<br/>
+			Page last change <xsl:value-of select="$pagedate" /> by <xsl:value-of select="$pageusername"/>. Resp is <xsl:value-of select="$pageresp" />
 		</div>
 	</xsl:template>
 
