@@ -3,10 +3,6 @@
 							xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 							xmlns:sendmail="http://apache.org/cocoon/transformation/sendmail"
 							xmlns:h="http://apache.org/cocoon/request/2.0">
-
-    <xsl:include href="../../stylesheets/xslt/editlinks.xslt" />
-    <!-- Questo include serve pei link de modifica, elimina e (dis)attiva 
-		 ma anca per le combo de ordinamento  -->
                               
 	<xsl:param name="cid"/>
 	<xsl:param name="pid"/>
@@ -78,10 +74,6 @@
 			</xsl:if>
 		</content>
 		
-		
-		<!--  TASTO DI MODIFICA -->
-		<xsl:call-template name="editlinks" />
-		<xsl:apply-templates select="order" />
 	</xsl:template>
 		
 	<xsl:template match="h:requestHeaders">

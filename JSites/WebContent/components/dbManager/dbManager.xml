@@ -2,7 +2,7 @@
 <dbManager>
 	<pageTitle>
 		<sql:execute-query xmlns:sql="http://apache.org/cocoon/SQL/2.0">
-			<sql:query>select Name,PCode from tblpagine where PID=<pid /></sql:query>
+			<sql:query>select Name,PCode, resp from tblpagine where PID=<pid /></sql:query>
 		</sql:execute-query>
 	</pageTitle>
 	<permissions>

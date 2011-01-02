@@ -21,7 +21,7 @@
 						</map:transform>
 						<map:transform src="dbManager.xslt">
 							<map:parameter name="pid" value="{request-attr:pageid}"/>
-							<map:parameter name="use-request-parameters" value="true"/>
+	                    	<map:parameter name="contentcid" value="{request-param:contentcid}"/>
 						</map:transform>
 					</map:act>
                     <map:serialize type="xml"/>

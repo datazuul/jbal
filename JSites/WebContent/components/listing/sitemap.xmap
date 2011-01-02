@@ -50,8 +50,17 @@
 	                    <map:parameter name="parameters" value="true"/>
 	                    <map:generate type="listing"/>
 	                    <map:transform src="context://components/section/section.xslt">
-	                        <map:parameter name="use-request-parameters" value="true"/>
-	                    </map:transform>
+							<map:parameter name="lang" value="{request-param:lang}"/>
+							<map:parameter name="validating"  value="{request-param:validating}"/>
+							<map:parameter name="disabling" value="{request-param:disabling}"/>
+							<map:parameter name="time" value="{request-param:time}"/>
+							<map:parameter name="extra"  value="{request-param:extra}"/>
+							<map:parameter name="type"  value="{request-param:type}"/>
+							<map:parameter name="cid"  value="{request-param:cid}"/>
+							<map:parameter name="pid"  value="{request-param:pid}"/>
+							<map:parameter name="pacid"  value="{request-param:pacid}"/>
+							<map:parameter name="editing"  value="{request-param:editing}"/>
+						</map:transform>
 	                    
 	                    <map:transform type="wikitrans"/>
 	                    
@@ -63,13 +72,18 @@
 					<map:generate type="internalSave"/>
 					<map:transform src="childrenListingsave.xslt"/>
 					<map:transform type="write-source"/>
-					<map:transform src="result.xslt">
-						<map:parameter name="use-request-parameters" value="true"/>
-	                </map:transform>
+					<map:transform type="xslt" src="result.xslt">
+						<map:parameter name="cid"  value="{request-param:cid}"/>
+						<map:parameter name="pid"  value="{request-param:pid}"/>
+						<map:parameter name="pacid"  value="{request-param:pacid}"/>
+						<map:parameter name="state"  value="{request-param:state}"/>						
+					</map:transform>
 	                <map:transform type="cinclude"/>
 					<map:serialize type="xml"/>
 				</map:match-->
 				
+				
+<!-- 
 				<map:match pattern="order">
 				 	<map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
@@ -84,15 +98,26 @@
 	                    <map:serialize type="xml" />
 	                </map:act>
 				</map:match>
+-->
+
 				
 				<map:match pattern="*">
 	                <map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
 	                    <map:generate type="listing">
-	                    	<map:parameter name="use-request-parameters" value="true"/>
+	                    	<!-- map:parameter name="use-request-parameters" value="true"/ -->
 	                    </map:generate>
 	                    <map:transform src="listing.xslt">
-	                        <map:parameter name="use-request-parameters" value="true"/>
+	                        <map:parameter name="lang" value="{request-param:lang}"/>
+							<map:parameter name="validating"  value="{request-param:validating}"/>
+							<map:parameter name="disabling" value="{request-param:disabling}"/>
+							<map:parameter name="time" value="{request-param:time}"/>
+							<map:parameter name="extra"  value="{request-param:extra}"/>
+							<map:parameter name="type"  value="{request-param:type}"/>
+							<map:parameter name="cid"  value="{request-param:cid}"/>
+							<map:parameter name="pid"  value="{request-param:pid}"/>
+							<map:parameter name="pacid"  value="{request-param:pacid}"/>
+							<map:parameter name="editing"  value="{request-param:editing}"/>
 	                    </map:transform>
 	                    
 	                    <map:transform type="wikitrans"/>

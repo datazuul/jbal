@@ -30,7 +30,11 @@
 	                    
 	                    <!-- map:transform type="tutil" src="/t/sendafter0" / -->
 	                    
-	                    <map:transform src="sendmailresult.xslt" />
+	                    <map:transform src="sendmailresult.xslt" >
+	                    	<map:parameter name="use-request-parameters" value="true"/>
+	                        <map:parameter name="pagecode" value="{request-attr:pagecode}" />
+	                        <map:parameter name="pagerequest" value="{request-attr:pagerequest}"/>
+	                    </map:transform>
 	                    
 	                    <!-- map:transform type="tutil" src="/t/sendafter1" / -->
 	                    

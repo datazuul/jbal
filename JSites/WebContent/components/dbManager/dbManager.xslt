@@ -33,6 +33,14 @@
 					<xsl:value-of select="sql:rowset/sql:row/sql:pcode" />
 				</xsl:attribute>
 			</input>
+			<div class="clearer">&#160;</div>
+			<div class="label">Responsabile pagina:</div>
+			<input type="text" name="resp">
+				<xsl:attribute name="value">
+					<xsl:value-of select="sql:rowset/sql:row/sql:resp" />
+				</xsl:attribute>
+			</input>
+			
 			<br/><!--br/><a href="dir/" class="navbar1lev">[ upload file ]</a-->
 			<input type="submit" value="Salva" id="boton"/><br/>
 			

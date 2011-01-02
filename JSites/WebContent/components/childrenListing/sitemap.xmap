@@ -22,8 +22,17 @@
 	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/childrenListing{cid}.xml"/>
 	                    <map:transform type="ChildrenListing" />
 	                    <map:transform src="../section/section.xslt">
-	                        <map:parameter name="use-request-parameters" value="true"/>
-	                    </map:transform>
+	                    	<map:parameter name="cid" value="{request-param:cid}"/>
+							<map:parameter name="pid" value="{request-param:pid}"/>
+							<map:parameter name="pacid" value="{request-param:pacid}"/>
+							<map:parameter name="editing" value="{request-param:editing}"/>
+							<map:parameter name="lang" value="{request-param:lang}"/>
+						    <map:parameter name="validating" value="{request-param:validating}"/>
+						    <map:parameter name="disabling" value="{request-param:disabling}"/>
+						    <map:parameter name="time" value="{request-param:time}"/>
+						    <map:parameter name="extra"  value="{request-param:extra}"/>
+						    <map:parameter name="type"  value="{request-param:type}"/>	                    
+					    </map:transform>
 	                    <map:transform type="wikitrans"/>
 	                    <map:serialize type="xml"/>
 	                </map:act>
@@ -34,7 +43,9 @@
 	                	<map:parameter name="parameters" value="true"/>
 	             		<map:generate type="componentGenerator" src="{request-param:datadir}/data/childrenListing{cid}.xml"/>
 	                    <map:transform src="childrenListingedit.xslt">
-	                    	<map:parameter name="use-request-parameters" value="true"/>
+	                    	<map:parameter name="cid" value="{request-param:cid}"/>
+							<map:parameter name="pid" value="{request-param:pid}"/>
+							<map:parameter name="time" value="{request-param:time}"/>
 	                    </map:transform>
 	                    <map:transform type="cinclude" />
 	                    <map:serialize type="xml"/>
@@ -44,11 +55,14 @@
 	            <map:match pattern="save">
 					<map:generate type="internalSave"/>
 					<map:transform src="childrenListingsave.xslt">
-						<map:parameter name="use-request-parameters" value="true"/>
+						<map:parameter name="datadir" value="{request-param:datadir}"/>
 					</map:transform>
 					<map:transform type="write-source"/>
 					<map:transform src="result.xslt">
-						<map:parameter name="use-request-parameters" value="true"/>
+							<map:parameter name="cid" value="{request-param:cid}"/>
+							<map:parameter name="pid" value="{request-param:pid}"/>
+							<map:parameter name="pacid" value="{request-param:pacid}"/>
+							<map:parameter name="state" value="{request-param:state}"/>
 	                </map:transform>
 	                <map:transform type="cinclude"/>
 	                <map:transform type="wikitrans"/>

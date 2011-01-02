@@ -48,7 +48,8 @@
 	                    <map:parameter name="parameters" value="true" />
 	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/lingue{cid}.xml" />
 	   					<map:transform src="lingue.xslt">
-		                    <map:parameter name="use-request-parameters" value="true" />
+		                    <map:parameter name="lang"  value="{request-param:lang}"/>
+							<map:parameter name="pid"  value="{request-param:pid}"/>
 		                </map:transform>
 	        			<map:serialize type="xml"/>
 	                </map:act>

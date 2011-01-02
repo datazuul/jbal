@@ -1,8 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:output method="xml" indent="yes"/>
+	
+	 <xsl:include href="../../stylesheets/xslt/editlinks0.xslt" />
+    <!-- Questo include serve pei link de modifica, elimina e (dis)attiva 
+		 ma anca per le combo de ordinamento  -->
+		 
+	<xsl:param name="cid"/>
+	<xsl:param name="pid"/>
+	<xsl:param name="pacid"/>
+	<xsl:param name="editing"/>
+	<xsl:param name="lang"/>
+    <xsl:param name="validating"/>
+    <xsl:param name="disabling"/>
+    <xsl:param name="time"/>
+    <xsl:param name="extra" />
+    <xsl:param name="type" />
+    <xsl:param name="container" />
                               
 	<xsl:template match="/">
-		<xsl:apply-templates /> <!-- select="navigator"/-->
+		<xsl:copy-of select="." />
+		<!--  TASTO DI MODIFICA -->
+		<xsl:call-template name="editlinks" />
+		<xsl:apply-templates select="order" />
 	</xsl:template>
 	
 	<xsl:template match="navigator">

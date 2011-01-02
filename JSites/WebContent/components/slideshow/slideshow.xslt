@@ -17,6 +17,7 @@
     <xsl:param name="time"/>
     <xsl:param name="extra" />
     <xsl:param name="type" />
+    <xsl:param name="container" />
     
 	<xsl:template match="/">
 		<div class="{$time}">

@@ -12,6 +12,21 @@
 			</global-variables>
 		</map:component-configurations>
 		
+		<map:pipeline internal-only="false" type="noncaching"> 
+			<map:match pattern="save">
+				<map:generate type="internalSave"/>
+				<map:transform src="footerContentsave.xslt">
+					<map:parameter name="datadir"  value="{request-param:datadir}"/>
+				</map:transform>
+	
+				<map:transform type="write-source"/>
+				<map:transform src="../section/saving.xslt" />
+	            
+	
+				<map:serialize type="xml"/>
+			</map:match>
+		</map:pipeline>
+		
 		&generalComponentPipeline;
 		
 	</map:pipelines>

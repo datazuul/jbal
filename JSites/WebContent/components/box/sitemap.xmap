@@ -23,7 +23,9 @@
 	             		<map:generate type="componentGenerator" src="{request-param:datadir}/data/box{cid}.xml"/>
 						
 	                    <map:transform src="boxedit.xslt">
-	                    	<map:parameter name="use-request-parameters" value="true"/>
+	                    	<map:parameter name="cid" value="{request-param:cid}"/>
+							<map:parameter name="time" value="{request-param:time}"/>
+							<map:parameter name="pid" value="{request-param:pid}"/>
 	                    </map:transform>
 	                    
 	                    <map:transform type="cinclude" />
@@ -34,11 +36,14 @@
 	            <map:match pattern="save">
 					<map:generate type="internalSave"/>
 					<map:transform src="boxsave.xslt">
-						<map:parameter name="use-request-parameters" value="true"/>
+						<!-- map:parameter name="use-request-parameters" value="true"/ -->
 					</map:transform>
 					<map:transform type="write-source"/>
 					<map:transform src="result.xslt">
-						<map:parameter name="use-request-parameters" value="true"/>
+						<map:parameter name="cid" value="{request-param:cid}"/>
+						<map:parameter name="pacid" value="{request-param:pacid}"/>
+						<map:parameter name="pid" value="{request-param:pid}"/>
+						<map:parameter name="state" value="{request-param:state}"/>
 	                </map:transform>
 	                <map:transform type="wikitrans"/>
 	                <map:transform type="cinclude"/>
@@ -51,8 +56,17 @@
 	             		<map:generate type="componentGenerator" src="{request-param:datadir}/data/box{cid}.xml"/>
 						
 	                    <map:transform src="unit.xslt">
-	                    	<map:parameter name="use-request-parameters" value="true"/>
-	                    	<map:parameter name="datadir" value="{request-param:datadir}" />
+	                    	<map:parameter name="cid" value="{request-param:cid}" />
+							<map:parameter name="unit" value="{request-param:unit}" />
+							<map:parameter name="pid" value="{request-param:pid}" />
+							<map:parameter name="pacid" value="{request-param:pacid}" />
+							<map:parameter name="editing" value="{request-param:editing}" />
+							<map:parameter name="lang" value="{request-param:lang}" />
+						    <map:parameter name="validating" value="{request-param:validating}" />
+						    <map:parameter name="disabling" value="{request-param:disabling}" />
+						    <map:parameter name="time" value="{request-param:time}" />
+						    <map:parameter name="datadir" value="{request-param:datadir}" />
+						    <map:parameter name="quant" value="{request-param:quant}" />
 	                    </map:transform>
 	                    <map:serialize type="xml"/>
 	                </map:act>

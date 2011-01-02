@@ -23,7 +23,12 @@
 	                    <map:parameter name="parameters" value="true"/>
 	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/excel{cid}.xml"/>
 	                    <map:transform src="excel.xslt">
-	                        <map:parameter name="use-request-parameters" value="true"/>
+	                    	<map:parameter name="cid"  value="{request-param:cid}"/>
+							<map:parameter name="pid"  value="{request-param:pid}"/>
+							<map:parameter name="editing"  value="{request-param:editing}"/>
+							<map:parameter name="validating"  value="{request-param:validating}"/>
+							<map:parameter name="disabling"  value="{request-param:disabling}"/>
+	                    	<map:parameter name="time" value="{request-param:time}"/>
 	                    </map:transform>
 	                    <map:transform type="wikitrans" />
 	                    <map:serialize type="xml"/>
@@ -35,7 +40,13 @@
 	                	<map:parameter name="parameters" value="true"/>
 	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/excel{cid}.xml"/>
 	                    <map:transform src="exceledit.xslt">
-	                    	<map:parameter name="use-request-parameters" value="true"/>
+							<map:parameter name="cid"  value="{request-param:cid}"/>
+							<map:parameter name="pid"  value="{request-param:pid}"/>
+							<map:parameter name="rows"  value="{request-param:rows}"/>
+							<map:parameter name="cols"  value="{request-param:cols}"/>
+							<map:parameter name="redim"  value="{request-param:redim}"/>
+							<map:parameter name="pacid"  value="{request-param:pacid}"/>
+							<map:parameter name="time" value="{request-param:time}"/>
 	                    </map:transform>
 	                    <map:serialize type="xml"/>
 	                </map:act>
@@ -46,12 +57,13 @@
 						<map:generate type="internalSave"/>
 						<map:transform type="upload-parser"/>
 						
-						<map:transform src="excelsave.xslt" type="xsltc">
-							<map:parameter name="use-request-parameters" value="true"/>
-						</map:transform>
+						<map:transform src="excelsave.xslt" type="xsltc" />
 						<map:transform type="write-source"/>
 						<map:transform type="xslt" src="result.xslt">
-							<map:parameter name="use-request-parameters" value="true"/>
+							<map:parameter name="cid"  value="{request-param:cid}"/>
+							<map:parameter name="pid"  value="{request-param:pid}"/>
+							<map:parameter name="pacid"  value="{request-param:pacid}"/>
+							<map:parameter name="state"  value="{request-param:state}"/>						
 						</map:transform>
 						<map:transform type="wikitrans"/>
 						<map:transform type="cinclude"/>

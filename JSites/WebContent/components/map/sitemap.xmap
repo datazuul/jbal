@@ -47,7 +47,12 @@
 	                    <map:parameter name="parameters" value="true"/>
 	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/map{cid}.xml"/>
 	                    <map:transform src="map.xslt">
-	                        <map:parameter name="use-request-parameters" value="true"/>
+	                        <map:parameter name="cid"  value="{request-param:cid}"/>
+							<map:parameter name="pid"  value="{request-param:pid}"/>
+							<map:parameter name="validating"  value="{request-param:validating}"/>
+							<map:parameter name="editing"  value="{request-param:editing}"/>
+							<map:parameter name="disabling" value="{request-param:disabling}/>
+							<map:parameter name="time" value="{request-param:time}/>
 	                    </map:transform>
 	                    <map:serialize type="xml"/>
 	                </map:act>
@@ -58,7 +63,13 @@
 	                	<map:parameter name="parameters" value="true"/>
 	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/map{cid}.xml"/>
 	                    <map:transform src="mapedit.xslt">
-	                    	<map:parameter name="use-request-parameters" value="true"/>
+	                    	<map:parameter name="cid"  value="{request-param:cid}"/>
+							<map:parameter name="pid"  value="{request-param:pid}"/>
+							<map:parameter name="pacid" value="{request-param:pacid}"/>
+							<map:parameter name="type" value="{request-param:type}"/>
+							<map:parameter name="redim" value="{request-param:redim}"/>
+							<map:parameter name="elements" value="{request-param:elements}"/>
+							<map:parameter name="time" value="{request-param:time}"/>
 	                    </map:transform>
 	                    <map:transform type="cinclude" />
 	                    <map:serialize type="xml"/>
@@ -68,12 +79,15 @@
 	            <map:match pattern="save">
 	            	<map:generate type="internalSave"/>
 					<map:transform src="mapsave.xslt">
-						<map:parameter name="use-request-parameters" value="true"/>
+						<map:parameter name="datadir" value="{request-param:datadir}"/>
 					</map:transform>
 					<map:transform type="write-source"/>
-					<map:transform src="result.xslt">
-						<map:parameter name="use-request-parameters" value="true"/>
-	                </map:transform>
+					<map:transform type="xslt" src="result.xslt">
+						<map:parameter name="cid"  value="{request-param:cid}"/>
+						<map:parameter name="pid"  value="{request-param:pid}"/>
+						<map:parameter name="pacid"  value="{request-param:pacid}"/>
+						<map:parameter name="state"  value="{request-param:state}"/>						
+					</map:transform>
 					<map:serialize type="xml"/>
 				</map:match>
 				

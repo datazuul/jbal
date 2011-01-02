@@ -44,8 +44,19 @@
 	                    
 					 	<!-- map:transform type="tutil" src="/t/template" / -->
 					
-	                    <map:transform src="catalogSearch.xslt">
-	                    	<map:parameter name="use-request-parameters" value="true"/>
+	                    <map:transform src="catalogSearch.xslt">	                    	
+	                    	<map:parameter name="cid" value="{request-param:cid}"/>
+							<map:parameter name="pid" value="{request-param:pid}"/>
+							<map:parameter name="pacid" value="{request-param:pacid}"/>
+							<map:parameter name="editing" value="{request-param:editing}"/>
+							<map:parameter name="lang" value="{request-param:lang}"/>
+						    <map:parameter name="validating" value="{request-param:validating}"/>
+						    <map:parameter name="disabling" value="{request-param:disabling}"/>
+						    <map:parameter name="time" value="{request-param:time}"/>
+						    <map:parameter name="extra" value="{request-param:extra}"/>
+						    <map:parameter name="type" value="{request-param:type}" />
+						    	                    	
+	                    	
 	                    	<map:parameter name="page" value="{request-attr:page}"/>
 	                    	<!-- map:parameter name="query" value="{request-attr:query}"/ -->
 	                    	<map:parameter name="orderby" value="{request-attr:orderby}"/>
@@ -77,8 +88,17 @@
 	                    </map:transform>
 					
 	                    <map:transform src="catalogSearch.xslt">
-	                    	<map:parameter name="use-request-parameters" value="true"/>
-	                    	<map:parameter name="page" value="{request-attr:page}"/>
+							<map:parameter name="cid" value="{request-param:cid}"/>
+							<map:parameter name="pid" value="{request-param:pid}"/>
+							<map:parameter name="pacid" value="{request-param:pacid}"/>
+							<map:parameter name="editing" value="{request-param:editing}"/>
+							<map:parameter name="lang" value="{request-param:lang}"/>
+						    <map:parameter name="validating" value="{request-param:validating}"/>
+						    <map:parameter name="disabling" value="{request-param:disabling}"/>
+						    <map:parameter name="time" value="{request-param:time}"/>
+						    <map:parameter name="extra" value="{request-param:extra}"/>
+						    <map:parameter name="type" value="{request-param:type}" />	                    	
+						    <map:parameter name="page" value="{request-attr:page}"/>
 	                    	<map:parameter name="query" value="{request-attr:query}"/>
 	                    	<map:parameter name="orderby" value="{request-attr:orderby}"/>
 	                    </map:transform -->
@@ -102,9 +122,7 @@
 					
 								
 					<map:transform type="write-source"/>
-					<map:transform src="../section/saving.xslt">
-						<map:parameter name="use-request-parameters" value="true"/>
-	                </map:transform>
+					<map:transform src="../section/saving.xslt" />
 	                <map:serialize type="xml"/>
 				</map:match>
 

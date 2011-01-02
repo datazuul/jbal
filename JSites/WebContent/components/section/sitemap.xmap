@@ -21,6 +21,7 @@
 						<map:transform src="section.xslt">
 	                        <map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
+	                    <map:transform type="metadata" />
 	                    <map:transform type="wikitrans"/>
 	                    <map:serialize type="xml"/>
 	                </map:act>
