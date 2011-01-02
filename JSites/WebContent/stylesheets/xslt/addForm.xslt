@@ -4,6 +4,7 @@
 	xmlns:c="http://apache.org/cocoon/include/1.0">
 	
 	<xsl:param name="pid"/>
+	<xsl:param name="pcode"/>
 	
 	<xsl:template match="managers">
 		<div class="modifica">
@@ -33,6 +34,10 @@
 					<option value="slideshow">slideshow</option>
 					<option value="catalogSearch">ricerca catalogo</option>
 					<option value="sendmail">invio form per email</option>
+					<xsl:if test="starts-with($pcode,'_')">
+						<option value="sidebar">sidebar verticale</option>
+					</xsl:if>
+					
 				</select>
 	
 				<input type="hidden" name="pid">

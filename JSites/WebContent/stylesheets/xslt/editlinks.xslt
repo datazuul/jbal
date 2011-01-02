@@ -4,16 +4,18 @@
 						xmlns="http://www.w3.org/1999/xhtml">
 	
 	<xsl:template name="editlinks">
-		<xsl:if test="$editing='true' or $validating='true' or $disabling='true'">
-			<div class="modifica">
-				
-				<!-- xsl:if test="$editing='true'"><a href="pageedit?pid={$pid}&amp;cid={$cid}">[ modifica ]</a> <a href="pagedelete?pid={$pid}&amp;cid={$cid}"> [ elimina ]</a></xsl:if>
-	       		<xsl:if test="$validating='true'"><a href="pageactivate?pid={$pid}&amp;cid={$cid}">[ attiva ]</a></xsl:if>
-				<xsl:if test="$disabling='true'"><a href="pagedisable?pid={$pid}&amp;cid={$cid}">[ disattiva ]</a></xsl:if-->
-				<xsl:if test="$editing='true'"><a href="pageedit?pid={$pid}&amp;cid={$cid}">\[ modifica \]</a> <a href="pagedelete?pid={$pid}&amp;cid={$cid}"> \[ elimina \]</a></xsl:if>
-	       		<xsl:if test="$validating='true'"><a href="pageactivate?pid={$pid}&amp;cid={$cid}">\[ attiva \]</a></xsl:if>
-				<xsl:if test="$disabling='true'"><a href="pagedisable?pid={$pid}&amp;cid={$cid}">\[ disattiva \]</a></xsl:if>
-			</div>	
+		<xsl:if test="$container='content'">
+			<xsl:if test="$editing='true' or $validating='true' or $disabling='true'">
+				<div class="modifica">
+					
+					<!-- xsl:if test="$editing='true'"><a href="pageedit?pid={$pid}&amp;cid={$cid}">[ modifica ]</a> <a href="pagedelete?pid={$pid}&amp;cid={$cid}"> [ elimina ]</a></xsl:if>
+		       		<xsl:if test="$validating='true'"><a href="pageactivate?pid={$pid}&amp;cid={$cid}">[ attiva ]</a></xsl:if>
+					<xsl:if test="$disabling='true'"><a href="pagedisable?pid={$pid}&amp;cid={$cid}">[ disattiva ]</a></xsl:if-->
+					<xsl:if test="$editing='true'"><a href="pageedit?pid={$pid}&amp;cid={$cid}">\[ modifica \]</a> <a href="pagedelete?pid={$pid}&amp;cid={$cid}"> \[ elimina \]</a></xsl:if>
+		       		<xsl:if test="$validating='true'"><a href="pageactivate?pid={$pid}&amp;cid={$cid}">\[ attiva \]</a></xsl:if>
+					<xsl:if test="$disabling='true'"><a href="pagedisable?pid={$pid}&amp;cid={$cid}">\[ disattiva \]</a></xsl:if>
+				</div>	
+			</xsl:if>
 		</xsl:if>
 	</xsl:template>
 	
