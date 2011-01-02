@@ -1,21 +1,36 @@
-02/08/2010 - core: bug corretto, eccezione con db vuoto: quando il db era vuoto andava in 
+02/01/2011 - sidebar: componente in pagine con codice che inizia con '_'
+01/01/2011 - _footer, _navbar page
+30/12/2010 - action recupero metadati pagine (pid,papid,pcode,name,valid,haschild,insidebar,username,
+             remoteip,insertdate,resp)
+15/12/2010 - core: aggiunto responsabile pagine
+15/12/2010 - core: bug fixed: select count(*) from.... chiamato inutilmente in visualizzazione pagine 
+             per ogni componente quando l'utente non ha permessi diversi dalla sola visualizzazione
+14/12/2010 - core: db: data, username, remoteip in tblcomponenti e tblpagine
+14/12/2010 - core: login / logout page, in alternativa a do-login e do-logout
+09/11/2010 - core: cocoon: upgrade da cocoon 2.1.9 a cocoon 2.1.11
+07/11/2010 - core: serializzatori xhtml, definizioni in sitemap.xmap
+10/10/2010 - components: sidebar: modificato trasformatore, MODIFICA TEMPLATE! cambiato xml prima 
+             dell'ultimo trasformatore xslt
+31/08/2010 - components: footerContent: footer editabile
+12/08/2010 - engine: bug fixed, outer join su order by, aggiornato jbal-engine.jar
+02/08/2010 - core: bug fixed, eccezione con db vuoto: quando il db era vuoto andava in 
 			 eccezione invece di creare le tabelle
-21/07/2010 - catalogSearch: defaultQuery e orderBy da configuraione per eseguire ricerche 
+21/07/2010 - components: catalogSearch: defaultQuery e orderBy da configuraione per eseguire ricerche 
 		 	 automaticamente al caricamento della pagina
-07/07/2010 - catalogSearch: parametro record per pagina
-01/07/2010 - catalogSearch: dati in xml ..../components/catalogSearch/viewxml?catalog=xxx
-01/07/2010 - catalogSearch: parametro descendant=true per avere i dati in ordine decrescente
-01/07/2010 - catalogSearch: parametro stemmer=true per attivare la ricerca con stemmer
-01/07/2010 - aggiornata jbal-engine.jar
-01/07/2010 - accesso dall'esterno a components/**
-25/06/2010 - componente slideshow
-29/05/2010 - Possibile ordinamento dei campi di ricerca in catalogSearch
-28/05/2010 - Bug corretto: tornando in modifica delle componente catalogo perde
+07/07/2010 - components: catalogSearch: parametro record per pagina
+01/07/2010 - components: catalogSearch: dati in xml ..../components/catalogSearch/viewxml?catalog=xxx
+01/07/2010 - components: catalogSearch: parametro descendant=true per avere i dati in ordine decrescente
+01/07/2010 - components: catalogSearch: parametro stemmer=true per attivare la ricerca con stemmer
+01/07/2010 - core: aggiornata jbal-engine.jar
+01/07/2010 - core: accesso dall'esterno a components/**
+25/06/2010 - components: slideshow: nuova componente slideshow
+29/05/2010 - components: catalogSearch: Possibile ordinamento dei campi di ricerca
+28/05/2010 - core: bug fixed, tornando in modifica delle componente catalogo perde
 			 l'informazione se visualizzare la ricerca per lista su un canale.
-20/05/2010 - Indirizzamento pagine per codice pagina (http://sito.mio/codice_pagina)
+20/05/2010 - core: indirizzamento pagine per codice pagina (http://sito.mio/codice_pagina)
 			 invece che per pid (http://sito.mio/pageview?pid=xxx).
-14/05/2010 - Componente catalogo, nuova maschera selezione canali ricerca / liste.
-04/05/2010 - Componente catalogo riscritta, rappresentazione dei dati che tengono 
+14/05/2010 - components: catalogSearch: nuova maschera selezione canali ricerca / liste.
+04/05/2010 - components: catalogSearch: riscritta, rappresentazione dei dati che tengono 
 			 conto dei contesti.
 
 			 
