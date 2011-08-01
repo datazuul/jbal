@@ -55,18 +55,18 @@
 
 	<map:transformer logger="sitemap.transformer.extractor" name="extractor" src="org.apache.cocoon.transformation.FragmentExtractorTransformer" />
 	<map:transformer logger="sitemap.transformer.sql" name="sql" src="org.apache.cocoon.transformation.SQLTransformer" />
-	<map:transformer name="sendmail" src="org.apache.cocoon.mail.transformation.SendMailTransformer">
-		<smtphost>mail.units.it</smtphost>
-	</map:transformer>
+	<map:transformer name="sendmail" src="org.apache.cocoon.mail.transformation.SendMailTransformer" />
 
 	<!-- Questi xe i miei -->
 	<map:transformer name="fillBill" src="JSites.transformation.FillComponent2L" />
 	<map:transformer name="imagefilter" src="JSites.transformation.ImageFilter" />
 	<map:transformer name="tutil" src="JSites.transformation.Tutil" />
 	<map:transformer name="wikitrans" src="JSites.transformation.WikiTransformer3" />
+	<map:transformer name="metadata" src="JSites.transformation.MetaDataTransformer" />
 	<map:transformer name="redirectNonAccessible" src="JSites.transformation.RedirectNA" />
 	<map:transformer name="copyFile" src="JSites.transformation.CopyFile" />
 	<map:transformer name="checkContentLength" src="JSites.transformation.CheckContentLenghtTransformer" />
+    <map:transformer name="simpleMail" src="JSites.transformation.SimpleMailTransformer"/>
 	
 	<map:transformer name="JSONReadData" src="JSites.transformation.JSONReadDataTransformer" />
 

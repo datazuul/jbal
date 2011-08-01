@@ -6,13 +6,21 @@
         <!-- if we are already logged in, redirect to the protected document -->
         <map:act type="auth-loggedIn">
           <map:parameter name="handler" value="JSitesHandler"/>
-        </map:act> 
-        <map:generate src="../login.xml"/>
+          <map:redirect-to uri="{context}"/>
+        </map:act>
+        
+        <map:act type="PageCodeAction" src="{global:db}:pageview">
+        	<map:redirect-to uri="cocoon:/doview?_static=true&amp;_src=login.html&amp;pcode=_internal&amp;db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/>
+        </map:act>
+        
+        <!--
+        <map:generate src="../login.html"/>
         <map:transform src="../stylesheets/auth/simple-page2html.xsl">
         	<map:parameter name="resource" value="{request-param:resource}"/>
         </map:transform> 
         <map:transform type="encodeURL"/>
         <map:serialize/>
+        -->
       </map:match>
 
       <!-- ========================================= -->
@@ -27,9 +35,9 @@
           <map:redirect-to uri="{request-param:resource}"/>
         </map:act>
         <!-- something was wrong, try it again -->
-        <map:generate type="timeGenerator" />
-        <map:serialize/>
-        <!--map:redirect-to uri="login"/-->
+        <!-- <map:generate type="_error" />
+        <map:serialize/> -->
+        <map:redirect-to uri="login"/>
       </map:match>
       
       <!-- ========================================= -->

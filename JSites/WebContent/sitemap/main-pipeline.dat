@@ -5,7 +5,7 @@
     
     <map:match pattern="pageview">
 
-    	<map:act type="PageCodeAction" src="{global:db}">
+    	<map:act type="PageCodeAction" src="{global:db}:pageview">
     		<map:redirect-to uri="{request-attr:pagecode}" />
 	    </map:act>
 <!--	    <map:redirect-to uri="cocoon:/doview?db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/> -->
@@ -15,7 +15,7 @@
 	<map:match pattern="page*">
 		<map:act type="auth-protect">
 			<map:parameter name="handler" value="JSitesHandler"/>
-			<map:act type="PageCodeAction" src="{global:db}">
+			<map:act type="PageCodeAction" src="{global:db}:page*">
 				<map:redirect-to uri="cocoon:/do{../../1}?db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/>
 			</map:act>
 	    </map:act>
@@ -249,6 +249,7 @@
 		        <map:parameter name="handler" value="JSitesHandler"/>
 		        <map:transform src="../stylesheets/xslt/addForm.xslt">
 			        <map:parameter name="use-request-parameters" value="true"/>
+			        <map:parameter name="pcode" value="{request-attr:pagecode}"/>
 			    </map:transform>
 		    </map:act>
 		</map:act>
@@ -272,15 +273,15 @@
     	* maxheight (Massima altezza)
     	
     	END-->
-    	
+    	<!-- 
     	<map:match pattern="imagecontent">
 		 	<map:generate type="imagedirectory" src="{request-param:datadir}/images/contentimg/">
 		   		<map:parameter name="depth" value="1"/>
 		 	</map:generate>
-		 	
 		 	<map:transform type="imagefilter" />
 		 	<map:serialize type="xml" />
 		</map:match>
+		-->
 		
 		<!-- genera una lista di css presenti nella relativa cartella -->
 		
@@ -299,11 +300,19 @@
 		
 		<map:match pattern="imageeditcomponent">
 			<map:act type="request">
-				<map:generate src="cocoon:/imagecontent" />
+				<!-- <map:generate src="cocoon:/imagecontent" /> -->
+				<map:generate type="imagedirectory" src="{global:data-directory}/images/contentimg/">
+		   			<map:parameter name="depth" value="1"/>
+		 		</map:generate>
+		 		
+				<!-- map:transform type="tutil" src="/t/imgcontent" / -->
 				
 				<map:transform src="../stylesheets/xslt/imageedit.xslt">
 					<map:parameter name="use-request-parameters" value="true"/>
 				</map:transform>
+				
+				<!-- map:transform type="tutil" src="/t/imglist" / -->
+				
 				<map:serialize type="xml" />
 			</map:act>
 		</map:match>
@@ -317,31 +326,88 @@
     <map:pipeline internal-only="true">    	
 	    <map:match pattern="do*">
 	    	
-	        <map:aggregate element="page">
-	        	 <map:part src="cocoon:/csscontent?action={1}"/>
-	        	 <map:part src="cocoon:/viewheader">
-	                 <map:parameter name="use-request-parameters" value="true"/>
-	             </map:part>
-	             <map:part src="cocoon:/{1}navbar">
-	                 <map:parameter name="use-request-parameters" value="true"/>
-	             </map:part>
-	             <map:part src="cocoon:/{1}content">
-	                 <map:parameter name="use-request-parameters" value="true"/>
-	             </map:part>
-	             <map:part src="cocoon:/viewfooter">
-	                 <map:parameter name="use-request-parameters" value="true"/>
-	             </map:part>
-	        </map:aggregate>
+	    	
+	    	<map:select type="request-parameter">
+				<map:parameter name="parameter-name" value="_static"/>
+				<map:when test="true">
+					<map:aggregate element="page">
+		        	 <map:part src="cocoon:/csscontent?action={1}"/>
+		        	 <map:part src="cocoon:/viewheader">
+		                 <map:parameter name="use-request-parameters" value="true"/>
+		             </map:part>
+		             <map:part src="cocoon:/{1}navbar">
+		                 <map:parameter name="use-request-parameters" value="true"/>
+		             </map:part>
+		             <map:part src="cocoon:/read-{request-param:_src}" />
+		             <map:part src="cocoon:/viewfooter">
+		                 <map:parameter name="use-request-parameters" value="true"/>
+		             </map:part>
+		        	</map:aggregate>
+				</map:when>
+				<map:otherwise>
+					<map:aggregate element="page">
+		        	 <map:part src="cocoon:/csscontent?action={1}"/>
+		        	 <map:part src="cocoon:/viewheader">
+		                 <map:parameter name="use-request-parameters" value="true"/>
+		             </map:part>
+		             <map:part src="cocoon:/{1}navbar">
+		                 <map:parameter name="use-request-parameters" value="true"/>
+		             </map:part>
+		             <map:part src="cocoon:/{1}content">
+		                 <map:parameter name="use-request-parameters" value="true"/>
+		             </map:part>
+		             <map:part src="cocoon:/viewfooter">
+		                 <map:parameter name="use-request-parameters" value="true"/>
+		             </map:part>
+		        	</map:aggregate>
+				</map:otherwise>
+			</map:select>
+	    	
+	        
 	        
             <!-- map:transform type="tutil" src="/t/final" / -->
 	        
 	        
 	        <!-- map:transform type="metadata" / -->
 	        
-	        <map:transform type="xslt" src="context://templates/{global:template}/xslt/xml2xhtml.xslt">
+	        <!-- {session-attr:template} -->
+	        
+	        <!--
+	        http://www.xsltg.com/appl/sitemap.xmap
+	        
+	        
+	        <map:resource name="htmlSerialize">
+			<map:select type="request-parameter">
+				<map:parameter name="parameter-name" value="pageType"/>
+				<map:when test="frameset">
+					<map:serialize type="xhtml-frameset"/>
+				</map:when>
+				<map:otherwise>
+					<map:select type="browser">
+						<map:when test="ie6">
+							<map:serialize type="html-MSIE"/>
+						</map:when>
+						<map:when test="ie55">
+							<map:serialize type="html-MSIE"/>
+						</map:when>
+						<map:otherwise>
+							<map:serialize type="xhtml"/>
+						</map:otherwise>
+					</map:select>
+				</map:otherwise>
+			</map:select>
+		</map:resource>
+	        
+	        -->
+	        
+			<!--
+				{request-attr:_template} e' impostato da PageCodeAction prendendo {global:template}
+				per default e il valore del parametro _template se specificato altrimenti
+			-->	       
+			<map:transform type="xslt" src="context://templates/{request-attr:_template}/xslt/xml2xhtml.xslt">
 	        	<map:parameter name="context" value="{context}"/>
 	        	<map:parameter name="pid" value="{request-param:pid}"/>
-	        	<map:parameter name="template" value="{global:template}"/>
+	        	<map:parameter name="template" value="{request-attr:_template}"/>
 	        	<map:parameter name="sitename" value="{global:sitename}"/>
 	        	<map:parameter name="pageid" value="{request-attr:pid}"/>
 	        	<map:parameter name="pagecode" value="{request-attr:pcode}"/>
@@ -351,11 +417,18 @@
 	        	<map:parameter name="pagedate" value="{request-attr:insertdate}"/>
 	        	<map:parameter name="pageresp" value="{request-attr:resp}"/>
 	        </map:transform>
+        
+	        
 	        <map:transform type="cinclude"/>
 	        
 	         <!-- map:transform type="tutil" src="/t/final" / -->
 	        
-	        <map:serialize type="html" doctype-default="loose"/> 
+	        <map:serialize type="html" /> <!-- doctype-default="loose" --> 
+	    </map:match>
+	    
+	    <map:match pattern="read-*">
+	    	<map:generate src="../{1}" />
+	    	<map:serialize />
 	    </map:match>
 	    
 	    <map:match pattern="getlistpages">
