@@ -34,6 +34,7 @@
 					<option value="slideshow">slideshow</option>
 					<option value="catalogSearch">ricerca catalogo</option>
 					<option value="sendmail">invio form per email</option>
+					<option value="sitemap">mappa sito</option>
 					<xsl:if test="starts-with($pcode,'_')">
 						<option value="sidebar">sidebar verticale</option>
 					</xsl:if>
