@@ -266,7 +266,7 @@ private boolean clearDatabase;
 		
 	}
 
-  public void process(String stringa, ParoleSpoolerInterface paroleSpooler) throws Exception {
+  public void process(byte[] stringa, ParoleSpoolerInterface paroleSpooler) throws Exception {
 	  RecordInterface notizia=null;
 	  Enumeration<TokenWord> tags=null;
   
@@ -359,7 +359,7 @@ private boolean clearDatabase;
 
       RecordInterface n=null;
       try {
-    	  n=RecordFactory.buildRecord(0,"",tipoNotizia,0);
+    	  n=RecordFactory.buildRecord(0,null,tipoNotizia,0);
       }
       catch(Exception e) {
     	  e.printStackTrace();

@@ -564,7 +564,7 @@ public abstract class DbGateway {
      * @throws SQLException
      */    
     public void inserisciNotizia(Connection conn, String catalog, String tipo, 
-    		String notizia) throws SQLException {
+    		byte[] notizia) throws SQLException {
   	  RecordInterface ma;
   	  //ma=ISO2709.creaNotizia(0,notizia,tipo,0);
   	  try {

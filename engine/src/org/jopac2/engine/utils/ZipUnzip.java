@@ -86,7 +86,7 @@ public class ZipUnzip {
    * @param compressedData
    * @return
    */
-  public static final String decompressString(byte[] compressedData) {
+  public static final byte[] decompressString(byte[] compressedData) {
 //	 Create the decompressor and give it the data to compress
 	    Inflater decompressor = new Inflater();
 	    decompressor.setInput(compressedData);
@@ -110,16 +110,10 @@ public class ZipUnzip {
 	    } catch (IOException e) {
 	    }
 	    
-	    String r=null;
-		try {
-			r = running?bos.toString("UTF-8"):new String(compressedData);
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    
-	    // Get the decompressed data
-	    //byte[] decompressedData = bos.toByteArray();
+	    byte[] r=null;
+
+		r = running?bos.toByteArray():compressedData;
+		
 	    return r;
   }
 	

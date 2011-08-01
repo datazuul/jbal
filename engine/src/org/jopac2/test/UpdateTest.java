@@ -100,7 +100,7 @@ public class UpdateTest extends TestCase {
 			// avanti con l'inserimento dei prossimi
 			
 			for(int i=1;i<recs.length;i++) {
-				ma=RecordFactory.buildRecord(0, recs[i], filetype, 0);
+				ma=RecordFactory.buildRecord(0, recs[i].getBytes(), filetype, 0);
 				if(ma!=null) {
 					dbgw.inserisciNotizia(c, catalog, ma);
 					ma.destroy();

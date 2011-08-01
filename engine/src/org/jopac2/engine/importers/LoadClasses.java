@@ -113,7 +113,7 @@ public class LoadClasses {
         Vector<ClassItem> SQLInstructions=new Vector<ClassItem>();
         
         try {
-        	RecordInterface ma=RecordFactory.buildRecord(0, "", name, 0);
+        	RecordInterface ma=RecordFactory.buildRecord(0, null, name, 0);
         	Hashtable<String, List<Tag>> mapping=ma.getRecordMapping();
         	ma.destroy();
         	Enumeration<String> e=mapping.keys();
