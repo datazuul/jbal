@@ -15,11 +15,13 @@
 						<!--map:parameter name="startLevel" value="2"/-->
 					</map:generate>
 					
-					 <!-- map:transform type="tutil" src="/t/sidebar" / -->
+					<!-- map:transform type="tutil" src="/t/sitemap" / -->
 					
-                    <map:transform src="sidebar2xhtml.xslt">
+                    <map:transform src="sitemap2xhtml.xslt">
                     	<map:parameter name="use-request-parameters" value="true"/>
                     </map:transform> 
+                
+                	<!-- map:transform type="tutil" src="/t/sitemap_after" / -->
                 
 					<map:serialize type="xml"/>
 				</map:match>

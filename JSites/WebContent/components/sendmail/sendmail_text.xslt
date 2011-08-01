@@ -50,22 +50,19 @@
 						
 						<sendmail:body>
 							<![CDATA[
-							<html>
-								<body>
-							
 							Dati da: 
+							
 							]]><xsl:value-of select="h:request/h:requestHeaders/h:header[@name='referer']/text()" /><![CDATA[<br/>]]>
 							<xsl:value-of select="$body" />
-							<![CDATA[
-								</body>
-							</html>
-							]]>
+							
 						</sendmail:body>
 			
 					</sendmail:sendmail>
 					
 					<xsl:if test="contains(//recap,'true')">
-						Sono state inviate le seguenti informazioni:<br/>
+						<![CDATA[
+						Sono state inviate le seguenti informazioni:
+						]]>
 						<futiz>
 						<xsl:value-of select="normalize-space($body)" disable-output-escaping="no"/>
 						</futiz>
@@ -80,20 +77,20 @@
 	
 		<xsl:if test="string-length(normalize-space(/root/sendmail/parameters))=0">
 			<![CDATA[
-				<h2>Header</h2>
-				<table border='1'>
+				Header
+				
 			]]>
 			<xsl:apply-templates />
 			<![CDATA[
-				</table>
+				
 			]]>
 		</xsl:if>
 	</xsl:template>
 	
 	<xsl:template match="h:requestParameters">
 		<![CDATA[
-			<h2>Parametri</h2>
-			<table border='1'>
+			Parametri
+			
 		]]>
 		<xsl:if test="string-length(normalize-space(/root/sendmail/parameters))=0">
 			
@@ -107,7 +104,7 @@
 			
 		</xsl:if>
 		<![CDATA[
-			</table>
+			
 		]]>
 	</xsl:template>
 	
@@ -116,10 +113,11 @@
       <xsl:variable name="newlist" select="concat(normalize-space($list), ' ')" />
       <xsl:variable name="first" select="substring-before($newlist, ' ')" />
       <xsl:variable name="remaining" select="substring-after($newlist, ' ')" />
-      <![CDATA[<tr><td><b>]]>
-     	<xsl:value-of select="$first" /><![CDATA[</b></td><td>]]><xsl:value-of select="/root/h:request/h:requestParameters/h:parameter[@name=$first]/h:value" /> 
+      <![CDATA[]]>
+     	<xsl:value-of select="$first" /><![CDATA[ = ]]><xsl:value-of select="/root/h:request/h:requestParameters/h:parameter[@name=$first]/h:value" /> 
       	<xsl:text>&#xD;&#xA;</xsl:text>
-      <![CDATA[</td></tr>]]>
+      <![CDATA[
+	  ]]>
 		
       <xsl:if test="$remaining">
           <xsl:call-template name="output-tokens">
@@ -152,17 +150,19 @@
 	
 	
 	<xsl:template match="h:parameter">
-		<![CDATA[<tr><td><b>]]>
-		<xsl:value-of select="@name"/><![CDATA[</b></td><td>]]><xsl:value-of select="h:value" />
+		<![CDATA[]]>
+		<xsl:value-of select="@name"/><![CDATA[ = ]]><xsl:value-of select="h:value" />
 		<xsl:text>&#xD;&#xA;</xsl:text>
-		<![CDATA[</td></tr>]]>
+		<![CDATA[
+		]]>
 	</xsl:template>
 	
 	<xsl:template match="h:header">
-		<![CDATA[<tr><td><b>]]>
-		<xsl:value-of select="@name"/><![CDATA[</b></td><td>]]><xsl:value-of select="." />
+		<![CDATA[]]>
+		<xsl:value-of select="@name"/><![CDATA[ = ]]><xsl:value-of select="." />
 		<xsl:text>&#xD;&#xA;</xsl:text>
-		<![CDATA[</td></tr>]]>
+		<![CDATA[
+		]]>
 	</xsl:template>
 	
 	<xsl:template match="cc">
@@ -172,8 +172,11 @@
 	
 	<xsl:template match="email">
 		<sendmail:to><xsl:value-of select="."/></sendmail:to>
-		<xsl:variable name="node"><xsl:value-of select="normalize-space(//cc)" /></xsl:variable>
-		<sendmail:to><xsl:value-of select="/root/h:request/h:requestParameters/h:parameter[@name=$node]/h:value"/></sendmail:to>
+		<xsl:variable name="node"><xsl:value-of select="//cc" /></xsl:variable>
+		<xsl:variable name="nodeval"><xsl:value-of select="/root/h:request/h:requestParameters/h:parameter[@name=$node]/h:value"/></xsl:variable>
+		<xsl:if test="string-length(normalize-space($nodeval))!=0">
+			<sendmail:to><xsl:value-of select="$nodeval" /></sendmail:to>
+		</xsl:if>
 	</xsl:template>
 	
 	<xsl:template match="subject">
@@ -181,15 +184,15 @@
 	</xsl:template>
 	
 	<xsl:template match="smtphost">
-		<sendmail:smtphost><xsl:value-of select="."/></sendmail:smtphost>
+	<!-- 	<sendmail:smtphost><xsl:value-of select="."/></sendmail:smtphost> -->
 	</xsl:template>
 	
 	<xsl:template match="smtpuser">
-   		<sendmail:smtpuser><xsl:value-of select="."/></sendmail:smtpuser>
+   	<!-- 	<sendmail:smtpuser><xsl:value-of select="."/></sendmail:smtpuser>  -->
    	</xsl:template>
    	
    	<xsl:template match="smtppassword">
-   		<sendmail:smtppassword><xsl:value-of select="."/></sendmail:smtppassword>
+   	<!-- 	<sendmail:smtppassword><xsl:value-of select="."/></sendmail:smtppassword>  -->
 	</xsl:template>
 	
 	
@@ -207,18 +210,6 @@
 		<mailerror>
 			<xsl:value-of select="." />
 		</mailerror>
-	</xsl:template>
-	
-	<xsl:template match="debug">
-		<debug>
-			<xsl:value-of select="." />
-		</debug>
-	</xsl:template>
-	
-	<xsl:template match="recap">
-		<recap>
-			<xsl:value-of select="." />
-		</recap>
 	</xsl:template>
 	
 	<xsl:template match="missingparameter">

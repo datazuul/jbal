@@ -15,6 +15,7 @@
     <xsl:param name="disabling"/>
     <xsl:param name="time"/>
     <xsl:param name="extra" />
+    <xsl:param name="container" />
     
 	<xsl:template match="/">
 		<div class="{$time}">
@@ -46,17 +47,17 @@
 					<xsl:variable name="idate">
 						<xsl:value-of select="substring-before(@insertionDate,' ')" />
 					</xsl:variable>
-					<xsl:value-of select="substring($idate,9,2)" />/<xsl:value-of select="substring($idate,6,2)" />&#160;</span> 
+					<xsl:value-of select="substring($idate,9,2)" />/<xsl:value-of select="substring($idate,6,2)" />/<xsl:value-of select="substring($idate,1,4)" />&#160;</span> 
 				<!-- span class="newsitem_pagina">
 					<xsl:value-of select="@pageName" />:&#160;</spani -->
 				<span class="newsitem_titolo">
-					<xsl:value-of select="div[@class='presente']/div[@class='sezione']/h2[@class='sezione_titolo']" />
-					<xsl:value-of select="div[@class='presente']/div[@class='sezione']/h1[@class='sezione_titolo']" />
-					<xsl:value-of select="div[@class='presente']/div[@class='sezione']/div[@class='sezione_contenuto']/h2[@class='sezione_titolo']" />
-					<xsl:value-of select="div[@class='presente']/div[@class='sezione']/div[@class='sezione_contenuto']/h1[@class='sezione_titolo']" />&#160;</span>
+					<xsl:value-of select="div/div[@class='sezione']/h2[@class='sezione_titolo']" />
+					<xsl:value-of select="div/div[@class='sezione']/h1[@class='sezione_titolo']" />
+					<xsl:value-of select="div/div[@class='sezione']/div[@class='sezione_contenuto']/h2[@class='sezione_titolo']" />
+					<xsl:value-of select="div/div[@class='sezione']/div[@class='sezione_contenuto']/h1[@class='sezione_titolo']" />&#160;</span>
 				<span class="newsitem_testo">
-					<xsl:value-of select="substring(div[@class='presente']/div[@class='sezione']/div[@class='sezione_testo'],1,50)" />
-					<xsl:value-of select="substring(div[@class='presente']/div[@class='sezione']/div[@class='sezione_contenuto']/div[@class='sezione_testo'],1,50)" />...
+					<xsl:value-of select="substring(div/div[@class='sezione']/div[@class='sezione_testo'],1,50)" />
+					<xsl:value-of select="substring(div/div[@class='sezione']/div[@class='sezione_contenuto']/div[@class='sezione_testo'],1,50)" />...
 				</span>
 			</a>
 		</div>

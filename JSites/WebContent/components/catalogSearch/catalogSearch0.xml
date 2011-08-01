@@ -10,4 +10,5 @@
 	<template></template>
 	<rxp>10</rxp>
 	<defaultQuery></defaultQuery>
+	<direction></direction>
 </catalogSearch>

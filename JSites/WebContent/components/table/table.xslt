@@ -12,6 +12,7 @@
 	<xsl:param name="validating" />
 	<xsl:param name="disabling" />
 	<xsl:param name="time" />
+	 <xsl:param name="container" />
 
 	<!--  TABELLA PRINCIPALE -->
 	<xsl:template match="/table">

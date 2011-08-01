@@ -67,9 +67,11 @@
 	</xsl:template>
 	
 	<xsl:template match="recap">
-		<recap>
-			<xsl:value-of select="text()"/>
-		</recap>
+		<recap>true</recap>
+	</xsl:template>
+	
+	<xsl:template match="debug">
+		<debug>true</debug>
 	</xsl:template>
 	
 	<xsl:template match="cc">

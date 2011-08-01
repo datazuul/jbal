@@ -53,9 +53,15 @@
 	            <map:match pattern="save">
 					<map:generate type="internalSave"/>
 					<!--map:transform type="checkContentLength"/-->
+					
+					<!-- map:transform type="tutil" src="/t/sectionb" / -->
+					
 					<map:transform src="sectionsave.xslt">
 						<map:parameter name="use-request-parameters" value="true"/>
 					</map:transform>
+					
+					<!-- map:transform type="tutil" src="/t/sectiona" / -->
+					
 					<map:transform type="sql">
 						<map:parameter name="use-connection" value="{request-param:db}"/>
 					</map:transform>

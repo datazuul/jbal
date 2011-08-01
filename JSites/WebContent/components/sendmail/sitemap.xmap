@@ -5,7 +5,7 @@
 <map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
 
 	<map:pipelines>
-		
+
 		<map:pipeline internal-only="false" type="noncaching"> 
 	            
 	            <map:match pattern="view">
@@ -24,10 +24,11 @@
 		                        <map:parameter name="pagerequest" value="{request-attr:pagerequest}"/>
 		                    </map:transform>
 	                    </map:act>
-	                    <map:transform type="sendmail">
-	                    	<map:parameter name="sendpartial" value="true" />
-	                    </map:transform>
 	                    
+	                    <!-- map:transform type="tutil" src="/t/sendmiddle" / -->
+	                    
+	                    <map:transform type="simpleMail" />
+	                    		                    
 	                    <!-- map:transform type="tutil" src="/t/sendafter0" / -->
 	                    
 	                    <map:transform src="sendmailresult.xslt" >

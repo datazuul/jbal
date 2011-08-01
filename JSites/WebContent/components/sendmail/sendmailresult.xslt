@@ -23,13 +23,15 @@
     
 		 
 	<xsl:template match="/content">
-		<content>
 		<xsl:apply-templates />
-		</content>
 		
 		<!--  TASTO DI MODIFICA -->
 		<xsl:call-template name="editlinks" />
 		<xsl:apply-templates select="order" />
+	</xsl:template>
+	
+	<xsl:template match="result">
+		<xsl:apply-templates />
 	</xsl:template>
 	
 	
@@ -37,9 +39,29 @@
 		<xsl:if test="sendmail:failure">
 			<xsl:value-of select="//mailerror" />
 		</xsl:if>
-		<xsl:if test="sendmail:success">
+		<xsl:if test="success">
 			<xsl:value-of select="//mailsent" />
 		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template match="sendmail:sendmail">
+		<xsl:apply-templates />
+	</xsl:template>
+	
+	<xsl:template match="success">
+		<xsl:value-of select="//mailsent" />
+	</xsl:template>
+	
+	<xsl:template match="sendmail:subject" />
+	<xsl:template match="sendmail:from" />
+	<xsl:template match="sendmail:to" />
+	<xsl:template match="sendmail:smtphost" />
+	<xsl:template match="sendmail:body" />
+	
+	<xsl:template match="debug">
+		<pre>
+			<xsl:value-of select="." />
+		</pre>
 	</xsl:template>
 
 	<xsl:template match="mailsent" />

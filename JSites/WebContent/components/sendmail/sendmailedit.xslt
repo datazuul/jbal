@@ -35,8 +35,25 @@
 						<tr><td><b>mail sent message:</b></td><td><input type="text" size="40" name="mailsent" value="{mailsent/text()}" /></td></tr>
 						<tr><td><b>mail error message:</b></td><td><input type="text" size="40" name="mailerror" value="{mailerror/text()}" /></td></tr>
 						<tr><td><b>missing parameter message:</b></td><td><input type="text" size="40" name="missingparameter" value="{missingparameter/text()}" /></td></tr>
-						<tr><td><b>recap sent data to user:</b></td><td><input type="checkbox" name="recap" value="{recap/text()}" /></td></tr>
+						<tr><td><b>recap sent data to user:</b></td>
+						    <td>
+						    	<input type="checkbox" name="recap">
+						    		<xsl:if test="recap/text() = 'true'">
+										<xsl:attribute name="checked">checked</xsl:attribute>
+									</xsl:if>
+								</input>
+							</td>
+						</tr>
 						<tr><td><b>field containing user email to send cc:</b></td><td><input type="text" size="40" name="cc" value="{cc}" /></td></tr>
+						<tr><td><b>DEBUG (debug data displayed to the world, email included!):</b></td>
+						    <td>
+						    	<input type="checkbox" name="debug">
+						    		<xsl:if test="debug/text() = 'true'">
+										<xsl:attribute name="checked">checked</xsl:attribute>
+									</xsl:if>
+								</input>
+							</td>
+						</tr>
 					</table>
 				</div>
 			</div>		

@@ -26,9 +26,11 @@
 				<map:match pattern="view">
 					<map:act type="request">
 					 	<map:parameter name="parameters" value="true" />
-					 
-	                    <map:generate type="componentGenerator" src="{global:data-directory}/data/catalogSearch{request-param:cid}.xml"/>
+					 	
+	                    	<map:generate type="componentGenerator" src="{global:data-directory}/data/catalogSearch{request-param:cid}.xml"/>
+	                    
 	                    <!-- map:transform type="tutil" src="/t/template" / -->
+	                    
 	                    <map:transform type="catalogSearch">
 	                    	<map:parameter name="db" value="{global:db}" />
 	                    </map:transform>
@@ -55,7 +57,7 @@
 						    <map:parameter name="time" value="{request-param:time}"/>
 						    <map:parameter name="extra" value="{request-param:extra}"/>
 						    <map:parameter name="type" value="{request-param:type}" />
-						    	                    	
+						    <map:parameter name="container" value="{request-param:container}" />	                    	
 	                    	
 	                    	<map:parameter name="page" value="{request-attr:page}"/>
 	                    	<!-- map:parameter name="query" value="{request-attr:query}"/ -->

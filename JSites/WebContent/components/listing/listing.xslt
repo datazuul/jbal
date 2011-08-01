@@ -13,6 +13,7 @@
     <xsl:param name="validating"/>
     <xsl:param name="disabling"/>
     <xsl:param name="time"/>
+    <xsl:param name="container" />
     
 	<xsl:template match="/">
 		<div class="{$time}">

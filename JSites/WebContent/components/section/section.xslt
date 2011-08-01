@@ -23,7 +23,7 @@
 			<div class="sezione{$extra}" id="{$cid}">
 				<!--  <xsl:apply-templates select="section/lang[@code=$lang]"/> -->
 				<xsl:apply-templates select="section"/>
-				<div class="clearer">&#160;</div>
+				<div class="_jclearer">&#160;</div>
 			</div>
 		</div>
 		
@@ -33,19 +33,16 @@
 	</xsl:template>
 	
 	<xsl:template match="titolo">
+	<!--
 		<xsl:variable name="tit"><xsl:value-of select="@type"/></xsl:variable>
 
-<!-- 
-		<xsl:if test="$extra = 'news'">
-			<xsl:value-of select="../sql:rowset/sql:row/sql:startdate"/> - <xsl:value-of select="../sql:rowset/sql:row/sql:enddate"/>
-		</xsl:if>
--->		
 		<xsl:if test="$tit = '1'">
 			<h1 class="sezione_titolo{$extra}"><xsl:value-of select="text()"/></h1>
 		</xsl:if>
 		<xsl:if test="$tit != '1'">
 			<h2 class="sezione_titolo{$extra}"><xsl:value-of select="text()"/></h2>
 		</xsl:if>
+		-->
 	</xsl:template>
 	
 		
@@ -56,16 +53,37 @@
 
 		<xsl:variable name="url"><xsl:value-of select="image/text()"/></xsl:variable>
 		<xsl:variable name="titolo"><xsl:value-of select="titolo/text()"/></xsl:variable>
+		<xsl:variable name="tit"><xsl:value-of select="titolo/@type"/></xsl:variable>
 		<xsl:variable name="link"><xsl:value-of select="image/@link"/></xsl:variable>
-		<xsl:if test="$url != 'images/contentimg/no_image'">
-			<div class="sezione_immagine">
-				<xsl:if test="string-length(normalize-space($link)) > 0">
-					<!-- Link non e vuoto  -->
-					<a href="{$link}">
-						<xsl:if test="contains($link,'http')">
-							<xsl:attribute name="target">_blank</xsl:attribute>
-						</xsl:if>
-						<img src="{$url}" width="70" height="70">
+		
+		
+		<h1 class="sezione_titolo{$extra}">
+		
+		
+		
+			<xsl:if test="not(contains($url, 'no_image'))">
+				<!--  <div class="sezione_immagine"> -->
+					<xsl:if test="string-length(normalize-space($link)) > 0">
+						<!-- Link non e vuoto  -->
+						<a href="{$link}">
+							<xsl:if test="contains($link,'http')">
+								<xsl:attribute name="target">_blank</xsl:attribute>
+							</xsl:if>
+							<img src="{$url}" class="image">
+								<xsl:choose>
+									<xsl:when test="contains($titolo,'>')">
+										<xsl:attribute name="alt"><xsl:value-of select="substring-before(substring-after($titolo,'>'),']')"/></xsl:attribute>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:attribute name="alt"><xsl:value-of select="$titolo"/></xsl:attribute>
+									</xsl:otherwise>
+								</xsl:choose>
+							</img>
+						</a>
+					</xsl:if>
+					<xsl:if test="string-length(normalize-space($link)) = 0">
+						<!-- Link e vuoto  -->
+						<img src="{$url}" class="image">
 							<xsl:choose>
 								<xsl:when test="contains($titolo,'>')">
 									<xsl:attribute name="alt"><xsl:value-of select="substring-before(substring-after($titolo,'>'),']')"/></xsl:attribute>
@@ -75,43 +93,32 @@
 								</xsl:otherwise>
 							</xsl:choose>
 						</img>
-					</a>
-				</xsl:if>
-				<xsl:if test="string-length(normalize-space($link)) = 0">
-					<!-- Link e vuoto  -->
-					<img src="{$url}" width="70" height="70">
-						<xsl:choose>
-							<xsl:when test="contains($titolo,'>')">
-								<xsl:attribute name="alt"><xsl:value-of select="substring-before(substring-after($titolo,'>'),']')"/></xsl:attribute>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:attribute name="alt"><xsl:value-of select="$titolo"/></xsl:attribute>
-							</xsl:otherwise>
-						</xsl:choose>
-					</img>
-				</xsl:if>
-			</div>
-		</xsl:if>
+					</xsl:if>
+				<!--  </div> -->
+			</xsl:if>
+			
+			<xsl:value-of select="$titolo" />
+		
+		</h1>
+		
 		
 		<!-- CONTENUTO SE C'E' L'IMMAGINE -->
 		
-		<xsl:if test="$url != 'images/contentimg/no_image'">
-			<div class="sezione_contenuto{$extra}">
-			
-				<xsl:apply-templates select="titolo"/>
-						
-				<div class="sezione_testo{$extra}"><xsl:value-of disable-output-escaping="yes" select="testo/text()"/></div>
-			</div>
-		</xsl:if>
+		
+		<div class="sezione_contenuto{$extra}">
+			<div class="sezione_testo{$extra}"><xsl:value-of disable-output-escaping="yes" select="testo/text()"/></div>
+		</div>
+	
 		
 		<!--  CONTENUTO SE NON C'E' L'IMMAGINE -->
 		
-		<xsl:if test="$url = 'images/contentimg/no_image'">
-			<xsl:apply-templates select="titolo"/>
+		<!--  <xsl:if test="$url = 'images/contentimg/no_image'">
+			
 		
 			<div class="sezione_testo{$extra}"><xsl:value-of select="testo/text()"/></div>
 		</xsl:if>
 				
+		-->
 		
 	</xsl:template>
 	

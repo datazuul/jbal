@@ -166,13 +166,13 @@
 	</xsl:template>
 	
 	<xsl:template match="cc">
-		<xsl:variable name="node"><xsl:value-of select="normalize-space(//cc)" /></xsl:variable>
+		<xsl:variable name="node"><xsl:value-of select="//cc" /></xsl:variable>
 		<sendmail:from><xsl:value-of select="/root/h:request/h:requestParameters/h:parameter[@name=$node]/h:value"/></sendmail:from>
 	</xsl:template>
 	
 	<xsl:template match="email">
 		<sendmail:to><xsl:value-of select="."/></sendmail:to>
-		<xsl:variable name="node"><xsl:value-of select="normalize-space(//cc)" /></xsl:variable>
+		<xsl:variable name="node"><xsl:value-of select="//cc" /></xsl:variable>
 		<sendmail:to><xsl:value-of select="/root/h:request/h:requestParameters/h:parameter[@name=$node]/h:value"/></sendmail:to>
 	</xsl:template>
 	
@@ -181,15 +181,15 @@
 	</xsl:template>
 	
 	<xsl:template match="smtphost">
-		<sendmail:smtphost><xsl:value-of select="."/></sendmail:smtphost>
+	<!-- 	<sendmail:smtphost><xsl:value-of select="."/></sendmail:smtphost> -->
 	</xsl:template>
 	
 	<xsl:template match="smtpuser">
-   		<sendmail:smtpuser><xsl:value-of select="."/></sendmail:smtpuser>
+   	<!-- 	<sendmail:smtpuser><xsl:value-of select="."/></sendmail:smtpuser>  -->
    	</xsl:template>
    	
    	<xsl:template match="smtppassword">
-   		<sendmail:smtppassword><xsl:value-of select="."/></sendmail:smtppassword>
+   	<!-- 	<sendmail:smtppassword><xsl:value-of select="."/></sendmail:smtppassword>  -->
 	</xsl:template>
 	
 	
@@ -207,18 +207,6 @@
 		<mailerror>
 			<xsl:value-of select="." />
 		</mailerror>
-	</xsl:template>
-	
-	<xsl:template match="debug">
-		<debug>
-			<xsl:value-of select="." />
-		</debug>
-	</xsl:template>
-	
-	<xsl:template match="recap">
-		<recap>
-			<xsl:value-of select="." />
-		</recap>
 	</xsl:template>
 	
 	<xsl:template match="missingparameter">

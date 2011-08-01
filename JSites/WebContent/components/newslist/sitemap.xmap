@@ -17,10 +17,13 @@
 	                    
 						<map:transform type="cinclude" />
 						
+						<!-- map:transform type="tutil" src="/t/newsbefore" / -->
 						
 	                    <map:transform src="newslist.xslt">
 	                        <map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
+	                    
+	                    <!-- map:transform type="tutil" src="/t/newsafter" / -->
 	                    
 	                    <map:transform type="wikitrans"/>
 	                    <map:serialize type="xml"/>

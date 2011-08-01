@@ -1,5 +1,5 @@
 <sendmail>
-	<email>address to send data</email>
+	<email>address to send data (used as from if rejected by spam filters)</email>
 	<subject>subject all mails will have</subject>
 	<smtphost>SMTP host to use</smtphost>
 	<parameters>Parameters to send</parameters>

@@ -29,7 +29,7 @@
 					<xsl:apply-templates select="catalogName" />
 					<xsl:apply-templates select="catalogConnection" />
 					<xsl:apply-templates select="catalogFormat" />
-					
+					<xsl:apply-templates select="direction" />
 					<tr>
 					<td><label class="cat_data_label">Numero record per pagina</label></td>
 					<td><input type="text" size="40" name="rxp" id="rxp" value="{rxp}" /></td>
@@ -293,6 +293,26 @@ function validate() {
 		<tr>
 		<td><label class="cat_data_label">Nome catalogo (senza spazi)</label></td>
 		<td><input type="text" size="40" name="catalogConnection" id="catalogConnection" value="{text()}" /></td>
+		</tr>
+	</xsl:template>
+	
+	<xsl:template match="direction">
+		<tr>
+		<td><label class="cat_data_label">Ordinamento</label></td>
+		<td>
+			<xsl:if test="text()='desc' or text()='descendant'">
+				<select name="direction" id="direction">
+					<option value="ascendant">Crescente</option>
+					<option value="descendant" selected="selected">Decrescente</option>
+				</select>
+			</xsl:if>
+			<xsl:if test="not(text()='desc' or text()='descendant')">
+				<select name="direction" id="direction">
+					<option value="ascendant" selected="selected">Crescente</option>
+					<option value="descendant">Decrescente</option>
+				</select>
+			</xsl:if>
+		</td>
 		</tr>
 	</xsl:template>
 	
