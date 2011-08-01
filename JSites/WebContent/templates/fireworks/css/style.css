@@ -57,7 +57,7 @@ a:hover {
 /* Header */
 
 #header {
-	width: 940px;
+	width: 960px;
 	height: 102px;
 	margin: 0 auto;
 }
@@ -141,55 +141,14 @@ a:hover {
 
 /* Menu */
 
-#menu {
-	width: 940px;
-	height: 36px;
-	margin: 0 auto;
-	padding: 0;
-	background: #000000;
-}
-
-#menu ul {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-	line-height: normal;
-}
-
-#menu li {
-	float: left;
-}
-
-#menu a {
-	display: block;
-	width: 156px;
-	height: 28px;
-	background: #000000;
-	padding-top: 8px;
-	border-right: 1px solid #FFFFFF;
-	text-decoration: none;
-	text-align: center;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 13px;
-	font-weight: bold;
-	color: #FFFFFF;
-	border: none;
-}
-
-#menu a:hover, #menu .current_page_item a {
-	background: #BC1B32;
-	text-decoration: none;
-}
-
-#menu .current_page_item a {
-	background: #BC1B32;
-	padding-left: 0;
+#menuHolder {
+	display: none;
 }
 
 /* Page */
 
 #page {
-	width: 940px;
+	width: 960px;
 	margin: 0 auto;
 	padding: 0;
 }
@@ -350,7 +309,7 @@ a:hover {
 /* Footer */
 
 #footer {
-	height: 50px;
+	width: 960px;
 	margin: 0 auto;
 	padding: 0px 0 15px 0;
 	background: #ECECEC;
