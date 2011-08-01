@@ -35,6 +35,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import JSites.transformation.catalogSearch.Group;
 import JSites.transformation.catalogSearch.Templator;
 import JSites.utils.XMLUtil;
 import junit.framework.TestCase;
@@ -135,7 +136,7 @@ public class TemplatorTest extends TestCase {
 				"<item><primo>c</primo><secondo>3</secondo></item>" +
 				"</record>";
 		Document doc=XMLUtil.String2XML(xml2);
-		Templator.groupPair(doc, ",", "item", "/record/primo", "/record/secondo");
+		Group.groupPair(doc, ",", "item", "/record/primo", "/record/secondo");
 		String ret=XMLUtil.XML2String(doc);
 		System.out.println(ret);
 		assertTrue("OK",ret.equals(out));
@@ -156,6 +157,26 @@ public class TemplatorTest extends TestCase {
 		assertTrue("OK",ret.equals(out));
 	}
 	
+	
+	public void test1p_limit() throws Exception {
+		String in="{{^Limit(/record/ISBD|30| <a href=\"/dettaglio/?query=JID=[[/record/jid]]\">Continua</a>):[[.]]}}";
+		String out="Il *pensiero americano <a href=\"/dettaglio/?query=JID=6142\">Continua</a>";
+		Document doc=XMLUtil.String2XML(xml1);
+		String ret=Templator.parseContext(doc, in);
+
+		System.out.println(ret);
+		assertTrue("OK",ret.equals(out));
+	}
+	
+	public void test2p_limit() throws Exception {
+		String in="{{^Limit(Nella vecchia fattoria, ia ia oooooo, c'è la mucca di zio tobia, ia ia oooo|30| <a href=\"\">Continua</a>):[[.]]}}";
+		String out="Nella vecchia fattoria, ia ia <a href=\"\">Continua</a>";
+		Document doc=XMLUtil.String2XML(xml1);
+		String ret=Templator.parseContext(doc, in);
+
+		System.out.println(ret);
+		assertTrue("OK",ret.equals(out));
+	}
 	
 	public void test1p_group() throws Exception {
 		String in="{{^Group(,|item|/record/primo|/record/secondo):<a href='[[primo]]'>[[secondo]]</a>}}";
