@@ -38,6 +38,9 @@ import JSites.authentication.Permission;
 public class PageCreator extends MyAbstractPageGenerator {
 	
 	protected void subClassProcess(String componentType, long id, AttributesImpl attrCid, boolean hasChildren, Connection conn) throws SAXException, SQLException {
+		if(componentType.equals("content") && !containerType.equals("content")) { //shift content on footer, header, ...
+    		componentType=containerType;
+    	}
 		
 		if(permission.hasPermission(Permission.EDITABLE)){
 		

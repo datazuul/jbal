@@ -32,11 +32,9 @@ import java.sql.Statement;
 
 public class DbSetupMysql extends DbSetup {
 	public void createTableInfo(Connection conn) throws SQLException {
-		String sql="DROP TABLE IF EXISTS info;";
 		Statement st=conn.createStatement();
-//		st.execute(sql);
 		
-		sql="CREATE TABLE info (PCode varchar(3) NOT NULL," +
+		String sql="CREATE TABLE info (PCode varchar(3) NOT NULL," +
 				"PaPCode varchar(3) NOT NULL) " +
 				"ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 		
@@ -51,11 +49,9 @@ public class DbSetupMysql extends DbSetup {
 	}
 	
 	public void createTableTblComponenti(Connection conn) throws SQLException {
-		String sql="DROP TABLE IF EXISTS tblcomponenti;";
 		Statement st=conn.createStatement();
-//		st.execute(sql);
 		
-		sql="CREATE TABLE tblcomponenti (CID int(10) unsigned NOT NULL default '0'," +
+		String sql="CREATE TABLE tblcomponenti (CID int(10) unsigned NOT NULL default '0'," +
 				"Type varchar(45) NOT NULL default ''," +
 				"Attributes longtext," +
 				"HasChildren tinyint(1) unsigned NOT NULL default '0'," +
@@ -78,11 +74,9 @@ public class DbSetupMysql extends DbSetup {
 	}
 	
 	public void createTableNews(Connection conn) throws SQLException {
-		String sql="DROP TABLE IF EXISTS tblnews;";
 		Statement st=conn.createStatement();
-//		st.execute(sql);
 		
-		sql="CREATE TABLE tblnews (CID integer, startdate varchar(8) NOT NULL," +
+		String sql="CREATE TABLE tblnews (CID integer, startdate varchar(8) NOT NULL," +
 				"enddate varchar(8) NOT NULL," +
 				"list tinyint(1), " +
 				"PRIMARY KEY (CID)," +
@@ -101,11 +95,9 @@ public class DbSetupMysql extends DbSetup {
 	}
 	
 	public void createTableTblContenuti(Connection conn) throws SQLException {
-		String sql="DROP TABLE IF EXISTS tblcontenuti;";
 		Statement st=conn.createStatement();
-//		st.execute(sql);
 		
-		sql="CREATE TABLE tblcontenuti (" +
+		String sql="CREATE TABLE tblcontenuti (" +
 				"PaCID int(10) unsigned NOT NULL default '0'," +
 				"CID int(10) unsigned NOT NULL default '0'," +
 				"StateID int(10) unsigned NOT NULL default '3'," +
@@ -126,11 +118,9 @@ public class DbSetupMysql extends DbSetup {
 	}
 	
 	public void createTableTblPagine(Connection conn) throws SQLException {
-		String sql="DROP TABLE IF EXISTS tblpagine;";
 		Statement st=conn.createStatement();
-//		st.execute(sql);
 		
-		sql="CREATE TABLE tblpagine (" +
+		String sql="CREATE TABLE tblpagine (" +
 				"PID int(10) unsigned NOT NULL auto_increment," +
 				"Name varchar(100) NOT NULL default ''," +
 				"PaPID int(10) unsigned default '0'," +
@@ -161,11 +151,9 @@ public class DbSetupMysql extends DbSetup {
 	}
 	
 	public void createTableTblRedirects(Connection conn) throws SQLException {
-		String sql="DROP TABLE IF EXISTS tblredirects;";
 		Statement st=conn.createStatement();
-//		st.execute(sql);
 		
-		sql="CREATE TABLE tblredirects (" +
+		String sql="CREATE TABLE tblredirects (" +
 				"PID int(10) unsigned NOT NULL default '0'," +
 				"Url text NOT NULL," +
 				"KEY Index_1 USING BTREE (PID)" +
@@ -181,11 +169,9 @@ public class DbSetupMysql extends DbSetup {
 	}
 	
 	public void createTableTblRoles(Connection conn) throws SQLException {
-		String sql="DROP TABLE IF EXISTS tblroles;";
 		Statement st=conn.createStatement();
-//		st.execute(sql);
 		
-		sql="CREATE TABLE tblroles (" +
+		String sql="CREATE TABLE tblroles (" +
 				"Username varchar(50) NOT NULL," +
 				"PermissionCode int(10) unsigned NOT NULL default '0'," +
 				"PID int(10) unsigned NOT NULL default '0'," +
@@ -204,11 +190,9 @@ public class DbSetupMysql extends DbSetup {
 	}
 	
 	public void createTableTblStati(Connection conn) throws SQLException {
-		String sql="DROP TABLE IF EXISTS tblstati;";
 		Statement st=conn.createStatement();
-//		st.execute(sql);
 		
-		sql="CREATE TABLE tblstati (" +
+		String sql="CREATE TABLE tblstati (" +
 				"StateID int(10) unsigned NOT NULL auto_increment," +
 				"StateName varchar(5) NOT NULL," +
 				"Scope varchar(45) NOT NULL," +
@@ -226,11 +210,9 @@ public class DbSetupMysql extends DbSetup {
 	}
 	
 	public void createTableTblStrutture(Connection conn) throws SQLException {
-		String sql="DROP TABLE IF EXISTS tblstrutture;";
 		Statement st=conn.createStatement();
-//		st.execute(sql);
 		
-		sql="CREATE TABLE tblstrutture (" +
+		String sql="CREATE TABLE tblstrutture (" +
 				"PID int(10) unsigned NOT NULL default '0'," +
 				"CID int(10) unsigned NOT NULL default '0'," +
 				"UNIQUE KEY Index_3 USING BTREE (PID,CID)," +

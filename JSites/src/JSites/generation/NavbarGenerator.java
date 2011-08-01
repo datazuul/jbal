@@ -346,13 +346,13 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 			}
 		}
 		
-		if(authenticated) {
-			Permission tempperm = Authentication.assignPermissions(session, pid, conn);
-			if(DBGateway.getPageLevel(pid,0, conn)<4 && tempperm.hasPermission(Permission.EDITABLE)){
-				addAddPage(aggiungiPagina, "pagecreate?papid="+pid+"&pid=0&type=section");
-				addAddPage(aggiungiLink, "pagecreate?papid="+pid+"&pid=0&type=externalLink");
-			}
-		}
+//		if(authenticated) {
+//			Permission tempperm = Authentication.assignPermissions(session, pid, conn);
+//			if(DBGateway.getPageLevel(pid,0, conn)<4 && tempperm.hasPermission(Permission.EDITABLE)){
+//				addAddPage(aggiungiPagina, "pagecreate?papid="+pid+"&pid=0&type=section");
+//				addAddPage(aggiungiLink, "pagecreate?papid="+pid+"&pid=0&type=externalLink");
+//			}
+//		}
 			
 		rs.close();
 		st.close();

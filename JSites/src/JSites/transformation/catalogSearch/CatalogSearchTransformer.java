@@ -30,6 +30,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
@@ -56,12 +58,15 @@ import JSites.utils.Util;
 
 public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 	
-	String catalogConnection = null, dbType=null, defaultQuery=null, catalogOrder=null;
+	String catalogConnection = null, dbType=null, defaultQuery=null, catalogOrder=null, direction=null;
 	String rxp=null;
 	StringBuffer sb = new StringBuffer();
 	String dbUrl=null;
+	int rxpn=10;
+	boolean desc=false;
 	
-	boolean readCatalogConnection = false, readDbType = false, isRxp = false, isDefaultQuery = false, isCatalogOrder=false;
+	boolean readCatalogConnection = false, readDbType = false, isRxp = false, 
+		isDefaultQuery = false, isCatalogOrder=false, isDirection=false;
 	//boolean readLinks = false;
 	
 	@SuppressWarnings("unchecked")
@@ -89,6 +94,9 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		else if(loc.equals("rxp")) {
 			isRxp=true;
 		}
+		else if(loc.equals("direction")) {
+			isDirection=true;
+		}
 		else if(loc.equals("catalogSearch"))
 			super.startElement("", "root", "root", a);
 		else
@@ -97,7 +105,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 
 	@Override
 	public void characters(char[] c, int start, int len) throws SAXException {
-		if(readCatalogConnection || readDbType || isRxp || isDefaultQuery || isCatalogOrder)
+		if(readCatalogConnection || readDbType || isRxp || isDefaultQuery || isCatalogOrder || isDirection)
 			sb.append(c,start,len);
 		else
 			super.characters(c, start, len);
@@ -132,6 +140,13 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 			String t=Util.getRequestData(request, "rxp");
 			if(t!=null && t.trim().length()>0) rxp=t;
 		}
+		else if(loc.equals("direction")) {
+			isDirection = false;
+			direction = sb.toString().trim();
+			sb.delete(0, sb.length());
+			String t=Util.getRequestData(request, "direction");
+			if(t!=null && t.trim().length()>0) direction=t;
+		}
 		else if(loc.equals("catalogSearch")) {
 			try {
 				throwResults();
@@ -158,28 +173,37 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 			if(t!=null && t.length()>0) catalogConnection=t;
 		}
 		
-		String catalogQuery = getQuery(request);
+		try {
+        	rxpn=Integer.parseInt(rxp);
+        }
+        catch(Exception e) {}
+        
+        String descendant=Util.getRequestData(request, "descendant");
+		
+		if(descendant!=null && descendant.equalsIgnoreCase("true")) desc=true;
+		if(direction!=null && (direction.equalsIgnoreCase("descendant") || direction.equalsIgnoreCase("desc"))) desc=true;
+		
+		String catalogQuery = getQuery();
 		
 		String orderBy= Util.getRequestData(request, "orderby");
 		
 		if(orderBy!=null) orderBy=orderBy.trim();
 		
 		if(orderBy==null || orderBy.length()==0) orderBy=catalogOrder;
-		
-		String descendant=Util.getRequestData(request, "descendant");
-		
+
 		if(checkListParameter("list")) {
 			String[] list=getListParameter("list");
 			if(list[1]!=null && list[1].length()>0) {
-				if(descendant!=null && descendant.equalsIgnoreCase("true")) {
+				if(desc) {
 					result=ListSearch.listSearchBackward(conn, catalogConnection, list[0], list[1], 100);
+					desc=false; // sempre true, perche' e' il metodo di lista diverso
 				}
 				else {
 					result=ListSearch.listSearch(conn, catalogConnection, list[0], list[1], 100);
 				}
 				throwField("listRecord", list[0]);
 				
-				throwResults(conn, catalogQuery, result);
+				throwResults(conn, catalogQuery, result); 
 			}
 		}
 		else if(checkListParameter("nlist")) {
@@ -187,8 +211,9 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 			if(list[1]!=null && list[1].length()>0) {
 				long sjid=Long.parseLong(list[1]);
 				
-				if(descendant!=null && descendant.equalsIgnoreCase("true")) {
+				if(desc) {
 					result=ListSearch.listSearchBackward(conn, catalogConnection, list[0], sjid, 100);
+					desc=false; // sempre true, perche' e' il metodo di lista diverso
 				}
 				else {
 					result=ListSearch.listSearch(conn, catalogConnection, list[0], sjid, 100);
@@ -196,7 +221,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 				
 				throwField("listRecord", list[0]);
 				
-				throwResults(conn, catalogQuery, result);
+				throwResults(conn, catalogQuery, result); // sempre true, perche' e' il metodo di lista diverso
 			}
 		}
 		else if(catalogQuery!=null && catalogQuery.length()>0) {
@@ -321,17 +346,14 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 			
         throwField("catalogConnection",catalogConnection);
         throwField("dbType",dbType);
+
         throwQueryData(catalogQuery,result,useStemmer);
         throwSearchData(result);
 		
         Vector<Long> v = result.getRecordIDs();
+        if(desc) Collections.reverse(v);
 		
-        int rxpn=10;
-        
-        try {
-        	rxpn=Integer.parseInt(rxp);
-        }
-        catch(Exception e) {}
+       
         
 		int nrec = v.size();
 		int start = (page * rxpn) + 0;
@@ -365,6 +387,9 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 		throwField("optimizedQuery",result.getOptimizedQuery());
 		throwField("queryCount",Long.toString(result.getQueryCount()));
 		throwField("queryTime",Double.toString(result.getQueryTime()));
+		if(desc) throwField("direction","descendant");
+		else throwField("direction","ascendant");
+		throwField("rxp",Integer.toString(rxpn));
 
         contentHandler.endElement("","queryData","queryData");
 		
@@ -398,12 +423,12 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer {
 	}
 
 
-	private String getQuery(Request o) {
+	private String getQuery() {
 		
-		String ret = Util.getRequestData(o,"query");
+		String ret = Util.getRequestData(request,"query");
 		
 //		if(ret==null) {
-////			ret=((Map<String,String>)o.getSession().getAttribute("redirectfrom")).get("query");
+//			ret=((Map<String,String>)request.getSession().getAttribute("redirectfrom")).get("query");
 //			
 //		}
 		

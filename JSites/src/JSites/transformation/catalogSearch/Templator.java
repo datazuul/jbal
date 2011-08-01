@@ -72,6 +72,8 @@ import org.apache.avalon.framework.component.ComponentSelector;
 import org.apache.avalon.framework.component.ComponentException;
 import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.component.Composable;
+import org.jopac2.jbal.RecordInterface;
+
 import JSites.transformation.MyAbstractPageTransformer;
 import JSites.utils.XMLUtil;
 
@@ -636,85 +638,6 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 //		return string;
 //	}
 	
-	public static void groupPair(Document doc, String separator, String child, String... elements) {
-		Object result=null;
-		XPath xpath = XPathFactory.newInstance().newXPath();
-	    XPathExpression expr=null;
-		try {
-			expr = xpath.compile(elements[0]);
-			result = expr.evaluate(doc, XPathConstants.NODESET);
-		} catch (XPathExpressionException e2) {
-			e2.printStackTrace();
-		}
-		
-
-	    NodeList nodes = (NodeList) result;
-
-	    for (int j = 0; j < nodes.getLength(); j++) {
-	    	Node parent=nodes.item(j).getParentNode();
-	    	moveElements(doc,parent,separator,child,elements);
-	    }
-	}
-	
-	
-	private static void moveElements(Document doc, Node parent, String separator, String child,
-			String[] elements) {
-		
-		Node[] sub=getChildren(doc,parent,elements);
-		
-		int k=1;
-		int p=0;
-		while(k!=-1) {
-			Node c=doc.createElement(child);
-			
-			k=-1;
-			for(int i=0;i<elements.length;i++) {
-				int z=appendSubChild(c,separator,sub[i],p);
-				if(z>k) k=z;
-			}
-			if(k!=-1) parent.appendChild(c);
-			p++;
-		}
-		for(int j=0;j<elements.length;j++) {
-			if(sub[j]!=null) parent.removeChild(sub[j]);
-		}
-		
-	}
-
-
-	private static int appendSubChild(Node node, String sep, Node value, int p) {
-		Node sc=node.getOwnerDocument().createElement(value.getNodeName());
-		String[] v=value.getTextContent().split(sep);
-		int z=-1;
-		if(p<v.length) {
-			z=v.length;
-			sc.setTextContent(v[p].trim());
-			node.appendChild(sc);
-		}
-		return z;
-	}
-
-
-	private static Node[] getChildren(Document doc, Node parent, String[] elements) {
-		Node[] r=new Node[elements.length];
-		for(int i=0;i<elements.length;i++) {
-			Object result=null;
-			XPath xpath = XPathFactory.newInstance().newXPath();
-		    XPathExpression expr=null;
-			try {
-				expr = xpath.compile(elements[i]);
-				result = expr.evaluate(doc, XPathConstants.NODESET);
-			} catch (XPathExpressionException e2) {
-				e2.printStackTrace();
-			}
-			
-		    NodeList nodes = (NodeList) result;
-		    if(nodes.getLength()>0) r[i]=nodes.item(0);
-		    else r[i]=null;
-		}
-		return r;
-	}
-	
 	
 	public static String parseContext(Document doc, String in) throws Exception {
 		StringBuffer buffer=new StringBuffer();
@@ -736,7 +659,8 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 			expr = xpath.compile(context);
 			result = expr.evaluate(doc, XPathConstants.NODESET);
 		} catch (XPathExpressionException e2) {
-			e2.printStackTrace();
+			throw e2;
+			//e2.printStackTrace();
 		}
 		
 
@@ -793,12 +717,24 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 		String fArguments=context.substring(i+1,f);
 		String[] args=fArguments.split("\\|");
 		String ret="";
-		if(fName.equals("Group")) {
-			Templator.groupPair(doc, args[0],args[1],(String[]) ArrayUtils.subarray(args, 2,args.length));
-			String newContext=args[2];
-			newContext=newContext.substring(0,newContext.lastIndexOf("/")+1)+args[1];
-			ret=parseContext(doc,"{{"+newContext+":"+in+"}}");
+		@SuppressWarnings("unchecked")
+		Class<TextFunction> fClass=(Class<TextFunction>)Class.forName("JSites.transformation.catalogSearch."+fName);
+		TextFunction tFunction=null;
+		if(fClass!=null) {
+			@SuppressWarnings("rawtypes")
+			java.lang.reflect.Constructor c = fClass.getConstructor();
+			tFunction = (TextFunction) c.newInstance();
+			ret=tFunction.parse(doc,in,args);
 		}
+		
+		
+		
+//		if(fName.equals("Group")) {
+//			Templator.groupPair(doc, args[0],args[1],(String[]) ArrayUtils.subarray(args, 2,args.length));
+//			String newContext=args[2];
+//			newContext=newContext.substring(0,newContext.lastIndexOf("/")+1)+args[1];
+//			ret=parseContext(doc,"{{"+newContext+":"+in+"}}");
+//		}
 		return ret;
 	}
 

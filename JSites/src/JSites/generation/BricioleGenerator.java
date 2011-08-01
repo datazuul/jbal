@@ -53,7 +53,8 @@ public class BricioleGenerator extends MyAbstractPageGenerator {
 			int pageLevel = DBGateway.getPageLevel(pageId, 0, conn)+1;
 			if( pageLevel >= startLevel){
 				contentHandler.startElement("","briciole","briciole", emptyAttrs);
-				if (papid > 1)
+				if (papid > 1) 
+//					nome = DBGateway.getPageName(papid, conn);
 					nome = getParent(papid, conn) + " > " + nome;
 				contentHandler.characters(nome.toCharArray(), 0, nome.length());
 				contentHandler.endElement("","briciole","briciole");
@@ -68,7 +69,7 @@ public class BricioleGenerator extends MyAbstractPageGenerator {
 
 	private String getParent(long pid, Connection conn) throws SQLException {
 		
-		String ret = "[pageview?pid="+pid+">"+DBGateway.getPageName(pid, conn)+"]";
+		String ret = "<a href=\"pageview?pid="+pid+"\">"+DBGateway.getPageName(pid, conn)+"</a>";
 		long papid = DBGateway.getPapid(pid, conn);
 		if(papid > 1){
 			ret = getParent(papid, conn)  + " > " + ret;

@@ -2,7 +2,7 @@ package JSites.action;
 
 /*******************************************************************************
 *
-*  JOpac2 (C) 2002-2010 JOpac2 project
+*  JOpac2 (C) 2002-2011 JOpac2 project
 *
 *     This file is part of JOpac2. http://www.jopac2.org
 *
@@ -31,9 +31,12 @@ import org.apache.avalon.framework.component.ComponentException;
 import org.apache.avalon.framework.component.ComponentManager;
 import org.apache.avalon.framework.component.ComponentSelector;
 import org.apache.avalon.framework.component.Composable;
+import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.parameters.Parameters;
+import org.apache.avalon.framework.service.ServiceException;
 import org.apache.cocoon.acting.AbstractAction;
 import org.apache.cocoon.acting.Action;
+import org.apache.cocoon.components.modules.input.SitemapVariableHolder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -76,7 +79,32 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		String pcode=request.getParameter("pcode");
 		Document metadata=null;
 		
+		String pname="";
+		String[] tsource=source.split(":");
+		String dbname=tsource[0];
+		String entry=tsource.length>1?tsource[1]:null;
+		String template=null;
+		
+		try {
+			template=(String)getAttribute("template");
+		} catch (ConfigurationException e1) {
+			e1.printStackTrace();
+		}
+
+		
+		Connection conn=null;
+		
 		Session session=request.getSession();
+		
+		if(pid==null && pcode==null) {
+			String uri=request.getRequestURI();
+			int k=uri.lastIndexOf('/');
+			pcode=uri.substring(k+1);
+		}
+		
+		Map<String,String> rf=(Map<String,String>)session.getAttribute("redirectfrom");
+		
+		if(rf!=null && pcode!=null && rf.containsKey("pcode") && rf.get("pcode").equals(pcode)) return objectModel;
 		
 		Enumeration<String> ee=request.getParameterNames();
 		while(ee.hasMoreElements()) {
@@ -87,17 +115,30 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		
 		
 		
-		String pname="";
-		String dbname=source;
-		
-		Connection conn=null;
-		
-		if(pid==null && pcode==null) {
-			String uri=request.getRequestURI();
-			int k=uri.lastIndexOf('/');
-			pcode=uri.substring(k+1);
+		// get default template
+		if(!lastdata.containsKey("_template")) {
+			// user doesn't submit template
+			String ptemplate=(String)session.getAttribute("template");
+			if(ptemplate!=null) {
+				template=ptemplate;
+			}
+			lastdata.put("_template", template);
+		}
+		else {
+			// user submits template
+			if(!lastdata.get("_template").equals("default")) {
+				// is not "default"
+				session.setAttribute("template", lastdata.get("_template"));
+			}
+			else {
+				// is "default", restore default template defined in sitemap.xmap
+				session.setAttribute("template", template);
+				lastdata.put("_template", template);
+			}
 		}
 		
+		
+
 		if(pid==null && pcode.length()==0) pid="1"; // homepage
 		
 		if(pid==null || pid.length()==0) {
@@ -134,18 +175,6 @@ public class PageCodeAction implements Action, Composable, Disposable {
 			}
 		}
 		
-//		if(!pid.equals("0")) {
-//			try {
-//				conn=getConnection(dbname);
-//				pname=DBGateway.getPageName(Long.parseLong(pid), conn);
-//				DBGateway.getPageMetadata(Long.parseLong(pid), request, lastdata, conn);
-//			}
-//			catch(Exception e) {e.printStackTrace();}
-//			finally {
-//				if(conn!=null) try{conn.close();} catch(Exception e) {}
-//			}
-//		}
-		
 		if(pcode==null) pcode="_null";
 				
 		request.setAttribute("pageid", pid);
@@ -171,9 +200,23 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		lastdata.put("pagerequest", ru);
 		
 		session.setAttribute("redirectfrom", lastdata);
+		
 		if(metadata!=null) session.setAttribute("metadata", metadata);
 		return objectModel;
 	}
+	
+	@SuppressWarnings("deprecation")
+	public Object getAttribute(String name) throws ConfigurationException  {
+		SitemapVariableHolder holder = null;
+        try {
+            holder = (SitemapVariableHolder)this.manager.lookup(SitemapVariableHolder.ROLE);
+            return holder.get(name); 
+        } catch (Exception ce) {
+            throw new ConfigurationException("Unable to lookup SitemapVariableHolder.", ce);
+        } finally {
+            this.manager.release(holder);
+        }
+    }
 	
 	public void compose(ComponentManager cm) throws ComponentException {
 		manager = cm;

@@ -59,6 +59,7 @@ public class ManageUsers extends PageAction {
 				while(params.hasMoreElements()){
 					String name = (String)params.nextElement();
 					if(name.startsWith("utente")){
+						String cUsername= request.getParameter(name);
 						String index = name.replaceAll("utente","");
 		
 						String editable = request.getParameter("editable" + index);
@@ -81,7 +82,7 @@ public class ManageUsers extends PageAction {
 							p.setPermission(Permission.ACCESSIBLE);
 	
 						if(pid != -1 && username.length()>0)
-							DBGateway.setPermission(pid, username, p, conn);					
+							DBGateway.setPermission(pid, cUsername, p, conn);					
 					}
 					else if(name.equals("pageTitle")){
 						String titolo = Util.readRequestParameter(request.getParameter(name));

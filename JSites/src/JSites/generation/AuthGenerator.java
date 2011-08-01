@@ -25,11 +25,18 @@ package JSites.generation;
 *
 *******************************************************************************/
 
+import java.io.IOException;
+import java.util.Map;
+
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.SearchResult;
 
 import it.univts.autenticazione.tomcat.realm.Auth;
 
+import org.apache.avalon.framework.parameters.ParameterException;
+import org.apache.avalon.framework.parameters.Parameters;
+import org.apache.cocoon.ProcessingException;
+import org.apache.cocoon.environment.SourceResolver;
 import org.xml.sax.SAXException;
 
 public class AuthGenerator extends MyAbstractPageGenerator {
@@ -37,6 +44,7 @@ public class AuthGenerator extends MyAbstractPageGenerator {
 	private String username;
 	private String password;
 	private String displayName="",mail="";
+	private String connectString="", realm="";
 
 	public void generate() throws SAXException {
 		username = request.getParameter("name");
@@ -82,12 +90,8 @@ public class AuthGenerator extends MyAbstractPageGenerator {
 		
 		boolean ret = false;
 		
-		String ds = "ldap://dc1ts.ds.units.it:389/dc=ds,dc=units,dc=it";
-		ds = "ldap://ds.units.it:389/dc=ds,dc=units,dc=it";
-		
         try {
-            Auth ads=new Auth("DS\\"+u, p, 
-            		ds);
+            Auth ads=new Auth(realm+"\\"+u, p, connectString);
             ads.Logon();
 
             ret=true;
@@ -116,6 +120,17 @@ public class AuthGenerator extends MyAbstractPageGenerator {
         return ret;
 
     }
+	
+	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par) throws ProcessingException, SAXException, IOException{
+		super.setup(resolver, objectModel, src, par);
+		
+		try {
+			connectString=par.getParameter("ad_connect_string");
+			realm=par.getParameter("ad_realm");
+		} catch (ParameterException e) {
+			e.printStackTrace();
+		}
+	}
 
 	
 }

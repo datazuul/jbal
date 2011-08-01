@@ -116,7 +116,7 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 			}
 			else {
 				try {
-					RecordInterface ma=RecordFactory.buildRecord(0, "", catalogFormat, 0);
+					RecordInterface ma=RecordFactory.buildRecord(0, null, catalogFormat, 0);
 					chr=ma.getChannels();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -155,23 +155,35 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 			String order=request.getParameter("neworder").trim();
 			
 			Enumeration<String> i=listChannel.keys();
+			String orderl=order.toLowerCase();
 			while(i.hasMoreElements()) {
 				String chn=i.nextElement();
-				if(!order.contains(chn)) order=order+" "+chn;
+				if(!order.contains(chn) && !orderl.contains(chn)) order=order+" "+chn;
 			}
 			
-			
+//			this.printRequestData(null, null);
 			
 			String[] ord=order.split(" ");
 			
 			for(int iz=0;iz<ord.length;iz++) {
-				Channel ch=searchChannel.get(ord[iz].trim());
-				String t=request.getParameter("search-"+ch.getName());
-				String desc=request.getParameter("name-"+ch.getName());
-				if(desc==null) desc=ch.getName();
-				ch.setDesc(desc);
-				if(t!=null && t.length()>0) ch.setChecked("true");
-				sendElement("search",ch);
+				Channel sch=searchChannel.get(ord[iz].trim());
+				if(sch==null) {
+					sch=searchChannel.get(ord[iz].trim().toLowerCase());
+					sch.setName(ord[iz].trim()); // reset upper/lower case
+					searchChannel.remove(ord[iz].trim().toLowerCase());
+					searchChannel.put(ord[iz].trim(), sch);
+					
+					Channel lch=listChannel.get(ord[iz].trim().toLowerCase());
+					lch.setName(ord[iz].trim()); // reset upper/lower case
+					listChannel.remove(ord[iz].trim().toLowerCase());
+					listChannel.put(ord[iz].trim(), lch);
+				}
+				String t=request.getParameter("search-"+sch.getName());
+				String desc=request.getParameter("name-"+sch.getName());
+				if(desc==null) desc=sch.getName();
+				sch.setDesc(desc);
+				if(t!=null && t.length()>0) sch.setChecked("true");
+				sendElement("search",sch);
 			}
 			
 			
@@ -270,6 +282,11 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 	}
 
 	private class Channel {
+		@Override
+		public boolean equals(Object obj) {
+			return ((Channel)obj).getName().equalsIgnoreCase(name);
+		}
+
 		protected String name,desc,checked;
 		public Channel(String n, String d, String c) {
 			name=n;

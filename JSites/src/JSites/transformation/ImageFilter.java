@@ -100,27 +100,27 @@ public class ImageFilter extends AbstractTransformer {
 			int height;
 			long size;
 			
-			temp = attributes.getValue("width");
-			if (temp != null) width = Integer.parseInt(temp);
-			else return;
-			temp = attributes.getValue("height");
-			if (temp != null) height = Integer.parseInt(temp);
-			else return;
-			temp = attributes.getValue("size");
-			if (temp != null) size = Long.parseLong(temp);
-			else return;
-			if ((maxsize >= size) || (maxsize == 0)) {
-				if ((minwidth <= width) && (minheight <= height)) {
-					if ((maxwidth >= width) || (maxwidth == 0)) {
-						if ((maxheight >= height) || (maxheight == 0)) {
+//			temp = attributes.getValue("width");
+//			if (temp != null) width = Integer.parseInt(temp);
+//			else return;
+//			temp = attributes.getValue("height");
+//			if (temp != null) height = Integer.parseInt(temp);
+//			else return;
+//			temp = attributes.getValue("size");
+//			if (temp != null) size = Long.parseLong(temp);
+//			else return;
+//			if ((maxsize >= size) || (maxsize == 0)) {
+//				if ((minwidth <= width) && (minheight <= height)) {
+//					if ((maxwidth >= width) || (maxwidth == 0)) {
+//						if ((maxheight >= height) || (maxheight == 0)) {
 							String filename = attributes.getValue("name");
 							super.startElement("","image","image",emptyAttr);
 							super.characters(filename.toCharArray(),0,filename.length());
 							flag = true;
-						}
-					}
-				}
-			}
+//						}
+//					}
+//				}
+//			}
 		}
 	}
 	

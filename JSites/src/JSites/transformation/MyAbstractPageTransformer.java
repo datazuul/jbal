@@ -95,21 +95,27 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
     	return ((DataSourceComponent)dbselector.select(db)).getConnection();
     }
     
+	@SuppressWarnings("unchecked")
 	public void printRequestData(Map arg1, Parameters arg3) {
-		Set arg1Keys = arg1.keySet();
-		 Iterator iter = arg1Keys.iterator();
+		 
 		 String name = "";
 		 String value = "";
 		 
-		 while(iter.hasNext()){
-			 name = (String)iter.next();
-			 value = arg1.get(name).toString();
-			 System.out.println(name + " = " + value);
+		 if(arg1!=null) {
+			 Set arg1Keys = arg1.keySet();
+			 Iterator iter = arg1Keys.iterator();
+			 
+			 while(iter.hasNext()){
+				 name = (String)iter.next();
+				 value = arg1.get(name).toString();
+				 System.out.println(name + " = " + value);
+			 }
 		 }
 		 System.out.println("REQUEST QUERY = " + request.getQueryString());
 		 
 		 System.out.println("Request parameters:");
-		 Enumeration<String> e = request.getParameterNames();
+		 @SuppressWarnings("unchecked")
+		Enumeration<String> e = (Enumeration<String>)request.getParameterNames();
 		 while(e.hasMoreElements()){
 			 name = (String)e.nextElement();
 			 value = request.getParameter(name);
@@ -131,19 +137,20 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
 		 System.out.println("--------------------");
 		 
 		 
-		 
-		 String[] arg3Keys = arg3.getNames();
-		 
-		 for(int i=0;i<arg3Keys.length;i++){
-			 name = arg3Keys[i];
-			 try {
-				value = arg3.getParameter(name);
-				System.out.println(name + " = " + value);
-			} catch (Exception e1) {
-				System.out.println("Exception parameter: "+ name);
-				e1.printStackTrace();
-			}
+		 if(arg3!=null) {
+			 String[] arg3Keys = arg3.getNames();
 			 
+			 for(int i=0;i<arg3Keys.length;i++){
+				 name = arg3Keys[i];
+				 try {
+					value = arg3.getParameter(name);
+					System.out.println(name + " = " + value);
+				} catch (Exception e1) {
+					System.out.println("Exception parameter: "+ name);
+					e1.printStackTrace();
+				}
+				 
+			 }
 		 }
 	}
     
@@ -177,4 +184,19 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
 			contentHandler.endElement("", name, name);
 		}
 	}
+    
+    protected void throwField(String name, String qName, String value) throws SAXException{
+		if(value != null && value.length()>0){
+			contentHandler.startElement("", name, qName, emptyAttrs);
+			contentHandler.characters(value.toCharArray(), 0, value.length());
+			contentHandler.endElement("", name, qName);
+		}
+	}
+    
+    protected String getParameter(String parameter) {
+    	String r=request.getParameter(parameter);
+    	if(r==null) r=(String)session.getAttribute(parameter);
+    	return r;
+    }
+    
 }

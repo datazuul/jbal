@@ -86,6 +86,9 @@ public class PageEditor extends MyAbstractPageGenerator {
 
 	protected void subClassProcess(String componentType, long id, AttributesImpl attrCid, boolean hasChildren, Connection conn) throws SAXException, SQLException{
 	
+    	if(componentType.equals("content") && !containerType.equals("content")) { //shift content on footer, header, ...
+    		componentType=containerType;
+    	}
 		if(containerType.equals("header") || containerType.equals("footer") || containerType.equals("navbar")){
 			super.subClassProcess(componentType, id, attrCid, hasChildren, conn);
 			return;

@@ -37,6 +37,11 @@ import org.xml.sax.SAXException;
 
 import JSites.transformation.MyAbstractPageTransformer;
 
+/**
+ * @deprecated
+ * @author romano
+ *
+ */
 public class PublicationPairs extends MyAbstractPageTransformer {
 
 	private boolean started;

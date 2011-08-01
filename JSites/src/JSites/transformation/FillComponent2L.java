@@ -8,7 +8,7 @@ package JSites.transformation;
 
 /*******************************************************************************
 *
-*  JOpac2 (C) 2002-2009 JOpac2 project
+*  JOpac2 (C) 2002-2011 JOpac2 project
 *
 *     This file is part of JOpac2. http://www.jopac2.org
 *
@@ -120,6 +120,9 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 			}
 			else if(localName.equals("ordering")){
 				componentOrder(localName, Long.parseLong(attributes.getValue("cid")), attributes.getValue("type"), attributes.getValue("pacid"), attributes.getValue("time"));
+			}
+			else if(localName.equals("box")) {
+				// nothing, box is deprecated
 			}
 			else if(level==2){
 				fill(localName, attributes);
@@ -282,7 +285,7 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 		super.startElement("","form","form",attrib);
 		
 		AttributesImpl attribPacid=new AttributesImpl();
-		attribPacid.addCDATAAttribute("type", "hydden");
+		attribPacid.addCDATAAttribute("type", "hidden");
 		attribPacid.addCDATAAttribute("name", "pacid");
 		attribPacid.addCDATAAttribute("value", Long.toString(pacid));
 		super.startElement("","input","input",attribPacid);
@@ -337,7 +340,7 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 		    super.endElement("","OrderManager","OrderManager");
 		    super.endElement("",newTagName,newTagName);
 		}
-		else if(localName.equals("content")||localName.equals("footer")){
+		else if(localName.equals("content")){ // ||localName.equals("footer")
 			if(permission.hasPermission(Permission.EDITABLE) || permission.hasPermission(Permission.VALIDABLE) ) {
 				super.startElement("", "managers", "managers", this.emptyAttr);
 				if(permission.hasPermission(Permission.EDITABLE)){
