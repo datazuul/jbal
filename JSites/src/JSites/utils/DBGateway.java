@@ -73,6 +73,29 @@ public class DBGateway {
 		}
 	}
 	
+	/**
+
+ ALTER TABLE tblcomponenti 
+ 	ADD COLUMN username VARCHAR(50)  NOT NULL DEFAULT 'unknown', 
+	ADD COLUMN remoteip VARCHAR(20)  NOT NULL DEFAULT 'unknown', 
+	ADD INDEX Index_3(username), 
+	ADD INDEX Index_4(remoteip);
+	
+	
+ALTER TABLE tblpagine 
+	ADD COLUMN resp VARCHAR(50)  NOT NULL DEFAULT 'unknown', 
+	ADD COLUMN username VARCHAR(50)  NOT NULL DEFAULT 'unknown', 
+	ADD COLUMN remoteip VARCHAR(20)  NOT NULL DEFAULT 'unknown', 
+	ADD COLUMN insertdate datetime NOT NULL default '0000-00-00 00:00:00', 
+	ADD INDEX Index_resp(resp), 
+	ADD INDEX Index_username(username), 
+	ADD INDEX Index_remoteip(remoteip), 
+	ADD INDEX Index_insertdate(insertdate);
+		
+ 
+ 
+	 **/
+	
 	public static void updateTblComponentiForUsernameRemoteip(Connection conn) throws SQLException {
 		String sql="ALTER TABLE tblcomponenti " +
 			"ADD COLUMN username VARCHAR(50)  NOT NULL DEFAULT 'unknown', " +
@@ -212,16 +235,25 @@ public class DBGateway {
     	String ret = "";
 		String[] words = name.split(" ");
 		int index = 0;
+		boolean stop=false;
 		
-		while(ret.length()<3){
+		while(!stop && ret.length()<3){
+			stop=true;
 			for(int i=0;i<words.length;i++){
-				if(index>words[i].length()-1)
-					continue;
-				ret = ret + words[i].substring(index,index+1);
-				
+				if(index<words[i].length()) {
+					ret = ret + words[i].substring(index,index+1);
+					stop=false;
+				}
 			}
 			index++;
 		}
+		
+		index=ret.length();
+		switch(index) {
+		case 1:ret=ret+"ZZ";break;
+		case 2:ret=ret+"Z";break;
+		}
+		
 		index = 0;
 		ret = ret.substring(0,3).toUpperCase();
 		if(codeExists(ret, conn)){
@@ -759,7 +791,19 @@ public class DBGateway {
 		
 		try {
 			st=conn.createStatement();
-			temp=st.executeQuery(sql);
+			try {
+				temp=st.executeQuery(sql);
+			}
+			catch (SQLException e2) {
+				try {
+					caricaDB(conn);
+					temp=st.executeQuery(sql);
+				}
+				catch(SQLException e1) {
+					throw e1;
+				}
+				
+			}
 			if(temp.next()) {
 				ResultSetMetaData meta=temp.getMetaData();
 				for(int i=1;i<=meta.getColumnCount();i++) {
@@ -773,18 +817,18 @@ public class DBGateway {
 							GregorianCalendar gc = new GregorianCalendar();
 							gc.setTimeInMillis(date.getTime());
 							lastdata.put(column+"_YEAR", Integer.toString(gc.get(GregorianCalendar.YEAR)));
-							lastdata.put(column+"_MONTH", Integer.toString(gc.get(GregorianCalendar.MONTH)));
-							lastdata.put(column+"_DAY", Integer.toString(gc.get(GregorianCalendar.DAY_OF_MONTH)));
-							lastdata.put(column+"_HOUR", Integer.toString(gc.get(GregorianCalendar.HOUR_OF_DAY)));
-							lastdata.put(column+"_MINUTE", Integer.toString(gc.get(GregorianCalendar.MINUTE)));
-							lastdata.put(column+"_SECOND", Integer.toString(gc.get(GregorianCalendar.SECOND)));
+							lastdata.put(column+"_MONTH", pad(Integer.toString(gc.get(GregorianCalendar.MONTH)+1)));
+							lastdata.put(column+"_DAY", pad(Integer.toString(gc.get(GregorianCalendar.DAY_OF_MONTH))));
+							lastdata.put(column+"_HOUR", pad(Integer.toString(gc.get(GregorianCalendar.HOUR_OF_DAY))));
+							lastdata.put(column+"_MINUTE", pad(Integer.toString(gc.get(GregorianCalendar.MINUTE))));
+							lastdata.put(column+"_SECOND", pad(Integer.toString(gc.get(GregorianCalendar.SECOND))));
 							d.append("<"+column+">\n");
 							d.append("<year>"+Integer.toString(gc.get(GregorianCalendar.YEAR))+"</year>\n");
-							d.append("<month>"+Integer.toString(gc.get(GregorianCalendar.MONTH))+"</month>\n");
-							d.append("<day>"+Integer.toString(gc.get(GregorianCalendar.DAY_OF_MONTH))+"</day>\n");
-							d.append("<hour>"+Integer.toString(gc.get(GregorianCalendar.HOUR_OF_DAY))+"</hour>\n");
-							d.append("<minute>"+Integer.toString(gc.get(GregorianCalendar.MINUTE))+"</minute>\n");
-							d.append("<second>"+Integer.toString(gc.get(GregorianCalendar.SECOND))+"</second>\n");
+							d.append("<month>"+pad(Integer.toString(gc.get(GregorianCalendar.MONTH)+1))+"</month>\n");
+							d.append("<day>"+pad(Integer.toString(gc.get(GregorianCalendar.DAY_OF_MONTH)))+"</day>\n");
+							d.append("<hour>"+pad(Integer.toString(gc.get(GregorianCalendar.HOUR_OF_DAY)))+"</hour>\n");
+							d.append("<minute>"+pad(Integer.toString(gc.get(GregorianCalendar.MINUTE)))+"</minute>\n");
+							d.append("<second>"+pad(Integer.toString(gc.get(GregorianCalendar.SECOND)))+"</second>\n");
 							d.append("</"+column+">\n");
 						}
 						catch(Exception e) {}
@@ -811,6 +855,13 @@ public class DBGateway {
 		return XMLUtil.String2XML(d.toString());
 	}
 	
+	private static String pad(String string) {
+		String l="0";
+		if(string.length()<2) l=l+string;
+		else l=string;
+		return l;
+	}
+
 	public static String getPageCode(long pid, Connection conn) throws SQLException {
 		ResultSet temp = null;
 		String ret = null;
