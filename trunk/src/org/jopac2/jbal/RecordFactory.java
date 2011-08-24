@@ -36,6 +36,8 @@ import java.util.Vector;
  *******************************************************************************/
 
 public class RecordFactory {
+	
+	public static final String defaultCharset="utf-8";
 
 	public static final RecordInterface buildRecord(long id, byte[] codedData,
 			String type, String syntax, long level) throws SecurityException,
@@ -82,7 +84,7 @@ public class RecordFactory {
 				iso = getClassForName("org.jopac2.jbal.xml." + type_upper);
 			}
 
-			java.lang.reflect.Constructor c = iso.getConstructor(new Class[] {
+			java.lang.reflect.Constructor<RecordInterface> c = iso.getConstructor(new Class[] {
 					byte[].class, String.class, String.class });
 			ma = (RecordInterface) c.newInstance(new Object[] { codedData,
 					type, Long.toString(level) });
@@ -92,6 +94,7 @@ public class RecordFactory {
 			te.printStackTrace();
 			throw te;
 		}
+		ma.setJOpacID(id);
 		return ma;
 	}
 
