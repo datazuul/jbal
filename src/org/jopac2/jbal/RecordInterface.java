@@ -49,6 +49,16 @@ public interface RecordInterface {
 	 */
 	public String getRecordTypeDescription();
 	
+	public String getCharacterEncodingScheme();
+
+	public void setCharacterEncodingScheme(
+			String recordCharacterEncodingScheme);
+
+	public String getHierarchicalLevel();
+
+	public void setHierarchicalLevel(String recordHierarchicalLevel);
+
+	
 	/**
 	 * Restituisce una mappatura tra gli elementi del record e i canali da indicizzare.
 	 * @return
@@ -509,10 +519,16 @@ public interface RecordInterface {
 	public boolean contains(String tag, String field, String s);
 	
 	public BufferedImage getImage();
+	
+	public void setImage(BufferedImage image, int maxx, int maxy);
+	
+	public String getBase64Image();
 
 	public String getPublicationNature();
 	
-	public String getPrice();
+	public String getAvailabilityAndOrPrice();
+	
+	public void setAvailabilityAndOrPrice(String availabilityAndOrPrice) throws JOpac2Exception;
 	
 	public String getField(String field);
 	
