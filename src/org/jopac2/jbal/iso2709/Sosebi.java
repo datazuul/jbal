@@ -53,12 +53,12 @@ import org.jopac2.utils.*;
 
 public class Sosebi extends Unimarc {
 
-  public Sosebi(byte[] stringa,String dTipo,String charset)  throws Exception {
-    super(stringa,dTipo,charset);
+  public Sosebi(byte[] stringa,String dTipo)  throws Exception {
+    super(stringa,dTipo);
   }
 
-  public Sosebi(byte[] stringa,String dTipo,String charset,String livello)  throws Exception {
-    super(stringa,dTipo,charset,livello);
+  public Sosebi(byte[] stringa,String dTipo,String livello)  throws Exception {
+    super(stringa,dTipo,livello);
   }
   
   public Hashtable<String, List<Tag>> getRecordMapping() {

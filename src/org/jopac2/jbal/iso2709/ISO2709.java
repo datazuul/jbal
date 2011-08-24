@@ -54,7 +54,24 @@ import org.jopac2.utils.TokenWord;
 import org.jopac2.utils.Utils;
 
 public abstract class ISO2709 implements RecordInterface {
-  public Vector<Tag> dati;
+  public String getCharacterEncodingScheme() {
+		return recordCharacterEncodingScheme;
+	}
+
+	public void setCharacterEncodingScheme(
+			String recordCharacterEncodingScheme) {
+		this.recordCharacterEncodingScheme = recordCharacterEncodingScheme;
+	}
+
+public String getHierarchicalLevel() {
+		return recordHierarchicalLevel;
+	}
+
+	public void setHierarchicalLevel(String recordHierarchicalLevel) {
+		this.recordHierarchicalLevel = recordHierarchicalLevel;
+	}
+
+public Vector<Tag> dati;
   public Vector<TokenWord> tw;
   public static String[] channels={"ANY","AUT","TIT","NUM","LAN","MAT","DTE","SBJ","BIB","INV","CLL","ANY","JID","ABS","NAT"};
 
@@ -64,7 +81,7 @@ public abstract class ISO2709 implements RecordInterface {
   private long JOpacID=0;
   protected String bid=null;
   protected String descrizioneTipo;
-  protected String charset="utf-8";
+  private String charset="utf-8";
   private int _livello =0;  // serve a gestire le notizie per linkup e down
 
   public Vector<RecordInterface> linkUp=null;
@@ -203,7 +220,7 @@ public abstract class ISO2709 implements RecordInterface {
     return bid;
   }
   
-  private String getTag(byte[] record, String dirEntry, String charset) throws UnsupportedEncodingException {
+  private String getTag(byte[] record, String dirEntry) throws UnsupportedEncodingException {
 	    String t=dirEntry.substring(3,7);
 	    int FieldLength = Integer.parseInt(t);
 	    t=dirEntry.substring(7,12);
@@ -415,7 +432,7 @@ public Vector<Tag> getTags(String tag) {
 	  r.append("Record status: "+recordStatus+"\n");
 	  r.append("Record type: "+recordType+"\n");
 	  r.append("Record biblio level: "+recordBiblioLevel+"\n");
-	  r.append("Record hierarchical level code: "+indicatorLength+"\n");
+	  r.append("Record hierarchical level code: "+recordHierarchicalLevel+"\n");
 	  
 	  Collections.sort(dati);
 	  
@@ -482,17 +499,22 @@ public Vector<Tag> getTags(String tag) {
    */
     protected long recordlength=-1;
     protected String recordStatus="n";
-    protected String implementationCodes="    "; // 4 char (recordType, recordBiblioLevel, '0' , '0')
+    protected String implementationCodes="    "; // 4 char (recordType, recordBiblioLevel, hierarchicalLevel , 'blanck')
     protected String recordType="a";
     protected String recordBiblioLevel="m";
-    protected String indicatorLength="0";
-    protected String subfieldIdentifierLength="0";
+    protected String recordHierarchicalLevel="#"; // hierarchical relationship undefined in UNIMARC
+    protected String indicatorLength="2";  // One numeric digit giving the length of the indicators. This is invariably 2 in UNIMARC.
+    protected String subfieldIdentifierLength="2"; // One numeric digit giving the length of the subfield identifier; e.g. '$a'. This is invariably 2 in UNIMARC.
     protected String baseAddressOfData="     "; // 5 bytes
     protected String additionalRecordDefinition="   "; // 3 bytes
 //    protected String directoryMap="    "; // 4 bytes  // R.T.: 29/07/2011 see init()
-    protected String characterEncodingScheme=" "; // 1 byte, a=utf8, blank=normal
+    protected String recordCharacterEncodingScheme="a"; // 1 byte, a=utf8, blank=normal
 
-  public void init(byte[] stringa) throws Exception {
+  /**
+ * @param stringa
+ * @throws Exception
+ */
+public void init(byte[] stringa) throws Exception {
 //    inString=stringa;
     if(stringa==null || stringa.length==0) return;
 
@@ -510,26 +532,15 @@ public Vector<Tag> getTags(String tag) {
 			Base address of data				5			12-16
 			Additional record definition		3			17-19
 			Directory map						4			20-23
-
     	 */
     	
     	
       recordlength = Long.parseLong(new String(stringa,0,5));
       if(recordlength > 0) {
-    	int stringLength=stringa.length;
+//    	int stringLength=stringa.length;
 //    	int byteLength=stringa.getBytes().length;
     	
     	
-    	/**
-    	 * RT: 12/11/2009
-    	 * Some systems code the record counting bytes instead of chars. This is an ambiguity in ISO2709 standard.
-    	 * I think the correct interpretation is for chars, because transport of the record should be independent from
-    	 * the charset coding. So jbal read and write in that sense.
-    	 * Anyway this is a silence patch to read byte coded records.
-    	 * I've posted a mail to IFLA to ask about this problem and I'm waiting for a copy of the ISO2709:2008.
-    	 * I will correct with the right interpretation iff I solve the question :-)
-    	 * Problem occurs only with utf8 data and in content part of the record.
-    	 */
     	/**
     	 * RT: 22/07/2011
     	 * Checked against ISO 2709:2008. Length is octect (byte).
@@ -543,7 +554,10 @@ public Vector<Tag> getTags(String tag) {
         implementationCodes=new String(stringa,6,4); //stringa.substring(6,10);
         recordType = implementationCodes.substring(0,1);
         recordBiblioLevel = implementationCodes.substring(1,2);
-        characterEncodingScheme=implementationCodes.substring(3,4);
+        recordHierarchicalLevel = implementationCodes.substring(2,3);
+        recordCharacterEncodingScheme=implementationCodes.substring(3,4);
+        
+        
         
         // indicatorLength
         indicatorLength = new String(stringa,10,1); //stringa.substring(10,11);
@@ -559,9 +573,29 @@ public Vector<Tag> getTags(String tag) {
         // directory map
 //        directoryMap=new String(stringa,20,4); //stringa.substring(20,24);
         
-        int entryLengthOfFieldLength=Integer.parseInt(new String(stringa,20,1));
-        int entryStartPositionLength=Integer.parseInt(new String(stringa,21,1));
-        int entryImplementationDefinedLength=Integer.parseInt(new String(stringa,22,1));
+        int entryLengthOfFieldLength=-1;
+        try {
+        	entryLengthOfFieldLength=Integer.parseInt(new String(stringa,20,1));
+        }
+        catch(Exception e) {
+        	entryLengthOfFieldLength=4;
+        }
+        
+        int entryStartPositionLength=-1;
+        try {
+        	entryStartPositionLength=Integer.parseInt(new String(stringa,21,1));
+        }
+        catch(Exception e) {
+        	entryStartPositionLength=5;
+        }
+        
+        int entryImplementationDefinedLength=-1;
+        try {
+        	entryImplementationDefinedLength=Integer.parseInt(new String(stringa,22,1));
+        }
+        catch(Exception e) {
+        	entryImplementationDefinedLength=0;
+        }
         @SuppressWarnings("unused")
 		int entryReservedFutureUse=stringa[24];
         
@@ -591,7 +625,7 @@ public Vector<Tag> getTags(String tag) {
         for(int z = 0; z<= ndir - 1;z++) {
         	
           String s = null;
-        	  s=my_trim(getTag(record, Directory[z], charset));
+        	  s=my_trim(getTag(record, Directory[z]));
           String tag=Directory[z].substring(0,3);
 
           dati.addElement(new Tag(tag+s,delimiters));
@@ -721,14 +755,15 @@ public Vector<Tag> getTags(String tag) {
   	 */
     String r=null;
 	try {
-	  	String leader = recordStatus + 
-	  					recordType + 
-	                    recordBiblioLevel + 
-	                    implementationCodes.substring(2) +
-	                    indicatorLength +
-	                    subfieldIdentifierLength ;
+		String leader = recordStatus + 
+			recordType + 
+	        recordBiblioLevel + 
+	        recordHierarchicalLevel +
+	        recordCharacterEncodingScheme +
+	        indicatorLength +
+	        subfieldIdentifierLength;
 	
-	    int ba=27;
+	    int ba=0;
 	    String directory="";
 	    String data="";
 	
@@ -744,19 +779,23 @@ public Vector<Tag> getTags(String tag) {
 	    
 	    
 	    ba+=this.getRows()*12;
+
 	    long c=0;
 	    for(int z=0;z<t.size();z++) {
 	    	String k=t.elementAt(z).toString();
-	        directory=directory.concat(k.substring(0,3));
-	        directory=directory.concat(Utils.pad("0000",k.length()-2));
-	        directory=directory.concat(Utils.pad("00000",c));
-	        c+=k.length()-2;
-	        ba+=k.length()-2;	
+	    	int kLength=k.getBytes().length;
+	        directory=directory.concat(k.substring(0,3)); // 3 bytes (tag length)
+	        directory=directory.concat(Utils.pad("0000",kLength-2)); // modified for byte counting! pad to 4 digit (see entry map definition above).
+	        directory=directory.concat(Utils.pad("00000",c)); // pad to 5 digit (see entry map definition above)
+	        c+=kLength-2;  // is always full lenght - tag length (3) + 1 for ft at end of each data. Total = kLength - 3 +1
+	        ba+=kLength-2; // is always full lenght - tag length (3) + 1 for ft at end of each data. Total = kLength - 3 +1
 	        data=data+t.elementAt(z).toXML();
 	    }
 	    
 	        
-	    leader=Utils.pad("00000", ba-1).concat(leader);
+	    ba = 5 + leader.length() + ba + 2; // 5 digit for record length + directory + 1 ft + 1 rt
+	    leader=Utils.pad("00000", ba).concat(leader); // it was ba-1, I don't understand why :-(	    
+	    
 	    r="<record>\n" + 
 	    	"\t<leader>"+leader+"</leader>\n" + 
 //	    	directory + 
@@ -786,8 +825,13 @@ public Vector<Tag> getTags(String tag) {
 			Record length						5			0-4
 			Record status						1			5
 			Implementation codes				4			6-9
-			Indicator length					1			10
-			Subfield identifier length			1			11
+			        For Unimarc they are:
+					6 = type
+					7 = bibliographic level
+					8 = hierarcical level
+					9 = undefined
+			Indicator length					1			10   	One numeric digit giving the length of the indicators. This is invariably 2 in UNIMARC.
+			Subfield identifier length			1			11		One numeric digit giving the length of the subfield identifier; e.g. '$a'. This is invariably 2 in UNIMARC.
 			Base address of data				5			12-16
 			Additional record definition		3			17-19
 			Directory map						4			20-23
@@ -798,11 +842,12 @@ public Vector<Tag> getTags(String tag) {
 	  	String leader = recordStatus + 
 	  					recordType + 
 	                    recordBiblioLevel + 
-	                    implementationCodes.substring(2) +
+	                    recordHierarchicalLevel +
+	                    recordCharacterEncodingScheme +
 	                    indicatorLength +
 	                    subfieldIdentifierLength ;
 	
-	    int ba=27;
+	    int ba=0;
 	    String directory="";
 	    String data="";
 	
@@ -810,7 +855,7 @@ public Vector<Tag> getTags(String tag) {
 	    leader = leader.concat(Utils.pad("00000",temp));
 	    
 	    leader=leader.concat(additionalRecordDefinition);                  // implementation defined
-	    leader=leader.concat("450 ");                 // entry map
+	    leader=leader.concat("450 ");                 // entry map, 4 and 5 digit padding, see in the for loop beyond 
 	    
 	    Vector<Tag> t=this.getTags();
 	    Collections.sort(t);
@@ -820,17 +865,19 @@ public Vector<Tag> getTags(String tag) {
 	    for(int z=0;z<t.size();z++) {
 	    	String k=t.elementAt(z).toString();
 	    	int kLength=k.getBytes().length;
-	        directory=directory.concat(k.substring(0,3));
-	        directory=directory.concat(Utils.pad("0000",kLength-2)); // modified for byte counting!
-	        directory=directory.concat(Utils.pad("00000",c));
-	        c+=kLength-2;
-	        ba+=kLength-2;	
-	        data=data+k.substring(3)+delimiters.getByteFt();
+	        directory=directory.concat(k.substring(0,3)); // 3 bytes (tag length)
+	        directory=directory.concat(Utils.pad("0000",kLength-2)); // modified for byte counting! pad to 4 digit (see entry map definition above).
+	        directory=directory.concat(Utils.pad("00000",c)); // pad to 5 digit (see entry map definition above)
+	        c+=kLength-2;  // is always full lenght - tag length (3) + 1 for ft at end of each data. Total = kLength - 3 +1
+	        ba+=kLength-2; // is always full lenght - tag length (3) + 1 for ft at end of each data. Total = kLength - 3 +1
+	        data=data+k.substring(3)+delimiters.getFt(); // get data starting at position 3 (ommitting tag) + one byte for ft
 	    }
 	    data=data.concat(delimiters.getRt());
 	        
-	    leader=Utils.pad("00000", ba-1).concat(leader);
-	    r=leader+directory+delimiters.getByteFt()+data;
+	    ba = 5 + leader.length() + ba + 2; // 5 digit for record length + directory + 1 ft + 1 rt
+	    
+	    leader=Utils.pad("00000", ba).concat(leader); // it was ba-1, I don't understand why :-(
+	    r=leader+directory+delimiters.getFt()+data;
 	}
 	catch(java.lang.StringIndexOutOfBoundsException e) {
 		r=null;
@@ -846,13 +893,11 @@ public Vector<Tag> getTags(String tag) {
     return delimiters;
   }
   
-  public ISO2709(byte[] notizia,String dTipo,String charset, String livello) throws Exception {
-	  this.charset=charset;
+  public ISO2709(byte[] notizia,String dTipo, String livello) throws Exception {
     this.iso2709Costruttore(notizia,dTipo,Integer.parseInt(livello));
   }
 
-  public ISO2709(byte[] notizia,String dTipo, String charset) throws Exception {
-	  this.charset=charset;
+  public ISO2709(byte[] notizia,String dTipo) throws Exception {
     this.iso2709Costruttore(notizia,dTipo,0);
   }
   

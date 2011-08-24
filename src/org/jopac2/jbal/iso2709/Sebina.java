@@ -46,12 +46,12 @@ import org.jopac2.utils.*;
 
 public class Sebina extends Unimarc {
 
-  public Sebina(byte[] stringa,String dTipo,String charset)  throws Exception {
-    super(stringa,dTipo,charset);
+  public Sebina(byte[] stringa,String dTipo)  throws Exception {
+    super(stringa,dTipo);
   }
 
-  public Sebina(byte[] stringa,String dTipo,String charset,String livello)  throws Exception {
-    super(stringa,dTipo,charset,livello);
+  public Sebina(byte[] stringa,String dTipo,String livello)  throws Exception {
+    super(stringa,dTipo,livello);
   }
   
   public Hashtable<String, List<Tag>> getRecordMapping() {

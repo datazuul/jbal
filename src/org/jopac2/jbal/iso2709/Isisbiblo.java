@@ -53,9 +53,9 @@ import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.*;
 
 public class Isisbiblo extends ISO2709Impl {
-	private final static String rt="#";
-	private final static String ft="#";
-	private final static String dl="^";        //' delimiter
+//	private final static String rt="#";
+//	private final static String ft="#";
+//	private final static String dl="^";        //' delimiter
 	
 
 
@@ -602,6 +602,31 @@ public String getLanguage() {
 }
 
 public void setLanguage(String language) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public void setImage(BufferedImage image, int maxx, int maxy) {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public String getBase64Image() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public String getAvailabilityAndOrPrice() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public void setAvailabilityAndOrPrice(String availabilityAndOrPrice)
+		throws JOpac2Exception {
 	// TODO Auto-generated method stub
 	
 }
