@@ -46,12 +46,12 @@ import org.jopac2.utils.*;
 
 public class SBNUnix extends Unimarc {
 
-  public SBNUnix(byte[] stringa,String dTipo,String charset)  throws Exception {
-    super(stringa,dTipo,charset);
+  public SBNUnix(byte[] stringa,String dTipo)  throws Exception {
+    super(stringa,dTipo);
   }
 
-  public SBNUnix(byte[] stringa,String dTipo,String charset,String livello)  throws Exception {
-    super(stringa,dTipo,charset,livello);
+  public SBNUnix(byte[] stringa,String dTipo,String livello)  throws Exception {
+    super(stringa,dTipo,livello);
   }
   
   public Hashtable<String, List<Tag>> getRecordMapping() {

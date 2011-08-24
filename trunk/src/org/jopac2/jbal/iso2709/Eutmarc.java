@@ -28,12 +28,12 @@ public class Eutmarc extends Unimarc {
 	
         private int maxx=104, maxy=150;
 
-        public Eutmarc(byte[] stringa, String tipo,String charset)  throws Exception {
-                super(stringa, tipo,charset);
+        public Eutmarc(byte[] stringa, String tipo)  throws Exception {
+                super(stringa, tipo);
         }
         
-        public Eutmarc(byte[] stringa, String tipo,String charset, String livello)  throws Exception {
-            super(stringa, tipo, charset,livello);
+        public Eutmarc(byte[] stringa, String tipo, String livello)  throws Exception {
+            super(stringa, tipo, livello);
         }
         
         public Hashtable<String, List<Tag>> getRecordMapping() {
@@ -88,54 +88,7 @@ public class Eutmarc extends Unimarc {
                
         }
        
-        public void setImage(BufferedImage image) {
-        	if(image == null){
-        		try {
-					removeTags("911");
-				} catch (JOpac2Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return;
-        	}
-                ByteArrayOutputStream a=new ByteArrayOutputStream();
-                   try {
-                        Image im=image.getScaledInstance(maxx, maxy, Image.SCALE_SMOOTH);
-                        BufferedImage dest = new BufferedImage(maxx,maxy,
-                                        BufferedImage.TYPE_INT_RGB);
-                        dest.createGraphics().drawImage(im, 0, 0, null);
-                        ImageIO.write (dest, "jpeg", a);                        
-                        String coded=Base64.encode(a.toByteArray());
-                        Tag t=new Tag("911",' ',' ');
-                        t.addField(new Field("a",coded));
-                        try {
-                                removeTags("911");
-                        } catch (JOpac2Exception e) {
-                        }
-                        addTag(t);
-                        a.reset();
-                } catch (IOException e) {
-                        e.printStackTrace();
-                }
-        }
-       
-        public BufferedImage getImage() {
-                BufferedImage r=null;
-                Tag t=getFirstTag("911");
-                if(t!=null) {
-                        Field i=t.getField("a");
-                        if(i!=null) {
-                                String coded=i.getContent();
-                                byte[] b=Base64.decode(coded);
-                                try {
-                                        r=ImageIO.read(new ByteArrayInputStream(b));
-                                } catch (IOException e) {
-                                        e.printStackTrace();
-                                }
-                        }
-                }
-                return r;
-        }
+
 
         public void setMaxx(int maxx) {
                 this.maxx = maxx;
@@ -155,6 +108,10 @@ public class Eutmarc extends Unimarc {
         
     	
     	/**
+    	 * Use UNIMARC getAvailibilityAndOrPrice
+    	 * @deprecated
+    	 *
+    	 * 
     	 * 904^p^n 
     	 */
     	public void setPrezzo(String p, String note){
@@ -173,7 +130,10 @@ public class Eutmarc extends Unimarc {
     			addTag(a);
     	}
     	
-    	
+    	/**
+    	 * Use UNIMARC getAvailibilityAndOrPrice
+    	 * @deprecated
+    	 */
     	public String getPrezzo(){
     		Tag t = getFirstTag("904");
     		if(t==null)return "";
@@ -184,6 +144,10 @@ public class Eutmarc extends Unimarc {
     		return r;
     	}
     	
+    	/**
+    	 * Use UNIMARC getAvailibilityAndOrPrice
+    	 * @deprecated
+    	 */
     	public String getPrice() {
     		String r = null;
     		Tag t = getFirstTag("904");
@@ -246,24 +210,24 @@ public class Eutmarc extends Unimarc {
 			t.addField(new Field("c","Edizioni Universita'"));
 		}
 		
-		public String getTitle() {
-		    String r=null;
-		    Tag tag=getFirstTag("200");
-		    if(tag==null)return "";
-		    Vector<Field> a=tag.getFields("a");
-		    r=a.elementAt(0).getContent();
-		    for(int i=1;i<a.size();i++) r+=" ; "+a.elementAt(i).getContent();
-//		    r+=Utils.ifExists(" [] ",tag.getField("b"));
-//		    r+=Utils.ifExists(" . ",tag.getField("c"));
-//		    r+=Utils.ifExists(" = ",tag.getField("d"));
-//		    r+=Utils.ifExists(" : ",tag.getField("e"));
-//		    r+=Utils.ifExists(" / ",tag.getField("f"));
-//		    r+=Utils.ifExists(" ; ",tag.getField("g"));
-//		    r+=Utils.ifExists(" . ",tag.getField("h"));
-//		    r+=Utils.ifExists(" , ",tag.getField("i"));
-
-		    return r;
-		  }
+//		public String getTitle() {
+//		    String r=null;
+//		    Tag tag=getFirstTag("200");
+//		    if(tag==null)return "";
+//		    Vector<Field> a=tag.getFields("a");
+//		    r=a.elementAt(0).getContent();
+//		    for(int i=1;i<a.size();i++) r+=" ; "+a.elementAt(i).getContent();
+////		    r+=Utils.ifExists(" [] ",tag.getField("b"));
+////		    r+=Utils.ifExists(" . ",tag.getField("c"));
+////		    r+=Utils.ifExists(" = ",tag.getField("d"));
+////		    r+=Utils.ifExists(" : ",tag.getField("e"));
+////		    r+=Utils.ifExists(" / ",tag.getField("f"));
+////		    r+=Utils.ifExists(" ; ",tag.getField("g"));
+////		    r+=Utils.ifExists(" . ",tag.getField("h"));
+////		    r+=Utils.ifExists(" , ",tag.getField("i"));
+//
+//		    return r;
+//		  }
 		
     	
 		public void setLink(String link, String tipo) {
@@ -293,6 +257,8 @@ public class Eutmarc extends Unimarc {
 			Tag tag=getFirstTag("903");
 			return Utils.ifExists("",tag.getField("a"));
 		}
+
+
 		
 
 }

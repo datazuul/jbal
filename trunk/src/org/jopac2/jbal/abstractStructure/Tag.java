@@ -216,6 +216,25 @@ public class Tag implements Comparable<Tag> {
 		return r;
 	}
 	
+	
+	/**
+	 * Return a iso2709 byte compilant rappresentation of this Tag
+	 */
+	public byte[] toBytes() {
+		String r = "";
+		if (fields != null) {
+			r = tagName;
+			if(modifier1>0) r+= modifier1 + "" + modifier2;
+			for (int i = 0; fields != null && i < fields.size(); i++) {
+				r += fields.elementAt(i).toString();
+			}
+		} else {
+			r = tagName + rawContent;
+		}
+		return r.getBytes();
+	}
+	
+	
 	/**
 	 * 
 	 * @return XML fragment for this tag
@@ -223,11 +242,11 @@ public class Tag implements Comparable<Tag> {
 	public String toXML() {
 		String r="";
 		if (fields != null) {
-			r = "<datafield tag=\"" + tagName;
+			r = "<datafield tag=\"" + tagName+"\"";
 			if(modifier1>0) {
 				r+= " ind1=\""+modifier1 + "\" ind2=\"" + modifier2 + "\"";
 			}
-			r=r+ "\">\n";
+			r=r+ ">\n";
 			
 			for (int i = 0; fields != null && i < fields.size(); i++) {
 				r += "\t\t"+fields.elementAt(i).toXML()+"\n";

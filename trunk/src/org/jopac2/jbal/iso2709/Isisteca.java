@@ -846,4 +846,29 @@ public RecordReader getRecordReader(InputStream dataFile) throws UnsupportedEnco
 	r.setChToIndex(channels);
 	return r;
 }
+
+@Override
+public void setImage(BufferedImage image, int maxx, int maxy) {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public String getBase64Image() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public String getAvailabilityAndOrPrice() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public void setAvailabilityAndOrPrice(String availabilityAndOrPrice)
+		throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
 }

@@ -49,12 +49,12 @@ public class Marc21 extends ISO2709Impl {
 	/*
 	 * TODO Marc21 e' tutto da fare!!!
 	 */
-  public Marc21(byte[] stringa,String dTipo,String charset)  throws Exception {
-    super(stringa,dTipo,charset);
+  public Marc21(byte[] stringa,String dTipo)  throws Exception {
+    super(stringa,dTipo);
   }
 
-  public Marc21(byte[] stringa,String dTipo,String charset,String livello)  throws Exception {
-    super(stringa,dTipo,charset,livello);
+  public Marc21(byte[] stringa,String dTipo,String livello)  throws Exception {
+    super(stringa,dTipo,livello);
   }
   
 	public Hashtable<String, List<Tag>> getRecordMapping() {
@@ -309,6 +309,31 @@ public class Marc21 extends ISO2709Impl {
 	}
 
 	public void setLanguage(String language) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setImage(BufferedImage image, int maxx, int maxy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getBase64Image() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getAvailabilityAndOrPrice() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setAvailabilityAndOrPrice(String availabilityAndOrPrice)
+			throws JOpac2Exception {
 		// TODO Auto-generated method stub
 		
 	}

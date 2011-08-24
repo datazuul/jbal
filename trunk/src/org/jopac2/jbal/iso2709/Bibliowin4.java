@@ -53,12 +53,12 @@ import org.jopac2.utils.*;
 public class Bibliowin4 extends Unimarc {
 	private String rawRecord=null;
 	
-	  public Bibliowin4(byte[] stringa,String dTipo, String charset)  throws Exception {
-		    super(stringa,dTipo,charset);
+	  public Bibliowin4(byte[] stringa,String dTipo)  throws Exception {
+		    super(stringa,dTipo);
 		  }
 
-		  public Bibliowin4(byte[] stringa,String dTipo,String charset, String livello)  throws Exception {
-		    super(stringa,dTipo,charset,livello);
+		  public Bibliowin4(byte[] stringa,String dTipo, String livello)  throws Exception {
+		    super(stringa,dTipo,livello);
 		  }
 		  
 		  public Hashtable<String, List<Tag>> getRecordMapping() {

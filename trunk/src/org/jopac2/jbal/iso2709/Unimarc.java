@@ -35,9 +35,17 @@ package org.jopac2.jbal.iso2709;
 * @version ??/??/2002
 */
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
+
+import javax.imageio.ImageIO;
 //import java.lang.*;
 //import java.sql.*;
+import org.apache.xerces.impl.dv.util.Base64;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.abstractStructure.Field;
@@ -59,8 +67,31 @@ import org.jopac2.jbal.subject.UncontrolledSubjectTerms;
 import org.jopac2.utils.*;
 
 public abstract class Unimarc extends ISO2709Impl {
-	public static String MONOGRAFIA="M";
-	public static String COLLANA="C";
+	public static String STATUS_CORRECTED_RECORD="c";
+	public static String STATUS_DELETED_RECORD="d";
+	public static String STATUS_NEW_RECORD="n";
+	public static String STATUS_PREVIOUSLY_ISSUED_HIGHER_LEVEL_RECORD="o";
+	public static String STATUS_PREVIOUSLY_ISSUED_INCOMPLETE_RECORD="p";
+	
+	
+	public static String TYPE_LANGUAGE_MATERIALS_PRINTED="a";
+	public static String TYPE_LANGUAGE_MATERIALS_MANUSCRIPT="b";
+	public static String TYPE_MUSIC_SCORES_PRINTED="c";
+	public static String TYPE_MUSIC_SCORES_MANUSCRIPT="d";
+	public static String TYPE_CARTOGRAPHIC_MATERIALS_PRINTED="e";
+	public static String TYPE_CARTOGRAPHIC_MATERIALS_MANUSCRIPT="f";
+	
+	public static String LEVEL_ANALYTIC="a"; // analytic (component part) bibliographic item
+	public static String LEVEL_MONOGRAPHIC="m"; // monographic bibliographic item complete in one physical part or 
+												// intended to be completed in a finite number of parts
+	public static String LEVEL_SERIAL="s"; // serial - bibliographic item issued in successive parts and intended to be continued indefinitely
+	public static String LEVEL_COLLECTION="c"; // collection - bibliographic item that is a made-up collection
+	
+	public static String HIERARCHICAL_UNDEFINED="#"; // hierarchical relationship undefined
+	public static String HIERARCHICAL_NO="0"; //  no hierarchical relationship
+	public static String HIERARCHICAL_HIGHEST="1"; // highest level record
+	public static String HIERARCHICAL_BELOW="2"; // record below highest level (all levels below)
+	
 
 	public void clearSignatures() throws JOpac2Exception {
 		removeArea("9xx");
@@ -123,7 +154,7 @@ public void initLinkUp() {
           //ISO2709 not=ISO2709.creaNotizia(0,(String)v.elementAt(i),this.getTipo(),this.getLivello());
         	if(tag.equals("410")) {
         		not.removeTags("410");
-        		not.setBiblioLevel(Unimarc.COLLANA); // Cosi' è giusto ma controllare il nome del campo!! Non e' il tipo?!
+        		not.setBiblioLevel(Unimarc.LEVEL_COLLECTION);
         		Vector<Tag> d=not.getTags("200");
         		for(int j=0;d!=null && j<d.size();j++) {
         			d.elementAt(j).removeField("v"); // l'indicazione del volume non deve essere nel record di collana
@@ -928,17 +959,18 @@ public void initLinkUp() {
 
   
   
-  public Unimarc(byte[] stringa,String dTipo, String charset)  throws Exception {
-    super(stringa,dTipo,charset,"0");
+  public Unimarc(byte[] stringa,String dTipo)  throws Exception {
+    super(stringa,dTipo,"0");
     this.marcCostruttore(stringa,dTipo,0);
   }
 
-  public Unimarc(byte[] stringa,String dTipo,String charset,String livello)  throws Exception {
-    super(stringa,dTipo,charset,livello);
+  public Unimarc(byte[] stringa,String dTipo,String livello)  throws Exception {
+    super(stringa,dTipo,livello);
     this.marcCostruttore(stringa,dTipo,Integer.parseInt(livello));
   }
 
-	public String getPrice() {
+  @Override
+	public String getAvailabilityAndOrPrice() {
 		String ret = null;
 		Tag tag = getFirstTag("010");
 		if(tag!=null){
@@ -946,7 +978,17 @@ public void initLinkUp() {
 			if(f!=null)
 				ret = f.getContent();
 		}
-		return null;
+		return ret;
+	}
+	
+	@Override
+	public void setAvailabilityAndOrPrice(String availabilityAndOrPrice) throws JOpac2Exception {
+		Tag t=getFirstTag("010");
+		if(t==null) t=new Tag("010");
+		t.removeField("d");
+		t.addField(new Field("d",availabilityAndOrPrice));
+		removeTags("010");
+		addTag(t);
 	}
   
 	public Hashtable<String, List<Tag>> getRecordMapping() {
@@ -1021,5 +1063,66 @@ public void initLinkUp() {
 	public String getRecordTypeDescription() {
 		return "General unimarc format.";
 	}
+	
+    public void setImage(BufferedImage image, int maxx, int maxy) {
+    	if(image == null){
+    		try {
+				removeTags("911");
+			} catch (JOpac2Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+    	}
+            ByteArrayOutputStream a=new ByteArrayOutputStream();
+               try {
+                    Image im=image.getScaledInstance(maxx, maxy, Image.SCALE_SMOOTH);
+                    BufferedImage dest = new BufferedImage(maxx,maxy,
+                                    BufferedImage.TYPE_INT_RGB);
+                    dest.createGraphics().drawImage(im, 0, 0, null);
+                    ImageIO.write (dest, "jpeg", a);                        
+                    String coded=Base64.encode(a.toByteArray());
+                    Tag t=new Tag("911",' ',' ');
+                    t.addField(new Field("a",coded));
+                    try {
+                            removeTags("911");
+                    } catch (JOpac2Exception e) {
+                    }
+                    addTag(t);
+                    a.reset();
+            } catch (IOException e) {
+                    e.printStackTrace();
+            }
+    }
+   
+    public BufferedImage getImage() {
+            BufferedImage r=null;
+            Tag t=getFirstTag("911");
+            if(t!=null) {
+                    Field i=t.getField("a");
+                    if(i!=null) {
+                            String coded=i.getContent();
+                            byte[] b=Base64.decode(coded);
+                            try {
+                                    r=ImageIO.read(new ByteArrayInputStream(b));
+                            } catch (IOException e) {
+                                    e.printStackTrace();
+                            }
+                    }
+            }
+            return r;
+    }
+    
+    public String getBase64Image() {
+    	String r=null;
+        Tag t=getFirstTag("911");
+        if(t!=null) {
+                Field i=t.getField("a");
+                if(i!=null) {
+                    r=i.getContent();
+                }
+        }
+        return r;
+    }
 
 }

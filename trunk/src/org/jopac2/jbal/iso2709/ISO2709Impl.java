@@ -57,13 +57,11 @@ import org.jopac2.utils.JOpac2Exception;
 public abstract class ISO2709Impl extends ISO2709 {
   //public Vector<String> dati;
 
-  public ISO2709Impl(byte[] notizia,String dTipo,String charset,String livello) throws Exception {
-	  this.charset=charset;
+  public ISO2709Impl(byte[] notizia,String dTipo,String livello) throws Exception {
     this.iso2709Costruttore(notizia,dTipo,Integer.parseInt(livello));
   }
 
-  public ISO2709Impl(byte[] notizia,String dTipo, String charset) throws Exception {
-	  this.charset=charset;
+  public ISO2709Impl(byte[] notizia,String dTipo) throws Exception {
     this.iso2709Costruttore(notizia,dTipo,0);
   }
 
