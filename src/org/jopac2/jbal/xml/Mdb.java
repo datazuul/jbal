@@ -12,6 +12,7 @@ import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.BookSignature;
+import org.jopac2.utils.JOpac2Exception;
 import org.jopac2.utils.TokenWord;
 import org.xml.sax.SAXException;
 
@@ -141,6 +142,55 @@ public class Mdb extends XML {
 		for(int i=0;i<v.size();i++) ch[i+1]=v.elementAt(i).getTag();
 		ch[0]="ANY";
 		return ch;
+	}
+
+	@Override
+	public void setImage(BufferedImage image, int maxx, int maxy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getBase64Image() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getAvailabilityAndOrPrice() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setAvailabilityAndOrPrice(String availabilityAndOrPrice)
+			throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getCharacterEncodingScheme() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setCharacterEncodingScheme(String recordCharacterEncodingScheme) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getHierarchicalLevel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setHierarchicalLevel(String recordHierarchicalLevel) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
