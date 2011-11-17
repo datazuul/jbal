@@ -5,95 +5,165 @@
       <format property="TODAY" pattern="yyyyMMdd-HHmm" />
     </tstamp>
     <property environment="env"/>
-    
+	
+	<property name="ECLIPSE_HOME" value="/Programs/eclipse"/>
+	<property name="TOMCAT_HOME" value="/Programs/apache-tomcat-7.0.4" />
+	<property name="LIBS" value="WebContent/WEB-INF/lib"/>
+	<property name="engine.location" value="../engine"/>
+	<property name="engine.dist.location" value="dist/engine"/>
+	<property name="jbal.location" value="../jbal"/>
+	<property name="jbal.dist.location" value="dist/jbal"/>
+	
     <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.5"/>
-    <property name="source" value="1.5"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+	
+	
+	<path id="jbal.classpath">
+        <pathelement location="${LIBS}/excalibur-datasource-2.1.jar"/>
+        <pathelement location="${LIBS}/whirlycache-0.7.1.jar"/>
+        <pathelement location="${LIBS}/xercesImpl-2.8.0.jar"/>
+        <pathelement location="${LIBS}/cocoon-2.1.11.jar"/>
+        <pathelement location="${LIBS}/commons-httpclient-3.0-rc4.jar"/>
+        <pathelement location="${LIBS}/icu4j.jar"/>
+        <path refid="JUnit 4.libraryclasspath"/>
+        <pathelement location="${LIBS}/jackcess-1.1.18.jar"/>
+    </path>
+	
+	<path id="engine.classpath">
+        <pathelement location="${LIBS}/a2jruntime.jar"/>
+		<pathelement location="${LIBS}/commons-collections-3.1.jar"/>
+		<pathelement location="${LIBS}/commons-httpclient-3.1-rc1.jar"/>
+		<pathelement location="${LIBS}/commons-logging-1.0.4.jar"/>
+		<pathelement location="${LIBS}/concurrent-1.3.4.jar"/>
+		<pathelement location="${LIBS}/derby.jar"/>
+		<pathelement location="${LIBS}/icu4j.jar"/>
+		<pathelement location="${LIBS}/jdom.jar"/>
+		<pathelement location="${LIBS}/ki-jzkit-hss-1_2_3.jar"/>
+		<pathelement location="${LIBS}/ki-jzkit-iface-1_2_3.jar"/>
+		<pathelement location="${LIBS}/ki-jzkit-z3950-1_2_3.jar"/>
+		<pathelement location="${LIBS}/ki-util.jar"/>
+		<pathelement location="${LIBS}/mysql-connector-java-3.1.6-bin.jar"/>
+        <pathelement location="${LIBS}/whirlycache-1.0.1.jar"/>
+		<pathelement location="${LIBS}/xalan-2.7.0.jar"/>
+        <pathelement location="${LIBS}/xercesImpl-2.8.0.jar"/>
+        <pathelement location="${LIBS}/commons-httpclient-3.0-rc4.jar"/>
+        <pathelement location="${jbal.dist.location}" />
+        <path refid="JUnit 4.libraryclasspath"/>
+        <pathelement location="${LIBS}/jackcess-1.1.18.jar"/>
+		<path refid="Tomcat.libraryclasspath" />
+    </path>
     <path id="WebApp.libraryclasspath">
-        <pathelement location="WebContent/WEB-INF/lib/a2jruntime.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/activation.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/autenticazione.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/avalon-framework-api-4.3.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/avalon-framework-impl-4.3.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/avalon-logkit-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/batik-all-1.6.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/cocoon-2.1.9-deprecated.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/cocoon-2.1.9.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/cocoon-authentication-fw-block.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/cocoon-batik-block.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/cocoon-cron-block.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/cocoon-databases-block.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/cocoon-fop-block.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/cocoon-hsqldb-block.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/cocoon-mail-block.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/cocoon-session-fw-block.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/cocoon-testcase.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/cocoon-xsp-block.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/commons-beanutils-core-1.7.0.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/commons-cli-1.0.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/commons-collections-3.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/commons-fileupload-1.2.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/commons-httpclient-3.1-rc1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/commons-io-1.3.2.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/commons-jexl-1.0.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/commons-jxpath-1.2.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/commons-lang-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/commons-logging-1.0.4.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/commons-net-1.4.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/concurrent-1.3.4.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/derby.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/ehcache-1.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-component-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-datasource-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-i18n-1.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-instrument-api-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-instrument-mgr-api-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-instrument-mgr-http-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-instrument-mgr-impl-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-logger-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-naming-1.0.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-pool-api-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-pool-impl-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-pool-instrumented-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-sourceresolve-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-store-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/excalibur-xmlutil-2.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/fop-0.20.5.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/hsqldb-1.8.0.2.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/icu4j.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/jackcess-1.1.18.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/jakarta-bcel-20040329.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/jakarta-regexp-1.4.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/javacApi-0.9.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/javacImpl-0.9.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/jbal-engine.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/jcs-1.2.5-dev-20050313.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/jdom.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/jdtcore-3.0.2.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/json.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/jstl.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/ki-jzkit-hss-1_2_3.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/ki-jzkit-iface-1_2_3.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/ki-jzkit-z3950-1_2_3.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/ki-util.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/log4j-1.2.13.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/mail.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/mysql-connector-java-5.1.10-bin.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/pizza-1.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/poi-3.0.1-FINAL-20070705.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/poi-contrib-3.0.1-FINAL-20070705.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/poi-scratchpad-3.0.1-FINAL-20070705.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/postgresql-8.0-311.jdbc3.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/profiler-block.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/quartz-1.5.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/rhino1.5r4-continuations-R26.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/whirlycache-1.0.1.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/xalan-2.7.0.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/xercesImpl-2.8.0.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/xml-apis-1.3.03.jar"/>
-        <pathelement location="WebContent/WEB-INF/lib/xml-commons-resolver-1.1.jar"/>
+    	<path refid="Common.libraryclasspath"/>
+    </path>
+	<path id="Common.libraryclasspath">
+        <pathelement location="${LIBS}/a2jruntime.jar"/>
+        <pathelement location="${LIBS}/activation.jar"/>
+        <pathelement location="${LIBS}/avalon-framework-api-4.3.jar"/>
+        <pathelement location="${LIBS}/avalon-framework-impl-4.3.jar"/>
+        <pathelement location="${LIBS}/avalon-logkit-2.1.jar"/>
+        <pathelement location="${LIBS}/batik-all-1.6.jar"/>
+        <pathelement location="${LIBS}/cocoon-2.1.11-deprecated.jar"/>
+        <pathelement location="${LIBS}/cocoon-2.1.11.jar"/>
+        <pathelement location="${LIBS}/cocoon-authentication-fw-block.jar"/>
+        <pathelement location="${LIBS}/cocoon-batik-block.jar"/>
+        <pathelement location="${LIBS}/cocoon-cron-block.jar"/>
+        <pathelement location="${LIBS}/cocoon-databases-block.jar"/>
+        <pathelement location="${LIBS}/cocoon-fop-block.jar"/>
+        <pathelement location="${LIBS}/cocoon-hsqldb-block.jar"/>
+        <pathelement location="${LIBS}/cocoon-mail-block.jar"/>
+        <pathelement location="${LIBS}/cocoon-session-fw-block.jar"/>
+        <pathelement location="${LIBS}/cocoon-testcase.jar"/>
+        <pathelement location="${LIBS}/cocoon-xsp-block.jar"/>
+        <pathelement location="${LIBS}/commons-beanutils-core-1.7.0.jar"/>
+        <pathelement location="${LIBS}/commons-cli-1.0.jar"/>
+        <pathelement location="${LIBS}/commons-collections-3.1.jar"/>
+        <pathelement location="${LIBS}/commons-fileupload-1.2.jar"/>
+        <pathelement location="${LIBS}/commons-httpclient-3.1-rc1.jar"/>
+        <pathelement location="${LIBS}/commons-io-1.3.2.jar"/>
+        <pathelement location="${LIBS}/commons-jexl-1.0.jar"/>
+        <pathelement location="${LIBS}/commons-jxpath-1.2.jar"/>
+        <pathelement location="${LIBS}/commons-lang-2.1.jar"/>
+        <pathelement location="${LIBS}/commons-logging-1.0.4.jar"/>
+        <pathelement location="${LIBS}/commons-net-1.4.1.jar"/>
+        <pathelement location="${LIBS}/concurrent-1.3.4.jar"/>
+        <pathelement location="${LIBS}/derby.jar"/>
+        <pathelement location="${LIBS}/ehcache-1.1.jar"/>
+        <pathelement location="${LIBS}/excalibur-component-2.1.jar"/>
+        <pathelement location="${LIBS}/excalibur-datasource-2.1.jar"/>
+        <pathelement location="${LIBS}/excalibur-i18n-1.1.jar"/>
+        <pathelement location="${LIBS}/excalibur-instrument-api-2.1.jar"/>
+        <pathelement location="${LIBS}/excalibur-instrument-mgr-api-2.1.jar"/>
+        <pathelement location="${LIBS}/excalibur-instrument-mgr-http-2.1.jar"/>
+        <pathelement location="${LIBS}/excalibur-instrument-mgr-impl-2.1.jar"/>
+        <pathelement location="${LIBS}/excalibur-logger-2.1.jar"/>
+        <pathelement location="${LIBS}/excalibur-naming-1.0.jar"/>
+        <pathelement location="${LIBS}/excalibur-pool-api-2.1.jar"/>
+        <pathelement location="${LIBS}/excalibur-pool-impl-2.1.jar"/>
+        <pathelement location="${LIBS}/excalibur-pool-instrumented-2.1.jar"/>
+        <pathelement location="${LIBS}/excalibur-sourceresolve-2.1.jar"/>
+        <pathelement location="${LIBS}/excalibur-store-2.1.jar"/>
+        <pathelement location="${LIBS}/excalibur-xmlutil-2.1.jar"/>
+        <pathelement location="${LIBS}/fop-0.20.5.jar"/>
+        <pathelement location="${LIBS}/hsqldb-1.8.0.2.jar"/>
+        <pathelement location="${LIBS}/icu4j.jar"/>
+        <pathelement location="${LIBS}/jackcess-1.1.18.jar"/>
+        <pathelement location="${LIBS}/jakarta-bcel-20040329.jar"/>
+        <pathelement location="${LIBS}/jakarta-regexp-1.4.jar"/>
+        <pathelement location="${LIBS}/javacApi-0.9.jar"/>
+        <pathelement location="${LIBS}/javacImpl-0.9.jar"/>
+        <pathelement location="${LIBS}/jcs-1.2.5-dev-20050313.jar"/>
+        <pathelement location="${LIBS}/jdom.jar"/>
+        <pathelement location="${LIBS}/jdtcore-3.0.2.jar"/>
+        <pathelement location="${LIBS}/json.jar"/>
+        <pathelement location="${LIBS}/jstl.jar"/>
+        <pathelement location="${LIBS}/ki-jzkit-hss-1_2_3.jar"/>
+        <pathelement location="${LIBS}/ki-jzkit-iface-1_2_3.jar"/>
+        <pathelement location="${LIBS}/ki-jzkit-z3950-1_2_3.jar"/>
+        <pathelement location="${LIBS}/ki-util.jar"/>
+        <pathelement location="${LIBS}/log4j-1.2.13.jar"/>
+        <pathelement location="${LIBS}/mail.jar"/>
+        <pathelement location="${LIBS}/mysql-connector-java-5.1.10-bin.jar"/>
+        <pathelement location="${LIBS}/pizza-1.1.jar"/>
+        <pathelement location="${LIBS}/poi-3.0.1-FINAL-20070705.jar"/>
+        <pathelement location="${LIBS}/poi-contrib-3.0.1-FINAL-20070705.jar"/>
+        <pathelement location="${LIBS}/poi-scratchpad-3.0.1-FINAL-20070705.jar"/>
+        <pathelement location="${LIBS}/postgresql-8.0-311.jdbc3.jar"/>
+        <pathelement location="${LIBS}/profiler-block.jar"/>
+        <pathelement location="${LIBS}/quartz-1.5.1.jar"/>
+        <pathelement location="${LIBS}/rhino1.5r4-continuations-R26.jar"/>
+        <pathelement location="${LIBS}/whirlycache-1.0.1.jar"/>
+        <pathelement location="${LIBS}/xalan-2.7.0.jar"/>
+        <pathelement location="${LIBS}/xercesImpl-2.8.0.jar"/>
+        <pathelement location="${LIBS}/xml-apis-1.3.03.jar"/>
+        <pathelement location="${LIBS}/xml-commons-resolver-1.1.jar"/>
     </path>
 
+	<path id="JUnit 4.libraryclasspath">
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_4.8.1.v4_8_1_v20100427-1100/junit.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+    </path>
+	
+	<path id="Tomcat.libraryclasspath">
+        <pathelement location="${TOMCAT_HOME}/lib/tomcat-i18n-fr.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/tomcat-coyote.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/catalina-tribes.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/el-api.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/tomcat-dbcp.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/catalina.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/catalina-ant.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/ecj-3.6.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/tomcat-util.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/jasper.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/annotations-api.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/tomcat-api.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/servlet-api.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/tomcat-i18n-es.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/jasper-el.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/jsp-api.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/catalina-ha.jar"/>
+        <pathelement location="${TOMCAT_HOME}/lib/tomcat-i18n-ja.jar"/>
+    </path>
 	
 	<path id="Jetty.libraryclasspath">
 		<pathelement location="jettylib/servlet-api-2.5-20081211.jar"/>
@@ -107,6 +177,8 @@
     </path>
 	
     <target name="init">
+    	<delete dir="dist"/>
+		<mkdir dir="dist" />
         <mkdir dir="WebContent/WEB-INF/classes"/>
         <copy includeemptydirs="false" todir="WebContent/WEB-INF/classes">
             <fileset dir="src">
@@ -117,10 +189,9 @@
     </target>
 	
 	<target name="prepare-dist">
-		<delete dir="dist"/>
-		<mkdir dir="dist" />
+		
+		
 		<mkdir dir="dist/JSites" />
-
 		<mkdir dir="dist/JSites/upload" />
 		
 		<copy includeemptydirs="false" todir="dist/JSites/components">
@@ -148,6 +219,9 @@
             <fileset dir="WebContent/WEB-INF" />
         </copy>
 		
+		<jar destfile="dist/JSites/WEB-INF/lib/jbal.jar" basedir="${jbal.dist.location}"/>
+		<jar destfile="dist/JSites/WEB-INF/lib/engine.jar" basedir="${engine.dist.location}"/>
+		
 		<copy includeemptydirs="false" todir="dist/JSites/LEGAL">
 			<fileset dir="LEGAL" />
 		</copy>
@@ -162,7 +236,7 @@
 		<copy file="LICENCE.txt" todir="dist/JSites"/>
 		<copy file="NOTICE.txt" todir="dist/JSites"/>
 		<copy file="Readme.txt" todir="dist/JSites"/>
-		<copy file="WebContent/login.xml" todir="dist/JSites"/>
+		<copy file="WebContent/login.html" todir="dist/JSites"/>
 		
 		<delete file="dist/JSites/WEB-INF/dbConnections.xml" />
 		<echo file="dist/JSites/WEB-INF/dbConnections.xml">
@@ -290,8 +364,38 @@ java -cp ..\..\..\jettylib\jetty-6.1.20.jar;..\..\..\jettylib\jetty-util-6.1.20.
     </target>
 	
     <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project" name="build"/>
-    <target name="build-subprojects"/>
+	
+    <target depends="init,build-subprojects,build-project,distribution" name="build"/>
+	
+    <target name="build-subprojects">
+    	<echo message="jbal: ${jbal.dist.location}"/>
+    	<delete dir="${jbal.dist.location}" />
+    	<mkdir dir="${jbal.dist.location}" />
+
+        <javac debug="true" debuglevel="${debuglevel}" 
+        	destdir="${jbal.dist.location}" 
+        	source="${source}" target="${target}"
+        	excludes="**/test/*.java">
+        	<src path="${jbal.location}/src" />
+            	
+            <classpath refid="jbal.classpath"/>
+        </javac>
+    	
+    	<echo message="engine: ${engine.dist.location}"/>
+    	<delete dir="${engine.dist.location}" />
+    	<mkdir dir="${engine.dist.location}" />
+
+        <javac debug="true" debuglevel="${debuglevel}" 
+        	destdir="${engine.dist.location}" 
+        	source="${source}" target="${target}"
+        	excludes="**/test/*.java">
+        	<src path="${engine.location}/src" />
+            	
+            <classpath refid="engine.classpath"/>
+        </javac>
+    	
+    </target>
+	
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" 
