@@ -23,7 +23,7 @@
     <xsl:param name="page" />
     <xsl:param name="rxp" /> <!-- results per page -->
     
-    <xsl:variable name="query"><xsl:value-of select="/root/queryData/requestQuery" /></xsl:variable>
+    <xsl:variable name="query"><xsl:value-of select="translate(/root/queryData/requestQuery,'%','*')" /></xsl:variable>
     
     
 	<xsl:template match="/">
@@ -52,6 +52,7 @@
                         }
 				    }
 				    q = q.substring(0,q.length-1);
+				    q = q + "*";
 				    
 				    document.getElementById("query").value = escape(q);
 				  
