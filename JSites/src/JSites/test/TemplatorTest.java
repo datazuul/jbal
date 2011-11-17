@@ -80,7 +80,6 @@ public class TemplatorTest extends TestCase {
 				"</record>\n"+
 				"</haspart>\n"+
 				"<bid>RA4388959</bid>\n"+
-				"<jid>6142</jid>\n"+
 				"</record>";	
 	
 	/**
