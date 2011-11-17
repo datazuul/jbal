@@ -416,12 +416,12 @@ function switchMonth()
 }
 
 function createMonthDiv(){
-	var div = document.createElement('DIV');
+	var div = document.createElement('div');
 	div.className='monthYearPicker';
 	div.id = 'monthPicker';
 
 	for(var no=0;no<monthArray.length;no++){
-		var subDiv = document.createElement('DIV');
+		var subDiv = document.createElement('div');
 		subDiv.innerHTML = monthArray[no];
 		subDiv.onmouseover = highlightMonthYear;
 		subDiv.onmouseout = highlightMonthYear;
@@ -443,7 +443,7 @@ function createMonthDiv(){
 function changeSelectBoxYear(e,inputObj)
 {
 	if(!inputObj)inputObj =this;
-	var yearItems = inputObj.parentNode.getElementsByTagName('DIV');
+	var yearItems = inputObj.parentNode.getElementsByTagName('div');
 	if(inputObj.innerHTML.indexOf('-')>=0){
 		var startYear = yearItems[1].innerHTML/1 -1;
 		if(activeSelectBoxYear){
@@ -474,7 +474,7 @@ function changeSelectBoxHour(e,inputObj)
 {
 	if(!inputObj)inputObj = this;
 
-	var hourItems = inputObj.parentNode.getElementsByTagName('DIV');
+	var hourItems = inputObj.parentNode.getElementsByTagName('div');
 	if(inputObj.innerHTML.indexOf('-')>=0){
 		var startHour = hourItems[1].innerHTML/1 -1;
 		if(startHour<0)startHour=0;
@@ -513,7 +513,7 @@ function updateYearDiv()
        yearSpan = 0;
     }
 	var div = document.getElementById('yearDropDown');
-	var yearItems = div.getElementsByTagName('DIV');
+	var yearItems = div.getElementsByTagName('div');
 	for(var no=1;no<yearItems.length-1;no++){
 		yearItems[no].innerHTML = currentYear/1 -yearSpan + no;
 		if(currentYear==(currentYear/1 -yearSpan + no)){
@@ -538,7 +538,7 @@ function updateMonthDiv()
 function updateHourDiv()
 {
 	var div = document.getElementById('hourDropDown');
-	var hourItems = div.getElementsByTagName('DIV');
+	var hourItems = div.getElementsByTagName('div');
 
 	var addHours = 0;
 	if((currentHour/1 -6 + 1)<0){
@@ -577,11 +577,11 @@ function createYearDiv()
 {
 
 	if(!document.getElementById('yearDropDown')){
-		var div = document.createElement('DIV');
+		var div = document.createElement('div');
 		div.className='monthYearPicker';
 	}else{
 		var div = document.getElementById('yearDropDown');
-		var subDivs = div.getElementsByTagName('DIV');
+		var subDivs = div.getElementsByTagName('div');
 		for(var no=0;no<subDivs.length;no++){
 			subDivs[no].parentNode.removeChild(subDivs[no]);
 		}
@@ -597,8 +597,8 @@ function createYearDiv()
 
     var yearSpan = 10;
 	if (! turnOffYearSpan) {
-    	var subDiv = document.createElement('DIV');
-    	subDiv.innerHTML = '&nbsp;&nbsp;- ';
+    	var subDiv = document.createElement('div');
+    	subDiv.innerHTML = '&#160;&#160;- ';
     	subDiv.onclick = changeSelectBoxYear;
     	subDiv.onmouseover = highlightMonthYear;
     	subDiv.onmouseout = function(){ selectBoxMovementInProgress = false;};
@@ -610,7 +610,7 @@ function createYearDiv()
     }
 
 	for(var no=startYear;no<(startYear+yearSpan);no++){
-		var subDiv = document.createElement('DIV');
+		var subDiv = document.createElement('div');
 		subDiv.innerHTML = no;
 		subDiv.onmouseover = highlightMonthYear;
 		subDiv.onmouseout = highlightMonthYear;
@@ -624,8 +624,8 @@ function createYearDiv()
 		}
 	}
 	if (! turnOffYearSpan) {
-    	var subDiv = document.createElement('DIV');
-    	subDiv.innerHTML = '&nbsp;&nbsp;+ ';
+    	var subDiv = document.createElement('div');
+    	subDiv.innerHTML = '&#160;&#160;+ ';
     	subDiv.onclick = changeSelectBoxYear;
     	subDiv.onmouseover = highlightMonthYear;
     	subDiv.onmouseout = function(){ selectBoxMovementInProgress = false;};
@@ -655,11 +655,11 @@ function slideCalendarSelectBox()
 function createHourDiv()
 {
 	if(!document.getElementById('hourDropDown')){
-		var div = document.createElement('DIV');
+		var div = document.createElement('div');
 		div.className='monthYearPicker';
 	}else{
 		var div = document.getElementById('hourDropDown');
-		var subDivs = div.getElementsByTagName('DIV');
+		var subDivs = div.getElementsByTagName('div');
 		for(var no=0;no<subDivs.length;no++){
 			subDivs[no].parentNode.removeChild(subDivs[no]);
 		}
@@ -669,8 +669,8 @@ function createHourDiv()
 	var startHour = currentHour/1;
 	if(startHour>14)startHour=14;
 
-	var subDiv = document.createElement('DIV');
-	subDiv.innerHTML = '&nbsp;&nbsp;- ';
+	var subDiv = document.createElement('div');
+	subDiv.innerHTML = '&#160;&#160;- ';
 	subDiv.onclick = changeSelectBoxHour;
 	subDiv.onmouseover = highlightMonthYear;
 	subDiv.onmouseout = function(){ selectBoxMovementInProgress = false;};
@@ -680,7 +680,7 @@ function createHourDiv()
 	for(var no=startHour;no<startHour+10;no++){
 		var prefix = '';
 		if(no/1<10)prefix='0';
-		var subDiv = document.createElement('DIV');
+		var subDiv = document.createElement('div');
 		subDiv.innerHTML = prefix + no;
 		subDiv.onmouseover = highlightMonthYear;
 		subDiv.onmouseout = highlightMonthYear;
@@ -693,8 +693,8 @@ function createHourDiv()
 			activeSelectBoxYear = subDiv;
 		}
 	}
-	var subDiv = document.createElement('DIV');
-	subDiv.innerHTML = '&nbsp;&nbsp;+ ';
+	var subDiv = document.createElement('div');
+	subDiv.innerHTML = '&#160;&#160;+ ';
 	subDiv.onclick = changeSelectBoxHour;
 	subDiv.onmouseover = highlightMonthYear;
 	subDiv.onmouseout = function(){ selectBoxMovementInProgress = false;};
@@ -708,11 +708,11 @@ function createHourDiv()
 function createMinuteDiv()
 {
 	if(!document.getElementById('minuteDropDown')){
-		var div = document.createElement('DIV');
+		var div = document.createElement('div');
 		div.className='monthYearPicker';
 	}else{
 		var div = document.getElementById('minuteDropDown');
-		var subDivs = div.getElementsByTagName('DIV');
+		var subDivs = div.getElementsByTagName('div');
 		for(var no=0;no<subDivs.length;no++){
 			subDivs[no].parentNode.removeChild(subDivs[no]);
 		}
@@ -722,7 +722,7 @@ function createMinuteDiv()
 	for(var no=startMinute;no<60;no+=intervalSelectBox_minutes){
 
 		if(no<10)prefix='0'; else prefix = '';
-		var subDiv = document.createElement('DIV');
+		var subDiv = document.createElement('div');
 		subDiv.innerHTML = prefix + no;
 		subDiv.onmouseover = highlightMonthYear;
 		subDiv.onmouseout = highlightMonthYear;
@@ -743,18 +743,18 @@ function highlightSelect()
 
 	if(this.className=='selectBoxTime'){
 		this.className = 'selectBoxTimeOver';
-		this.getElementsByTagName('IMG')[0].src = pathToImages + 'down_time_over.gif';
+		this.getElementsByTagName('img')[0].src = pathToImages + 'down_time_over.gif';
 	}else if(this.className=='selectBoxTimeOver'){
 		this.className = 'selectBoxTime';
-		this.getElementsByTagName('IMG')[0].src = pathToImages + 'down_time.gif';
+		this.getElementsByTagName('img')[0].src = pathToImages + 'down_time.gif';
 	}
 
 	if(this.className=='selectBox'){
 		this.className = 'selectBoxOver';
-		this.getElementsByTagName('IMG')[0].src = pathToImages + 'down_over.gif';
+		this.getElementsByTagName('img')[0].src = pathToImages + 'down_over.gif';
 	}else if(this.className=='selectBoxOver'){
 		this.className = 'selectBox';
-		this.getElementsByTagName('IMG')[0].src = pathToImages + 'down.gif';
+		this.getElementsByTagName('img')[0].src = pathToImages + 'down.gif';
 	}
 
 }
@@ -801,15 +801,15 @@ function closeCalendar(){
 function writeTopBar()
 {
 
-	var topBar = document.createElement('DIV');
+	var topBar = document.createElement('div');
 	topBar.className = 'topBar';
 	topBar.id = 'topBar';
 	calendarDiv.appendChild(topBar);
 
 	// Left arrow
-	var leftDiv = document.createElement('DIV');
+	var leftDiv = document.createElement('div');
 	leftDiv.style.marginRight = '1px';
-	var img = document.createElement('IMG');
+	var img = document.createElement('img');
 	img.src = pathToImages + 'left.gif';
 	img.onmouseover = highlightArrow;
 	img.onclick = switchMonth;
@@ -819,9 +819,9 @@ function writeTopBar()
 	if(Opera)leftDiv.style.width = '16px';
 
 	// Right arrow
-	var rightDiv = document.createElement('DIV');
+	var rightDiv = document.createElement('div');
 	rightDiv.style.marginRight = '1px';
-	var img = document.createElement('IMG');
+	var img = document.createElement('img');
 	img.src = pathToImages + 'right.gif';
 	img.onclick = switchMonth;
 	img.onmouseover = highlightArrow;
@@ -832,17 +832,17 @@ function writeTopBar()
 
 
 	// Month selector
-	var monthDiv = document.createElement('DIV');
+	var monthDiv = document.createElement('div');
 	monthDiv.id = 'monthSelect';
 	monthDiv.onmouseover = highlightSelect;
 	monthDiv.onmouseout = highlightSelect;
 	monthDiv.onclick = showMonthDropDown;
-	var span = document.createElement('SPAN');
+	var span = document.createElement('span');
 	span.innerHTML = monthArray[currentMonth];
 	span.id = 'calendar_month_txt';
 	monthDiv.appendChild(span);
 
-	var img = document.createElement('IMG');
+	var img = document.createElement('img');
 	img.src = pathToImages + 'down.gif';
 	img.style.position = 'absolute';
 	img.style.right = '0px';
@@ -864,17 +864,17 @@ function writeTopBar()
 	calendarDiv.appendChild(monthPicker);
 
 	// Year selector
-	var yearDiv = document.createElement('DIV');
+	var yearDiv = document.createElement('div');
 	yearDiv.onmouseover = highlightSelect;
 	yearDiv.onmouseout = highlightSelect;
 	yearDiv.onclick = showYearDropDown;
-	var span = document.createElement('SPAN');
+	var span = document.createElement('span');
 	span.innerHTML = currentYear;
 	span.id = 'calendar_year_txt';
 	yearDiv.appendChild(span);
 	topBar.appendChild(yearDiv);
 
-	var img = document.createElement('IMG');
+	var img = document.createElement('img');
 	img.src = pathToImages + 'down.gif';
 	yearDiv.appendChild(img);
 	yearDiv.className = 'selectBox';
@@ -894,7 +894,7 @@ function writeTopBar()
 	calendarDiv.appendChild(yearPicker);
 
 
-	var img = document.createElement('IMG');
+	var img = document.createElement('img');
 	img.src = pathToImages + 'close.gif';
 	img.style.styleFloat = 'right';
 	img.onmouseover = highlightClose;
@@ -914,7 +914,7 @@ function writeCalendarContent()
 {
 	var calendarContentDivExists = true;
 	if(!calendarContentDiv){
-		calendarContentDiv = document.createElement('DIV');
+		calendarContentDiv = document.createElement('div');
 		calendarDiv.appendChild(calendarContentDiv);
 		calendarContentDivExists = false;
 	}
@@ -936,12 +936,12 @@ function writeCalendarContent()
 	document.getElementById('calendar_hour_txt').innerHTML = currentHour/1 > 9 ? currentHour : '0' + currentHour;
 	document.getElementById('calendar_minute_txt').innerHTML = currentMinute/1 >9 ? currentMinute : '0' + currentMinute;
 
-	var existingTable = calendarContentDiv.getElementsByTagName('TABLE');
+	var existingTable = calendarContentDiv.getElementsByTagName('table');
 	if(existingTable.length>0){
 		calendarContentDiv.removeChild(existingTable[0]);
 	}
 
-	var calTable = document.createElement('TABLE');
+	var calTable = document.createElement('table');
 	calTable.width = '100%';
 	calTable.cellSpacing = '0';
 	calendarContentDiv.appendChild(calTable);
@@ -949,7 +949,7 @@ function writeCalendarContent()
 
 
 
-	var calTBody = document.createElement('TBODY');
+	var calTBody = document.createElement('tbody');
 	calTable.appendChild(calTBody);
 	var row = calTBody.insertRow(-1);
 	row.className = 'calendar_week_row';
@@ -976,7 +976,7 @@ function writeCalendarContent()
 	}
 	for(var no=0;no<dayStartOfMonth;no++){
 		var cell = row.insertCell(-1);
-		cell.innerHTML = '&nbsp;';
+		cell.innerHTML = '&#160;';
 	}
 
 	var colCounter = dayStartOfMonth;
@@ -1129,26 +1129,26 @@ function getWeek(year,month,day){
 
 function writeTimeBar()
 {
-	var timeBar = document.createElement('DIV');
+	var timeBar = document.createElement('div');
 	timeBar.id = 'timeBar';
 	timeBar.className = 'timeBar';
 
-	var subDiv = document.createElement('DIV');
+	var subDiv = document.createElement('div');
 	subDiv.innerHTML = 'Time:';
 
 	// hour selector
-	var hourDiv = document.createElement('DIV');
+	var hourDiv = document.createElement('div');
 	hourDiv.onmouseover = highlightSelect;
 	hourDiv.onmouseout = highlightSelect;
 	hourDiv.onclick = showHourDropDown;
 	hourDiv.style.width = '30px';
-	var span = document.createElement('SPAN');
+	var span = document.createElement('span');
 	span.innerHTML = currentHour;
 	span.id = 'calendar_hour_txt';
 	hourDiv.appendChild(span);
 	timeBar.appendChild(hourDiv);
 
-	var img = document.createElement('IMG');
+	var img = document.createElement('img');
 	img.src = pathToImages + 'down_time.gif';
 	hourDiv.appendChild(img);
 	hourDiv.className = 'selectBoxTime';
@@ -1170,19 +1170,19 @@ function writeTimeBar()
 	// Add Minute picker
 
 	// Year selector
-	var minuteDiv = document.createElement('DIV');
+	var minuteDiv = document.createElement('div');
 	minuteDiv.onmouseover = highlightSelect;
 	minuteDiv.onmouseout = highlightSelect;
 	minuteDiv.onclick = showMinuteDropDown;
 	minuteDiv.style.width = '30px';
-	var span = document.createElement('SPAN');
+	var span = document.createElement('span');
 	span.innerHTML = currentMinute;
 
 	span.id = 'calendar_minute_txt';
 	minuteDiv.appendChild(span);
 	timeBar.appendChild(minuteDiv);
 
-	var img = document.createElement('IMG');
+	var img = document.createElement('img');
 	img.src = pathToImages + 'down_time.gif';
 	minuteDiv.appendChild(img);
 	minuteDiv.className = 'selectBoxTime';
@@ -1209,7 +1209,7 @@ function writeTimeBar()
 function writeBottomBar()
 {
 	var d = new Date();
-	var bottomBar = document.createElement('DIV');
+	var bottomBar = document.createElement('div');
 
 	bottomBar.id = 'bottomBar';
 
@@ -1217,7 +1217,7 @@ function writeBottomBar()
 	bottomBar.className = 'todaysDate';
 	// var todayStringFormat = '[todayString] [dayString] [day] [monthString] [year]';	;;
 
-	var subDiv = document.createElement('DIV');
+	var subDiv = document.createElement('div');
 	subDiv.onclick = pickTodaysDate;
 	subDiv.id = 'todaysDateString';
 	subDiv.style.width = (calendarDiv.offsetWidth - 95) + 'px';
@@ -1280,14 +1280,14 @@ function positionCalendar(inputObj)
 function initCalendar()
 {
 	if(MSIE){
-		iframeObj = document.createElement('IFRAME');
+		iframeObj = document.createElement('iframe');
 		iframeObj.style.filter = 'alpha(opacity=0)';
 		iframeObj.style.position = 'absolute';
 		iframeObj.border='0px';
 		iframeObj.style.border = '0px';
 		iframeObj.style.backgroundColor = '#FF0000';
 		//// fix for EI frame problem on time dropdowns 09/30/2006
-		iframeObj2 = document.createElement('IFRAME');
+		iframeObj2 = document.createElement('iframe');
 		iframeObj2.style.position = 'absolute';
 		iframeObj2.border='0px';
 		iframeObj2.style.border = '0px';
@@ -1301,7 +1301,7 @@ function initCalendar()
 		document.body.appendChild(iframeObj);
 	}
 
-	calendarDiv = document.createElement('DIV');
+	calendarDiv = document.createElement('div');
 	calendarDiv.id = 'calendarDiv';
 	calendarDiv.style.zIndex = 1000;
 	slideCalendarSelectBox();

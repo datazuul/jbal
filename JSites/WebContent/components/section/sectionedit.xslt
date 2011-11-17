@@ -87,10 +87,10 @@
 		<b>Descrizione:</b>
 		<br/>
 		<input type="hidden" name="UndoText" id="UndoText"/>
-		<textarea id="elm2" name="text" rows="10" class="edittextarea" tinyMCE_this="true">
+		<textarea id="elm2" name="text" rows="10" class="edittextarea"> <!--  tinyMCE_this="true" -->
 			<!--  xsl:value-of select="text()" /-->
-			<!-- xsl:copy-->
-				<xsl:apply-templates select="@*|node()|text()|*" />
+			<!--  <xsl:copy /> -->
+			<xsl:apply-templates select="@*|node()|text()|*" />
 			<!--  /xsl:copy-->
 		</textarea>
 		<br />

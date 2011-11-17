@@ -18,6 +18,10 @@
 	             		<map:transform type="sql">
 							<map:parameter name="use-connection" value="{request-param:db}"/>
 						</map:transform>
+						
+						<!-- map:transform type="tutil" src="/t/section" / -->
+						
+						
 						<map:transform src="section.xslt">
 	                        <map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
@@ -39,12 +43,16 @@
 	             		<map:transform type="sql">
 							<map:parameter name="use-connection" value="{request-param:db}"/>
 						</map:transform>
-						<map:transform type="wikitrans"/>
+						<!-- map:transform type="tutil" src="/t/sectiona" / -->
+						<!-- map:transform type="wikitrans"/ -->
+						<!-- map:transform type="tutil" src="/t/sectionw" / -->
 	                    <map:transform src="sectionedit.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
 	                    	<map:parameter name="context" value="{context}"/>
 	                    	<map:parameter name="template" value="{global:template}"/>
+	                    	<map:parameter name="pid" value="{request-attr:pid}"/>
 	                    </map:transform>
+	                    <!-- map:transform type="tutil" src="/t/sectionb" / -->
 	                    <map:transform type="cinclude" />
 	                    <map:serialize type="xml"/>
 	                </map:act>
