@@ -58,10 +58,10 @@ public class Authentication {
 		return UID;
 	}
 	
-	public static Permission assignPermissions(Session session, long pid, Connection conn) throws SQLException, JOpac2Exception {
+	public static Permission assignPermissions(Session session, String remoteaddr, long pid, Connection conn) throws SQLException, JOpac2Exception {
 		
 		Permission ret = new Permission();
-		ret = DBGateway.getPermission(getUsername(session), pid, conn);
+		ret = DBGateway.getPermission(getUsername(session), remoteaddr, pid, conn);
 		return ret;
 			
 	}
