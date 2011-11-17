@@ -163,7 +163,13 @@ public class PageSaver extends MyAbstractPageGenerator{
 		
 		long ret = 0;
 		String pc=request.getParameter("pacid");
-		if(pc!=null) ret=Long.parseLong(pc);
+		if(pc!=null && !pc.equals("0")) {
+			ret=Long.parseLong(pc);
+		}
+		else {
+			ret=DBGateway.getContentCID(pageId, conn);
+		}
+		
 		if(ret == 0){
 			Long l = (Long) session.getAttribute("newPacid");
 			if(l!=null) ret = l.longValue();

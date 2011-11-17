@@ -186,7 +186,6 @@ public class CleanNews extends ServiceableCronJob implements Configurable, Confi
 
 
 
-	@SuppressWarnings("unchecked")
 	public void setup(Parameters params, Map objects) {
         if (null != params) {
         	try {

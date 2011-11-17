@@ -41,6 +41,7 @@ import org.apache.cocoon.xml.AttributesImpl;
 import org.xml.sax.SAXException;
 
 import JSites.authentication.Permission;
+import JSites.utils.DBGateway;
 
 
 public class PageOrderer extends MyAbstractPageGenerator{
@@ -83,8 +84,13 @@ public class PageOrderer extends MyAbstractPageGenerator{
 	protected void init(Connection conn){
 		super.init(conn);
 		try{
-			String temp = request.getParameter("pacid");
-			orderedPacid = Long.parseLong(temp);
+//			String temp = request.getParameter("pacid");
+//			orderedPacid = Long.parseLong(temp);
+			
+			String temp = request.getParameter("pid");
+			orderedPacid = DBGateway.getContentCID(Long.parseLong(temp), conn);
+			
+			
 		}
 		catch(Exception e){
 			System.out.println("The QueryString was: " + request.getQueryString());

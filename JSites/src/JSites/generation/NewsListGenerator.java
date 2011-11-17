@@ -92,7 +92,7 @@ public class NewsListGenerator extends MyAbstractPageGenerator {
 	}
 
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par) throws ProcessingException, SAXException, IOException{
 		
 		super.setup(resolver, objectModel, src, par);

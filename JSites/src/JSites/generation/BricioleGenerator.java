@@ -53,7 +53,7 @@ public class BricioleGenerator extends MyAbstractPageGenerator {
 			int pageLevel = DBGateway.getPageLevel(pageId, 0, conn)+1;
 			if( pageLevel >= startLevel){
 				contentHandler.startElement("","briciole","briciole", emptyAttrs);
-				if (papid > 1) 
+				if (papid >= startLevel) 
 //					nome = DBGateway.getPageName(papid, conn);
 					nome = getParent(papid, conn) + " > " + nome;
 				contentHandler.characters(nome.toCharArray(), 0, nome.length());
@@ -71,7 +71,7 @@ public class BricioleGenerator extends MyAbstractPageGenerator {
 		
 		String ret = "<a href=\"pageview?pid="+pid+"\">"+DBGateway.getPageName(pid, conn)+"</a>";
 		long papid = DBGateway.getPapid(pid, conn);
-		if(papid > 1){
+		if(papid >= startLevel){
 			ret = getParent(papid, conn)  + " > " + ret;
 		}
 		
@@ -79,7 +79,7 @@ public class BricioleGenerator extends MyAbstractPageGenerator {
 		
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par) throws ProcessingException, SAXException, IOException {
 		super.setup(resolver, objectModel, src, par);
 		try {

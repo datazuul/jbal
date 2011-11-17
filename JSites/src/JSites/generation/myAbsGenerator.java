@@ -89,7 +89,7 @@ public abstract class myAbsGenerator extends AbstractGenerator implements Compos
     	return path;
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par) throws IOException, ProcessingException, SAXException {
     	this.par = par;
     	this._source=src;

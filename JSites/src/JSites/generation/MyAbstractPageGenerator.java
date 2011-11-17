@@ -113,6 +113,7 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 			}
 			else {
 				long tpid=DBGateway.getPidFrom("_"+containerType, conn);
+				if(tpid==-1) tpid=1;
 				if(tpid!=1) { // 1 = sempre HOMEPAGE, ed e' il default restituito se la pagina non esiste
 					ps.setLong(1, tpid);
 					ps.setString(2, "content");
@@ -220,7 +221,7 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 
 	}
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par) throws ProcessingException, SAXException, IOException{
 		
 		super.setup(resolver, objectModel, src, par);
@@ -257,7 +258,8 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 				pageId = ManagePageID(conn);
 				init(conn);
 				logger.log(Level.CONFIG, dbname + ": "+ "Take the permissions.");
-				permission = Authentication.assignPermissions(session, pageId, conn);
+				String remoteaddr=request.getRemoteAddr();
+				permission = Authentication.assignPermissions(session, remoteaddr, pageId, conn);
 				session.setAttribute("permission",permission);
 				
 				logger.log(Level.CONFIG, dbname + ": "+ "Permissions taken.");
@@ -334,14 +336,14 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 	private long ManagePageID(Connection conn) throws SQLException { 
 		
 		long ret=-1;
-		
+		String spid=request.getParameter("pid");
 		String pcode = request.getParameter("pcode");
-		if(pcode!= null){
+		if(pcode!= null && !pcode.equals("null")){
 			ret = DBGateway.getPidFrom(pcode, conn);
 		}
 		else{
-			try {;
-				ret = Long.parseLong(request.getParameter("pid"));
+			try {
+				ret = Long.parseLong(spid);
 			}
 			catch (Exception e2){ret = -1;} 
 		}
@@ -351,20 +353,24 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 			if(request.getParameter("papid")==null)ret=1;
 			else{
 				Long l = (Long) session.getAttribute("newPageID");
-				
+			
 				if(l==null){
-					l = DBGateway.getNewPageId(conn);
-					DBGateway.creaPaginaInDB(l,request, conn);
+					int ln = DBGateway.getNewPageId(conn);
+					DBGateway.creaPaginaInDB(ln,request, conn);
+					String remoteaddr=request.getRemoteAddr();
 					try {
-						Permission p=DBGateway.getPermission(Authentication.getUserData(session, "ID"), ret, conn);
-						DBGateway.setPermission(l, Authentication.getUserData(session, "ID"), p, conn);
+						Permission p=DBGateway.getPermission(Authentication.getUserData(session, "ID"), remoteaddr, ret, conn);
+						DBGateway.setPermission(new Long(ln), Authentication.getUserData(session, "ID"), p, conn);
 
 					} catch (JOpac2Exception e) {
-						DBGateway.setPermission(l, Authentication.getUserData(session, "ID"), conn);
+						DBGateway.setPermission(new Long(ln), Authentication.getUserData(session, "ID"), conn);
 					}
-					session.setAttribute("newPageID",l);
+					session.setAttribute("newPageID",new Long(ln));
+					ret=ln;
 				}
-				ret = l.longValue();
+				else {
+					ret = l.longValue();
+				}
 			}
 		} 
 		try {

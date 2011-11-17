@@ -49,6 +49,7 @@ public class SearchGenerator extends MyAbstractPageGenerator {
 	private String catalog;
 	
 	@Override
+	@SuppressWarnings("rawtypes")
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par) throws IOException, ProcessingException, SAXException {
 		
 		super.setup(resolver, objectModel, src, par);
@@ -81,11 +82,14 @@ public class SearchGenerator extends MyAbstractPageGenerator {
 		
 		if(ri instanceof Eutmarc){
 			Eutmarc rieut = ((Eutmarc)ri);
-			throwField("prezzo", rieut.getPrezzo());
+			throwField("prezzo", rieut.getAvailabilityAndOrPrice());
+			try {
 			if(rieut.getImage() != null)
 				throwField("image", "images/pubimages/eut"+t+".jpg");
 			else
 				throwField("image", "images/pubimages/NS.jpg");
+			}
+			catch(Exception e) {};
 			
 		}
 		

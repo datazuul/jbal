@@ -91,7 +91,7 @@ public class ListingGenerator extends MyAbstractPageGenerator {
 		long tempPid = 0; Permission tempP = null;
 		while(rs.next()){
 			tempPid = rs.getLong("PID");
-			tempP = Authentication.assignPermissions(session, tempPid, conn);
+			tempP = Authentication.assignPermissions(session, request.getRemoteAddr(), tempPid, conn);
 			if(tempP.hasPermission(Permission.ACCESSIBLE) && DBGateway.isPageValid(tempPid,conn) && DBGateway.isPageInSidebar(tempPid,conn)){
 				tree.add(rs.getString("Name") + " #" + tempPid);
 				tree.addAll(getTree(conn, tempPid));
@@ -102,7 +102,7 @@ public class ListingGenerator extends MyAbstractPageGenerator {
 		return tree;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par) throws ProcessingException, SAXException, IOException{
 		super.setup(resolver, objectModel,src,par);
 		containerType="listing";

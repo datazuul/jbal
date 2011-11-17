@@ -26,12 +26,13 @@ package JSites.generation;
 *******************************************************************************/
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Map;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.SearchResult;
 
-import it.univts.autenticazione.tomcat.realm.Auth;
+import JSites.authentication.Auth;
 
 import org.apache.avalon.framework.parameters.ParameterException;
 import org.apache.avalon.framework.parameters.Parameters;
@@ -93,10 +94,9 @@ public class AuthGenerator extends MyAbstractPageGenerator {
         try {
             Auth ads=new Auth(realm+"\\"+u, p, connectString);
             ads.Logon();
-
-            ret=true;
             
-            NamingEnumeration n=ads.Search("(sAMAccountName="+u+")");
+            @SuppressWarnings("rawtypes")
+			NamingEnumeration n=ads.Search("(sAMAccountName="+u+")");
             SearchResult sr = null;
             int count=0;
             
@@ -111,6 +111,7 @@ public class AuthGenerator extends MyAbstractPageGenerator {
             }
             
             ads.close();
+            ret=true;
             
         }
         catch (Exception e) {
@@ -121,6 +122,8 @@ public class AuthGenerator extends MyAbstractPageGenerator {
 
     }
 	
+	
+	@SuppressWarnings("rawtypes")
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par) throws ProcessingException, SAXException, IOException{
 		super.setup(resolver, objectModel, src, par);
 		

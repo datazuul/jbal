@@ -132,10 +132,12 @@ public class DbSetupMysql extends DbSetup {
 				"insertdate datetime NOT NULL default '0000-00-00 00:00:00'," +
 				"username varchar(50) NOT NULL default 'unknown'," +
 				"remoteip varchar(20) NOT NULL default 'unknown'," +
+				"priority int(10) NOT NULL default '99'," +
 				"KEY index_username (username)," +
 				"KEY index_remoteip (remoteip)," +
 				"KEY index_insertdate (insertdate)," +
 				"KEY index_resp (resp)," +
+				"KEY index_priority (priority)," +
 				"PRIMARY KEY  (PID)," +
 				"UNIQUE KEY Codice USING BTREE (PCode)," +
 				"KEY Index_2 USING BTREE (PaPID)" +

@@ -121,6 +121,7 @@ public class DbSetupDerby extends DbSetup {
 				"HasChild int NOT NULL default 0," +
 				"PCode varchar(20) NOT NULL," +
 				"InSidebar int  NOT NULL default 1," + 
+				"priority int NOT NULL default 99, " +
 				"resp varchar(50)" +
 				"insertdate datetime NOT NULL default '0000-00-00 00:00:00'," +
 				"username varchar(50) NOT NULL default 'unknown'," +
