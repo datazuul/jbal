@@ -29,9 +29,10 @@
 	                    
 	                    <map:transform type="simpleMail" />
 	                    		                    
-	                    <!-- map:transform type="tutil" src="/t/sendafter0" / -->
 	                    
-	                    <map:transform src="sendmailresult.xslt" >
+	                    <map:transform type="xslt" src="context://stylesheets/xslt/removens.xslt" />
+	                    <!-- map:transform type="tutil" src="/t/sendafter0" / -->
+	                    <map:transform src="sendmailresult.xslt">
 	                    	<map:parameter name="use-request-parameters" value="true"/>
 	                        <map:parameter name="pagecode" value="{request-attr:pagecode}" />
 	                        <map:parameter name="pagerequest" value="{request-attr:pagerequest}"/>
@@ -39,7 +40,11 @@
 	                    
 	                    <!-- map:transform type="tutil" src="/t/sendafter1" / -->
 	                    
-	                    <map:transform type="wikitrans"/>
+	                    
+	                    
+	                    
+	                    <!-- map:transform type="wikitrans"/ -->
+	                    
 	                    <map:serialize type="xml"/>
 	                </map:act>
 	            </map:match>

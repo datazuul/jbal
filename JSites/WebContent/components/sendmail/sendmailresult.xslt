@@ -4,8 +4,7 @@
 								xmlns:source="http://apache.org/cocoon/source/1.0">
 								
     <xsl:include href="../../stylesheets/xslt/editlinks.xslt" />
-    <!-- Questo include serve pei link de modifica, elimina e (dis)attiva 
-		 ma anca per le combo de ordinamento  -->
+    <!-- Questo include serve pei link de modifica, elimina e (dis)attiva   -->
 		 
 	<xsl:param name="cid"/>
 	<xsl:param name="pid"/>
@@ -21,47 +20,45 @@
     <xsl:param name="pagerequest" />
     <xsl:param name="container" />
     
-		 
-	<xsl:template match="/content">
+   	<xsl:template match="subject" />
+	<xsl:template match="from" />
+	<xsl:template match="to" />
+	<xsl:template match="smtphost" />
+	<xsl:template match="body" />
+    
+   	<xsl:template match="/content">
 		<xsl:apply-templates />
 		
 		<!--  TASTO DI MODIFICA -->
 		<xsl:call-template name="editlinks" />
-		<xsl:apply-templates select="order" />
 	</xsl:template>
 	
-	<xsl:template match="result">
+	<xsl:template match="result[2]" />
+	
+	<xsl:template match="result[1]">
+		<div>
 		<xsl:apply-templates />
-	</xsl:template>
-	
-	
-	<xsl:template match="sendmail:result">
-		<xsl:if test="sendmail:failure">
-			<xsl:value-of select="//mailerror" />
-		</xsl:if>
-		<xsl:if test="success">
-			<xsl:value-of select="//mailsent" />
-		</xsl:if>
-	</xsl:template>
-	
-	<xsl:template match="sendmail:sendmail">
-		<xsl:apply-templates />
+		</div>
 	</xsl:template>
 	
 	<xsl:template match="success">
-		<xsl:value-of select="//mailsent" />
+		<xsl:apply-templates />
 	</xsl:template>
 	
-	<xsl:template match="sendmail:subject" />
-	<xsl:template match="sendmail:from" />
-	<xsl:template match="sendmail:to" />
-	<xsl:template match="sendmail:smtphost" />
-	<xsl:template match="sendmail:body" />
+	<xsl:template match="failure">
+		<xsl:apply-templates />
+	</xsl:template>
 	
+	<xsl:template match="sendmail">
+		<xsl:apply-templates />
+	</xsl:template>
+
 	<xsl:template match="debug">
-		<pre>
-			<xsl:value-of select="." />
-		</pre>
+		<xsl:if test="contains(/content/sendmail/debug,'true')" >
+			<pre>
+				<xsl:value-of select="." />
+			</pre>
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="mailsent" />
@@ -69,7 +66,8 @@
 	<xsl:template match="mailerror" />
 	
 	
-	 
+	
+
 <!-- 	<xsl:template match="text()"/>  -->
 
 	<xsl:template match="@*|node()|text()">
