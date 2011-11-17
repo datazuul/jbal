@@ -12,6 +12,168 @@
 	    
 	</map:match>
 
+
+    <map:match pattern="pagecreate">
+    	<map:act type="auth-protect">
+			<map:parameter name="handler" value="JSitesHandler"/>
+	    	<map:act type="create-page">
+	    		<map:parameter name="containerType" value="content"/>
+	    		<map:parameter name="db" value="{global:db}"/>
+	    		<map:parameter name="datadir" value="{global:data-directory}" />
+	    	</map:act>
+        	
+	    	<map:redirect-to uri="{request-attr:pagecode}" />
+		    
+	    </map:act>
+		<!-- something was wrong, redirect to login page -->
+        <map:redirect-to uri="login"/>
+    </map:match>
+
+    <map:match pattern="pageinsidebar">
+    	<map:act type="auth-protect">
+			<map:parameter name="handler" value="JSitesHandler"/>
+	    	<map:act type="page-in-sidebar">
+	    		<map:parameter name="containerType" value="content"/>
+	    		<map:parameter name="db" value="{global:db}"/>
+	    		<map:parameter name="datadir" value="{global:data-directory}" />
+	    	</map:act>
+	    	<map:act type="PageCodeAction" src="{global:db}:pageview">
+	    		<map:redirect-to uri="{request-attr:pagecode}" />
+		    </map:act>
+		</map:act>
+		<!-- something was wrong, redirect to login page -->
+        <map:redirect-to uri="login"/>
+    </map:match>
+    
+        <map:match pattern="pageviewsidebar">
+    	<map:act type="auth-protect">
+			<map:parameter name="handler" value="JSitesHandler"/>
+	    	<map:act type="page-view-sidebar">
+	    		<map:parameter name="containerType" value="content"/>
+	    		<map:parameter name="db" value="{global:db}"/>
+	    		<map:parameter name="datadir" value="{global:data-directory}" />
+	    	</map:act>
+	    	<map:act type="PageCodeAction" src="{global:db}:pageview">
+	    		<map:redirect-to uri="{request-attr:pagecode}" />
+		    </map:act>
+		</map:act>
+		<!-- something was wrong, redirect to login page -->
+        <map:redirect-to uri="login"/>
+    </map:match>
+    
+    <map:match pattern="pageactivate">
+    	<map:act type="auth-protect">
+			<map:parameter name="handler" value="JSitesHandler"/>
+	    	<map:act type="activate-page">
+	    		<map:parameter name="containerType" value="content"/>
+	    		<map:parameter name="db" value="{global:db}"/>
+	    		<map:parameter name="datadir" value="{global:data-directory}" />
+	    	</map:act>
+	        <map:act type="PageCodeAction" src="{global:db}:pageview">
+	    		<map:redirect-to uri="{request-attr:pagecode}" />
+		    </map:act>
+		    </map:act>
+		<!-- something was wrong, redirect to login page -->
+        <map:redirect-to uri="login"/>
+    </map:match>
+
+    <map:match pattern="pagedelete">
+    	<map:act type="auth-protect">
+			<map:parameter name="handler" value="JSitesHandler"/>
+	    	<map:act type="delete-component">
+	    		<map:parameter name="containerType" value="content"/>
+	    		<map:parameter name="db" value="{global:db}"/>
+	    		<map:parameter name="datadir" value="{global:data-directory}" />
+	    	</map:act>
+        	
+    		<map:redirect-to uri="{request-attr:pagecode}" />
+		    
+	    </map:act>
+		<!-- something was wrong, redirect to login page -->
+        <map:redirect-to uri="login"/>
+    </map:match>
+    
+    
+    <map:match pattern="pagecomponentmove">
+    	<map:act type="auth-protect">
+			<map:parameter name="handler" value="JSitesHandler"/>
+	    	<map:act type="move-component">
+	    		<map:parameter name="containerType" value="content"/>
+	    		<map:parameter name="db" value="{global:db}"/>
+	    		<map:parameter name="datadir" value="{global:data-directory}" />
+	    	</map:act>
+        	<map:act type="PageCodeAction" src="{global:db}:pageview">
+	    		<map:redirect-to uri="{request-attr:pagecode}" />
+		    </map:act>
+	    </map:act>
+		<!-- something was wrong, redirect to login page -->
+        <map:redirect-to uri="login"/>
+    </map:match>
+    
+    <map:match pattern="pagedisable">
+    	<map:act type="auth-protect">
+			<map:parameter name="handler" value="JSitesHandler"/>
+	    	<map:act type="disable-page">
+	    		<map:parameter name="containerType" value="content"/>
+	    		<map:parameter name="db" value="{global:db}"/>
+	    		<map:parameter name="datadir" value="{global:data-directory}" />
+	    	</map:act>
+        	<map:act type="PageCodeAction" src="{global:db}:pageview">
+	    		<map:redirect-to uri="{request-attr:pagecode}" />
+		    </map:act>
+	    </map:act>
+		<!-- something was wrong, redirect to login page -->
+        <map:redirect-to uri="login"/>
+    </map:match>
+    
+    <map:match pattern="pageerase">
+    	<map:act type="auth-protect">
+			<map:parameter name="handler" value="JSitesHandler"/>
+	    	<map:act type="erase-page">
+	    		<map:parameter name="containerType" value="content"/>
+	    		<map:parameter name="db" value="{global:db}"/>
+	    		<map:parameter name="datadir" value="{global:data-directory}" />
+	    	</map:act>
+        	<map:act type="PageCodeAction" src="{global:db}:pageview">
+	    		<map:redirect-to uri="{context}" />
+		    </map:act>
+	    </map:act>
+		<!-- something was wrong, redirect to login page -->
+        <map:redirect-to uri="login"/>
+    </map:match>
+
+    <map:match pattern="pageclone">
+    	<map:act type="auth-protect">
+			<map:parameter name="handler" value="JSitesHandler"/>
+	    	<map:act type="clone-page">
+	    		<map:parameter name="containerType" value="content"/>
+	    		<map:parameter name="db" value="{global:db}"/>
+	    		<map:parameter name="datadir" value="{global:data-directory}" />
+	    	</map:act>
+        	<map:act type="PageCodeAction" src="{global:db}:pageview">
+	    		<map:redirect-to uri="{request-attr:pagecode}" />
+		    </map:act>
+	    </map:act>
+		<!-- something was wrong, redirect to login page -->
+        <map:redirect-to uri="login"/>
+    </map:match>
+    
+    <map:match pattern="pagemanagedb">
+    	<map:act type="auth-protect">
+			<map:parameter name="handler" value="JSitesHandler"/>
+	    	<map:act type="manage-users">
+	    		<map:parameter name="containerType" value="content"/>
+	    		<map:parameter name="db" value="{global:db}"/>
+	    		<map:parameter name="datadir" value="{global:data-directory}" />
+	    	</map:act>
+        	<map:act type="PageCodeAction" src="{global:db}:pageview">
+	    		<map:redirect-to uri="{request-attr:pagecode}" />
+		    </map:act>
+	    </map:act>
+		<!-- something was wrong, redirect to login page -->
+        <map:redirect-to uri="login"/>
+    </map:match>
+
 	<map:match pattern="page*">
 		<map:act type="auth-protect">
 			<map:parameter name="handler" value="JSitesHandler"/>
@@ -19,7 +181,7 @@
 				<map:redirect-to uri="cocoon:/do{../../1}?db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/>
 			</map:act>
 	    </map:act>
-        <!-- something was wrong, redirect to login page -->
+        
         <map:redirect-to uri="login"/>
 	</map:match>
 	
@@ -27,59 +189,7 @@
 	<!-- ========================================= -->
 	
     
-<!--+ 
-    | Match per le Actions
-    +-->
-    
-    <map:match pattern="activate*">
-    	<map:act type="activate-page">
-    		<map:parameter name="containerType" value="{1}"/>
-    	</map:act>
-        <map:redirect-to uri="view{1}"/>
-    </map:match>
-    
-    <map:match pattern="delete*">
-    	<map:act type="delete-component">
-    		<map:parameter name="containerType" value="{1}"/>
-    	</map:act>
-        <map:redirect-to uri="view{1}"/>
-    </map:match>
-    
-    <map:match pattern="ordersave*">
-    	<map:act type="save-order">
-    		<map:parameter name="containerType" value="{1}"/>
-    	</map:act>
-        <map:redirect-to uri="view{1}"/>
-    </map:match>
-    
-    <map:match pattern="disable*">
-    	<map:act type="disable-page">
-    		<map:parameter name="containerType" value="{1}"/>
-    	</map:act>
-        <map:redirect-to uri="view{1}"/>
-    </map:match>
 
-    <map:match pattern="erase*">
-    	<map:act type="erase-page">
-    		<map:parameter name="containerType" value="{1}"/>
-    	</map:act>
-        <map:redirect-to uri="view{1}"/>
-    </map:match>
-    
-    <map:match pattern="insidebar*">
-    	<map:act type="page-in-sidebar">
-    		<map:parameter name="containerType" value="{1}"/>
-    	</map:act>
-        <map:redirect-to uri="view{1}"/>
-    </map:match>
-    
-    <map:match pattern="managedb*">
-    	<map:act type="manage-users">
-    		<map:parameter name="containerType" value="{1}"/>
-    	</map:act>
-        <map:redirect-to uri="cocoon:/view{1}"/>
-    </map:match>
-    
   </map:pipeline>
 
     <!-- =========================================== -->
@@ -90,7 +200,31 @@
 	<map:pipeline>
 		<map:match pattern="test">
 			<map:generate type="timeGenerator" />
-			<map:serialize type="html" />
+			<map:serialize type="xhtml" />
+			<!--
+			<map:select type="parameter">
+        		<map:parameter name="parameter-selector-test" value="{global:serializer}"/>
+					<map:serialize type="xhtml10strict" />
+				<map:when test="xhtml10strict">
+				</map:when>
+				<map:when test="xhtml10transitional">
+					<map:serialize type="xhtml10transitional" />
+				</map:when>
+				<map:when test="xhtml10frameset">
+					<map:serialize type="xhtml10frameset" />
+				</map:when>
+				<map:when test="xhtml11">
+					<map:serialize type="xhtml11" />
+				</map:when>
+				<map:when test="xhtml2">
+					<map:serialize type="xhtml2" />
+				</map:when>
+			
+				<map:otherwise>
+					<map:serialize type="xhtml" />
+			    </map:otherwise>
+			</map:select>
+			-->
 		</map:match>
 	    
 	   	<map:match pattern="components/**/css/*.css">
@@ -129,12 +263,15 @@
 		
         <map:transform type="cinclude"/>
 
+		<!-- map:transform type="tutil" src="/t/pageview" / -->
+
         <map:act type="auth-loggedIn">
         	<map:parameter name="handler" value="JSitesHandler"/>
 	        <map:act type="auth-protect">
 		        <map:parameter name="handler" value="JSitesHandler"/>
 		        <map:transform src="../stylesheets/xslt/addForm.xslt">
 			        <map:parameter name="use-request-parameters" value="true"/>
+			        <map:parameter name="pid" value="{request-attr:pid}"/>
 			    </map:transform>
 		    </map:act>
 		</map:act>
@@ -157,7 +294,7 @@
 
         <map:parameter name="parameters" value="true"/>
         <map:transform type="fillBill">
-        	<map:parameter name="pid" value="{request-param:pid}"/>
+        	<map:parameter name="pid" value="{request-attr:pid}"/>
         </map:transform>
 
         <map:transform type="cinclude"/>
@@ -201,7 +338,8 @@
 <!--+ 
     | Match che crea nuove pagine o pagine di redirect a siti esterni
     +-->
-    
+
+<!--    
     <map:match pattern="create*">
         <map:generate type="pagecreator">
             <map:parameter name="containerType" value="{1}"/>
@@ -216,48 +354,9 @@
         <map:transform type="cinclude"/>		
         <map:serialize type="xml"/>
     </map:match>
+-->    
     
-    
-<!--+ 
-    | Match di ordinamento dei componenti in una pagina
-    +-->
-    
-    <map:match pattern="order*">
-    	<map:generate type="pageorderer">
-            <map:parameter name="containerType" value="{1}"/>
-        </map:generate>
-        
-        <!-- map:transform type="tutil" src="/t/pageorderer" / -->
 
-        <map:parameter name="parameters" value="true"/>
-        <map:transform type="fillBill">
-        	<map:parameter name="pid" value="{request-param:pid}"/>
-        	
-        </map:transform>
-	    
-	    <!-- map:transform type="tutil" src="/t/pagepostorderer" / -->
-
-		<map:transform type="cinclude">
-	        <map:parameter name="use-request-parameters" value="true"/>
-	    </map:transform>
-	    
-	    <!-- map:transform type="tutil" src="/t/pageincludeorderer" / -->
-	    
-	    <map:act type="auth-loggedIn">
-        	<map:parameter name="handler" value="JSitesHandler"/>
-	        <map:act type="auth-protect">
-		        <map:parameter name="handler" value="JSitesHandler"/>
-		        <map:transform src="../stylesheets/xslt/addForm.xslt">
-			        <map:parameter name="use-request-parameters" value="true"/>
-			        <map:parameter name="pcode" value="{request-attr:pagecode}"/>
-			    </map:transform>
-		    </map:act>
-		</map:act>
-	    
-	    <!-- map:transform type="wikitrans" / -->
-	    <map:serialize type="xml"/>
-    </map:match>
-    
   </map:pipeline>
   
   
@@ -370,62 +469,93 @@
 	        
 	        <!-- map:transform type="metadata" / -->
 	        
-	        <!-- {session-attr:template} -->
-	        
-	        <!--
-	        http://www.xsltg.com/appl/sitemap.xmap
-	        
-	        
-	        <map:resource name="htmlSerialize">
-			<map:select type="request-parameter">
-				<map:parameter name="parameter-name" value="pageType"/>
-				<map:when test="frameset">
-					<map:serialize type="xhtml-frameset"/>
+	        <!-- map:transform type="tutil" src="/t/final" / -->
+	         
+			
+			<map:select type="browser">
+				<map:when test="explorer">
+					<!--
+						{request-attr:_template} e' impostato da PageCodeAction prendendo {global:template}
+						per default e il valore del parametro _template se specificato altrimenti
+					-->	       
+					<map:transform type="xslt" src="context://templates/{request-attr:_template}/xslt/xml2xhtml.xslt">
+			        	<map:parameter name="context" value="{context}"/>
+			        	<map:parameter name="pid" value="{request-param:pid}"/>
+			        	<map:parameter name="useragent" value="explorer"/>
+			        	<map:parameter name="template" value="{request-attr:_template}"/>
+			        	<map:parameter name="sitename" value="{global:sitename}"/>
+			        	<map:parameter name="pageid" value="{request-attr:pid}"/>
+			        	<map:parameter name="pagecode" value="{request-attr:pcode}"/>
+			        	<map:parameter name="pagename" value="{request-attr:name}"/>
+			        	<map:parameter name="pageusername" value="{request-attr:username}"/>
+			        	<map:parameter name="pagechangeip" value="{request-attr:remoteip}"/>
+			        	<map:parameter name="pagedate" value="{request-attr:insertdate}"/>
+			        	<map:parameter name="pageresp" value="{request-attr:resp}"/>
+			        	<map:parameter name="requesturi" value="{request-attr:uri}"/>
+			        	<map:parameter name="querystring" value="{request-attr:querystring}"/>
+			        	<map:parameter name="viewsidebar" value="{request-attr:viewsidebar}"/>
+			        </map:transform>
+		        
+			        <!-- map:transform type="tutil" src="/t/finalIE" / -->
+			        
+			        <map:transform type="cinclude"/>
+			        <map:transform type="xslt" src="context://stylesheets/xslt/removens.xslt" />
+					<map:serialize type="html-MSIE"/>
 				</map:when>
 				<map:otherwise>
-					<map:select type="browser">
-						<map:when test="ie6">
-							<map:serialize type="html-MSIE"/>
+					<!--
+						{request-attr:_template} e' impostato da PageCodeAction prendendo {global:template}
+						per default e il valore del parametro _template se specificato altrimenti
+					-->	       
+					<map:transform type="xslt" src="context://templates/{request-attr:_template}/xslt/xml2xhtml.xslt">
+			        	<map:parameter name="context" value="{context}"/>
+			        	<map:parameter name="pid" value="{request-param:pid}"/>
+			        	<map:parameter name="useragent" value="NA"/>
+			        	<map:parameter name="template" value="{request-attr:_template}"/>
+			        	<map:parameter name="sitename" value="{global:sitename}"/>
+			        	<map:parameter name="pageid" value="{request-attr:pid}"/>
+			        	<map:parameter name="pagecode" value="{request-attr:pcode}"/>
+			        	<map:parameter name="pagename" value="{request-attr:name}"/>
+			        	<map:parameter name="pageusername" value="{request-attr:username}"/>
+			        	<map:parameter name="pagechangeip" value="{request-attr:remoteip}"/>
+			        	<map:parameter name="pagedate" value="{request-attr:insertdate}"/>
+			        	<map:parameter name="pageresp" value="{request-attr:resp}"/>
+			        	<map:parameter name="requesturi" value="{request-attr:uri}"/>
+			        	<map:parameter name="querystring" value="{request-attr:querystring}"/>
+			        	<map:parameter name="viewsidebar" value="{request-attr:viewsidebar}"/>
+			        </map:transform>
+		        
+			        
+			        <map:transform type="cinclude"/>
+			        
+			        <map:select type="parameter">
+		        		<map:parameter name="parameter-selector-test" value="{global:serializer}"/>
+						<map:when test="xhtml10strict">
+							<map:serialize type="xhtml10strict" />
 						</map:when>
-						<map:when test="ie55">
-							<map:serialize type="html-MSIE"/>
+						<map:when test="xhtml10transitional">
+							<map:serialize type="xhtml10transitional" />
 						</map:when>
+						<map:when test="xhtml10frameset">
+							<map:serialize type="xhtml10frameset" />
+						</map:when>
+						<map:when test="xhtml11">
+							<map:serialize type="xhtml11" />
+						</map:when>
+						<map:when test="xhtml2">
+							<map:serialize type="xhtml2" />
+						</map:when>
+					
 						<map:otherwise>
-							<map:serialize type="xhtml"/>
-						</map:otherwise>
+							<map:serialize type="xhtml" />
+					    </map:otherwise>
 					</map:select>
 				</map:otherwise>
 			</map:select>
-		</map:resource>
 	        
-	        -->
-	        
-			<!--
-				{request-attr:_template} e' impostato da PageCodeAction prendendo {global:template}
-				per default e il valore del parametro _template se specificato altrimenti
-			-->	       
-			<map:transform type="xslt" src="context://templates/{request-attr:_template}/xslt/xml2xhtml.xslt">
-	        	<map:parameter name="context" value="{context}"/>
-	        	<map:parameter name="pid" value="{request-param:pid}"/>
-	        	<map:parameter name="template" value="{request-attr:_template}"/>
-	        	<map:parameter name="sitename" value="{global:sitename}"/>
-	        	<map:parameter name="pageid" value="{request-attr:pid}"/>
-	        	<map:parameter name="pagecode" value="{request-attr:pcode}"/>
-	        	<map:parameter name="pagename" value="{request-attr:name}"/>
-	        	<map:parameter name="pageusername" value="{request-attr:username}"/>
-	        	<map:parameter name="pagechangeip" value="{request-attr:remoteip}"/>
-	        	<map:parameter name="pagedate" value="{request-attr:insertdate}"/>
-	        	<map:parameter name="pageresp" value="{request-attr:resp}"/>
-	        </map:transform>
-        
-	        
-	        <map:transform type="cinclude"/>
-	        
-	         <!-- map:transform type="tutil" src="/t/final" / -->
-	        
-	        <map:serialize type="html" /> <!-- doctype-default="loose" --> 
 	    </map:match>
-	    
+	 
+	    <!-- for login/logout pages -->
 	    <map:match pattern="read-*">
 	    	<map:generate src="../{1}" />
 	    	<map:serialize />
