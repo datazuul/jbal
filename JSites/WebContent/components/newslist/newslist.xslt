@@ -32,12 +32,13 @@
 	</xsl:template>
 	
 	<xsl:template match="newslist">
-		
-		<h1 class="newslist_titolo">AVVISI</h1>
-
-		<div class="newslist_avvisi">
-			<xsl:apply-templates />
-		</div>
+		<xsl:if test="count(newsitem) != 0">
+			<h1 class="newslist_titolo">AVVISI</h1>
+	
+			<div class="newslist_avvisi">
+				<xsl:apply-templates />
+			</div>
+		</xsl:if>
 	</xsl:template>
 	
 	<xsl:template match="newsitem">
