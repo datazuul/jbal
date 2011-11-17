@@ -44,7 +44,7 @@
 		
 				<map:match pattern="*">
 					<map:generate type="bricioleGenerator">
-						<map:parameter name="startLevel" value="2"/>
+						<map:parameter name="startLevel" value="1"/>
 					</map:generate>
                     <map:transform src="briciole2xhtml.xslt"/>
                     <map:transform type="wikitrans"/>
