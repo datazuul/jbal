@@ -78,15 +78,113 @@
       | Serializers consume SAX events and produce a character stream. Every
       | pipeline needs to be terminated by a serializer.
       +-->
-  <map:serializers default="html">
+  <map:serializers default="xhtml">
     <map:serializer logger="sitemap.serializer.links" name="links" src="org.apache.cocoon.serialization.LinkSerializer"/>
     <map:serializer logger="sitemap.serializer.xml" mime-type="text/xml" name="xml" src="org.apache.cocoon.serialization.XMLSerializer"/>
 
+	<!-- HTML 4 as html  -->
     <map:serializer logger="sitemap.serializer.html" mime-type="text/html" name="html" pool-max="${html-serializer.pool-max}" src="org.apache.cocoon.serialization.HTMLSerializer">
+      <doctype-public>-//W3C//DTD HTML 4.01 Transitional//EN</doctype-public>
+      <doctype-system>http://www.w3.org/TR/html4/loose.dtd</doctype-system>
+    </map:serializer>
+
+	<!-- XHTML 2.0 as html2 (not w3c approved) -->
+    <map:serializer logger="sitemap.serializer.html" mime-type="application/xhtml+xml" name="xhtml2" pool-max="${html-serializer.pool-max}" 
+    	src="org.apache.cocoon.serialization.XMLSerializer">
+      <doctype-public>-//W3C//DTD XHTML 2.0//EN</doctype-public>
+      <doctype-system>http://www.w3.org/MarkUp/DTD/xhtml2.dtd</doctype-system>
+    </map:serializer>
+
+	<!-- XHTML 1.0 Strict as xhtml10strict -->
+    <map:serializer logger="sitemap.serializer.xhtml" mime-type="application/xhtml+xml" name="xhtml10strict" pool-max="${xhtml-serializer.pool-max}" 
+    	src="org.apache.cocoon.serialization.XMLSerializer">
+    	<doctype-public>-//W3C//DTD XHTML 1.0 Strict//EN</doctype-public>
+	    <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd</doctype-system>
+      <encoding>UTF-8</encoding>
+      <indent>true</indent>
+      <omit-xml-declaration>true</omit-xml-declaration>
+    </map:serializer>
+    
+    <!-- XHTML 1.0 Transitional as xhtml10transitional -->
+    <map:serializer logger="sitemap.serializer.xhtml" mime-type="application/xhtml+xml" name="xhtml10transitional" pool-max="${xhtml-serializer.pool-max}" 
+    	src="org.apache.cocoon.serialization.XMLSerializer">
+    	<doctype-public>-//W3C//DTD XHTML 1.0 Transitional//EN</doctype-public>
+        <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd</doctype-system>
+        <encoding>UTF-8</encoding>
+        <indent>true</indent>
+        <omit-xml-declaration>true</omit-xml-declaration>
+    </map:serializer>
+    
+    <!-- XHTML 1.0 Transitional fir IE8 as html-MSIE -->
+    <map:serializer logger="sitemap.serializer.html" mime-type="text/html" name="html-MSIE" pool-max="${html-serializer.pool-max}" 
+    	src="org.apache.cocoon.serialization.HTMLSerializer">
+    	
+      
+    	 <doctype-public>-//W3C//DTD XHTML 1.0 Transitional//EN</doctype-public>
+        <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd</doctype-system>
+        <encoding>UTF-8</encoding>
+        <indent>true</indent>
+        <omit-xml-declaration>true</omit-xml-declaration>
+    </map:serializer>
+    
+    
+    <!-- XHTML 1.0 Frameset as xhtml10frameset -->
+    <map:serializer logger="sitemap.serializer.xhtml" mime-type="application/xhtml+xml" name="xhtml10frameset" pool-max="${xhtml-serializer.pool-max}" 
+    	src="org.apache.cocoon.serialization.XMLSerializer">
+    	<doctype-public>-//W3C//DTD XHTML 1.0 Frameset//EN</doctype-public>
+        <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd</doctype-system>
+      <encoding>UTF-8</encoding>
+      <indent>true</indent>
+      <omit-xml-declaration>true</omit-xml-declaration>
+    </map:serializer>
+     
+    <!-- XHTML 1.1 Transitional as xhtml11 -->
+    <map:serializer logger="sitemap.serializer.xhtml" mime-type="application/xhtml+xml" name="xhtml11" pool-max="${xhtml11-serializer.pool-max}" 
+    	src="org.apache.cocoon.serialization.XMLSerializer">
+      <doctype-public>-//W3C//DTD XHTML 1.1//EN</doctype-public>
+      <doctype-system>http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd</doctype-system>
+      <encoding>UTF-8</encoding>
+      <indent>true</indent>
+      <omit-xml-declaration>true</omit-xml-declaration>
+    </map:serializer>    
+    
+    <!-- XHTML 1.1 Transitional as xhtml -->
+    <map:serializer logger="sitemap.serializer.xhtml" mime-type="application/xhtml+xml" name="xhtml" pool-max="${xhtml11-serializer.pool-max}" 
+    	src="org.apache.cocoon.serialization.XMLSerializer">
+      <doctype-public>-//W3C//DTD XHTML 1.1//EN</doctype-public>
+      <doctype-system>http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd</doctype-system>
+      <encoding>UTF-8</encoding>
+      <indent>true</indent>
+      <omit-xml-declaration>true</omit-xml-declaration>
+    </map:serializer>  
+    
+    
+    <!-- XHTML 1.1 Transitional as xhtml -->
+    <map:serializer logger="sitemap.serializer.xhtml" mime-type="text/html" name="xhtmlNO" pool-max="${xhtml11-serializer.pool-max}" 
+    	src="org.apache.cocoon.serialization.HTMLSerializer">
+      <doctype-public>-//W3C//DTD XHTML 1.1//EN</doctype-public>
+      <doctype-system>http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd</doctype-system>
+      <encoding>UTF-8</encoding>
+      <indent>true</indent>
+      <omit-xml-declaration>true</omit-xml-declaration>
+    </map:serializer>  
+    
+    
+    <!-- JSites debug serializer as debug-html -->
+    <map:serializer logger="sitemap.serializer.html" mime-type="text/html" name="debug-html" pool-max="${html-serializer.pool-max}" src="JSites.serializer.HTMLSerializer">
+      <doctype-public>-//W3C//DTD XHTML 2.0//EN</doctype-public>
+      <doctype-system>http://www.w3.org/MarkUp/DTD/xhtml2.dtd</doctype-system>
+      
+      
+      <!--
+      <doctype-public>-//W3C//DTD XHTML 1.0 Strict//EN</doctype-public>
+      <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd</doctype-system>
+      
       <doctype-public>-//W3C//DTD XHTML 1.0 Transitional//EN</doctype-public>
       <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd</doctype-system>
-      <!-- <doctype-public>-//W3C//DTD HTML 4.01 Transitional//EN</doctype-public>
-      <doctype-system>http://www.w3.org/TR/html4/loose.dtd</doctype-system> -->
+      -->
+      <indent>true</indent>
+      <omit-xml-declaration>true</omit-xml-declaration>
     </map:serializer>
 
     <map:serializer logger="sitemap.serializer.wml" mime-type="text/vnd.wap.wml" name="wml" src="org.apache.cocoon.serialization.XMLSerializer">
@@ -107,33 +205,6 @@
     <map:serializer logger="sitemap.serializer.svgxml" mime-type="image/svg+xml" name="svgxml" src="org.apache.cocoon.serialization.XMLSerializer">
      <doctype-public>-//W3C//DTD SVG 1.0//EN</doctype-public>
      <doctype-system>http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd</doctype-system>
-    </map:serializer>
-
-    <map:serializer logger="sitemap.serializer.xhtml" mime-type="text/html" name="xhtml" pool-max="${xhtml-serializer.pool-max}" src="org.apache.cocoon.serialization.XMLSerializer">
-      <!--+
-          | You can choose from Strict, Transitional, or Frameset XHTML.
-          | For Strict XHTML set doctype to:
-          |   <doctype-public>-//W3C//DTD XHTML 1.0 Strict//EN</doctype-public>
-          |   <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd</doctype-system>
-          | For Transitional XHTML set doctype to:
-          |   <doctype-public>-//W3C//DTD XHTML 1.0 Transitional//EN</doctype-public>
-          |   <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd</doctype-system>
-          | For Frameset XHTML set doctype to:
-          |   <doctype-public>-//W3C//DTD XHTML 1.0 Frameset//EN</doctype-public>
-          |   <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd</doctype-system>
-          |
-          | Default XHTML doctype in Cocoon is XHTML Strict. If you want to use more than one
-          | XHTML DTD simultaneously, you can define several XHTML serializers.
-          +-->
-      <doctype-public>-//W3C//DTD XHTML 1.0 Transitional//EN</doctype-public>
-      <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd</doctype-system>
-      <encoding>UTF-8</encoding>
-    </map:serializer>
-
-    <map:serializer logger="sitemap.serializer.xhtml" mime-type="application/xhtml+xml" name="xhtml11" pool-max="${xhtml11-serializer.pool-max}" src="org.apache.cocoon.serialization.XMLSerializer">
-      <doctype-public>-//W3C//DTD XHTML 1.1//EN</doctype-public>
-      <doctype-system>http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd</doctype-system>
-      <encoding>UTF-8</encoding>
     </map:serializer>
 
     <map:serializer logger="sitemap.serializer.text" mime-type="text/plain" name="text" src="org.apache.cocoon.serialization.TextSerializer"/>
@@ -259,6 +330,11 @@
           +-->
       <browser name="opera" useragent="Opera"/>
       <browser name="explorer" useragent="MSIE"/>
+      <browser name="explorer" useragent="MSIE"/>
+    <browser name="explorer6" useragent="MSIE 6"/>
+    <browser name="explorer7" useragent="MSIE 7"/>
+    <browser name="explorer8" useragent="MSIE 8"/>
+    <browser name="explorer9" useragent="MSIE 9"/>
       <browser name="pocketexplorer" useragent="MSPIE"/>
       <browser name="handweb" useragent="HandHTTP"/>
       <browser name="avantgo" useragent="AvantGo"/>
