@@ -45,13 +45,17 @@
     <map:action name="auth-loggedIn" src="org.apache.cocoon.webapps.authentication.acting.LoggedInAction"/>
     
     <!-- Queste xe le mie Actions!!! -->
-    <map:action name="activate-page" src="JSites.action.ActivatePage"/>
-    <map:action name="disable-page" src="JSites.action.DisablePage"/>
-    <map:action name="save-order" src="JSites.action.SaveOrder"/>    
-    <map:action name="delete-component" src="JSites.action.DeleteComponent"/>
-    <map:action name="page-in-sidebar" src="JSites.action.PageInSidebar"/>
-    <map:action name="erase-page" src="JSites.action.ErasePage"/>
-    <map:action name="manage-users" src="JSites.action.ManageUsers"/>
+    <map:action name="activate-page" src="JSites.action.ActivatePageAction"/>
+    <map:action name="create-page" src="JSites.action.CreatePageAction"/>
+    <map:action name="disable-page" src="JSites.action.DisablePageAction"/>
+    <!--  <map:action name="save-order" src="JSites.action.SaveOrder"/>   --> 
+    <map:action name="delete-component" src="JSites.action.DeleteComponentAction"/>
+    <map:action name="move-component" src="JSites.action.MoveComponentAction"/>
+    <map:action name="page-in-sidebar" src="JSites.action.PageInSidebarAction"/>
+    <map:action name="page-view-sidebar" src="JSites.action.PageViewSidebarAction"/>
+    <map:action name="erase-page" src="JSites.action.ErasePageAction"/>
+    <map:action name="clone-page" src="JSites.action.ClonePageAction"/>
+    <map:action name="manage-users" src="JSites.action.ManageUsersAction"/>
     <map:action name="authorize-users" src="JSites.action.AuthorizationAction"/>
     <map:action name="PageCodeAction" src="JSites.action.PageCodeAction"/>
     <map:action name="RedirectFromRequestRestoreAction" src="JSites.action.RedirectFromRequestRestoreAction"/>
