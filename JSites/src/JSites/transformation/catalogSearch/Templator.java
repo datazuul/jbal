@@ -815,7 +815,7 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 	    else {
 	    	value=nodes.item(n-1).getTextContent();
 	    }
-		return value.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
+		return value.replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&", "&amp;");
 	}
 	
 

@@ -57,10 +57,10 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 	private int level;
 	private long pageId;
 	private long contentCid;
-	private long nComponentsInContainer;
+//	private long nComponentsInContainer;
 	long counter;
-	private Permission permission;
 	long ordercounter = 0;
+	boolean isSidebar=false;
 
 	@SuppressWarnings("unchecked")
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
@@ -70,12 +70,12 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 		level = 0;
 		pageId = -1;
 		contentCid = 0;
-		nComponentsInContainer = 0;
+//		nComponentsInContainer = 0;
 		counter = 0;
 		ordercounter = 0;
-		if(permission == null)
-			permission = new Permission();
-		permission.erasePermissions();
+//		if(permission == null)
+//			permission = new Permission();
+//		permission.erasePermissions();
 	}
 
 	public void startElement(String namespaceURI, String localName, String qName, Attributes origAttributes) throws SAXException
@@ -88,15 +88,20 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 			if(temp != null){
 				String[] type = temp.split(":");
 				if(type.length>1) {
-					attributes.removeAttribute("type");
+					while(attributes.getValue("type")!=null) {
+						attributes.removeAttribute("type");
+					}
 					attributes.addCDATAAttribute("type", type[0]);
 					attributes.addCDATAAttribute("extra", type[1]);
 				}
 			}
 
+			String viewsidebar=(String)request.getAttribute("viewsidebar");
+			if(viewsidebar==null) viewsidebar="1"; // default is view
 			String tempPid = attributes.getValue("pid");
 			if(pageId == -1 && tempPid != null) pageId = Long.parseLong(tempPid);
 			level++;
+
 			if(localName.equals("editing")){
 				edit(localName, attributes); 
 			}
@@ -104,42 +109,65 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 				save(localName, attributes);
 			}
 			else if(localName.equals("sidebar")){
-				AttributesImpl tempAttrs = new AttributesImpl();
-			
-				if (attributes.getValue("pid")==null){
-					tempAttrs.addCDATAAttribute("pid",String.valueOf(pageId));
-					fill("sidebar", tempAttrs);}
-				else
-					fill("sidebar", attributes);
+				isSidebar=true;
+				
+				if(viewsidebar.equals("1")) {
+					AttributesImpl tempAttrs = new AttributesImpl();
+				
+					if (attributes.getValue("pid")==null){
+						tempAttrs.addCDATAAttribute("pid",String.valueOf(pageId));
+						fill("sidebar", tempAttrs);}
+					else
+						fill("sidebar", attributes);
+				}
 			}
 			else if(localName.endsWith("2Order")){
-				String newTagName = localName.substring(0,localName.indexOf("2Order"));
-				super.startElement(namespaceURI, newTagName, newTagName, attributes);
-				containerOrder(localName, Long.parseLong(attributes.getValue("cid")));
-	
+				// nothing, *2Order is deprecated
+//				String newTagName = localName.substring(0,localName.indexOf("2Order"));
+//				super.startElement(namespaceURI, newTagName, newTagName, attributes);
+//				containerOrder(localName, Long.parseLong(attributes.getValue("cid")));
 			}
 			else if(localName.equals("ordering")){
-				componentOrder(localName, Long.parseLong(attributes.getValue("cid")), attributes.getValue("type"), attributes.getValue("pacid"), attributes.getValue("time"));
+				// nothing, ordering is deprecated
+//				componentOrder(localName, Long.parseLong(attributes.getValue("cid")), attributes.getValue("type"), attributes.getValue("pacid"), attributes.getValue("time"));
 			}
 			else if(localName.equals("box")) {
 				// nothing, box is deprecated
 			}
 			else if(level==2){
-				fill(localName, attributes);
+				if(!isSidebar || viewsidebar.equals("1"))
+					fill(localName, attributes);
 			}
 			
 			else super.startElement(namespaceURI, localName, qName, attributes);
 			
 			if(localName.equals("content")){
-				if(attributes.getValue("accessible").equals("true"))
-					permission.setPermission(Permission.ACCESSIBLE);
-				if(attributes.getValue("editable").equals("true"))
-					permission.setPermission(Permission.EDITABLE);
-				if(attributes.getValue("validable").equals("true"))
-					permission.setPermission(Permission.VALIDABLE);
-				if(attributes.getValue("sfa").equals("true"))
-					permission.setPermission(Permission.SFA);
+//				if(attributes.getValue("accessible").equals("true"))
+//					permission.setPermission(Permission.ACCESSIBLE);
+//				if(attributes.getValue("editable").equals("true"))
+//					permission.setPermission(Permission.EDITABLE);
+//				if(attributes.getValue("validable").equals("true"))
+//					permission.setPermission(Permission.VALIDABLE);
+//				if(attributes.getValue("sfa")!=null && attributes.getValue("sfa").equals("true"))
+//					permission.setPermission(Permission.SFA);
 				contentCid = Long.parseLong(attributes.getValue("cid"));	
+				
+//				if(permission.hasPermission(Permission.EDITABLE) || permission.hasPermission(Permission.VALIDABLE) || permission.hasPermission(Permission.SFA)) {
+//					super.startElement("", "managers", "managers", this.emptyAttr);
+//					if(permission.hasPermission(Permission.EDITABLE)){
+//						try {
+//							//this.ordercounter++;
+//	//						addSectionManager();
+//							addContentManager();
+//						}
+//						catch (Exception e) {	e.printStackTrace();}
+//					}
+//					if(permission.hasPermission(Permission.VALIDABLE)){
+//						try {addValidationManager();}
+//						catch (Exception e) {	e.printStackTrace();}
+//					}
+//					super.endElement("", "managers", "managers");
+//				}
 			}
 		}
 		catch (NumberFormatException e) { e.printStackTrace(); }
@@ -148,43 +176,43 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 		catch (SQLException e) { e.printStackTrace();}
 	}
 	
-	private void componentOrder(String nodeName, long cid, String componentType, String sPacid, String time) throws SAXException {
-		counter++;
-		String src = "cocoon://components/" + componentType + "/order?cid=" + cid + "&order=" + counter + "&maxn=" + nComponentsInContainer + "&time=" + time;
-		
-		AttributesImpl attrs = new AttributesImpl();
-		attrs.addCDATAAttribute("src", src);
-
-		super.startElement("http://apache.org/cocoon/include/1.0", "include", "include", attrs);
-		super.endElement("http://apache.org/cocoon/include/1.0", "include", "include");
-		
-	}
+//	private void componentOrder(String nodeName, long cid, String componentType, String sPacid, String time) throws SAXException {
+//		counter++;
+//		String src = "cocoon://components/" + componentType + "/order?cid=" + cid + "&order=" + counter + "&maxn=" + nComponentsInContainer + "&time=" + time;
+//		
+//		AttributesImpl attrs = new AttributesImpl();
+//		attrs.addCDATAAttribute("src", src);
+//
+//		super.startElement("http://apache.org/cocoon/include/1.0", "include", "include", attrs);
+//		super.endElement("http://apache.org/cocoon/include/1.0", "include", "include");
+//		
+//	}
 		
 	
-	private void containerOrder(String localName, long cid) throws SAXException, SQLException, ComponentException {
-		
-		//-----------------------------*/
-		emptyAttr.clear();
-		emptyAttr.addCDATAAttribute("pid",String.valueOf(pageId));
-		super.startElement("","OrderManager","OrderManager", emptyAttr);
-		emptyAttr.clear();
-
-		Connection conn = null;
-		
-		try{
-			conn = getConnection(dbname);
-			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("select count(*) from (select CID from tblcontenuti where PaCID=" + cid +" and StateID=3) as t");
-			rs.next();
-			nComponentsInContainer = rs.getLong(1);
-			rs.close();
-			st.close();
-		}catch(Exception ex) {ex.printStackTrace();}
-		
-		try{ if(conn!=null)conn.close(); } catch(Exception ex){System.out.println("Non ho potuto chiudere la connessione");}
-		
-		counter = 0;
-	}
+//	private void containerOrder(String localName, long cid) throws SAXException, SQLException, ComponentException {
+//		
+//		//-----------------------------*/
+//		emptyAttr.clear();
+//		emptyAttr.addCDATAAttribute("pid",String.valueOf(pageId));
+//		super.startElement("","OrderManager","OrderManager", emptyAttr);
+//		emptyAttr.clear();
+//
+//		Connection conn = null;
+//		
+//		try{
+//			conn = getConnection(dbname);
+//			Statement st = conn.createStatement();
+//			ResultSet rs = st.executeQuery("select count(*) from (select CID from tblcontenuti where PaCID=" + cid +" and StateID=3) as t");
+//			rs.next();
+//			nComponentsInContainer = rs.getLong(1);
+//			rs.close();
+//			st.close();
+//		}catch(Exception ex) {ex.printStackTrace();}
+//		
+//		try{ if(conn!=null)conn.close(); } catch(Exception ex){System.out.println("Non ho potuto chiudere la connessione");}
+//		
+//		counter = 0;
+//	}
 
 	/**
 	 * @throws SAXException
@@ -205,14 +233,15 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 		AttributesImpl attrs = new AttributesImpl();
 		attrs.addCDATAAttribute("src", src);
 		
-		try{
-			if(permission.hasPermission(Permission.EDITABLE) && ordercounter < Long.parseLong(attrz.getValue("order"))){
-                addSectionManager();
-				ordercounter = Long.parseLong(attrz.getValue("order"));
+		if(contentCid!=0) {
+			try{
+				if(permission.hasPermission(Permission.EDITABLE) && ordercounter < Long.parseLong(attrz.getValue("order"))){
+	                addSectionManager();
+					ordercounter = Long.parseLong(attrz.getValue("order"));
+				}
 			}
+			catch(Exception e){e.printStackTrace(); System.out.println("attrz.getValue(\"order\") = " + attrz.getValue("order"));}
 		}
-		catch(Exception e){e.printStackTrace(); System.out.println("attrz.getValue(\"order\") = " + attrz.getValue("order"));}
-		
 		super.startElement("http://apache.org/cocoon/include/1.0", "include", "include", attrs);
 		super.endElement("http://apache.org/cocoon/include/1.0", "include", "include");
 	}
@@ -265,7 +294,7 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 				
 		String tCompType = extra==null?componentType:componentType+":"+extra;
 		
-		if(pacid==0)action = "pagesave?papid=" + paPid + "&cid=" + cid + "&type=" + tCompType + "&order=" + order; // + "&pacid=" + pacid 
+		if(pacid==0)action = "pagesave?pid=" + pageId + "&papid=" + paPid + "&cid=" + cid + "&type=" + tCompType + "&order=" + order; // + "&pacid=" + pacid 
 		else action = "pagesave?pid=" + pageId + "&cid=" + cid + "&type=" + tCompType + "&order=" + order; //  + "&pacid=" + pacid
 		
 		
@@ -335,70 +364,75 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 	public void endElement(String namespaceURI, String localName, String qName) throws SAXException
     {
 		if(localName.endsWith("2Order")){
-			String newTagName = localName.substring(0,localName.indexOf("2Order"));
-			
-		    super.endElement("","OrderManager","OrderManager");
-		    super.endElement("",newTagName,newTagName);
+//			String newTagName = localName.substring(0,localName.indexOf("2Order"));
+//			
+//		    super.endElement("","OrderManager","OrderManager");
+//		    super.endElement("",newTagName,newTagName);
 		}
-		else if(localName.equals("content")){ // ||localName.equals("footer")
-			if(permission.hasPermission(Permission.EDITABLE) || permission.hasPermission(Permission.VALIDABLE) ) {
+		else if(localName.equals("sidebar")) {
+			isSidebar=false;
+		}
+		else if(localName.equals("content")){
+			contentCid=0;
+			if(permission.hasPermission(Permission.EDITABLE) || permission.hasPermission(Permission.VALIDABLE) || permission.hasPermission(Permission.SFA)) {
 				super.startElement("", "managers", "managers", this.emptyAttr);
 				if(permission.hasPermission(Permission.EDITABLE)){
 					try {
 						//this.ordercounter++;
 						addSectionManager();
-						addContentManager();
+//						addContentManager();
 					}
 					catch (Exception e) {	e.printStackTrace();}
 				}
-				if(permission.hasPermission(Permission.VALIDABLE)){
-					try {addValidationManager();}
-					catch (Exception e) {	e.printStackTrace();}
-				}
+//				if(permission.hasPermission(Permission.VALIDABLE)){
+//					try {addValidationManager();}
+//					catch (Exception e) {	e.printStackTrace();}
+//				}
 				super.endElement("", "managers", "managers");
 			}
-			super.endElement(namespaceURI, localName, qName);
+//			super.endElement(namespaceURI, localName, qName);
 		}
-		else if(level!=2)
+		
+		if(level!=2)
 			super.endElement(namespaceURI, localName, qName);
 		level--;
     }
 	
-	private void addValidationManager() throws ComponentException, SAXException {
-		Statement st = null;
-		AttributesImpl formAttrs = new AttributesImpl();
-		formAttrs.addCDATAAttribute("pid",String.valueOf(pageId));
-		formAttrs.addCDATAAttribute("pacid",String.valueOf(contentCid));
-		
-		Connection conn = null;
-		
-		try {
-			conn = getConnection(dbname); 
-			st = conn.createStatement();
-			ResultSet rs = st.executeQuery("select Valid, InSidebar from tblpagine where PID="+this.pageId);
-			if(rs.next()){
-				formAttrs.addCDATAAttribute("active",String.valueOf(rs.getBoolean(1)));
-				formAttrs.addCDATAAttribute("insidebar",String.valueOf(rs.getBoolean(2)));
-			}
-			rs.close();
-			st.close();
-			
-		}catch(Exception ex) {ex.printStackTrace();}
-		
-		try{ if(conn!=null)conn.close(); } catch(Exception ex){System.out.println("Non ho potuto chiudere la connessione");}
-		
-		contentHandler.startElement("","ValidationManager","ValidationManager",formAttrs);
-		contentHandler.endElement("","ValidationManager","ValidationManager");
-		
-	}
+//	private void addValidationManager() throws ComponentException, SAXException {
+//		Statement st = null;
+//		AttributesImpl formAttrs = new AttributesImpl();
+//		formAttrs.addCDATAAttribute("pid",String.valueOf(pageId));
+//		formAttrs.addCDATAAttribute("pacid",String.valueOf(contentCid));
+//		
+//		Connection conn = null;
+//		
+//		try {
+//			conn = getConnection(dbname); 
+//			st = conn.createStatement();
+//			ResultSet rs = st.executeQuery("select Valid, InSidebar from tblpagine where PID="+this.pageId);
+//			if(rs.next()){
+//				formAttrs.addCDATAAttribute("active",String.valueOf(rs.getBoolean(1)));
+//				formAttrs.addCDATAAttribute("insidebar",String.valueOf(rs.getBoolean(2)));
+//			}
+//			rs.close();
+//			st.close();
+//			
+//		}catch(Exception ex) {ex.printStackTrace();}
+//		
+//		try{ if(conn!=null)conn.close(); } catch(Exception ex){System.out.println("Non ho potuto chiudere la connessione");}
+//		
+//		contentHandler.startElement("","ValidationManager","ValidationManager",formAttrs);
+//		contentHandler.endElement("","ValidationManager","ValidationManager");
+//		
+//	}
 
-	private void addContentManager() throws SAXException, ComponentException {
-		AttributesImpl formAttrs = new AttributesImpl();
-		formAttrs.addCDATAAttribute("pid",String.valueOf(pageId));
-		formAttrs.addCDATAAttribute("pacid",String.valueOf(contentCid));
-		contentHandler.startElement("","ContentManager","ContentManager",formAttrs);
-		contentHandler.endElement("","ContentManager","ContentManager");
-	}
+//	private void addContentManager() throws SAXException, ComponentException {
+//		AttributesImpl formAttrs = new AttributesImpl();
+//		formAttrs.addCDATAAttribute("pid",String.valueOf(pageId));
+//		formAttrs.addCDATAAttribute("pacid",String.valueOf(contentCid));
+//		contentHandler.startElement("","ContentManager","ContentManager",formAttrs);
+//		contentHandler.endElement("","ContentManager","ContentManager");
+//	}
 	
 	private void addSectionManager() throws SAXException, ComponentException {
 		AttributesImpl formAttrs = new AttributesImpl();

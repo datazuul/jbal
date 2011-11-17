@@ -270,12 +270,15 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
             v.clear();
         }
         v=null;
+        
+        
 
         
 //        sendElement("ISBD",ma2.getISBD());
         XMLUtil.appendNode(document, root, "ISBD", ma2.getISBD());
 //        sendElement("description",ma2.getDescription());
         XMLUtil.appendNode(document, root, "description", ma2.getDescription());
+        XMLUtil.appendNode(document, root, "comments", ma2.getComments());
         
 //        super.startElement("","editors","editors",new AttributesImpl());
         v=ma2.getEditors();
@@ -392,7 +395,7 @@ public class Record2display extends MyAbstractPageTransformer implements Composa
             vbs.clear();vbs=null;
         }
        
-        XMLUtil.appendNode(document, root, "prezzo", ma2.getPrice());
+        XMLUtil.appendNode(document, root, "prezzo", ma2.getAvailabilityAndOrPrice());
 //        sendElement("bid",ma2.getBid());
 //    	sendElement("jid", String.valueOf(ma2.getJOpacID()));
         return root;

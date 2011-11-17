@@ -64,7 +64,7 @@ public class PartSelector extends MyAbstractPageTransformer {
 			 try{
 				 conn = this.getConnection(dbname);
 //				 Session session = this.sessionManager.getSession(true);
-				 permission = Authentication.assignPermissions(session, pageId, conn);
+				 permission = Authentication.assignPermissions(session, request.getRemoteAddr(), pageId, conn);
 			 }catch(Exception e) {e.printStackTrace();}
 				
 			 try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}

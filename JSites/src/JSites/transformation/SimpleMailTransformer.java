@@ -97,12 +97,11 @@ public class SimpleMailTransformer extends MyAbstractPageTransformer {
 			Vector<String> to=elements.get("sendmail:to");
 			for(int i=0;to!=null&&i<to.size();i++) {
 				try {
-					
-						sendmail(elements.get("sendmail:smtphost").firstElement(), 
-								elements.get("sendmail:from").firstElement(), 
+						sendmail(getFirstElement("sendmail:smtphost"), 
+								getFirstElement("sendmail:from"), 
 								to.elementAt(i), 
-								elements.get("sendmail:subject").firstElement(), 
-								elements.get("sendmail:body").firstElement(),
+								getFirstElement("sendmail:subject"), 
+								getFirstElement("sendmail:body"),
 								null, // username
 								null, // password
 								ps, // debug print stream
@@ -138,6 +137,13 @@ public class SimpleMailTransformer extends MyAbstractPageTransformer {
 		super.endElement(namespaceURI, localName, qName);
     }
 	
+	private String getFirstElement(String element) {
+		String r="";
+		Vector<String> t=elements.get(element);
+		if(t!=null) r=t.firstElement();
+		return r;
+	}
+
 	public void characters(char[] a, int s, int e) throws SAXException{
 		super.characters(a,s,e);
 		sb.append(a, s, e);

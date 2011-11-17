@@ -80,9 +80,10 @@ public class RedirectNA extends MyAbstractPageTransformer {
 			 try {
 				if (pCode != null)
 					pageId = DBGateway.getPidFrom(pCode, conn);
+					if(pageId == -1) pageId=1;
 
 //				Session session = this.sessionManager.getSession(true);
-				permission = Authentication.assignPermissions(session, pageId, conn);
+				permission = Authentication.assignPermissions(session, request.getRemoteAddr(), pageId, conn);
 //				try {
 //					permission = Authentication.assignPermissions(session, pageId, conn);
 //				} catch (JOpac2Exception e) {

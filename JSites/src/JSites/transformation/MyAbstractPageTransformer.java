@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -57,6 +58,8 @@ import org.xml.sax.SAXException;
 import org.apache.cocoon.xml.AttributesImpl;
 import org.jopac2.jbal.RecordInterface;
 
+import JSites.authentication.Permission;
+
 public abstract class MyAbstractPageTransformer extends AbstractTransformer implements Composable, Disposable {
 	
 	public ComponentSelector dbselector;
@@ -67,6 +70,8 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
 	protected String dbname = null;
 	protected AttributesImpl emptyAttrs = new AttributesImpl();
 	protected boolean debug=false;
+	protected Permission permission=null;
+	protected Hashtable<String,String> pagedata=null;
 	
 	@SuppressWarnings("unchecked")
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
@@ -79,6 +84,8 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
 			System.out.println(e.getMessage());
 			System.out.println("Request was: " + request.getQueryString());
 		}
+		permission=(Permission)session.getAttribute("permission");
+		pagedata=(Hashtable)session.getAttribute("lastdata");
 	}
 	
 	public void compose(ComponentManager manager) throws ComponentException {
@@ -155,25 +162,33 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
 	}
     
     protected String saveImgFile(RecordInterface ri) {
-		
-		if(ri.getImage()==null)return "images/pubimages/NS.jpg";
-		
-		File dir = new File(this.request.getParameter("datadir") + "/images/pubimages");
-		if(!dir.exists())dir.mkdirs();
-		String imgstr = this.request.getParameter("datadir") + "/images/pubimages/eut" + ri.getJOpacID() + ".jpg";
+    	String r="images/pubimages/NS.jpg";
 		try {
-			FileOutputStream imgfile = new FileOutputStream(imgstr);
-			ImageIO.write(ri.getImage(), "jpeg", imgfile);
-			imgfile.flush();
-			imgfile.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+    	
+			if(ri.getImage()!=null) {
+			
+				File dir = new File(this.request.getParameter("datadir") + "/images/pubimages");
+				if(!dir.exists())dir.mkdirs();
+				String imgstr = this.request.getParameter("datadir") + "/images/pubimages/eut" + ri.getJOpacID() + ".jpg";
+				try {
+					FileOutputStream imgfile = new FileOutputStream(imgstr);
+					ImageIO.write(ri.getImage(), "jpeg", imgfile);
+					imgfile.flush();
+					imgfile.close();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				r="images/pubimages/eut" + ri.getBid() + ".jpg";
+			}
 		}
-		return "images/pubimages/eut" + ri.getBid() + ".jpg";
+		catch(Exception e) {
+			
+		}
+		return r;
 		
 	}
     

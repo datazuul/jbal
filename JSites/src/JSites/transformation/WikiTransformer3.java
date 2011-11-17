@@ -150,17 +150,20 @@ public class WikiTransformer3 extends MyAbstractPageTransformer{
 	
 	
 	public void doFinal(StringBuffer s) throws SAXException {
-		if(s.length()>0 && s.charAt(0)=='<') {
-			isHtml=true;
-			try {
-				doFinalHtml(s.toString());
-			} catch (IOException e1) {
-				e1.printStackTrace();
+		if(s.length()>0){
+			if(s.charAt(0)=='<') {
+			
+				isHtml=true;
+				try {
+					doFinalHtml(s.toString());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				isHtml=false;
 			}
-			isHtml=false;
-		}
-		else {
-			doFinalWiki(s);
+			else {
+				doFinalWiki(s);
+			}
 		}
 	}
 
@@ -359,7 +362,7 @@ public class WikiTransformer3 extends MyAbstractPageTransformer{
 					
 					if(end>start) internalCharacters(chars, start, end, nodes);
 					OutputNode ref=null;
-					if(chars[i+1]=='$') { // it's a form or a form element!
+					if(i<l-1 && chars[i+1]=='$') { // it's a form or a form element!
 						ref=general.clone();
 						i=i+1;
 						ref.setDelayed(true);
