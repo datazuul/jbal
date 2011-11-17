@@ -43,6 +43,12 @@
 							<td>Push enabled</td><td><input type="radio" name="effect" value="push"><xsl:if test="contains(effect,'push')"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input></td>
 						</tr>
 						<tr>
+							<td>Flash enabled</td><td><input type="radio" name="effect" value="flash"><xsl:if test="contains(effect,'flash')"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input></td>
+						</tr>
+						<tr>
+							<td>Fold enabled</td><td><input type="radio" name="effect" value="fold"><xsl:if test="contains(effect,'fold')"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input></td>
+						</tr>
+						<tr>
 							<td>Controller enabled</td><td><input type="checkbox" name="controller"><xsl:if test="contains(controller,'true')"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input></td>
 						</tr>
 						<tr>
@@ -172,7 +178,7 @@ function fileBrowserCallBack(field_name, url, type, win) {
 	
 		<b>Directory (/images/...):</b>
 		<br/>
-		<input type="text" size="40" id="dir" name="dir" onClick="fileBrowserCallBack('dir','','file',window)" value="{text()}" />
+		<input type="text" size="40" id="dir" name="dir" onclick="fileBrowserCallBack('dir','','file',window)" value="{text()}" />
 		<br />
 	</xsl:template>
 	

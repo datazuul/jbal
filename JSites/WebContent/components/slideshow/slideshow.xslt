@@ -20,7 +20,7 @@
     <xsl:param name="container" />
     
 	<xsl:template match="/">
-		<div class="{$time}">
+		<div class="{$time}" style="height: {slideshow/height}px">
 			<div class="sezione{$extra}" id="{$cid}">
 				<xsl:apply-templates select="slideshow"/>
 				<div class="clearer">&#160;</div>
@@ -42,10 +42,13 @@
 		<xsl:apply-templates select="titolo"/>
 		
 		<link rel="stylesheet" type="text/css" href="./components/slideshow/css/slideshow.css" media="screen" />
-		<script type="text/javascript" src="./components/slideshow/js/mootools.js"></script>
+		<script type="text/javascript" src="./components/slideshow/js/mootools-1.3.2-core.js"></script>
+		<script type="text/javascript" src="./components/slideshow/js/mootools-1.3.2.1-more.js"></script>
 		<script type="text/javascript" src="./components/slideshow/js/slideshow.js"></script>
 		<script type="text/javascript" src="./components/slideshow/js/slideshow.kenburns.js"></script>
 		<script type="text/javascript" src="./components/slideshow/js/slideshow.push.js"></script>
+		<script type="text/javascript" src="./components/slideshow/js/slideshow.flash.js"></script>
+		<script type="text/javascript" src="./components/slideshow/js/slideshow.fold.js"></script>
 		
 	
 	<script type="text/javascript">		
@@ -126,6 +129,41 @@ function findPos(obj) {
 		    });
 ]]>
 </xsl:if>
+
+<xsl:if test="contains(effect,'flash')">
+<![CDATA[	    
+	    var myShow]]><xsl:value-of select="$cid" /><![CDATA[ = new Slideshow.Flash('show]]><xsl:value-of select="$cid" /><![CDATA[', 
+	    	data]]><xsl:value-of select="$cid" /><![CDATA[, 
+	    	{
+		    	color: ['tomato', 'palegreen', 'orangered', 'aquamarine'],
+		    	controller: ]]><xsl:value-of select="$_controller" /><![CDATA[, 
+		    	duration: ]]><xsl:value-of select="duration" /><![CDATA[, 
+		    	height: ]]><xsl:value-of select="height" /><![CDATA[, 
+		    	hu: ']]><xsl:value-of select="dir" /><![CDATA[', 
+		    	thumbnails: ]]><xsl:value-of select="$_thumbnails" /><![CDATA[, 
+		    	captions: ]]><xsl:value-of select="$_captions" /><![CDATA[, 
+		    	width: ]]><xsl:value-of select="width" /><![CDATA[
+		    });
+]]>
+</xsl:if>
+
+<xsl:if test="contains(effect,'fold')">
+<![CDATA[	    
+	    var myShow]]><xsl:value-of select="$cid" /><![CDATA[ = new Slideshow.Fold('show]]><xsl:value-of select="$cid" /><![CDATA[', 
+	    	data]]><xsl:value-of select="$cid" /><![CDATA[, 
+	    	{
+		    	controller: ]]><xsl:value-of select="$_controller" /><![CDATA[, 
+		    	duration: ]]><xsl:value-of select="duration" /><![CDATA[, 
+		    	height: ]]><xsl:value-of select="height" /><![CDATA[, 
+		    	hu: ']]><xsl:value-of select="dir" /><![CDATA[', 
+		    	thumbnails: ]]><xsl:value-of select="$_thumbnails" /><![CDATA[, 
+		    	captions: ]]><xsl:value-of select="$_captions" /><![CDATA[, 
+		    	width: ]]><xsl:value-of select="width" /><![CDATA[
+		    });
+]]>
+</xsl:if>
+
+
 <xsl:if test="contains(absolute,'true')">
 <![CDATA[
 		var imgp]]><xsl:value-of select="$cid" /><![CDATA[ = document.getElementById('show]]><xsl:value-of select="$cid" /><![CDATA[');
