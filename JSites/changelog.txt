@@ -1,6 +1,36 @@
-02/01/2011 - sidebar: componente in pagine con codice che inizia con '_'
-01/01/2011 - _footer, _navbar page
-30/12/2010 - action recupero metadati pagine (pid,papid,pcode,name,valid,haschild,insidebar,username,
+17/11/2011 - core: dbManager: aggiungi pagina con form dalla pagina sorgente
+17/11/2011 - core: dbManager: nuova funzione ordinamento pagine figlie
+17/11/2011 - core: dbManager: nuova funzione clona pagine da pagina
+17/11/2011 - core: createpage: bug pagina creata non ha i permessi della pagina padre risolto
+17/11/2011 - core: dbManager: operazioni su pagina trasformate da pipeline in action (main-pipeline)
+17/11/2011 - core: dbManager: azioni su pagina concludono sulla pagina (url con codice pagina)
+17/11/2011 - core: sitemap.xmap: serializzatori xhtml e check sul client per bugs di IE
+17/11/2011 - components: section: aggiornamento tinymce
+17/11/2011 - components: slideshow: bug visualizzazione IE risolto con aggiornamento libreria js
+17/11/2011 - components: news: bug inserimento nuova news (pagina bianca) risolto
+17/11/2011 - components: catalogSearch: default ricerca per troncamento
+17/11/2011 - components: catalogSearch: aggiornamento jbal e engine
+17/11/2011 - components: sendmail: bug non visualizza conferma invio risolto
+17/11/2011 - components: section: bug immagini senza src presentate in IE risolto
+19/04/2011 - components: sitemap: nuova componente mappa sito
+11/04/2011 - core: dbManager: bug non salva nuovi utenti risolto
+09/04/2011 - core: authentication: form autenticazione inserito in grafica template
+29/03/2011 - components: catalogSearch: Record2display: record convertiti da RecordInterface in DOM e poi stream in SAX
+22/03/2011 - core: pagecodeaction: installazione db se db vuoto
+10/03/2011 - core: authentication: global:ad_connection_string + global:ad_realm per autenticazione su AD
+01/03/2011 - core: pagecodeaction: controllo parametro _template vs global:template
+01/03/2011 - template: parametro _template in url per specificare template alternativo
+27/02/2011 - components: dbManager: nascondi pageInfo e userInfo
+25/02/2011 - components: dbManager: aggiunto aggiungi pagina, aggiungi link, rimuovi pagina
+25/02/2011 - components: sidebar: rimosso aggiungi pagina/link
+25/02/2011 - template: nuovo template fireworks
+15/02/2011 - components: sendmail: riscritto sendmail transformer
+08/01/2011 - components: catalogSearch: bug fixed in PageCodeAction per recupero parametri da redirectfrom pageview
+08/01/2011 - components: section: bug fixed: titolo ripetuto se assente icona
+07/01/2011 - components: newslist: bug fixed: testo non visualizzato in lista avvisi
+02/01/2011 - components: sidebar: componente in pagine con codice che inizia con '_'
+01/01/2011 - core: _footer, _navbar page
+30/12/2010 - core: pagecodeaction: recupero metadati pagine (pid,papid,pcode,name,valid,haschild,insidebar,username,
              remoteip,insertdate,resp)
 15/12/2010 - core: aggiunto responsabile pagine
 15/12/2010 - core: bug fixed: select count(*) from.... chiamato inutilmente in visualizzazione pagine 
