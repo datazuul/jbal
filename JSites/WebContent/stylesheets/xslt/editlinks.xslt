@@ -13,14 +13,14 @@
 					<xsl:if test="$disabling='true'"><a href="pagedisable?pid={$pid}&amp;cid={$cid}">[ disattiva ]</a></xsl:if-->
 					<xsl:if test="$editing='true'"><a href="pageedit?pid={$pid}&amp;cid={$cid}">\[ modifica \]</a> <a href="pagedelete?pid={$pid}&amp;cid={$cid}"> \[ elimina \]</a></xsl:if>
 		       		<xsl:if test="$validating='true'"><a href="pageactivate?pid={$pid}&amp;cid={$cid}">\[ attiva \]</a></xsl:if>
-					<xsl:if test="$disabling='true'"><a href="pagedisable?pid={$pid}&amp;cid={$cid}">\[ disattiva \]</a></xsl:if>
+					<xsl:if test="$disabling='true'"><a href="pagedisable?pid={$pid}&amp;cid={$cid}">\[ disattiva \]</a></xsl:if>&#160;&#160;&#160;&#160;<a href="pagecomponentmove?pid={$pid}&amp;cid={$cid}&amp;pacid={$pacid}&amp;dir=up">\[ Sposta sopra \]</a>&#160;-&#160;<a href="pagecomponentmove?pid={$pid}&amp;cid={$cid}&amp;pacid={$pacid}&amp;dir=down">\[ Sposta sotto \]</a>
 				</div>	
 			</xsl:if>
 		</xsl:if>
 	</xsl:template>
 	
 	<!--  COMBOBOX DI ORDINAMENTO -->
-	<xsl:template match="order">
+<!--  	<xsl:template match="order">
 	
 		<div class="modifica">
 			<select class="buttonright" name="cid{$cid}">
@@ -32,14 +32,14 @@
 		<div class="clearer">&#160;</div>
 		<hr color="#8BB6D8"/>
 	</xsl:template>
-	
+-->	
 	<!--  PIPELINE DI ITERAMENTO ELEMENTI DI ORDINAMENTO -->					
-	<xsl:template name="iterate">
+<!--  	<xsl:template name="iterate">
 		<xsl:param name = "iterateleft" />
 		<xsl:variable name="order"><xsl:value-of select="selected/text()"/></xsl:variable>
 		<xsl:variable name="top"><xsl:value-of select="elementnumber/text()"/></xsl:variable>
 			
-		<xsl:element name="option"> <!--  onChange="verifyChoice()" -->
+		<xsl:element name="option"> 
 			<xsl:attribute name="onChange">verifyChoice()</xsl:attribute>
 			<xsl:attribute name="value"><xsl:value-of select="$top - $iterateleft + 1" /></xsl:attribute>
 			<xsl:if test="$top - $iterateleft + 1 = $order">
@@ -54,5 +54,5 @@
 			</xsl:call-template>
 		</xsl:if>	
 	</xsl:template>
-
+-->
 </xsl:stylesheet>

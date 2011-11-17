@@ -6,9 +6,9 @@
 	<xsl:template name="callhelp">
 		<div id="inviaRichiesta">
 			<div id="radios">
-				<input name="state" type="radio" value="WRK" checked="true">Modificherò ancora il componente</input>
+				<input name="state" type="radio" value="WRK" checked="true" />Modificherò ancora il componente
 				<br/>
-				<input name="state" type="radio" value="PND">Il componente è pronto per la validazione</input>
+				<input name="state" type="radio" value="PND" />Il componente è pronto per la validazione
 			</div>
 			<div id="stateSubmit">
 				<input value="Salva" type="submit" id="submit"/>

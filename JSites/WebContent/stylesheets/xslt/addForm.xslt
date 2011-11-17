@@ -7,16 +7,15 @@
 	<xsl:param name="pcode"/>
 	
 	<xsl:template match="managers">
-		<div class="modifica">
+		<!--  <div> -->
 			<xsl:apply-templates />
-		</div>
+		<!-- </div> -->
 	</xsl:template>
 	
-	<xsl:template match="add">
-		<br/>
+	<xsl:template match="add" >
+		<!--  <br/>
 		<a href="pagecreate?papid={$pid}&amp;pid=0&amp;type=section" class="navbar1lev">[ aggiungi pagina ]</a>
-		<a href="pagecreate?papid={$pid}&amp;pid=0&amp;type=externalLink" class="navbar1lev">[ aggiungi link esterno ]</a>
-		
+		<a href="pagecreate?papid={$pid}&amp;pid=0&amp;type=externalLink" class="navbar1lev">[ aggiungi link esterno ]</a> -->
 	</xsl:template>
 	
 
@@ -61,10 +60,12 @@
 				<input type="submit" value="Nuovo" />
 			</form>
 		</div>
+		
 	</xsl:template>
 
 	<xsl:template match="ContentManager">
-	<a href="pageorder?pid={@pid}&amp;pacid={@pacid}">[ Cambia ordine ]</a>&#160;</xsl:template>
+		<!--  <span>[<a href="pageorder?pid={@pid}&amp;pacid={@pacid}">Cambia ordine</a>]</span>&#160;-&#160; -->
+	</xsl:template>
 	
 	
 	<xsl:template match="OrderManager">
@@ -76,15 +77,19 @@
 
 
 	<xsl:template match="ValidationManager">
-			<xsl:choose>
-				<xsl:when test="@active = 'true'"><a href="pagedisable?pid={@pid}&amp;pacid={@pacid}&amp;cid=0">[ Disattiva questa pagina ]</a>&#160;</xsl:when>
-				<xsl:otherwise><a href="pageactivate?pid={@pid}&amp;pacid={@pacid}&amp;cid=0">[ Attiva questa pagina ]</a>&#160;</xsl:otherwise>
-			</xsl:choose>
+	<!--  
+			<span>
+			[<xsl:choose>
+				<xsl:when test="@active = 'true'"><a href="pagedisable?pid={@pid}&amp;pacid={@pacid}&amp;cid=0">Disattiva questa pagina</a></xsl:when>
+				<xsl:otherwise><a href="pageactivate?pid={@pid}&amp;pacid={@pacid}&amp;cid=0">Attiva questa pagina</a></xsl:otherwise>
+			</xsl:choose>]&#160;-&#160;
 			
-			<xsl:choose>					
-				<xsl:when test="@insidebar = 'false'"><a href="pageinsidebar?pid={@pid}&amp;pacid={@pacid}&amp;cid=0&amp;insidebar=true">[ Visualizza la pagina nella sidebar ]</a></xsl:when>
-				<xsl:otherwise><a href="pageinsidebar?pid={@pid}&amp;pacid={@pacid}&amp;cid=0&amp;insidebar=false">[ Non visualizzare la pagina nella sidebar ]</a></xsl:otherwise>
-			</xsl:choose>
+			[<xsl:choose>					
+				<xsl:when test="@insidebar = 'false'"><a href="pageinsidebar?pid={@pid}&amp;pacid={@pacid}&amp;cid=0&amp;insidebar=true">Visualizza la pagina nella sidebar</a></xsl:when>
+				<xsl:otherwise><a href="pageinsidebar?pid={@pid}&amp;pacid={@pacid}&amp;cid=0&amp;insidebar=false">Non visualizzare la pagina nella sidebar</a></xsl:otherwise>
+			</xsl:choose>]
+			</span>
+	-->
 	</xsl:template>
 	
 	
