@@ -40,13 +40,10 @@ import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.environment.SourceResolver;
-import org.w3c.dom.Document;
-
-import JSites.utils.XMLUtil;
 
 public class RedirectFromRequestRestoreAction implements Action, Composable, Disposable {
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Map act(Redirector redirector, SourceResolver resolver,
 			Map objectModel, String source, Parameters params) {	
 

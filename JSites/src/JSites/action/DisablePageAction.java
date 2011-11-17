@@ -25,64 +25,33 @@ package JSites.action;
 *
 *******************************************************************************/
 
-import java.sql.Connection;
 import java.util.Map;
 
-import org.apache.avalon.framework.component.ComponentException;
-import org.apache.avalon.framework.component.ComponentManager;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.SourceResolver;
 
-import JSites.authentication.Authentication;
 import JSites.authentication.Permission;
 import JSites.utils.DBGateway;
 
-/*
- * Aggiunge un parametrinoinoino che indica il Permission Code dell'utente relativamente alla pgina
- */
-
-public class AuthorizationAction extends PageAction  {
-		
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+public class DisablePageAction extends PageAction {
+	
+	@SuppressWarnings("rawtypes")
 	public Map act(Redirector redirector, SourceResolver resolver, Map objectModel, String source, Parameters parameters) throws Exception {
 		
 		super.act(redirector, resolver, objectModel, source, parameters);
-		if(dbname==null)
-			return objectModel;
-				
-		try{
-			long pageId;
-			String pcode = request.getParameter("pcode");
+		if(parameters.getParameter("containerType").equals("content")){
 			
-			if(pcode != null) {
-				pid = DBGateway.getPidFrom(pcode, conn);
+			long pid = Long.parseLong(request.getParameter("pid"));
+			long cid = Long.parseLong(request.getParameter("cid"));
+			
+			if(permission.hasPermission(Permission.VALIDABLE)) {
+				try{
+					if(cid!=0)DBGateway.disableComponent(cid, username, remoteAddr, conn);
+					else DBGateway.disablePage(pid, username, remoteAddr, conn);
+				}catch(Exception e){e.printStackTrace();}
 			}
-			
-			if(pid == -1){
-				if(parameters.isParameter("pid"))
-					pid = Long.parseLong(parameters.getParameter("pid"));
-				else pid=1;
-			}
-			pageId = pid;
-		
-			
-			String permissionCode = "";
-			
-			Permission permission = Authentication.assignPermissions(session, request.getRemoteAddr(), pageId, conn);
-			
-			permissionCode = String.valueOf((int)permission.getPermissionCode());
-			
-			objectModel.put("permissionCode", permissionCode);
-		} catch(Exception e) {}
-		
-		
+		}
 		return objectModel;
 	}
-	
-	
-	public void compose(ComponentManager manager) throws ComponentException {
-		super.compose(manager);
-    }
-	
 }

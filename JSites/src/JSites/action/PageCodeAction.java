@@ -25,6 +25,14 @@ package JSites.action;
 *
 *******************************************************************************/
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.activity.Disposable;
 import org.apache.avalon.framework.component.ComponentException;
@@ -33,25 +41,8 @@ import org.apache.avalon.framework.component.ComponentSelector;
 import org.apache.avalon.framework.component.Composable;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.parameters.Parameters;
-import org.apache.avalon.framework.service.ServiceException;
-import org.apache.cocoon.acting.AbstractAction;
 import org.apache.cocoon.acting.Action;
 import org.apache.cocoon.components.modules.input.SitemapVariableHolder;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-
 import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.Request;
@@ -60,16 +51,16 @@ import org.apache.cocoon.environment.SourceResolver;
 import org.w3c.dom.Document;
 
 import JSites.utils.DBGateway;
-import JSites.utils.Page;
 
 
+@SuppressWarnings("deprecation")
 public class PageCodeAction implements Action, Composable, Disposable {
 	private ComponentSelector dbselector;
 	protected ComponentManager manager;
 
 	
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Map act(Redirector redirector, SourceResolver resolver,
 			Map objectModel, String source, Parameters params) {	
 
@@ -79,10 +70,10 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		String pcode=request.getParameter("pcode");
 		Document metadata=null;
 		
-		String pname="";
+//		String pname="";
 		String[] tsource=source.split(":");
 		String dbname=tsource[0];
-		String entry=tsource.length>1?tsource[1]:null;
+//		String entry=tsource.length>1?tsource[1]:null;
 		String template=null;
 		
 		try {
@@ -114,7 +105,6 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		}
 		
 		
-		
 		// get default template
 		if(!lastdata.containsKey("_template")) {
 			// user doesn't submit template
@@ -137,7 +127,12 @@ public class PageCodeAction implements Action, Composable, Disposable {
 			}
 		}
 		
+		String uri=request.getRequestURI();
+		String querystring=request.getQueryString();
 		
+		if(uri!=null) lastdata.put("uri", uri);
+		if(querystring!=null) lastdata.put("querystring", request.getQueryString());
+		else lastdata.put("querystring", "");
 
 		if(pid==null && pcode.length()==0) pid="1"; // homepage
 		
@@ -145,7 +140,14 @@ public class PageCodeAction implements Action, Composable, Disposable {
 			try {
 				conn=getConnection(dbname);
 				if(pcode!=null) {
-					metadata=DBGateway.getPageMetadata(pcode, lastdata, conn);
+					long _pid=DBGateway.getPidFrom(pcode, conn);
+					if(_pid==-1) {
+						metadata=DBGateway.getPageMetadata(1, lastdata, conn);
+						pcode=lastdata.get("pcode");
+					}
+					else {
+						metadata=DBGateway.getPageMetadata(pcode, lastdata, conn);
+					}
 					pid=lastdata.get("pid");
 					
 //					pid=Long.toString(DBGateway.getPidFrom(pcode, conn));
@@ -205,7 +207,6 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		return objectModel;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public Object getAttribute(String name) throws ConfigurationException  {
 		SitemapVariableHolder holder = null;
         try {

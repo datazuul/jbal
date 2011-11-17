@@ -25,38 +25,49 @@ package JSites.action;
 *
 *******************************************************************************/
 
-import java.sql.Connection;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.avalon.framework.parameters.Parameters;
-import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Redirector;
-import org.apache.cocoon.environment.Request;
-import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.environment.SourceResolver;
 
-import JSites.authentication.Authentication;
+import JSites.authentication.Permission;
 import JSites.utils.DBGateway;
 
-public class DisablePage extends PageAction {
+public class CreatePageAction extends PageAction {
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Map act(Redirector redirector, SourceResolver resolver, Map objectModel, String source, Parameters parameters) throws Exception {
 		
 		super.act(redirector, resolver, objectModel, source, parameters);
-		if(parameters.getParameter("containerType").equals("content")){
 			
-			long pid = Long.parseLong(request.getParameter("pid"));
-			long cid = Long.parseLong(request.getParameter("cid"));
-
-			Connection conn = null;
+		if(permission.hasPermission(Permission.VALIDABLE)) {
+			String pcode="";
 			try{
-				conn = this.getConnection(dbname);
-				if(cid!=0)DBGateway.disableComponent(cid, username, remoteAddr, conn);
-				else DBGateway.disablePage(pid, username, remoteAddr, conn);
+				String title=request.getParameter("title");
+				if(pid!=-1 && title!=null && title.trim().length()>0) {
+					int newpid = DBGateway.getNewPageId(conn);
+					DBGateway.createPage(title, newpid, (int)pid, conn);
+					
+					long newContentCid = DBGateway.getNewFreeCid(conn);
+					DBGateway.saveDBComponent(newContentCid,"content",1,0,new Date(), newpid, "", 
+							username, remoteAddr, conn);
+					DBGateway.linkPageContainers(newContentCid, newpid, conn);
+					
+					DBGateway.clonePermission((int)pid,newpid,conn);
+					
+					pcode=DBGateway.getPageCode(newpid, conn);
+					pid=newpid;
+				}
+				else {
+					pcode=DBGateway.getPageCode(pid, conn);
+				}
 			}catch(Exception e){e.printStackTrace();}
-			
-			try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
+			finally {
+				request.setAttribute("pagecode", pcode);
+				request.setAttribute("pid", pid);
+			}
 		}
 		return objectModel;
 	}

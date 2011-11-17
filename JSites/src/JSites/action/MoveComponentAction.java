@@ -25,7 +25,6 @@ package JSites.action;
 *
 *******************************************************************************/
 
-import java.sql.Connection;
 import java.util.Map;
 
 import org.apache.avalon.framework.parameters.Parameters;
@@ -36,28 +35,40 @@ import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.environment.SourceResolver;
 
 import JSites.authentication.Authentication;
+import JSites.authentication.Permission;
 import JSites.utils.DBGateway;
 
-public class ActivatePage extends PageAction {
+public class MoveComponentAction extends PageAction {
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Map act(Redirector redirector, SourceResolver resolver, Map objectModel, String source, Parameters parameters) throws Exception {
-		
 		
 		super.act(redirector, resolver, objectModel, source, parameters);
 		if(parameters.getParameter("containerType").equals("content")){
+			Request request=ObjectModelHelper.getRequest(objectModel);
+			Session session=request.getSession(true);
 			
-			Connection conn = null;
+			String username=Authentication.getUsername(session);
+			String remoteAddr=request.getRemoteAddr();
+			String direction=request.getParameter("dir");
 			
-			try{
-				conn = this.getConnection(dbname);
-				if(cid!=0)DBGateway.activateComponent(cid, username, remoteAddr, conn);
-				else DBGateway.activatePage(pid, username, remoteAddr, conn);
-				if(conn!=null) conn.close();
+			if(permission.hasPermission(Permission.VALIDABLE)) {
+				try{
+					if(cid!=0) {
+						try {
+							if(direction!=null && direction.equals("up")) {
+								DBGateway.exchangeCidOrder(cid,pacid,"prev",username,remoteAddr,conn);
+							}
+							if(direction!=null && direction.equals("down")) {
+								DBGateway.exchangeCidOrder(cid,pacid,"next",username,remoteAddr,conn);
+							}
+						}
+						catch(Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}catch(Exception e){e.printStackTrace();}
 			}
-			catch(Exception e){e.printStackTrace();}
-			
-			try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
 		}
 		return objectModel;
 	}

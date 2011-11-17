@@ -25,7 +25,6 @@ package JSites.action;
 *
 *******************************************************************************/
 
-import java.sql.Connection;
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -38,22 +37,21 @@ import JSites.authentication.Permission;
 import JSites.utils.DBGateway;
 import JSites.utils.Util;
 
-public class ManageUsers extends PageAction {
+public class ManageUsersAction extends PageAction {
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Map act(Redirector redirector, SourceResolver resolver, Map objectModel, String source, Parameters parameters) throws Exception {
 		
 		super.act(redirector, resolver, objectModel, source, parameters);
 		
-		if(parameters.getParameter("containerType").equals("content")){
-			Connection conn= null;
+		if(parameters.getParameter("containerType").equals("content")) {
 			try{
-				conn = this.getConnection(this.dbname);
 				String pcode = request.getParameter("pcode");
 				
 				if(pid==-1 || pid==0) {
 					pid=DBGateway.getPidFrom(pcode, conn);
 				}
+				if(pid==-1) pid=1;
 				
 				Enumeration<?> params = request.getParameterNames();
 				while(params.hasMoreElements()){
@@ -81,26 +79,40 @@ public class ManageUsers extends PageAction {
 						if(atLeastOne)
 							p.setPermission(Permission.ACCESSIBLE);
 	
-						if(pid != -1 && username.length()>0)
+						if(pid != -1 && username.length()>0 && permission.hasPermission(Permission.VALIDABLE))
 							DBGateway.setPermission(pid, cUsername, p, conn);					
 					}
-					else if(name.equals("pageTitle")){
+					else if(name.equals("pageTitle") && permission.hasPermission(Permission.EDITABLE)){
 						String titolo = Util.readRequestParameter(request.getParameter(name));
 						DBGateway.setPageName(pid, titolo, conn);
 					}
-					else if(name.equals("pageCode")){
+					else if(name.equals("pageCode") && permission.hasPermission(Permission.EDITABLE)){
 						String code = request.getParameter(name);
 						DBGateway.setPageCode(pid, code, conn);
 					}
-					else if(name.equals("resp")){
+					else if(name.equals("pagePaPCode") && permission.hasPermission(Permission.VALIDABLE)){
+						String PaPCode = request.getParameter(name);
+						if(PaPCode!=null && PaPCode.trim().length()>0) {
+							long papid=DBGateway.getPidFrom(PaPCode, conn);
+//							Permission p=DBGateway.getPermission(username, null, papid, conn);
+//							if(p.hasPermission(Permission.VALIDABLE))
+							DBGateway.setPaPid(pid,papid,conn);
+//							p.erasePermissions();
+						}
+					}
+					else if(name.equals("resp") && permission.hasPermission(Permission.VALIDABLE)){
 						String code = request.getParameter(name);
 						DBGateway.setPageResp(pid, code, conn);
+					}
+					else if(name.startsWith("priority_") && permission.hasPermission(Permission.VALIDABLE)) {
+						String code=name.substring(9);
+						String priority=request.getParameter(name);
+						DBGateway.setPagePriority(code,priority,conn);
 					}
 				}
 				
 			}catch(Exception e){e.printStackTrace();}
 		
-			try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
 		}
 		
 		return objectModel;

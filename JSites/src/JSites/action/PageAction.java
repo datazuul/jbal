@@ -41,6 +41,7 @@ import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.environment.SourceResolver;
 
 import JSites.authentication.Authentication;
+import JSites.authentication.Permission;
 
 public abstract class PageAction implements Action, Composable, Disposable{
 	
@@ -53,22 +54,31 @@ public abstract class PageAction implements Action, Composable, Disposable{
 	protected String remoteAddr;
 	protected long pid=-1;
 	protected long cid=-1;
+	protected long pacid=-1;
 	protected String pidString=null;
 	protected String cidString=null;
+	protected String pacidString=null;
+	protected Permission permission=null;
+	protected Connection conn=null;
+	protected String dataDirectory=null;
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Map act(Redirector redirector, SourceResolver resolver, Map objectModel, String source, Parameters parameters) throws Exception {
 		request = (Request)(objectModel.get("request"));
 		session = request.getSession(true);
 		dbname = request.getParameter("db");
+		dataDirectory=request.getParameter("datadir");
+
 		
 		username=Authentication.getUsername(session);
 		remoteAddr=request.getRemoteAddr();
 		
 		pidString=request.getParameter("pid");
 		cidString=request.getParameter("cid");
+		pacidString=request.getParameter("pacid");
 		if(pidString!=null)	pid = Long.parseLong(pidString);
 		if(cidString!=null)	cid = Long.parseLong(cidString);
+		if(pacidString!=null)	pacid = Long.parseLong(pacidString);
 		
 		try { dbname = dbname == null ? parameters.getParameter("db") : dbname; } catch (ParameterException e) {
 			e.printStackTrace();
@@ -76,6 +86,15 @@ public abstract class PageAction implements Action, Composable, Disposable{
 			System.out.println("No db param in request and no db param sitemap");
 		}
 		
+		try { dataDirectory = dataDirectory == null ? parameters.getParameter("datadir") : dataDirectory; } catch (ParameterException e) {
+			e.printStackTrace();
+			System.out.println("Request was: " + request.getQueryString());
+			System.out.println("No datadir param in request and no datadir param sitemap");
+		}
+		
+		conn=getConnection(dbname);
+		permission = Authentication.assignPermissions(session, request.getRemoteAddr(), pid, conn);
+		conn.close();
 		return objectModel;
 	}
 	
@@ -85,10 +104,14 @@ public abstract class PageAction implements Action, Composable, Disposable{
     }
 	
 	public void dispose() {
+		try {
+			if(conn!=null) conn.close();
+		}
+		catch(Exception e) {}
 		this.manager.release(dbselector);
 	}
 	
-	public Connection getConnection(String db) throws ComponentException, SQLException {
+	private Connection getConnection(String db) throws ComponentException, SQLException {
     	return ((DataSourceComponent)dbselector.select(db)).getConnection();
     }
 }

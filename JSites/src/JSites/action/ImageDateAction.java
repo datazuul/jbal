@@ -46,7 +46,7 @@ import JSites.utils.site.ImageData;
 
 public class ImageDateAction extends AbstractAction {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Map act(Redirector redirector, SourceResolver resolver,
 			Map objectModel, String source, Parameters params) {
 		Map<String, String> sitemapParams = new HashMap<String, String>();

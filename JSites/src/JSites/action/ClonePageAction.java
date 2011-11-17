@@ -25,70 +25,37 @@ package JSites.action;
 *
 *******************************************************************************/
 
-import java.sql.Connection;
-import java.util.*;
+import java.util.Map;
 
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.SourceResolver;
 
+import JSites.authentication.Permission;
 import JSites.utils.DBGateway;
+import JSites.utils.PageClone;
 
-public class SaveOrder extends PageAction {
+public class ClonePageAction extends PageAction {
 	
-	private Vector<String> oCids = null;
-	private Vector<String> oNums = null;
-	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Map act(Redirector redirector, SourceResolver resolver, Map objectModel, String source, Parameters parameters) throws Exception {
 		
 		super.act(redirector, resolver, objectModel, source, parameters);
-		
-		if(parameters.getParameter("containerType").equals("content")){
-			
-			oCids = new Vector<String>();
-			oNums = new Vector<String>();
-			boolean orderOk = true;
-			String pid = "";
-
-			
-			Enumeration<String> en = request.getParameterNames();
-			while(en.hasMoreElements()){
-				String name = en.nextElement();
-				if(name.matches("cid\\d+")){
-					String value = request.getParameterValues(name)[0];
-					if(oNums.contains(value)){
-						orderOk = false;
-						break;
-					}
-					else{
-						oCids.add(name);
-						oNums.add(value);
-					}
-				}
-				else if(name.matches("pid")){
-					pid = request.getParameterValues(name)[0];
-					if(!(pid.matches("\\d+"))) pid = "";
-				}
-			}
-			
-			if(oNums.size() != oCids.size())
-				orderOk = false;
-			
-			if(orderOk){
-				Connection conn = null;
-				try{
-					conn = this.getConnection(dbname);
-					DBGateway.orderComponents(oCids, oNums, pid, conn);
-				}catch(Exception e){e.printStackTrace();}
 				
-				try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
-
+		try{
+			String sourcePageCode=request.getParameter("source");
+			String container=parameters.getParameter("containerType");
+			if(container.equals("content") && permission.hasPermission(Permission.VALIDABLE)) {
+				long sourcePid=DBGateway.getPidFrom(sourcePageCode, conn);
+				if(pid!=-1)
+					PageClone.cloneRecursiveIntoPage((int)sourcePid, (int)pid, dataDirectory, username, remoteAddr, conn);
 			}
-			
-			oCids.clear();
-			oNums.clear();
-		}
+		}catch(Exception e){e.printStackTrace();}
+		
 		return objectModel;
 	}
+	
+	
+
+
 }

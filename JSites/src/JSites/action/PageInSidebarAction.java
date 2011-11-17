@@ -25,18 +25,18 @@ package JSites.action;
 *
 *******************************************************************************/
 
-import java.sql.Connection;
 import java.util.Map;
 
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.SourceResolver;
 
+import JSites.authentication.Permission;
 import JSites.utils.DBGateway;
 
-public class PageInSidebar extends PageAction {
+public class PageInSidebarAction extends PageAction {
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Map act(Redirector redirector, SourceResolver resolver, Map objectModel, String source, Parameters parameters) throws Exception {
 		
 		super.act(redirector, resolver, objectModel, source, parameters);
@@ -45,14 +45,11 @@ public class PageInSidebar extends PageAction {
 			
 			boolean insidebar = Boolean.parseBoolean(request.getParameter("insidebar"));
 			
-			Connection conn = null;
-			try{
-				conn = this.getConnection(dbname);
-				DBGateway.setPageInSidebar(conn, pid, insidebar);
-			}catch(Exception e){e.printStackTrace();}
-			
-			try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
-
+			if(permission.hasPermission(Permission.VALIDABLE)) {
+				try{
+					DBGateway.setPageInSidebar(conn, pid, insidebar);
+				}catch(Exception e){e.printStackTrace();}
+			}
 		}
 		return objectModel;
 	}
