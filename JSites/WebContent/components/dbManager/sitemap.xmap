@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
-	
-	
+
 	<map:pipelines>
 		
 		<map:pipeline internal-only="false"> 
@@ -15,10 +14,13 @@
 	                    	<map:parameter name="pid" value="{request-attr:pageid}"/>
 	                    	<map:parameter name="contentcid" value="{request-param:contentcid}"/>
 	                    </map:transform>
-	                    <!-- map:transform type="tutil" src="/t/addpid" / -->
+	                    
 	                    <map:transform type="sql">
 							<map:parameter name="use-connection" value="{request-param:db}"/>
 						</map:transform>
+						
+						<!-- map:transform type="tutil" src="/t/dbmanager" / -->
+						
 						<map:transform src="dbManager.xslt">
 							<map:parameter name="pid" value="{request-attr:pageid}"/>
 	                    	<map:parameter name="contentcid" value="{request-param:contentcid}"/>
