@@ -100,7 +100,10 @@ public abstract class Unimarc extends ISO2709Impl {
 	public String getComments() {
 		Tag comment=getFirstTag("300");
 		String r="";
-		if(comment!=null) r=comment.getField("a").getContent();
+		if(comment!=null) {
+			Field f=comment.getField("a");
+			if(f!=null) r=f.getContent();
+		}
 		return r;
 	}
 
@@ -299,16 +302,15 @@ public void initLinkUp() {
   }
   
   /* 
-   * TODO:Prendere fuori il BID giustoe esiste?
+   * TODO:Prendere fuori il BID giusto se esiste?
    * @see JOpac2.dataModules.ISO2709#getBid()
    */
   public String getBid() {
-  	if(super.getBid()==null) {
-  		return Long.toString(getJOpacID());
-  	}
-  	else {
-  		return super.getBid();
-  	}
+	  String r=null;
+	  Tag t=getFirstTag("001");
+	  if(t!=null) r=t.getRawContent();
+	  if(r==null || r.trim().length()==0) r=super.getBid();
+	  return r;
   }
   
   
@@ -420,21 +422,31 @@ public void initLinkUp() {
 //		else if(codeSystem.equals("NBN")) tagName="020";
 //		else if(codeSystem.equals("GPN")) tagName="022";
 		
-		Tag tag=getFirstTag("010");//ISBN
 		String code = "ISBN";
+		String value=getValue("010","a");
 		
-		if(tag==null) {tag=getFirstTag("011");code="ISSN";}
-		if(tag==null) {tag=getFirstTag("013");code="ISMN";}
-		if(tag==null) {tag=getFirstTag("015");code="ISRN";}
-		if(tag==null) {tag=getFirstTag("020");code="NBN";}
-		if(tag==null) {tag=getFirstTag("022");code="GPN";}
-		if(tag==null) {tag=getFirstTag("035"); code ="NA";}
-		String ret = (tag==null?"":Utils.ifExists("", tag.getField("a")));
-		if(ret!=null && ret.length()>0)ret = code + " " + ret;
-		return ret;
+		if(value==null) {value=getValue("011","a");code="ISSN";}
+		if(value==null) {value=getValue("013","a");code="ISMN";}
+		if(value==null) {value=getValue("015","a");code="ISRN";}
+		if(value==null) {value=getValue("020","a");code="NBN";}
+		if(value==null) {value=getValue("022","a");code="GPN";}
+		if(value==null) {value=getValue("035","a");code ="NA";}
+		if(value!=null && value.length()>0)value = code + " " + value;
+		return value==null?"":value;
 	}
 
-  /**
+  private String getValue(String tag, String field) {
+	String r=null;
+	Tag t=getFirstTag(tag);
+	if(t!=null) {
+		Field f=t.getField(field);
+		if(f!=null) r=f.getContent();
+		if(r!=null && r.trim().length()==0) r=null; 
+	}
+	return r;
+}
+
+/**
    * 215  ^a : ^c ; ^d + ^e
    */
 	  public String getDescription() {
@@ -540,6 +552,20 @@ public void initLinkUp() {
 	public void setTitle(String title)  throws JOpac2Exception {
 		setTitle(title,true);
 	}
+	
+	
+
+	@Override
+	public void addAuthorsFromTitle() throws JOpac2Exception {
+		Tag t=getFirstTag("200"); // prende tag titolo
+		Vector<Field> v=new Vector<Field>(); // vettore contenente le responsabilita'
+		Field f=t.getField("f"); // prima responsabilita'
+		if(f!=null) { // se non c'è la prima responsabilita', non puo' averne altre
+			v.add(f);
+			v.addAll(t.getFields("g")); // responsabilita' successive
+			for(int i=0;i<v.size();i++) addAuthor(v.elementAt(i).getContent()); // imposta gli autori
+		}
+	}
 
 	public void addAuthor(String author)  throws JOpac2Exception {
 		/**
@@ -598,11 +624,34 @@ public void initLinkUp() {
 	/**
 	 * 300^a
 	 */
+	@Override
 	public void addComment(String comment)  throws JOpac2Exception {
 		if(comment==null || comment.length()==0) return;
 		Tag t=new Tag("300",' ',' ');
 		t.addField(new Field("a",comment.trim()));
 		addTag(t);
+	}
+	
+	@Override
+	public String getPublisherName() {
+		Tag tag=getFirstTag("210");
+		String r="";
+		if(tag!=null) {
+			r+=Utils.ifExists("",tag.getField("c"));
+		}
+		return r;
+	}
+
+	@Override
+	public void setPublisherName(String publisherName) throws JOpac2Exception {
+		if(publisherName==null || publisherName.length()==0) return;
+		
+		Tag p=getFirstTag("210");
+		if(p==null) p=new Tag("210");
+		p.removeField("c");
+		p.addField(new Field("c",publisherName));
+		removeTags("210");
+		addTag(p);
 	}
 
 	/**
@@ -872,9 +921,15 @@ public void initLinkUp() {
 		else if(codeSystem.equals("ISRN")) tagName="015";
 		else if(codeSystem.equals("NBN")) tagName="020";
 		else if(codeSystem.equals("GPN")) tagName="022";
-		Tag n=new Tag(tagName,' ',' ');
-		n.addField(new Field("a",standardNumber));
+		Tag n=getFirstTag(tagName);
+		if(n==null) n=new Tag(tagName,' ',' ');
+		n.removeField("a");
+		if(tagName.equals("035"))
+			n.addField(new Field("a","("+codeSystem+")"+standardNumber));
+		else
+			n.addField(new Field("a",standardNumber));
 
+		removeTags(tagName);
 		addTag(n);
 	}
 	
@@ -991,6 +1046,7 @@ public void initLinkUp() {
 		addTag(t);
 	}
   
+	@Override
 	public Hashtable<String, List<Tag>> getRecordMapping() {
 		Hashtable<String, List<Tag>> r=new Hashtable<String, List<Tag>>();
 		
@@ -1060,10 +1116,32 @@ public void initLinkUp() {
 		return r;
 	}
 
+	@Override
 	public String getRecordTypeDescription() {
 		return "General unimarc format.";
 	}
 	
+	@Override
+	public void setBase64Image(String base64EncodedImage)  throws JOpac2Exception {
+		if(base64EncodedImage == null){
+    		try {
+				removeTags("911");
+			} catch (JOpac2Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+    	}
+        Tag t=new Tag("911",' ',' ');
+        t.addField(new Field("a",base64EncodedImage));
+        try {
+                removeTags("911");
+        } catch (JOpac2Exception e) {
+        }
+        addTag(t);
+	}
+	
+	@Override
     public void setImage(BufferedImage image, int maxx, int maxy) {
     	if(image == null){
     		try {
@@ -1095,7 +1173,8 @@ public void initLinkUp() {
             }
     }
    
-    public BufferedImage getImage() {
+	@Override
+    public BufferedImage getImage() throws JOpac2Exception {
             BufferedImage r=null;
             Tag t=getFirstTag("911");
             if(t!=null) {
@@ -1104,15 +1183,29 @@ public void initLinkUp() {
                             String coded=i.getContent();
                             byte[] b=Base64.decode(coded);
                             try {
-                                    r=ImageIO.read(new ByteArrayInputStream(b));
+                            		if(b!=null)
+                            			r=ImageIO.read(new ByteArrayInputStream(b));
                             } catch (IOException e) {
-                                    e.printStackTrace();
+                            	throw new JOpac2Exception(e.getMessage());
                             }
                     }
             }
             return r;
     }
+	
+	
     
+	@Override
+	public void removeImage() throws JOpac2Exception {
+		Tag t=getFirstTag("911");
+		if(t!=null) {
+			Field f=t.getField("a");
+			if(f!=null) t.removeField("f");
+			if(t.getFields()!=null && t.getFields().isEmpty()) removeTags("911");
+		}
+	}
+
+	@Override
     public String getBase64Image() {
     	String r=null;
         Tag t=getFirstTag("911");

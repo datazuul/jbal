@@ -321,4 +321,14 @@ public class Tag implements Comparable<Tag> {
 	public int compareTo(Tag arg0) {
 		return tagName.compareTo(arg0.getTagName());
 	}
+
+	/**
+	 * Remove empty fields, I.e. content of field is null or 0 length
+	 */
+	public void removeEmptyFields() {
+		if(fields!=null && fields.size()>0)
+			for(int i=fields.size()-1;i>=0;i--) {
+				if(fields.elementAt(i).getContent()==null || fields.elementAt(i).getContent().length()==0) fields.removeElementAt(i);
+		}
+	}
 }

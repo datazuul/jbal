@@ -1,7 +1,7 @@
 package org.jopac2.jbal.stemmer;
 
 /* Classe di prova dell'algoritmo di stemming
- * ha la possibilità di:
+ * ha la possibilita' di:
  *
  * accettare parola da tastiera ( daTastiera(Stemmer) )
  * accettare parole da file e visualizzarle a video ( fileMonitor1(Stemmer, String percorso origine) )

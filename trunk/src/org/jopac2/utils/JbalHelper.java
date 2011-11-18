@@ -33,7 +33,7 @@ public final class JbalHelper {
 	   * 07/03/2003 - R.T.
 	   *      Cambiato: ai fini dell'indicizzazione vanno inserite anche le
 	   *      parole prima della parte significativa del titolo.
-	   *      Quindi semplicemente se c'è l'asterisco lo tolgo e se ci sono
+	   *      Quindi semplicemente se c'e' l'asterisco lo tolgo e se ci sono
 	   *      i marcatori li tolgo MA LASCIO LE PAROLE INCLUSE
 	   */
 	  public static String processaMarcatori(String valore) {

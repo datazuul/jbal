@@ -250,7 +250,7 @@ public class StemmerItv2 extends Radice {
      }
      
     /* step2() toglie determinati suffissi
-     * Viene eseguita se e solo se la variabile modifica ò true.
+     * Viene eseguita se e solo se la variabile modifica e' true.
      * Questa variabile viene modificata nello step1(), diventa true se non
      * viene trovato nessun suffisso senno diventa false. 
      */
@@ -372,7 +372,7 @@ public class StemmerItv2 extends Radice {
                 case 'e':
                 case 'i':
                 case 'o': { k = k-1; precedente = true; break; }
-                //case 'ù': { k = k-1; break; } // u accentata
+                //case 'u': { k = k-1; break; } // u accentata
                 default: return;
             }
         }
@@ -393,7 +393,7 @@ public class StemmerItv2 extends Radice {
     }
     
     /* Funzione che determina i valori di r1 e r2
-     * che decino se una determinato suffisso può essere eliminato o no
+     * che decino se una determinato suffisso puo' essere eliminato o no
      * r1 viene determinato come la prima consonate preceduta da vocale
      * r2 viene determinato come la prima consonate preceduta da vocale dopo r1
      */
@@ -476,11 +476,11 @@ public class StemmerItv2 extends Radice {
     
     
     /* Funzione che determina il valore di rv
-     * che decide se una determinato suffisso può essere eliminato o no.
-     * Se la seconda lettere ò una consonate rv diventa la prima vocale successiva.
+     * che decide se una determinato suffisso puo' essere eliminato o no.
+     * Se la seconda lettere e' una consonate rv diventa la prima vocale successiva.
      * Se le prime due lettere sono vocali rv diventa la prima consonante successiva.
      * Negli altri casi rv diventa la terza lettera.
-     * Se però la parola ò piò corta rv rimane a zero.
+     * Se pero' la parola e' piu' corta rv rimane a zero.
      */
     private void puntatorerv(){
         int indice = 0;
@@ -489,7 +489,7 @@ public class StemmerItv2 extends Radice {
         if (indice == k)
              return;
         
-        // if dove la seconda lettera ò una consonante
+        // if dove la seconda lettera ÔøΩ una consonante
         if (cons(1)) {
             indice = 1;
             //va avanti fino a quando non trova una vocale
@@ -506,7 +506,7 @@ public class StemmerItv2 extends Radice {
                     } 
                 }
             }
-        } // fine if dove la seconda lettera ò una consonante
+        } // fine if dove la seconda lettera ÔøΩ una consonante
         
         // if dove le prime due lettere sono vocali
         if ((!cons(0))&&(!cons(1))) {
@@ -538,9 +538,9 @@ public class StemmerItv2 extends Radice {
         return;
     }
     
-    /* Determina se all'iesima posizone c'ò una consonante o una vocale
-     * torna true se ò una consonante
-     * e false se ò una vocale
+    /* Determina se all'iesima posizone c'ÔøΩ una consonante o una vocale
+     * torna true se ÔøΩ una consonante
+     * e false se ÔøΩ una vocale
      */
     private boolean cons(int i){
        switch (b[i]){

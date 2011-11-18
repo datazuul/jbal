@@ -15,7 +15,7 @@ public class Radice extends Stemmer {
 	    * immette nell'array b e controlla se ci sono altri simboli oltre
 	    * i caratteri, se si vengono saltati
 	    *
-	    * vedere se bisogna matenere quella funzionalità dato che cancella anche
+	    * vedere se bisogna matenere quella funzionalita' dato che cancella anche
 	    * gli spazi.
 	    */
 	   public String radice (String parola){

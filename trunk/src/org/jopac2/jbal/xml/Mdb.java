@@ -22,8 +22,18 @@ public class Mdb extends XML {
 	this.XMLCostruttore(notizia, dTipo, Integer.parseInt(livello));
 	}
 	
+	private String importTableName="this";
+	
+	public String getImportTableName() {
+		return importTableName;
+	}
+
+	public void setImportTableName(String importTableName) {
+		this.importTableName = importTableName;
+	}
+
 	public Mdb(byte[] notizia, String dTipo) throws SAXException, IOException {
-	this.XMLCostruttore(notizia, dTipo, 0);
+		this.XMLCostruttore(notizia, dTipo, 0);
 	}
 
 	@Override
@@ -82,13 +92,13 @@ public class Mdb extends XML {
 
 	@Override
 	public RecordReader getRecordReader(InputStream dataFile) throws UnsupportedEncodingException {
-		MdbTableRecordReader r=new MdbTableRecordReader(dataFile, "this");
+		MdbTableRecordReader r=new MdbTableRecordReader(dataFile, importTableName);
 		return r;
 	}
 	
 	@Override
 	public RecordReader getRecordReader(InputStream dataFile, String charset) throws UnsupportedEncodingException {
-		MdbTableRecordReader r=new MdbTableRecordReader(dataFile, "this");
+		MdbTableRecordReader r=new MdbTableRecordReader(dataFile, importTableName);
 		return r;
 	}
 
@@ -189,6 +199,37 @@ public class Mdb extends XML {
 
 	@Override
 	public void setHierarchicalLevel(String recordHierarchicalLevel) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setBase64Image(String base64EncodedImage)
+			throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getPublisherName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPublisherName(String publisherName) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addAuthorsFromTitle() throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeImage() throws JOpac2Exception {
 		// TODO Auto-generated method stub
 		
 	}
