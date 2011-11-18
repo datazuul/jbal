@@ -1,4 +1,4 @@
-package org.jopac2.engine.Managers;
+package org.jopac2.engine.MetaSearch.Managers;
 /*******************************************************************************
 *
 *  JOpac2 (C) 2002-2007 JOpac2 project
@@ -33,35 +33,42 @@ package org.jopac2.engine.Managers;
 */
 import java.io.*;
 import java.util.*;
-
-import org.apache.commons.httpclient.HttpConnection;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.jopac2.utils.RecordItem;
 //import com.k_int.IR.*;
+import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.methods.*;
+import org.jopac2.utils.RecordItem;
+import org.jopac2.utils.Utils;
 
-//import JOpac2.utils.*;
 
 /*
  *implementazione di GetConstructor per JOpac2
  *si tratta di un elaboratore di stringhe
  */
-public class EasyWebGetManager extends AbstractManager
+public class InternetCulturaleSBNManager extends AbstractManager
 {
 	private Parser parser;
     private Hashtable<String,String> ChiaviCodici;
+    private Vector<RecordItem> result = null;
 	
+    /* http://opac.internetculturale.it/cgi-bin/records.cgi?address=iccu
+    *		&numentries=30
+    *		&request=1%3D1003%20%204%3D2%20%22antonio%20trampus%22
+    *		&type=full
+    */
 
-	public EasyWebGetManager()
+	public InternetCulturaleSBNManager()
 	{
 		ChiaviCodici = new Hashtable<String,String>();
-        ChiaviCodici.put("AUT","AU"); //autore
-        ChiaviCodici.put("INV","KW"); //tutti i campi
-        ChiaviCodici.put("SBJ","SO"); //soggetto
-        ChiaviCodici.put("TIT","TI"); //titolo
-        ChiaviCodici.put("CLL","CO"); //collana  
-        ChiaviCodici.put("ALL","KW"); //tutti i campi
-        parser = new EasyWebParser();       
+        ChiaviCodici.put("AUT","1=1003  4=2"); //autore
+        ChiaviCodici.put("INV","null"); //tutti i campi
+        ChiaviCodici.put("SBJ","1=21  4=2"); //soggetto
+        ChiaviCodici.put("TIT","1=4  4=2"); //titolo
+        ChiaviCodici.put("CLL","1=4  4=2"); //collana  
+        ChiaviCodici.put("ANY","1=1016  4=2"); //tutti i campi
+        // (1=54   4=2  "art") @and@ ((1=4  4=2 "patria"))
+        ChiaviCodici.put("LAN","1=54   4=2"); //lingua
+        
+        parser = new InternetCulturaleSBNParser();       
 	}
 
     /**
@@ -72,68 +79,29 @@ public class EasyWebGetManager extends AbstractManager
      */
 	private String construct(String q) //?
     {
-        String queryrtl = q; //(new QueryUtil()).changeQuery(q);
-		//String queryrtl="AUT=BONI&";
-		//queryrtl+="TIT=VIE E PIAZZE&";
-		//System.out.println("SCOMMENTARE PER TEST!!!!");
+        String queryrtl = Utils.removeAttribute(q, "stemmer"); 
        
        String[] parametri;
        String[] coppia = new String[2];
        parametri = queryrtl.split("&");
        
-       Hashtable<String,String> hashquery = new Hashtable<String,String>();
+       String e="";
        
        for(int i=0;i<parametri.length;i++)
        {
            coppia = parametri[i].split("=");
-           hashquery.put(ChiaviCodici.get(coppia[0]), coppia[1]);
+           String a= ChiaviCodici.get(coppia[0])+"  %22"+coppia[1]+"%22";           
+           e+="@and@"+"("+a+")";
        }
-       //hash con AU,autore     
        
-       Enumeration<String> keys = null;
-       
-       String chiave="";
-       String valore="";
-
-       int index=0;
-       /*
-http://212.131.152.85/cgi-bin/Easyweb/ewgettest?
-EW_HIL=trev/ew_menu.html&
-EW_HFL=trev/ew_copy.html&
-EW_D=TREV&
-EW4_DLL=10&
-EW4_DLP=10&
-EW4_NVR=&
-EW4_NVT=&
-EW4_NMI=&
-EW_RM=10&
-
-EW4_PY=(AU=PIPPO)&
-*EW4_NEX=1&
-*EW_P=TAG&
-*EW_T=R&
-EW=(AU=PIPPO)&
-        */
-       String NUM_RIS="0"; //validi 0,10,100 : numero di risultati
-       String req = "EW_HIL=trev/ew_menu.html&EW_HFL=trev/ew_copy.html&EW_D=TREV&EW4_DLL=10&EW4_DLP=10&EW4_NVR=&EW4_NVT=&EW4_NMI=&EW_RM="+NUM_RIS+"&EW4_NEX=1&EW_P=TAG&EW_T=R&";
-       keys = hashquery.keys();
-       // convertire valore in maiuscolo?
-       String e="";
-       while(keys.hasMoreElements())
-       {
-           index++;
-           chiave = (String)keys.nextElement();
-           valore = (String)hashquery.get(chiave);
-           String a= chiave+"="+valore;
-           a = a.replaceAll(" ", "_AND_"+chiave+"=");
-           
-           e+="_AND_"+"("+a+")";
-       }
        e=e.substring(5);  //toglie primo and
+
+       String NUM_RIS="30"; // numero risposte
+       String req = "&numentries="+NUM_RIS+"&type=full&request=";
+
+       // convertire valore in maiuscolo?
        
-       req = req + "EW4_PY="+e+"&";
-       req = req + "EW="+e+"&";
-       //req = req.substring(0,req.length()-1); // non serve
+       req=req+e;
        req = req.replaceAll(" ", "+");       
        return req;
     }
@@ -141,8 +109,9 @@ EW=(AU=PIPPO)&
     public void sendquery() throws IOException
     {
     	String req = ss.getPrefix() + construct(q);
-    	Vector<RecordItem> result = new Vector<RecordItem>();
-    	System.out.println("rit: http://"+ss.getHost()+req);
+    	
+    	result = new Vector<RecordItem>();
+    	System.out.println("rit: "+ss.getHost()+req);
         try{
                 HttpConnection conn = new HttpConnection(ss.getHost(),ss.getPort());
                 HttpState state = new HttpState();
@@ -168,20 +137,17 @@ EW=(AU=PIPPO)&
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public int getRecordCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return result.size();
 	}
 
 	@Override
 	public Vector<RecordItem> getRecords() {
-		// TODO Auto-generated method stub
-		return null;
+		return result;
 	}
 
 	public int getCurrentStatus() {

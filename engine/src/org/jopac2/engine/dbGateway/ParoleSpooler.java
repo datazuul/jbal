@@ -54,7 +54,7 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 	private Radice stemmer=null;
 	private PrintStream out=null;
 
-	public ParoleSpooler(Connection[] conn, String catalog, int nvalues, Cache cache, PrintStream console) {
+	public ParoleSpooler(Connection[] conn, String catalog, int nvalues, Cache cache, Radice stemmer, PrintStream console) {
 		//super();
 		this.nvalues=nvalues;
 		this.cache=cache;
@@ -79,7 +79,8 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 		}
 		buffer=new Hashtable<String,Long>();
 		
-		stemmer=new StemmerItv2();
+//		stemmer=new StemmerItv2();
+		this.stemmer=stemmer;
 	}
 	
 	private void insertCache(String parola,long id) {
@@ -184,7 +185,7 @@ public class ParoleSpooler implements ParoleSpoolerInterface {
 		            stmt.close();
 				}
 				
-				if(!is) DbGateway.InsertParola(c, catalog, p, stemmer.radice(p), id);
+				if(!is) DbGateway.insertParola(c, catalog, p, stemmer.radice(p), id);
 			}
 			
 			buffer.clear();

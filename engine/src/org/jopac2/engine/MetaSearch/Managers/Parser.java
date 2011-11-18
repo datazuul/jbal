@@ -1,4 +1,4 @@
-package org.jopac2.engine.Managers;
+package org.jopac2.engine.MetaSearch.Managers;
 /*******************************************************************************
 *
 *  JOpac2 (C) 2002-2007 JOpac2 project
@@ -27,36 +27,13 @@ package org.jopac2.engine.Managers;
 * 
 * @author	Romano Trampus
 * @version  19/01/2005
-* 
-* @author	Romano Trampus
-* @version	19/05/2005
 */
 import java.io.BufferedReader;
-import java.net.URLEncoder;
 import java.util.*;
 
 import org.jopac2.utils.RecordItem;
 
-public class EasyWebParser implements Parser {
 
-	public Vector<RecordItem> parse(BufferedReader r, String host, String contextDir, String dbname) {
-		Vector<RecordItem> result = new Vector<RecordItem>();
-		String i;
-		
-		try {
-			i=r.readLine();
-			while(r.ready()) {
-				i+=r.readLine();
-			}
-		
-			i=URLEncoder.encode(i,"UTF-8");
-			String data=i, dataType="pubmed", dataSyntax="pubmed", 
-				databasecode="", id="";
-			result.add(new RecordItem(host, dbname, data, dataType, dataSyntax, databasecode, id));
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
+public interface Parser {
+    public Vector<RecordItem> parse(BufferedReader in, String host, String contextDir, String dbname);
 }

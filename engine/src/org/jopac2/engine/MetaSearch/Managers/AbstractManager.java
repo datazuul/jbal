@@ -4,7 +4,7 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package org.jopac2.engine.Managers;
+package org.jopac2.engine.MetaSearch.Managers;
 /*******************************************************************************
 *
 *  JOpac2 (C) 2002-2007 JOpac2 project

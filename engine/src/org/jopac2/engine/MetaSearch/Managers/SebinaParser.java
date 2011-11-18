@@ -1,4 +1,4 @@
-package org.jopac2.engine.Managers;
+package org.jopac2.engine.MetaSearch.Managers;
 /*******************************************************************************
 *
 *  JOpac2 (C) 2002-2007 JOpac2 project
@@ -81,7 +81,7 @@ public class SebinaParser implements Parser {
 						titolo="";
 						
 						// le prime tre colonne non ci servono, quindi cerca il terzo "</td>" e
-						// toglie quello che c'è prima (compreso)
+						// toglie quello che c'e' prima (compreso)
 						
 						for(int i=0;i<3;i++) {
 							s=s.substring(s.indexOf("</td>")+4);
@@ -95,7 +95,7 @@ public class SebinaParser implements Parser {
 //						System.out.println(b+" "+e);
 						materiale=s.substring(b,e);
 						
-						// il link è del tipo:
+						// il link e' del tipo:
 						
 						// <A Href="....."
 						s=s.substring(s.indexOf("Href=")+6);

@@ -783,7 +783,7 @@ private void sortResultSet(Vector setnames_to_sort,
 
     // We need to split refid down into task-id : Srch
     System.out.println(new String(search_response.referenceId));
-    StringTokenizer st = new StringTokenizer(new String(search_response.referenceId),":");    //Questa riga è stata cambiata a causa di z3950.izumi.si perchè nella stringa indicata non c'era l'id aspettato
+    StringTokenizer st = new StringTokenizer(new String(search_response.referenceId),":");    //Questa riga e' stata cambiata a causa di z3950.izumi.si perche' nella stringa indicata non c'era l'id aspettato
     //StringTokenizer st = new StringTokenizer(last_search_refid,":");
     if ( st.hasMoreTokens() )
     {

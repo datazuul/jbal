@@ -3,7 +3,7 @@ package org.jopac2.engine.MetaSearch;
 import java.util.Map;
 import java.util.Vector;
 
-import org.jopac2.engine.Managers.AbstractManager;
+import org.jopac2.engine.MetaSearch.Managers.AbstractManager;
 import org.jopac2.engine.utils.SingleSearch;
 
 public class DoNewMetaSearch {

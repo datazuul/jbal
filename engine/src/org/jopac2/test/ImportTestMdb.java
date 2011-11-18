@@ -23,17 +23,17 @@ import org.junit.Before;
 import junit.framework.TestCase;
 
 public class ImportTestMdb extends TestCase {
-	private static String filename="/Users/romano/Desktop/biblio.mdb";
-	private static String sitename = "sebina";
+	private static String filename="/home/romano/Downloads/REA.mdb";
+	private static String sitename = "sito";
 	private InputStream in = null;
-	private static String filetype = "mdb";
+	private static String filetype = "mdb:this";
 	private static String JOpac2confdir = "src/org/jopac2/conf";
 //	private static String dbUrl = "jdbc:derby://localhost:1527/db"+sitename+";create=true";
-	private static String dbUrl = "jdbc:derby:/tmp/db" + sitename + ";create=true";
-//	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
+//	private static String dbUrl = "jdbc:derby:/tmp/db" + sitename + ";create=true";
+	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
 	private static String dbUser = "root";
-	private static String dbPassword = "root";
-	private static String catalog=sitename;
+	private static String dbPassword = "";
+	private static String catalog="banchedati2";
 	
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
 	private static String _classDerbyDriver = "org.apache.derby.jdbc.EmbeddedDriver";
@@ -189,26 +189,26 @@ public class ImportTestMdb extends TestCase {
 	
 	
 	public void testList() throws Exception {
-	SearchResultSet rs = ListSearch.listSearch(conn, catalog, "Titolo",
+	SearchResultSet rs = ListSearch.listSearch(conn, catalog, "NomeRisorsa",
 			"a", 10);
-	long[] listres = { 1,2 };
-	SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "Titolo");
+	long[] listres = { 1, 37, 5, 6, 7, 8, 9, 38, 10, 11 };
+	SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
 	boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
 	assertTrue("Done ", r1);
 }
 	
-//	public void testAida() throws Exception {
-//		SearchResultSet rs = doSearch("(NomeRisorsa=aida)");
-//
-//		long[] unordered = { 1 };
-//		long[] ordered = { 1 };
-//		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
-//		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
-//		DbGateway.orderBy(conn, catalog,"NomeRisorsa", rs);
-//		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
-//		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
-//		assertTrue("Done ", r1 && r2);
-//	}
+	public void testAida() throws Exception {
+		SearchResultSet rs = doSearch("(NomeRisorsa=aida)");
+
+		long[] unordered = { 5 };
+		long[] ordered = { 5 };
+		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
+		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
+		DbGateway.orderBy(conn, catalog,"NomeRisorsa", rs);
+		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
+		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
+		assertTrue("Done ", r1 && r2);
+	}
 //	
 //	public void testScienzeFisiche() throws Exception {
 //		SearchResultSet rs = doSearch("(AreaDisciplinare=scienze fisiche)");

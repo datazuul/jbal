@@ -1,4 +1,4 @@
-package org.jopac2.engine.Managers;
+package org.jopac2.engine.MetaSearch.Managers;
 /*******************************************************************************
 *
 *  JOpac2 (C) 2002-2007 JOpac2 project
@@ -28,7 +28,7 @@ package org.jopac2.engine.Managers;
 import java.io.IOException;
 import java.util.Vector;
 
-import org.jopac2.engine.Z3950.SBAInternalClient;
+import org.jopac2.engine.Z3950.InternalClient;
 import org.jopac2.utils.RecordItem;
 
 import com.k_int.IR.SearchTask;
@@ -42,13 +42,13 @@ import com.k_int.IR.TimeoutExceededException;
 public class JOpac2Z3950RequestManager extends AbstractManager
 {	
 	private SearchTask searchtask=null;
-	private SBAInternalClient client=null;
+	private InternalClient client=null;
 	
 	
     public void sendquery() throws IOException // TimeoutExceededException, 
     {	
     	try {
-    		client=new SBAInternalClient();
+    		client=new InternalClient();
     		searchtask=client.getJOpac2SearchData(ss, q, syntax);
     		client.getRecords(ss,searchtask); // questo crea il vettore e fa il fetch nel thread
 			//records = SBAInternalClient.getRecords(sd);

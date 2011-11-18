@@ -61,9 +61,9 @@ public class DisegnaAlbero {
 	 */		
 	private static String stampaAlberoInt(Nodo tree) {
 		Vector<String[]> v = getAlbero(tree);
-		Vector<int[]> x = new Vector<int[]>(); // conterrà le x dei nodi
+		Vector<int[]> x = new Vector<int[]>(); // conterra' le x dei nodi
 		for (int i = v.size() - 1; i >= 0; i--) { // parto dal basso
-			// gw è l'array degli elementi al livello i
+			// gw e' l'array degli elementi al livello i
 			String[] gw = (String[]) v.elementAt(i);
 			int[] pos = new int[gw.length];
 			int curr_x = 0;

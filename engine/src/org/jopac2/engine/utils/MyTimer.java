@@ -42,7 +42,7 @@ public class MyTimer {
 	/**
 	 * inizializza il timer
 	 * @param NomiTimer 
-	 * l'elemento 0 è il nome del timer
+	 * l'elemento 0 e' il nome del timer
 	 * gli altri sono i nomi
 	 * viene aggiunto l'ultimo nome di stop
 	 */

@@ -1,4 +1,4 @@
-package org.jopac2.engine.Managers;
+package org.jopac2.engine.MetaSearch.Managers;
 /*******************************************************************************
 *
 *  JOpac2 (C) 2002-2007 JOpac2 project
@@ -22,18 +22,31 @@ package org.jopac2.engine.Managers;
 *******************************************************************************/
 
 /**
-* @author	Albert Caramia
-* @version	19/01/2005
-* 
-* @author	Romano Trampus
-* @version  19/01/2005
+* @author	Iztok Cergol
+* @version	19/08/2004
 */
-import java.io.BufferedReader;
-import java.util.*;
 
+import java.io.IOException;
+import java.util.Vector;
+
+import org.jopac2.engine.utils.SingleSearch;
 import org.jopac2.utils.RecordItem;
 
 
-public interface Parser {
-    public Vector<RecordItem> parse(BufferedReader in, String host, String contextDir, String dbname);
+/*
+ *interfaccia che definisce un costruttore di richieste 
+ */
+public interface ReqManager {
+    
+    //protected String construct(IRQuery q);
+	
+	public void setInfo(SingleSearch ssearch, String query, String syntax_type, long TimeOut);
+    
+    public void sendquery() throws IOException; // TimeoutExceededException
+    
+    public Vector<RecordItem> getRecords();
+    
+    public int getCurrentStatus();
+    
+    public int getRecordCount();
 }

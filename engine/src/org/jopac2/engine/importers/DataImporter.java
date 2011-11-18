@@ -48,6 +48,8 @@ import java.sql.SQLException;
 import org.jopac2.engine.dbGateway.DbGateway;
 import org.jopac2.engine.dbGateway.LoadData;
 import org.jopac2.jbal.Readers.XsltTransformer;
+import org.jopac2.jbal.stemmer.Radice;
+import org.jopac2.jbal.stemmer.StemmerItv2;
 
 import com.whirlycott.cache.Cache;
 
@@ -90,8 +92,9 @@ public class DataImporter extends Thread {
     private String[] loadData(InputStream f,String dbType, String temporaryDir) throws SQLException {
     	String[] r=null;
     	DbGateway.commitAll(conn);
+    	Radice stemmer=new StemmerItv2();
         LoadData ld=new LoadData(conn,catalog,clearDatabase,out,outputErrorRecords);
-        r=ld.doJob(f,dbType,temporaryDir,cache); //,t);
+        r=ld.doJob(f,dbType,temporaryDir,cache,stemmer); //,t);
         ld.destroy();
         return r;
     }

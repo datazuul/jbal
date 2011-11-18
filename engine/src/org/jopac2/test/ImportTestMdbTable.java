@@ -1,6 +1,7 @@
 package org.jopac2.test;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,49 +11,42 @@ import java.util.Vector;
 import org.jopac2.engine.NewSearch.DoSearchNew;
 import org.jopac2.engine.command.JOpac2Import;
 import org.jopac2.engine.dbGateway.DbGateway;
-import org.jopac2.engine.dbGateway.ParoleSpooler;
 import org.jopac2.engine.dbGateway.StaticDataComponent;
 import org.jopac2.engine.listSearch.ListSearch;
 import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
 import org.jopac2.engine.utils.MyTimer;
 import org.jopac2.engine.utils.SearchResultSet;
-import org.jopac2.jbal.RecordFactory;
-import org.jopac2.jbal.RecordInterface;
-import org.jopac2.jbal.Readers.RecordReader;
-import org.jopac2.jbal.stemmer.Radice;
-import org.jopac2.jbal.stemmer.StemmerItv2;
 import org.junit.After;
 import org.junit.Before;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
-import com.whirlycott.cache.Cache;
 
 import junit.framework.TestCase;
 
-public class InsertTest extends TestCase {
-	private static String sitename = "sebina";
+public class ImportTestMdbTable extends TestCase {
+	private static String filename="/home/romano/Downloads/mdb/rivisted.mdb";
+	private static String tablename="tTitoli";
+	private static String sitename = "sito";
 	private InputStream in = null;
-	private static String filetype = "sebina";
+	private static String filetype = "mdb:"+tablename;
 	private static String JOpac2confdir = "src/org/jopac2/conf";
-	//private static String dbUrl = "jdbc:derby:/siti/jopac2/catalogs/db" + sitename + ";create=true";
+//	private static String dbUrl = "jdbc:derby://localhost:1527/db"+sitename+";create=true";
+//	private static String dbUrl = "jdbc:derby:/tmp/db" + sitename + ";create=true";
 	private static String dbUrl = "jdbc:mysql://localhost/db" + sitename;
 	private static String dbUser = "root";
 	private static String dbPassword = "";
-	private static String catalog=sitename;
-
+	private static String catalog="rivistemed";
+	
 	private static String _classMySQLDriver = "com.mysql.jdbc.Driver";
-	private static String _classHSQLDBDriver = "org.hsqldb.jdbcDriver";
 	private static String _classDerbyDriver = "org.apache.derby.jdbc.EmbeddedDriver";
+//	private static String _classDerbyDriver = "org.apache.derby.jdbc.ClientDriver";
+
 	private DoSearchNew doSearchNew;
 	private static boolean ru = false;
 	private Connection conn;
-	private Radice stemmer=new StemmerItv2();
 
 	public Connection CreaConnessione() throws SQLException {
 		Connection conn = null;
 		String driver = _classMySQLDriver;
-		if (dbUrl.contains(":hsqldb:"))
-			driver = _classHSQLDBDriver;
 		if (dbUrl.contains(":derby:"))
 			driver = _classDerbyDriver;
 
@@ -76,51 +70,15 @@ public class InsertTest extends TestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		if (!ru) {
-			String inFile = new String(
-					Base64
-							.decode(org.jopac2.test.Base64DataExample.unimarcBase64DataExample),
-					"utf-8");
+			File f=new File(filename);
 
-			String[] recs=inFile.split("\n");
-			
-//			RecordInterface ma=RecordFactory.buildRecord(0, "", filetype, 0);
-//			RecordReader r=ma.getRecordReader(in);
-//			ma.destroy();
-			
-			RecordInterface ma=null;
-			
-			Connection c=CreaConnessione();
-			DbGateway dbgw=DbGateway.getInstance("mysql", null);
-			
-			
-			// legge il primo record
-			String rec=recs[0];
-			
-			// carica con la procedura il primo record, per creare tutto il db, i canali di ricerca, le liste
-			InputStream in1 = new ByteArrayInputStream(rec.getBytes());
-			JOpac2Import ji = new JOpac2Import(in1, catalog, filetype, JOpac2confdir,
+			in = new FileInputStream(f);
+
+			JOpac2Import ji = new JOpac2Import(in, catalog, filetype, JOpac2confdir,
 					dbUrl, dbUser, dbPassword, true, System.out, System.out);
 			ji.doJob(false);
 			// ji.wait();
 			ji.destroy(dbUrl);
-			
-			Cache cache=DbGateway.getCache();
-	    	ParoleSpooler paroleSpooler=new ParoleSpooler(new Connection[] {conn},catalog,1,cache,stemmer,System.out);
-			
-			// avanti con l'inserimento dei prossimi
-			
-			for(int i=1;i<recs.length;i++) {
-				ma=RecordFactory.buildRecord(0, recs[i].getBytes(), filetype, 0);
-				if(ma!=null) {
-					dbgw.inserisciNotizia(c, catalog, stemmer, paroleSpooler, ma);
-					ma.destroy();
-				}
-			}
-			
-			DbGateway.shutdownCache();
-			
-			c.close();
-//			in.close();
 			ru = true;
 		}
 
@@ -193,11 +151,13 @@ public class InsertTest extends TestCase {
 		 * "          anagrafe_parole a "
 		 */
 
-		String[] tipi_notizie = { "1,sebina", "2,sosebi", "3,sbn-unix",
-				"4,isisbiblo", "5,easyweb", "6,bibliowin4", "7,pregresso",
-				"8,ejournal", "9,eut", "10,eutmarc" , "11,mdb"};
+		String[] tipi_notizie = { "1,bibliowin4", "2,comarc", "3,easyweb",
+				"4,eutmarc", "5,isisbiblo", "6,pregresso", "7,sbnunix",
+				"8,sebina", "9,sosebi", "10,mdb" };
 
-		Vector<String> v1 = DbGateway.dumpTable(conn, "tipi_notizie");
+		Vector<String> v1 = DbGateway.dumpTable(conn, "je_"+catalog+"_tipi_notizie");
+		
+		
 		boolean r1 = checkStringSequence(v1, tipi_notizie);
 		if (!r1) {
 			System.out.println(v1);
@@ -205,49 +165,63 @@ public class InsertTest extends TestCase {
 		assertTrue("Done ", r1);
 	}
 
-	public void testTblAnagrafeParole() throws Exception {
-
-
-		Vector<String> v1 = DbGateway.dumpTable(conn, "anagrafe_parole order by id");
-		// outputJava(v1);
-		boolean r1 = checkStringSequence(v1, org.jopac2.test.Base64DataExample.anagrafe_parole);
-		if (!r1) {
-			for(int i=0;i<v1.size();i++)
-				System.out.println(v1.elementAt(i));
-		}
-		assertTrue("Done ", r1);
-	}
 
 	
-	  public void testSearchOrder() throws Exception {
-		SearchResultSet rs = doSearch("(TIT=in)|(TIT=der)");
-		long[] unordered = { 1, 3, 6, 7, 9, 10 };
-		long[] ordered = { 7, 6, 1, 10, 3, 9 };
+//	  public void testSearchOrder() throws Exception {
+//		SearchResultSet rs = doSearch("(NomeRisorsa=business)|(NomeRisorsa=stampa)");
+//		long[] unordered = { 24, 25, 26, 27, 28, 29, 53, 59, 60 };
+//		long[] ordered = { 53, 24, 25, 26, 28, 29, 27, 59, 60 };
+//		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
+//		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
+//		DbGateway.orderBy(conn, "NomeRisorsa", rs);
+//		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
+//		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
+//		assertTrue("Done ", r1 && r2);
+//	}
+//
+//	public void testList() throws Exception {
+//		SearchResultSet rs = ListSearch.listSearch(conn, "NomeRisorsa",
+//				"English grammar in use", 10);
+//		long[] listres = { 106, 70, 22, 37, 42, 38, 43, 39, 35, 40, 36, 41, 44, 71, 17, 72, 56, 57 };
+//		SearchResultSet.dumpSearchResultSet(conn, rs, "NomeRisorsa");
+//		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
+//		assertTrue("Done ", r1);
+//	}
+	
+	
+	public void testList() throws Exception {
+	SearchResultSet rs = ListSearch.listSearch(conn, catalog, "NomeRisorsa",
+			"a", 10);
+	long[] listres = { 1, 37, 5, 6, 7, 8, 9, 38, 10, 11 };
+	SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
+	boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
+	assertTrue("Done ", r1);
+}
+	
+	public void testAida() throws Exception {
+		SearchResultSet rs = doSearch("(NomeRisorsa=aida)");
+
+		long[] unordered = { 5 };
+		long[] ordered = { 5 };
 		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
-		//SearchResultSet.dumpSearchResultSet(conn, rs);
-		DbGateway.orderBy(conn, catalog, "TIT", rs);
-		//SearchResultSet.dumpSearchResultSet(conn, rs);
+		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
+		DbGateway.orderBy(conn, catalog,"NomeRisorsa", rs);
+		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
 		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
 		assertTrue("Done ", r1 && r2);
 	}
-
-	public void testListTIT() throws Exception {
-		SearchResultSet rs = ListSearch.listSearch(conn, catalog, "TIT",
-				"English grammar in use", 100);
-		long[] listres = { 1, 10, 2, 11, 17, 8, 5, 3, 4, 18, 20, 9 };
-		//SearchResultSet.dumpSearchResultSet(conn, rs);
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
-		assertTrue("Done ", r1);
-	}
-	
-	public void testListAUT() throws Exception {
-		SearchResultSet rs = ListSearch.listSearch(conn, catalog, "AUT",
-				"a", 100);
-		long[] listres = { 17, 19, 6, 3, 8, 4, 11, 4, 9, 5, 7, 10, 15, 1, 15, 16, 2, 5, 8, 12, 10, 13, 10, 14, 7, 15, 6, 6 };
-		//SearchResultSet.dumpSearchResultSet(conn, rs);
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
-		assertTrue("Done ", r1);
-	}
-	 
+//	
+//	public void testScienzeFisiche() throws Exception {
+//		SearchResultSet rs = doSearch("(AreaDisciplinare=scienze fisiche)");
+//
+//		long[] unordered = { 71 };
+//		long[] ordered = { 71 };
+//		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
+//		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
+//		DbGateway.orderBy(conn, catalog,"NomeRisorsa", rs);
+//		SearchResultSet.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
+//		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
+//		assertTrue("Done ", r1 && r2);
+//	}
 
 }

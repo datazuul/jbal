@@ -42,6 +42,8 @@ import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.Readers.LoadDataInterface;
 import org.jopac2.jbal.Readers.ParoleSpoolerInterface;
 import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.jbal.stemmer.Radice;
+import org.jopac2.jbal.xml.Mdb;
 import org.jopac2.utils.ClasseDettaglio;
 import org.jopac2.utils.TokenWord;
 
@@ -343,23 +345,27 @@ private boolean clearDatabase;
 
   
   public String[] doJob(InputStream dataFile,String dbType,String temporaryDir,
-		  Cache cache) { //, Transliterator t) {
+		  Cache cache, Radice stemmer) { //, Transliterator t) {
 	  //this.t=t;
 	  //Cache cache=DbGateway.getCache();
-	  ParoleSpoolerInterface paroleSpooler=new ParoleSpooler(conn, catalog, maxValues4prepared,cache,out);
+	  ParoleSpoolerInterface paroleSpooler=new ParoleSpooler(conn, catalog, maxValues4prepared,cache,stemmer,out);
 	  
     
 	  long start_time=System.currentTimeMillis();
 
-      tipoNotizia=dbType;
-      //String outDir=temporaryDir;
+	  if(dbType.contains(":")) {
+		  tipoNotizia=dbType.substring(0,dbType.indexOf(":"));
+	  }
+	  else {
+		  tipoNotizia=dbType;
+	  }
 
-      //idTipo=classID;
-      this.dbType=dbType;
+      this.dbType=tipoNotizia;
 
       RecordInterface n=null;
       try {
     	  n=RecordFactory.buildRecord(0,null,tipoNotizia,0);
+    	  if(dbType.contains(":") && n instanceof Mdb) ((Mdb)n).setImportTableName(dbType.substring(dbType.indexOf(":")+1));
       }
       catch(Exception e) {
     	  e.printStackTrace();
@@ -394,7 +400,7 @@ private boolean clearDatabase;
         }
       }
       else {
-        out.println("Tipo "+tipoNotizia+" non trovato nella tabella tipi_notizie.");
+        out.println("Tipo "+dbType+" non trovato nella tabella tipi_notizie.");
       }
       
       close();

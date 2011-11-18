@@ -1,6 +1,7 @@
 package org.jopac2.engine.utils;
 
-import org.jopac2.engine.Managers.AbstractManager;
+import org.jopac2.engine.MetaSearch.Managers.AbstractManager;
+
 
 /**
 * 
@@ -57,7 +58,7 @@ public class SingleSearch
     
     /*
      *La funzione getRequest torna la concatenazione del prefix e del query
-     *cioè la vera e propria richiesta da applicare al server HTTP col metodo GET
+     *cioe' la vera e propria richiesta da applicare al server HTTP col metodo GET
      */    
     public String getPrefix()
     {

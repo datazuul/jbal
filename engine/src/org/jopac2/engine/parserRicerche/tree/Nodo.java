@@ -28,14 +28,14 @@ public class Nodo {
 	//trasformare la query in SOP (sum of producs) ha il vantaggio di 
 	//a. avere solo 2 livelli in memoria (per ricorsione) rispetto 
 	//	 ad una espressione con parentesi
-	//b. poter eliminare termini and se la cardinalità di uno è nulla
+	//b. poter eliminare termini and se la cardinalita' di uno e' nulla
 	
 	/**
 	 * TODO: utilizzare de morgan forse comporta un aumento di lavoro per la 
 	 * forma SOP?
 	 * TODO: inserire i tempi di elaborazione delle varie fasi
 	 * TODO: inserire campi con stringa prima e dopo le trasformazioni
-	 * TODO: inserire test tramite tavola verità delle forme trasformate 
+	 * TODO: inserire test tramite tavola verita' delle forme trasformate 
 	 */
 	
 	private boolean isNot = false;
@@ -266,8 +266,8 @@ public class Nodo {
 	}
 	
 	/**
-	 * scorre l'albero: una forma SOP è data da
-	 * se il nodo è
+	 * scorre l'albero: una forma SOP e' data da
+	 * se il nodo e'
 	 *  1. terminale->true
 	 *  2. or -> i sottoalberi devono essere SOP
 	 *  3. and ->  i sottoalberi devono contenere solo AND
@@ -339,11 +339,11 @@ public class Nodo {
 			} else {
 				// sul nodo and effettuo le trasformazioni
 				boolean s=this.getSinistro().isSubTreeSoloAnd();					
-				if(!s) { //sono sul nodo and e il ramo sx non è solo and
-					if(this.getSinistro().isOr()){ // se è esattamente il livello sotto agisco
+				if(!s) { //sono sul nodo and e il ramo sx non e' solo and
+					if(this.getSinistro().isOr()){ // se e' esattamente il livello sotto agisco
 						// eliminati i nodeclone in quanto i sottoalberi possono rimanere unici
 						// e non necessitano di venire duplicati. la navigazione dell'albero
-						// non verrà inficiata dalla presenza di puntatori a sottoalberi provenienti da nodi diversi
+						// non verra' inficiata dalla presenza di puntatori a sottoalberi provenienti da nodi diversi
 						Nodo z1=this.getDestro();//.NodeClone();
 						Nodo z2=this.getDestro();//.NodeClone();
 						Nodo l=this.getSinistro().getSinistro();//.NodeClone();
@@ -357,16 +357,16 @@ public class Nodo {
 						this.setDestro(nd);
 						this.setSinistro(ns);					
 					} else { 
-						// sono su un nodo and, il cui sottoalbero non è composto solo da and
-						// ma il nodo direttamente sottostante non è un or. devo scendere
+						// sono su un nodo and, il cui sottoalbero non e' composto solo da and
+						// ma il nodo direttamente sottostante non e' un or. devo scendere
 						// di livello per poter effettuare le trasformazioni 
 						this.getSinistro().switchToSOP();
 					}					
 				}	
-				// la gestione del ramo destro è speculare al ramo sinistro sopra codificato
+				// la gestione del ramo destro e' speculare al ramo sinistro sopra codificato
 				boolean d=this.getDestro().isSubTreeSoloAnd();
-				if(!d) { //sono sul nodo and e il ramo dx non è solo and
-					if(this.getDestro().isOr()){ // se è esattamente il livello sotto agisco
+				if(!d) { //sono sul nodo and e il ramo dx non e' solo and
+					if(this.getDestro().isOr()){ // se e' esattamente il livello sotto agisco
 						// eliminati i nodeclone per il motivo di cui sopra
 						Nodo z1=this.getSinistro();//.NodeClone();
 						Nodo z2=this.getSinistro();//.NodeClone();

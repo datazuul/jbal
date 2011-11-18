@@ -44,6 +44,8 @@ import org.jopac2.engine.utils.SearchResultSet;
 import org.jopac2.engine.utils.ZipUnzip;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.stemmer.Radice;
+import org.jopac2.jbal.stemmer.StemmerItv2;
 import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.jbal.xmlHandlers.ClassItem;
 import org.jopac2.utils.BookSignature;
@@ -55,6 +57,7 @@ import org.jopac2.utils.Utils;
 
 import com.whirlycott.cache.Cache;
 import com.whirlycott.cache.CacheConfiguration;
+import com.whirlycott.cache.CacheException;
 import com.whirlycott.cache.CacheManager;
 
 
@@ -558,34 +561,33 @@ public abstract class DbGateway {
     /**
      * 
      * @param conn
+     * @param catalog String 
      * @param tipo tipoNotizia 
-     * @param notizia Stringa
-     * @param clDettaglio Hashtable (tag+dataelement,id_classe) dalla tabella classi_dettaglio
+     * @param notizia byte[]
      * @throws SQLException
      */    
-    public void inserisciNotizia(Connection conn, String catalog, String tipo, 
+    public void inserisciNotizia(Connection conn, String catalog, String tipo, Radice stemmer, ParoleSpooler paroleSpooler,
     		byte[] notizia) throws SQLException {
   	  RecordInterface ma;
-  	  //ma=ISO2709.creaNotizia(0,notizia,tipo,0);
   	  try {
-		ma=RecordFactory.buildRecord(0,notizia,tipo,0);
-		inserisciNotizia(conn,catalog,ma);
-	} catch (Exception e) {
-		e.printStackTrace();
-	} 
+			ma=RecordFactory.buildRecord(0,notizia,tipo,0);
+			inserisciNotizia(conn,catalog,stemmer,paroleSpooler,ma);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
   	  
     }
     
-    public long inserisciNotizia(Connection conn, String catalog, RecordInterface notizia) throws SQLException {
+    public long inserisciNotizia(Connection conn, String catalog, Radice stemmer, ParoleSpooler paroleSpooler, RecordInterface notizia) throws SQLException {
     	long idTipo=getIdTipo(conn, catalog, notizia.getTipo());
     	long jid=insertTableNotizie(conn,catalog,notizia, idTipo);
-    	return inserisciNotiziaInner(conn,catalog,notizia,jid);
+    	return inserisciNotiziaInner(conn,catalog,notizia,stemmer, paroleSpooler, jid);
     }
     
-    public long inserisciNotizia(Connection conn, String catalog, RecordInterface notizia, long jid) throws SQLException {
+    public long inserisciNotizia(Connection conn, String catalog, Radice stemmer, ParoleSpooler paroleSpooler, RecordInterface notizia, long jid) throws SQLException {
     	long idTipo=getIdTipo(conn, catalog, notizia.getTipo());
     	insertTableNotizie(conn,catalog, notizia, idTipo, jid);
-    	return inserisciNotiziaInner(conn,catalog, notizia,jid);
+    	return inserisciNotiziaInner(conn,catalog, notizia,stemmer,paroleSpooler, jid);
     }
     
     /**
@@ -594,18 +596,17 @@ public abstract class DbGateway {
      * @param notizia ISO2709
      * @throws SQLException
      */
-    private long inserisciNotiziaInner(Connection conn, String catalog, RecordInterface notizia, long jid) throws SQLException {
+    private long inserisciNotiziaInner(Connection conn, String catalog, RecordInterface notizia, Radice stemmer, ParoleSpooler paroleSpooler, long jid) throws SQLException {
     	long idTipo=getIdTipo(conn, catalog, notizia.getTipo());
+    	
     	
     	if(notizia.toString()!=null) {
     	
 	    	insertHashNotizia(conn,catalog,notizia, jid);
 	    	
 	    	Connection c[]={conn};
-	    	Cache cache=getCache();
-	    	ParoleSpooler paroleSpooler=new ParoleSpooler(c,catalog,c.length,cache,out);
 	    	
-	    	insertNotizia(c,catalog,notizia,idTipo,jid,paroleSpooler);
+	    	insertNotizia(c,catalog,stemmer,notizia,idTipo,jid,paroleSpooler);
 	    	
 	    	paroleSpooler.destroy();
 	    	String[] channels=notizia.getChannels();
@@ -618,10 +619,10 @@ public abstract class DbGateway {
     	return jid;
     }
     
-    public void updateNotizia(Connection conn, String catalog, RecordInterface notizia) throws SQLException {
+    public void updateNotizia(Connection conn, String catalog, Radice stemmer, ParoleSpooler paroleSpooler, RecordInterface notizia) throws SQLException {
     	long jid=notizia.getJOpacID();
     	cancellaNotiziaFromJid(conn, catalog, jid);
-    	inserisciNotizia(conn,catalog,notizia,jid);
+    	inserisciNotizia(conn,catalog,stemmer,paroleSpooler,notizia,jid);
     }
     
     /**
@@ -703,7 +704,18 @@ public abstract class DbGateway {
 		return hash;
 	}
 
-	private static void insertNotizia(Connection[] conn, String catalog, RecordInterface notizia, long idTipo, long jid, ParoleSpooler paroleSpooler) throws SQLException {
+	/**
+	 * Inserisce gli indici di una notizia ma non la notizia in table_notizie!
+	 * paroleSpooler può essere null
+	 * @param conn
+	 * @param catalog
+	 * @param notizia
+	 * @param idTipo
+	 * @param jid
+	 * @param paroleSpooler
+	 * @throws SQLException
+	 */
+	private static void insertNotizia(Connection[] conn, String catalog, Radice stemmer, RecordInterface notizia, long idTipo, long jid, ParoleSpooler paroleSpooler) throws SQLException {
     	Vector<ClasseDettaglio> clDettaglio=initClDettaglio(conn[conn.length>1?1:conn.length-1],catalog, idTipo);
     	long idSequenzaTag=0;
     	
@@ -713,7 +725,7 @@ public abstract class DbGateway {
     		int k=clDettaglio.indexOf(new ClasseDettaglio(-1,-1,-1,tw.getTag(),tw.getDataelement()));
     		if(k>=0) {
     			ClasseDettaglio cd=clDettaglio.elementAt(k);
-	            InsertParole(conn,catalog,tw.getValue(),jid,idSequenzaTag++,cd,paroleSpooler);
+	            insertParole(conn,catalog,stemmer,tw.getValue(),jid,idSequenzaTag++,cd,paroleSpooler);
     		}
     	}
 
@@ -797,6 +809,7 @@ public abstract class DbGateway {
 		ResultSet rs = null;
 		ParoleSpooler paroleSpooler = null;
 		long current=0;
+		Radice stemmer=new StemmerItv2();
 
 		try {
 			stmt = conn[0].createStatement();
@@ -838,7 +851,7 @@ public abstract class DbGateway {
 			
 			Cache cache=getCache();
 			
-	    	paroleSpooler=new ParoleSpooler(conn,catalog,conn.length,cache,console);
+	    	paroleSpooler=new ParoleSpooler(conn,catalog,conn.length,cache,stemmer,console);
 			
 	    	boolean first=true;
 	    	
@@ -858,7 +871,7 @@ public abstract class DbGateway {
 					ma.setJOpacID(jid);
 					execute(conn[0],"delete from je_"+catalog+"_notizie where id='"+jid+"'");
 					insertTableNotizie(conn[0], catalog, ma, idTipo, ma.getJOpacID());
-					insertNotizia(conn,catalog,ma,idTipo,rs.getLong("id"),paroleSpooler); //ISO2709 notizia, long idTipo, long jid
+					insertNotizia(conn,catalog,stemmer,ma,idTipo,rs.getLong("id"),paroleSpooler); //ISO2709 notizia, long idTipo, long jid
 				} catch (Exception e) {
 					e.printStackTrace();
 				} 
@@ -869,6 +882,11 @@ public abstract class DbGateway {
 				}
 				ma.destroy();
 				ma=null;
+			}
+			try {
+				CacheManager.getInstance().shutdown();
+			} catch (CacheException e) {
+				e.printStackTrace();
 			}
 		}
 		catch(SQLException e) {
@@ -904,6 +922,11 @@ public abstract class DbGateway {
 		}
 		return cache;
 	}
+	
+	public static void shutdownCache() throws CacheException {
+//		CacheManager.getInstance().destroy();
+		CacheManager.getInstance().shutdown();
+	}
 
 	/**
 	 * @param valore
@@ -913,7 +936,18 @@ public abstract class DbGateway {
 		return  new StringTokenizer(processaMarcatori(valore),SEPARATORI_PAROLE);
 	}
 
-	private static void InsertParole(Connection conn[], String catalog, String valore, long jid, long idSequenzaTag, ClasseDettaglio cl, 
+	/**
+	 * paroleSpooler può essere null
+	 * @param conn
+	 * @param catalog
+	 * @param valore
+	 * @param jid
+	 * @param idSequenzaTag
+	 * @param cl
+	 * @param paroleSpooler
+	 * @throws SQLException
+	 */
+	private static void insertParole(Connection conn[], String catalog, Radice stemmer, String valore, long jid, long idSequenzaTag, ClasseDettaglio cl, 
 			ParoleSpooler paroleSpooler) throws SQLException {
 	    String parola;
 	    StringTokenizer tk=paroleTokenizer(valore);
@@ -926,7 +960,8 @@ public abstract class DbGateway {
 	      }
 	      
 	      if((parola!=null)&&(parola.length()>0)) {
-		      long id_parola=InsertParola(conn[conn.length>1?1:conn.length-1],catalog,parola,paroleSpooler);
+	    	  String stemma=stemmer.radice(parola);
+		      long id_parola=insertParola(conn[conn.length>1?1:conn.length-1],catalog,parola,stemma,paroleSpooler);
 		      long id_lcp=insertLClassiParole(conn[conn.length>2?2:conn.length-1],catalog,id_parola,cl.getIdClasse());
 		      insertLClassiParoleNotizie(conn[conn.length>3?3:conn.length-1],catalog,jid,id_lcp);
 	      }
@@ -1004,20 +1039,36 @@ public abstract class DbGateway {
 	    return returnValue;
 	  }
 	  
-	  public static long InsertParola(Connection conn,String catalog, String parola, ParoleSpooler paroleSpooler) throws SQLException {
+	  /**
+	   * paroleSpooler puo' essere null
+	   * @param conn
+	   * @param catalog
+	   * @param parola
+	   * @param paroleSpooler
+	   * @return
+	   * @throws SQLException
+	   */
+	  public static long insertParola(Connection conn,String catalog, String parola, String stemma, ParoleSpooler paroleSpooler) throws SQLException {
 		  long r=-1;
-	      parola=pulisciParola(parola);
+	      parola=pulisciParola(parola);	      
 	      
-	      r=paroleSpooler.getParola(parola);
+	      if(paroleSpooler!=null) r=paroleSpooler.getParola(parola);
 		  if(r==-1) {
-	    	  long id_ap_f=getMaxIdTable(conn,"je_"+catalog+"_anagrafe_parole")+1+paroleSpooler.getCurrentValue();
-	    	  r=id_ap_f;
-	    	  paroleSpooler.insertParola(id_ap_f,parola);
+			  if(paroleSpooler!=null) {
+		    	  long id_ap_f=getMaxIdTable(conn,"je_"+catalog+"_anagrafe_parole")+1+paroleSpooler.getCurrentValue();
+		    	  r=id_ap_f;
+		    	  paroleSpooler.insertParola(id_ap_f,parola);
+		    	  insertParola(conn,catalog,parola,stemma,r);
+			  }
+			  else {
+				  r=getMaxIdTable(conn,"je_"+catalog+"_anagrafe_parole")+1;
+				  insertParola(conn,catalog,parola,stemma,r);
+			  }
 	      }
 	      return r;
 	  }
 	  
-	  public static void InsertParola(Connection conn, String catalog, String parola, String stemma, Long id_parola) {
+	  public static void insertParola(Connection conn, String catalog, String parola, String stemma, Long id_parola) {
 		  try {
 			DbGateway.execute(conn, "insert into je_"+catalog+"_anagrafe_parole (parola,ID,stemma) values ('"+parola+"',"+id_parola+", '"+stemma+"');");
 		} catch (SQLException e) {
@@ -1147,7 +1198,7 @@ public abstract class DbGateway {
 	/**
      * esegue una query e restituisce tabella HTML
      */
-    public static String SqlToHtml(Connection conn,String SQL,boolean outputHtml) {
+    public static String sqlToHtml(Connection conn,String SQL,boolean outputHtml) {
         String html=SQL+(outputHtml?"<br/><table border=1><tr>":"\n");
         Statement stm=null;
         ResultSet rs=null;
@@ -1193,7 +1244,7 @@ public abstract class DbGateway {
         return html;
     }
 	public static void desc(Connection conn, String sql) {
-		if(DEBUG) System.out.println(SqlToHtml(conn, "desc "+sql,false));
+		if(DEBUG) System.out.println(sqlToHtml(conn, "desc "+sql,false));
 	}
 
 	public static Vector<Long> getIdNotizie(Connection conn, String catalog) throws SQLException {

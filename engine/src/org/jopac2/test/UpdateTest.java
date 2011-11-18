@@ -10,16 +10,20 @@ import java.util.Vector;
 import org.jopac2.engine.NewSearch.DoSearchNew;
 import org.jopac2.engine.command.JOpac2Import;
 import org.jopac2.engine.dbGateway.DbGateway;
+import org.jopac2.engine.dbGateway.ParoleSpooler;
 import org.jopac2.engine.dbGateway.StaticDataComponent;
 import org.jopac2.engine.parserRicerche.parser.exception.ExpressionException;
 import org.jopac2.engine.utils.MyTimer;
 import org.jopac2.engine.utils.SearchResultSet;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.stemmer.Radice;
+import org.jopac2.jbal.stemmer.StemmerItv2;
 import org.junit.After;
 import org.junit.Before;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import com.whirlycott.cache.Cache;
 
 import junit.framework.TestCase;
 
@@ -40,6 +44,7 @@ public class UpdateTest extends TestCase {
 	private DoSearchNew doSearchNew;
 	private static boolean ru = false;
 	private Connection conn;
+	private Radice stemmer=new StemmerItv2();
 
 	public Connection CreaConnessione() throws SQLException {
 		Connection conn = null;
@@ -99,14 +104,17 @@ public class UpdateTest extends TestCase {
 			
 			// avanti con l'inserimento dei prossimi
 			
+			Cache cache=DbGateway.getCache();
+	    	ParoleSpooler paroleSpooler=new ParoleSpooler(new Connection[] {conn},catalog,1,cache,stemmer,System.out);
+			
 			for(int i=1;i<recs.length;i++) {
 				ma=RecordFactory.buildRecord(0, recs[i].getBytes(), filetype, 0);
 				if(ma!=null) {
-					dbgw.inserisciNotizia(c, catalog, ma);
+					dbgw.inserisciNotizia(c, catalog, stemmer, paroleSpooler, ma);
 					ma.destroy();
 				}
 			}
-			
+			DbGateway.shutdownCache();
 			c.close();
 //			in.close();
 			ru = true;
@@ -216,10 +224,12 @@ public class UpdateTest extends TestCase {
 		RecordInterface ma=DbGateway.getNotiziaByJID(conn, catalog, 1);
 		System.out.println(ma.toReadableString());
 		ma.setTitle("Titolo prova");
-		
-		dbgw.updateNotizia(conn, catalog, ma);
+		Cache cache=DbGateway.getCache();
+    	ParoleSpooler paroleSpooler=new ParoleSpooler(new Connection[] {conn},catalog,1,cache,stemmer,System.out);
+		dbgw.updateNotizia(conn, catalog, stemmer, paroleSpooler,ma);
 		
 		ma.destroy();
+		DbGateway.shutdownCache();
 		ma=DbGateway.getNotiziaByJID(conn, catalog, 1);
 		System.out.println(ma.toReadableString());
 		conn.close();

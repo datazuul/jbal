@@ -29,7 +29,7 @@ package org.jopac2.engine.dbGateway;
 * @version	19/05/2005
 */
 
-import org.jopac2.engine.Z3950.SBAInternalClient;
+import org.jopac2.engine.Z3950.InternalClient;
 import org.jopac2.utils.StopWordRecognizer;
 
 import java.util.*;
@@ -46,7 +46,7 @@ import java.io.File;
 
 public final class StaticDataComponent { //, Contextualizable, ThreadSafe {
    private Hashtable<String,Long> tipi;
-   private SBAInternalClient staticclient = null;
+   private InternalClient staticclient = null;
    //private NewMetaSearch dms;
    private StopWordRecognizer stopword;
    private String path;
@@ -63,7 +63,7 @@ public final class StaticDataComponent { //, Contextualizable, ThreadSafe {
 //       return tipi;
 //   }
    
-   public SBAInternalClient getStaticClient(){
+   public InternalClient getStaticClient(){
    		return staticclient;
    }
 
@@ -79,7 +79,7 @@ public final class StaticDataComponent { //, Contextualizable, ThreadSafe {
   }
   
    public void init() {
-	    staticclient = new SBAInternalClient(); 
+	    staticclient = new InternalClient(); 
 
 	    stopword=new StopWordRecognizer();
 	    stopword.LoadList(new File(path+"stopwords.lst"));

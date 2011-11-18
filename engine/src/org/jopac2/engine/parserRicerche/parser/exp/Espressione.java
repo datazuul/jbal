@@ -32,7 +32,7 @@ import java.util.logging.*;
 public class Espressione {
 	private static Logger logger = Logger.getLogger("parser.Espressione");
 	// private static FileHandler lfh = new FileHandler("%t/exp.log"); 
-	// perchŽ non va?
+	// perche' non va?
 	private String exp;
 	private StringTokenizer st;
 	public String sym;
@@ -102,7 +102,7 @@ public class Espressione {
 	}
 	
 	/**
-	 * e' un numero se inizia per una cifra [0..9] può parserizzare sia un id che
+	 * e' un numero se inizia per una cifra [0..9] puo' parserizzare sia un id che
 	 * una forma id1=id2
 	 * 
 	 * @param x
@@ -120,7 +120,7 @@ public class Espressione {
 	 * una forma id1=id2
 	 * 
 	 * @param x
-	 * @return x è un numero?
+	 * @return x e' un numero?
 	 */
 	private static boolean isAlfanumerico(String x) {
 		char c = '.';

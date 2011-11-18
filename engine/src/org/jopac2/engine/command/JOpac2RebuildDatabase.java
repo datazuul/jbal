@@ -55,9 +55,9 @@ public class JOpac2RebuildDatabase {
 	public static void main(String[] args) throws Exception {
 		String filetype="eutmarc";
 		//String dbUrl = "jdbc:derby:db"+sitename+";create=true";
-		String dbUrl="jdbc:mysql://140.105.147.166/dbeut";
+		String dbUrl="jdbc:mysql://localhost/dbeut";
 		String dbUser="root";
-		String dbPassword="%op01rt!";
+		String dbPassword="";
 		String catalog="eutmarc";
 		
 		JOpac2RebuildDatabase rb=new JOpac2RebuildDatabase(catalog,filetype,dbUrl,dbUser,dbPassword, System.out, System.err);

@@ -63,9 +63,9 @@ public class JOpac2ExportData {
 		//JOpac2Import ji=new JOpac2Import(args[0],args[1],args[2],args[3],args[4],args[5],true);
 		//String webcontentdir="/java_source/keiko/WebContent";
 		String sitename="dbeut";
-		String dbUrl="jdbc:mysql://140.105.147.166/"+sitename;
+		String dbUrl="jdbc:mysql://localhost/"+sitename;
 		String dbUser="root";
-		String dbPassword="%op01rt!";
+		String dbPassword="";
 		String catalog="eutmarc";
 		
 		JOpac2ExportData ji=new JOpac2ExportData(dbUrl,catalog,dbUser,dbPassword);

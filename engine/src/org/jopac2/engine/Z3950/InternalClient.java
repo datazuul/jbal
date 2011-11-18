@@ -41,7 +41,7 @@ import org.jopac2.utils.Parametro;
 import org.jopac2.utils.RecordItem;
 import org.jopac2.utils.Utils;
 
-public class SBAInternalClient implements Observer {
+public class InternalClient implements Observer {
 	private int RUNNING=1;
 	private int status=RUNNING;
 	private int nfragments=-1;
@@ -50,7 +50,7 @@ public class SBAInternalClient implements Observer {
 	
 	
 	
-	public SBAInternalClient() {
+	public InternalClient() {
 		super();
 	}
 	
