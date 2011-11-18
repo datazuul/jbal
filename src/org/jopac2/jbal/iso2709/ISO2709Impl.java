@@ -61,7 +61,13 @@ public abstract class ISO2709Impl extends ISO2709 {
     this.iso2709Costruttore(notizia,dTipo,Integer.parseInt(livello));
   }
 
-  public ISO2709Impl(byte[] notizia,String dTipo) throws Exception {
+  @Override
+public void removeImage() throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+public ISO2709Impl(byte[] notizia,String dTipo) throws Exception {
     this.iso2709Costruttore(notizia,dTipo,0);
   }
 

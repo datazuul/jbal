@@ -45,6 +45,7 @@ import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.jbal.abstractStructure.Delimiters;
+import org.jopac2.jbal.abstractStructure.Field;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.subject.SubjectInterface;
@@ -54,7 +55,13 @@ import org.jopac2.utils.TokenWord;
 import org.jopac2.utils.Utils;
 
 public abstract class ISO2709 implements RecordInterface {
-  public String getCharacterEncodingScheme() {
+  @Override
+	public void addAuthorsFromTitle() throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+public String getCharacterEncodingScheme() {
 		return recordCharacterEncodingScheme;
 	}
 
@@ -192,7 +199,7 @@ public Vector<Tag> dati;
     return colour;
   }
 
-  private String[] Directory;
+  private DirEntry[] Directory;
   public String inString;
 
   public String getTipo() {
@@ -220,12 +227,8 @@ public Vector<Tag> dati;
     return bid;
   }
   
-  private String getTag(byte[] record, String dirEntry) throws UnsupportedEncodingException {
-	    String t=dirEntry.substring(3,7);
-	    int FieldLength = Integer.parseInt(t);
-	    t=dirEntry.substring(7,12);
-	    int Starting = Integer.parseInt(t) + 1;
-	    t=new String(record,Starting-1,FieldLength,charset);
+  private String getTag(byte[] record, DirEntry dirEntry) throws UnsupportedEncodingException {
+	    String t=new String(record,dirEntry.getStartPosition()-1,dirEntry.getFieldLength(),charset);
 	    t=my_trim(t);
 	    return(t);
   }
@@ -418,6 +421,7 @@ public Vector<Tag> getTags(String tag) {
     return(t);
   }
 
+  @Override
   public String toString() {
     try {
 		return toISO2709();
@@ -427,6 +431,7 @@ public Vector<Tag> getTags(String tag) {
 	return null;
   }
   
+  @Override
   public String toReadableString() {
 	  StringBuffer r=new StringBuffer();
 	  r.append("Record status: "+recordStatus+"\n");
@@ -557,8 +562,6 @@ public void init(byte[] stringa) throws Exception {
         recordHierarchicalLevel = implementationCodes.substring(2,3);
         recordCharacterEncodingScheme=implementationCodes.substring(3,4);
         
-        
-        
         // indicatorLength
         indicatorLength = new String(stringa,10,1); //stringa.substring(10,11);
         // Subfield identifier length
@@ -574,28 +577,13 @@ public void init(byte[] stringa) throws Exception {
 //        directoryMap=new String(stringa,20,4); //stringa.substring(20,24);
         
         int entryLengthOfFieldLength=-1;
-        try {
-        	entryLengthOfFieldLength=Integer.parseInt(new String(stringa,20,1));
-        }
-        catch(Exception e) {
-        	entryLengthOfFieldLength=4;
-        }
+        try {entryLengthOfFieldLength=Integer.parseInt(new String(stringa,20,1));} catch(Exception e) {entryLengthOfFieldLength=4;}
         
         int entryStartPositionLength=-1;
-        try {
-        	entryStartPositionLength=Integer.parseInt(new String(stringa,21,1));
-        }
-        catch(Exception e) {
-        	entryStartPositionLength=5;
-        }
+        try {entryStartPositionLength=Integer.parseInt(new String(stringa,21,1));} catch(Exception e) {entryStartPositionLength=5;}
         
         int entryImplementationDefinedLength=-1;
-        try {
-        	entryImplementationDefinedLength=Integer.parseInt(new String(stringa,22,1));
-        }
-        catch(Exception e) {
-        	entryImplementationDefinedLength=0;
-        }
+        try {entryImplementationDefinedLength=Integer.parseInt(new String(stringa,22,1));} catch(Exception e) {entryImplementationDefinedLength=0;}
         @SuppressWarnings("unused")
 		int entryReservedFutureUse=stringa[24];
         
@@ -607,15 +595,11 @@ public void init(byte[] stringa) throws Exception {
         byte[] recordBytes=stringa;
 
         while (stringa[readed]!=delimiters.getByteFt()) {
-        	
-        	
-        	String t=null;
-        		t=new String(recordBytes, readed, 12);
+        	String t=new String(recordBytes, readed, entryLength);
         	
     		readed=readed+entryLength;
-            Directory[ndir] = t;
+            Directory[ndir] = new DirEntry(t,entryLengthOfFieldLength, entryStartPositionLength, entryImplementationDefinedLength,entryReservedFutureUse);
             ndir = ndir + 1;
-
         }
         
         readed++;
@@ -624,9 +608,8 @@ public void init(byte[] stringa) throws Exception {
         System.arraycopy(stringa, readed, record, 0, record.length);
         for(int z = 0; z<= ndir - 1;z++) {
         	
-          String s = null;
-        	  s=my_trim(getTag(record, Directory[z]));
-          String tag=Directory[z].substring(0,3);
+          String s=my_trim(getTag(record, Directory[z]));
+          String tag=Directory[z].getTag();
 
           dati.addElement(new Tag(tag+s,delimiters));
           if(tag.equals("001")) {
@@ -693,7 +676,7 @@ public void init(byte[] stringa) throws Exception {
   }
 
   public void iso2709Costruttore(byte[] notizia,String dTipo,int livello) throws Exception {
-    Directory=new String[1000];
+    Directory=new DirEntry[1000];
     dati=new Vector<Tag>();
     tw=new Vector<TokenWord>();
     descrizioneTipo=dTipo;
@@ -710,6 +693,7 @@ public void init(byte[] stringa) throws Exception {
    * Codes only with Embedded fields technique
    * 
    */
+  @Override
   public String toEncapsulatedRecordFormat() {
 	  StringBuffer r=new StringBuffer();
 	  
@@ -738,6 +722,7 @@ public void init(byte[] stringa) throws Exception {
    *            
    * @throws Exception 
    */
+  @Override
   public String toXML() throws Exception {
 	  /**
   	 * http://www.ifla.org/VI/3/p1996-1/uni.htm
@@ -767,26 +752,31 @@ public void init(byte[] stringa) throws Exception {
 	    String directory="";
 	    String data="";
 	
-	    long temp = 24 + 12 * getRows() + 1;             // base address of data
+	    int maxFL=getMaxFieldLength();
+	    int entryLength=maxFL+maxFL+1+3; // 3 = tag length
+	    
+	    long temp = 24 + entryLength * getRows() + 1;             // base address of data
 	    leader = leader.concat(Utils.pad("00000",temp));
 	    
 	    leader=leader.concat(additionalRecordDefinition);                  // implementation defined
-	    leader=leader.concat("450 ");                 // entry map
+	    
+	    leader=leader.concat(Integer.toString(maxFL)+Integer.toString(maxFL+1)+"0 ");                 // entry map, maxFL and maxFL+1 digit padding, see in the for loop beyond 
+	    String lengthPad=pad0(maxFL);
+	    String posPad=lengthPad+"0";    
+	    
+	    removeEmptyTags();
 	    
 	    Vector<Tag> t=this.getTags();
 	    Collections.sort(t);
-	
-	    
-	    
-	    ba+=this.getRows()*12;
 
+	    ba+=this.getRows()*entryLength;
 	    long c=0;
 	    for(int z=0;z<t.size();z++) {
 	    	String k=t.elementAt(z).toString();
 	    	int kLength=k.getBytes().length;
 	        directory=directory.concat(k.substring(0,3)); // 3 bytes (tag length)
-	        directory=directory.concat(Utils.pad("0000",kLength-2)); // modified for byte counting! pad to 4 digit (see entry map definition above).
-	        directory=directory.concat(Utils.pad("00000",c)); // pad to 5 digit (see entry map definition above)
+	        directory=directory.concat(Utils.pad(lengthPad,kLength-2)); // modified for byte counting! pad to 4 digit (see entry map definition above).
+	        directory=directory.concat(Utils.pad(posPad,c)); // pad to 5 digit (see entry map definition above)
 	        c+=kLength-2;  // is always full lenght - tag length (3) + 1 for ft at end of each data. Total = kLength - 3 +1
 	        ba+=kLength-2; // is always full lenght - tag length (3) + 1 for ft at end of each data. Total = kLength - 3 +1
 	        data=data+t.elementAt(z).toXML();
@@ -812,7 +802,21 @@ public void init(byte[] stringa) throws Exception {
 }
   
   
-  /**
+  private void removeEmptyTags() {
+	for(int i=dati.size()-1;i>=0;i--) {
+		if(isEmpty(dati.elementAt(i))) dati.removeElementAt(i);
+	}
+  }
+
+private boolean isEmpty(Tag tag) {
+	boolean r=true;
+	tag.removeEmptyFields();
+	if(tag.getFields()!=null && tag.getFields().size()>0) r=false;
+	if(r && tag.getRawContent()!=null && tag.getRawContent().trim().length()>0) r=false;
+	return r;
+}
+
+/**
    * 01/10/2003 - RT 
    *            Prende una istanza ISO2709 e la salva in formato ISO2709 restituendo una stringa
    * @throws Exception 
@@ -851,23 +855,38 @@ public void init(byte[] stringa) throws Exception {
 	    String directory="";
 	    String data="";
 	
-	    long temp = 24 + 12 * getRows() + 1;             // base address of data
+	    
+	    
+	    
+	    int maxFL=getMaxFieldLength();
+	    int entryLength=maxFL+maxFL+1+3; // 3 = tag length
+	    
+	    long temp = 24 + entryLength * getRows() + 1;             // base address of data
 	    leader = leader.concat(Utils.pad("00000",temp));
 	    
 	    leader=leader.concat(additionalRecordDefinition);                  // implementation defined
-	    leader=leader.concat("450 ");                 // entry map, 4 and 5 digit padding, see in the for loop beyond 
+	    
+	    
+	    
+	    leader=leader.concat(Integer.toString(maxFL)+Integer.toString(maxFL+1)+"0 ");                 // entry map, maxFL and maxFL+1 digit padding, see in the for loop beyond 
+	    String lengthPad=pad0(maxFL);
+	    String posPad=lengthPad+"0";    
+	    
+	    removeEmptyTags();
 	    
 	    Vector<Tag> t=this.getTags();
 	    Collections.sort(t);
 	
-	    ba+=this.getRows()*12;
+	    
+	    
+	    ba+=this.getRows()*entryLength;
 	    long c=0;
 	    for(int z=0;z<t.size();z++) {
 	    	String k=t.elementAt(z).toString();
 	    	int kLength=k.getBytes().length;
 	        directory=directory.concat(k.substring(0,3)); // 3 bytes (tag length)
-	        directory=directory.concat(Utils.pad("0000",kLength-2)); // modified for byte counting! pad to 4 digit (see entry map definition above).
-	        directory=directory.concat(Utils.pad("00000",c)); // pad to 5 digit (see entry map definition above)
+	        directory=directory.concat(Utils.pad(lengthPad,kLength-2)); // modified for byte counting! pad to 4 digit (see entry map definition above).
+	        directory=directory.concat(Utils.pad(posPad,c)); // pad to 5 digit (see entry map definition above)
 	        c+=kLength-2;  // is always full lenght - tag length (3) + 1 for ft at end of each data. Total = kLength - 3 +1
 	        ba+=kLength-2; // is always full lenght - tag length (3) + 1 for ft at end of each data. Total = kLength - 3 +1
 	        data=data+k.substring(3)+delimiters.getFt(); // get data starting at position 3 (ommitting tag) + one byte for ft
@@ -888,7 +907,23 @@ public void init(byte[] stringa) throws Exception {
     return r;
 }
   
-  public Delimiters getTerminators() {
+  private String pad0(int n) {
+	  String r="";
+	for(int i=0;i<n;i++) r+="0";
+	return r;
+}
+
+private int getMaxFieldLength() {
+	int r=9999;
+    for(int z=0;z<dati.size();z++) {
+    	int kLength=dati.elementAt(z).toBytes().length;
+        if(kLength>r) r=kLength;
+    }
+    r=Integer.toString(r).length();
+	return r;
+}
+
+public Delimiters getTerminators() {
 	  System.out.append("prende i terminatori");
     return delimiters;
   }
@@ -913,6 +948,7 @@ public void init(byte[] stringa) throws Exception {
       tw=new Vector<TokenWord>();
   }
 
+  
   public Enumeration<TokenWord> getItems() {
 		tw.removeAllElements();
 		String ctk;
@@ -951,10 +987,17 @@ public void init(byte[] stringa) throws Exception {
 		return tw.elements();
 	}
   
+  @Override
   public String getPublicationNature(){ return  recordType;}
   
+  @Override
 	public String getField(String field) {
 		return null;
+	}
+	
+	@Override
+	public void setBase64Image(String base64EncodedImage) throws JOpac2Exception {
+		throw new JOpac2Exception("Unimplemented method");
 	}
 
 }

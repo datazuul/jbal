@@ -564,4 +564,28 @@ public void setAvailabilityAndOrPrice(String availabilityAndOrPrice)
 	// TODO Auto-generated method stub
 	
 }
+
+@Override
+public String getPublisherName() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public void setPublisherName(String publisherName) throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public void addAuthorsFromTitle() throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public void removeImage() throws JOpac2Exception {
+	// TODO Auto-generated method stub
+	
+}
 }

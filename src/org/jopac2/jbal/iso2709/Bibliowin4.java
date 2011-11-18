@@ -97,7 +97,7 @@ public class Bibliowin4 extends Unimarc {
 	public void init(byte[] stringa) throws Exception {
 		setTerminator((byte) '#',(byte)'$',(byte)'$');
 //		setTerminator(null, "$", "$");
-		
+		if(stringa==null) return;
 		rawRecord=new String(stringa);
 		
 		if(rawRecord.startsWith("###")) {

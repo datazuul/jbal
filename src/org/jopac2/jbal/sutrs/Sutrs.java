@@ -425,4 +425,16 @@ return null;
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public String getPublisherName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPublisherName(String publisherName) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
 }

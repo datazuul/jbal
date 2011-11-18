@@ -282,6 +282,7 @@ public abstract class XML implements RecordInterface {
   public abstract String getDescription(); // Descrizione fisica
 
   public void init(byte[] in) throws SAXException, IOException {
+	  if(in==null) return;
 	  String ins=new String(in);
 	  tw = new Vector<TokenWord>();
 	  if (ins != null && ins.length() > 0) {

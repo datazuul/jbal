@@ -37,7 +37,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class XmlMarcHandler extends DefaultHandler {
 	protected String rootElement, recordElement;
-	protected boolean isRoot=false, isRecord=false;
+	protected boolean isRoot=false, isRecord=false, isSubField=false;
 	protected long start_time;
 	protected java.util.Stack<Object> context;
 	static final int DEBUG=1;
@@ -70,7 +70,7 @@ public class XmlMarcHandler extends DefaultHandler {
         context.push(new Object[] {ns, name, qname, new AttributesImpl(attrs)});
         
         if(qname.equals(rootElement)) {isRoot=true;}
-        if(qname.equals(recordElement)) {
+        else if(qname.equals(recordElement)) {
         	isRecord=true;
         	try {
         		if(ma!=null) throw new JOpac2Exception("Not null record at beginning of new record. " +
@@ -80,7 +80,7 @@ public class XmlMarcHandler extends DefaultHandler {
 				e.printStackTrace();
 			}
         }
-        if(qname.equals(controlField)||qname.equals(dataField)) {
+        else if(qname.equals(controlField)||qname.equals(dataField)) {
         	currentTag=new Tag(attrs.getValue("tag"));
         	
         	String i1=attrs.getValue("ind1");
@@ -93,10 +93,18 @@ public class XmlMarcHandler extends DefaultHandler {
         		currentTag.setModifier2(i2.charAt(0));
         	}
         }
-        if(qname.equals(subField)) {
+        else if(qname.equals(subField)) {
         	currentField=new Field(attrs.getValue("code"),null);
+        	isSubField=true;
         }
         
+        if(isSubField && !qname.equals(subField)) {
+        	currentData.append("<"+qname);
+        	for(int ki=0;ki<attrs.getLength();ki++) {
+        		currentData.append(" "+attrs.getQName(ki)+"=\""+attrs.getValue(ki)+"\"");
+        	}
+        	currentData.append(">");
+        }
     	super.startElement(ns,name,qname,attrs);
     
         if(DEBUG>1) System.out.println("DEBUG: esce startElement: "+qname);
@@ -105,16 +113,16 @@ public class XmlMarcHandler extends DefaultHandler {
     public void endElement(java.lang.String ns, java.lang.String name, java.lang.String qname) throws SAXException {
     	if(DEBUG>1) System.out.println("DEBUG: entra endElement: "+qname);
         
+    	if(isSubField && !qname.equals(subField)) currentData.append("</"+qname+">");
     	
         if(qname.equals(rootElement)) {isRoot=false;}
-        if(qname.equals(recordElement)) {    		
+        else if(qname.equals(recordElement)) {    		
         	process(ma);
         	ma.destroy();
         	ma=null;
         	isRecord=false;
         }
-        
-        if(qname.equals(controlField)) {    		
+        else if(qname.equals(controlField)) {    		
         	try {
 				currentTag.setRawContent(currentData.toString());
 			} catch (JOpac2Exception e) {
@@ -123,16 +131,17 @@ public class XmlMarcHandler extends DefaultHandler {
 			ma.addTag(currentTag);
 			currentTag=null;
         }
-        if(qname.equals(dataField)) {    		
+        else if(qname.equals(dataField)) {    		
         	ma.addTag(currentTag);
         	currentTag=null;
         }
-        if(qname.equals(subField)) {    		
+        else if(qname.equals(subField)) {    		
         	currentField.setContent(currentData.toString());
         	currentTag.addField(currentField);
         	currentField=null;
+        	isSubField=false;
         }
-        if(qname.equals(leader)) {
+        else if(qname.equals(leader)) {
         	ma.setStatus(currentData.substring(5,6));
             // 4 bytes, are "Implementation Codes"
             ma.setType(currentData.substring(6,7));
@@ -140,7 +149,9 @@ public class XmlMarcHandler extends DefaultHandler {
             ma.setHierarchicalLevel(currentData.substring(8,9));
             ma.setCharacterEncodingScheme(currentData.substring(9,10));
         }
-                
+        
+               
+        
         dispatch();
         context.pop();
     	super.endElement(ns,name,qname);
@@ -150,7 +161,7 @@ public class XmlMarcHandler extends DefaultHandler {
        	if(DEBUG>1) System.out.println("DEBUG: esce startElement: "+qname);
     }
 
-	private void process(RecordInterface ma2) {
+	public void process(RecordInterface ma2) {
 		try {
 			System.out.println(ma.toXML());
 		} catch (Exception e) {
@@ -178,7 +189,8 @@ public class XmlMarcHandler extends DefaultHandler {
         if(DEBUG>1) System.out.println("+++ Dispatch data for: "+here);
                 
         super.characters(currentData.toString().toCharArray(), 0, currentData.length());
-    	currentData.delete(0, currentData.length());
+        if(!isSubField)
+        	currentData.delete(0, currentData.length());
     	
         if(DEBUG>1) System.out.println("DEBUG: esce dispatch");
     }

@@ -238,10 +238,20 @@ public interface RecordInterface {
 	 */
 	public String toString();
 	
+	
+	/**
+	 * Costruisce una rappresentazione del record bibliografico corrente testuale e "leggibile".
+	 * @return
+	 */
 	public String toReadableString();
 	
 	public String toEncapsulatedRecordFormat();
 	
+	/**
+	 * Costruisce una rappresentazione XML del record bibliografico corrente.
+	 * @return
+	 * @throws Exception
+	 */
 	public String toXML() throws Exception;
 
 	/**
@@ -255,6 +265,14 @@ public interface RecordInterface {
 	 * @throws JOpac2Exception 
 	 */
 	public void addAuthor(String author) throws JOpac2Exception;
+	
+	/**
+	 * Importa gli autori dalla responsabilità del titolo.
+	 * setTitle(...) dev'essere chiamato prima.
+	 * 
+	 * @throws JOpac2Exception
+	 */
+	public void addAuthorsFromTitle() throws JOpac2Exception;
 
 	/**
 	 * Restituisce un vettore di soggetti
@@ -337,6 +355,26 @@ public interface RecordInterface {
 	 * record bibliografico corrente
 	 * @return
 	 */
+	
+	/**
+	 * Restituisce l'informazione sul nome dell'editore
+	 * @return
+	 */
+	public String getPublisherName(); // Nome editore
+	
+	/**
+	 * imposta l'indicazione sul nome dell'editore
+	 * @param publisherName
+	 * @throws JOpac2Exception 
+	 */
+	public void setPublisherName(String publisherName) throws JOpac2Exception;
+
+	/**
+	 * Restituisce il titolo associato al volume descritto nel
+	 * record bibliografico corrente
+	 * @return
+	 */
+	
 	public String getTitle(); // Titolo
 
 	/**
@@ -518,18 +556,60 @@ public interface RecordInterface {
 	 */
 	public boolean contains(String tag, String field, String s);
 	
-	public BufferedImage getImage();
+	/**
+	 * Restituisce un'immagine (copertina)
+	 * @return
+	 * @throws JOpac2Exception 
+	 */
+	public BufferedImage getImage() throws JOpac2Exception;
 	
+	/**
+	 * Cancella l'immagine (copertina) dal record
+	 * @throws JOpac2Exception 
+	 */
+	public void removeImage() throws JOpac2Exception;
+	
+	/**
+	 * Imposta un'immagine (copertina)
+	 * @param image
+	 * @param maxx
+	 * @param maxy
+	 */
 	public void setImage(BufferedImage image, int maxx, int maxy);
 	
+	/**
+	 * Restituisce una codifica Base64 di un'immagine (copertina)
+	 * @return
+	 */
 	public String getBase64Image();
+	
+	/**
+	 * Imposta un'immagine (copertina) da una codifica Base64
+	 * @param base64EncodedImage
+	 * @throws JOpac2Exception 
+	 */
+	public void setBase64Image(String base64EncodedImage) throws JOpac2Exception;
 
 	public String getPublicationNature();
 	
+	/**
+	 * Restituisce il prezzo
+	 * @return
+	 */
 	public String getAvailabilityAndOrPrice();
 	
+	/**
+	 * Imposta il prezzo
+	 * @param availabilityAndOrPrice
+	 * @throws JOpac2Exception
+	 */
 	public void setAvailabilityAndOrPrice(String availabilityAndOrPrice) throws JOpac2Exception;
 	
+	/**
+	 * Restituisce un generico campo
+	 * @param field
+	 * @return
+	 */
 	public String getField(String field);
 	
 	/**

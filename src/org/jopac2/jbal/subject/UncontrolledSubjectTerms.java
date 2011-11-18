@@ -71,6 +71,10 @@ public class UncontrolledSubjectTerms implements SubjectInterface {
 		fields.addElement(field);
 	}
 	
+	public static char LEVEL_UNSPECIFIED='0';
+	public static char LEVEL_PRIMARY_TERM='1';
+	public static char LEVEL_SECONDARY_TERM='2';
+	
 /**
  * Indicator 1: Level of the Subject Term
  * 
