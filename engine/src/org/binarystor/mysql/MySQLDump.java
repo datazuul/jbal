@@ -271,7 +271,7 @@ public class MySQLDump {
             ResultSet rs = s.getResultSet ();
             ResultSetMetaData rsMetaData = rs.getMetaData();
             if (rs.last()){
-                out.write("--\n-- Dumping data for table `" + table + "`\n--\n\n");
+                out.write("\n--\n-- Dumping data for table `" + table + "`\n--\n\n");
                 rs.beforeFirst();
             }
             int columnCount = rsMetaData.getColumnCount();
@@ -289,8 +289,12 @@ public class MySQLDump {
             {
                 postfix = "";
                 for (int i = 1; i <= columnCount; i++) {
-                    if (i == columnCount){
-                        postfix += "unhex('" + escapeString(rs.getBytes(i)).toString() + "'));\n";
+	                    if (i == columnCount){
+	                	try{
+	                		postfix += "unhex('" + escapeString(rs.getBytes(i)).toString() + "'));\n";
+	            		}catch (Exception e){
+	                		postfix += "NULL);\n";
+	            		} 
                     }else{                   
                         try{
                             postfix += "unhex('" + escapeString(rs.getBytes(i)).toString() + "'),"; 
