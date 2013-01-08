@@ -10,8 +10,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.jopac2.engine.dbGateway.DbGateway;
-import org.jopac2.engine.importers.DataImporter;
+import org.jopac2.engine.dbengine.dbGateway.DbGateway;
+import org.jopac2.engine.dbengine.importers.DataImporter;
 
 
 public class JOpac2Import {

@@ -10,8 +10,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.jopac2.engine.dbGateway.DbGateway;
-import org.jopac2.engine.importers.DataImporter;
+import org.jopac2.engine.dbengine.dbGateway.DbGateway;
+import org.jopac2.engine.dbengine.importers.DataImporter;
 
 
 public class JOpac2RebuildDatabase {
@@ -55,10 +55,10 @@ public class JOpac2RebuildDatabase {
 	public static void main(String[] args) throws Exception {
 		String filetype="eutmarc";
 		//String dbUrl = "jdbc:derby:db"+sitename+";create=true";
-		String dbUrl="jdbc:mysql://localhost/dbeut";
+		String dbUrl="jdbc:mysql://localhost/dbsutrs";
 		String dbUser="root";
 		String dbPassword="";
-		String catalog="eutmarc";
+		String catalog="sutrs";
 		
 		JOpac2RebuildDatabase rb=new JOpac2RebuildDatabase(catalog,filetype,dbUrl,dbUser,dbPassword, System.out, System.err);
 		rb.doJob();

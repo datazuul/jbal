@@ -8,7 +8,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import org.jopac2.engine.dbGateway.DbGateway;
+import org.jopac2.engine.dbengine.dbGateway.DbGateway;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.utils.BookSignature;
 import org.jopac2.utils.JbalHelper;

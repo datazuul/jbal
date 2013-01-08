@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.jopac2.engine.dbGateway.DbGateway;
+import org.jopac2.engine.dbengine.dbGateway.DbGateway;
 
 
 public class JOpac2UpdateList {
@@ -48,11 +48,11 @@ public class JOpac2UpdateList {
 	public static void main(String[] args) throws Exception {
 		//JOpac2Import ji=new JOpac2Import(args[0],args[1],args[2],args[3],args[4],args[5],true);
 		//String webcontentdir="/java_source/keiko/WebContent";
-		String sitename="treviso";
+		String sitename="sito";
 		String dbUrl="jdbc:mysql://localhost/db"+sitename;
 		String dbUser="root";
 		String dbPassword="";
-		String catalog="treviso";
+		String catalog="sutrs";
 		
 		JOpac2UpdateList ji=new JOpac2UpdateList(dbUrl,catalog,dbUser,dbPassword);
 		ji.doJob();
