@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="jbal">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="/Programs/eclipse"/>
+    <property name="EutCat.location" value="../EutCat"/>
+    <property name="engine.location" value="../engine"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+    <path id="JUnit 4.libraryclasspath">
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_4.8.1.v4_8_1_v20100427-1100/junit.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+    </path>
+    <path id="EAR Libraries.libraryclasspath"/>
+    <path id="Apache Tomcat v7.0 [Apache Tomcat v7.0].libraryclasspath">
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/tomcat-i18n-fr.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/tomcat-coyote.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/catalina-tribes.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/el-api.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/tomcat-dbcp.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/catalina.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/catalina-ant.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/ecj-3.6.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/tomcat-util.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/jasper.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/annotations-api.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/tomcat-api.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/servlet-api.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/tomcat-i18n-es.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/jasper-el.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/jsp-api.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/catalina-ha.jar"/>
+        <pathelement location="../../../Programs/apache-tomcat-7.0.4/lib/tomcat-i18n-ja.jar"/>
+    </path>
+    <path id="jbal.classpath">
+        <pathelement location="lib/excalibur-datasource-2.1.jar"/>
+        <pathelement location="lib/whirlycache-0.7.1.jar"/>
+        <pathelement location="lib/xercesImpl-2.8.0.jar"/>
+        <pathelement location="lib/cocoon-2.1.9.jar"/>
+        <pathelement location="lib/commons-httpclient-3.0-rc4.jar"/>
+        <pathelement location="lib/icu4j.jar"/>
+        <path refid="JUnit 4.libraryclasspath"/>
+        <pathelement location="lib/jackcess-1.1.18.jar"/>
+        <pathelement location="bin"/>
+        <path refid="EAR Libraries.libraryclasspath"/>
+        <path refid="Apache Tomcat v7.0 [Apache Tomcat v7.0].libraryclasspath"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="jbal.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
+        <ant antfile="build.xml" dir="${EutCat.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${EutCat.location}" inheritAll="false" target="build"/>
+        <ant antfile="build.xml" dir="${engine.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${engine.location}" inheritAll="false" target="build"/>
+    </target>
+    <target name="CreationTest.rebuild">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="org.jopac2.test.CreationTest" todir="${junit.output.dir}"/>
+            <classpath refid="jbal.classpath"/>
+        </junit>
+    </target>
+    <target name="XmlMarcViewer">
+        <java classname="org.jopac2.viewer.XmlMarcViewer" failonerror="true" fork="yes">
+            <classpath refid="jbal.classpath"/>
+        </java>
+    </target>
+    <target name="CreationTest (1)">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="org.jopac2.test.CreationTest" todir="${junit.output.dir}"/>
+            <classpath refid="jbal.classpath"/>
+        </junit>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+</project>
