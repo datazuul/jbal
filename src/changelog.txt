@@ -1,0 +1,2 @@
+20110729: IsoRecordReader riscritto per byte invece che stringhe
+20110729: ISO2709 init riscritto (checked ISO2709:2008)
