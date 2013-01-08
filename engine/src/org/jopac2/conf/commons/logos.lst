@@ -1,0 +1,33 @@
+# ATTENZIONE:
+# Formato:
+#
+# periodo:::url:::nome:::descrizione
+#
+# la descrizione è opzionale. Il nome è obbligatorio e va a finire nell'attributo
+# alt dell'immagine.
+# Il periodo può essere indicato con una data oppure due date separate dal '-'.
+#
+# Le date sono tutte nella forma YYYYMMDD
+#
+# Per indicare una data che vale per ogni anno bisogna impostare l'anno a 0000
+#
+# Esempio:
+#
+# L'immagine sarà attiva SOLO il primo gennaio 2007
+# 20070101:::images/capodanno.gif:::Buon anno!
+#
+# L'immagine sarà attiva dal 20 dicembre 2007 al 27 dicembre 2007
+# 20071220-20071227:::images/natale.gif:::Buon Natale!
+#
+# L'immagine sarà attiva ogni 25 aprile
+# 00000425:::images/repubblica.gif:::Festa della Repubblica
+#
+# IMPORTANTE:
+#
+# VIENE SELEZIONATA L'IMMAGINE DELL'ULTIMO MATCH. QUINDI IN FONDO ALLA LISTA
+# INSERIRE UNA VOCE DEL TIPO:
+#
+# 00000000:::images/default.gif:::Logo
+
+
+00000000:::images/jopac2.jpg:::Logo
