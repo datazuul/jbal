@@ -6,6 +6,11 @@
 	<classpathentry kind="lib" path="jettylib/servlet-api-2.5-20081211.jar"/>
 	<classpathentry kind="lib" path="jettylib/jetty-6.1.20.jar"/>
 	<classpathentry kind="lib" path="jettylib/jetty-util-6.1.20.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mail.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jtidy-r938.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-jexl-2.1.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/engine"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jbal"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

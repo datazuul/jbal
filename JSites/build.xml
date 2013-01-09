@@ -13,6 +13,7 @@
 	<property name="engine.dist.location" value="dist/engine"/>
 	<property name="jbal.location" value="../jbal"/>
 	<property name="jbal.dist.location" value="dist/jbal"/>
+	<property name="build.sysclasspath" value="last" />
 	
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
@@ -25,9 +26,10 @@
         <pathelement location="${LIBS}/xercesImpl-2.8.0.jar"/>
         <pathelement location="${LIBS}/cocoon-2.1.11.jar"/>
         <pathelement location="${LIBS}/commons-httpclient-3.0-rc4.jar"/>
+		<pathelement location="${LIBS}/commons-lang-2.1.jar"/>
         <pathelement location="${LIBS}/icu4j.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
-        <pathelement location="${LIBS}/jackcess-1.1.18.jar"/>
+        <pathelement location="${LIBS}/jackcess-1.2.6.jar"/>
     </path>
 	
 	<path id="engine.classpath">
@@ -48,6 +50,7 @@
 		<pathelement location="${LIBS}/xalan-2.7.0.jar"/>
         <pathelement location="${LIBS}/xercesImpl-2.8.0.jar"/>
         <pathelement location="${LIBS}/commons-httpclient-3.0-rc4.jar"/>
+		<pathelement location="${LIBS}/commons-lang-2.1.jar"/>
         <pathelement location="${jbal.dist.location}" />
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="${LIBS}/jackcess-1.1.18.jar"/>
@@ -215,6 +218,9 @@
 		<copy includeemptydirs="false" todir="dist/JSites/templates/jopac2">
             <fileset dir="WebContent/templates/jopac2" />
         </copy>
+		<copy includeemptydirs="false" todir="dist/JSites/templates/raw">
+		            <fileset dir="WebContent/templates/raw" />
+		        </copy>
 		<copy includeemptydirs="false" todir="dist/JSites/WEB-INF">
             <fileset dir="WebContent/WEB-INF" />
         </copy>

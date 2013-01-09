@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<externalLink>
-	<sql:execute-query xmlns:sql="http://apache.org/cocoon/SQL/2.0">
-		<sql:query>
-			update tblredirects set Url='<url/>' where PID=<pid/>
-		</sql:query>
-	</sql:execute-query>
-</externalLink>

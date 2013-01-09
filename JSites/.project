@@ -3,6 +3,8 @@
 	<name>JSites</name>
 	<comment></comment>
 	<projects>
+		<project>engine</project>
+		<project>jbal</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

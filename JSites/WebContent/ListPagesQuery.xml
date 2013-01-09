@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<pages xmlns:sql="http://apache.org/cocoon/SQL/2.0">
-	<sql:execute-query >
-		<sql:query>
-			SELECT PID FROM tblpagine WHERE Valid=1
-		</sql:query>
-	</sql:execute-query>
-</pages>
