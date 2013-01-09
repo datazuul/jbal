@@ -1,0 +1,11 @@
+	<map:pipeline internal-only="true">
+        <!-- This is the authentication resource -->
+        <map:match pattern="authenticate">
+            <map:generate type="authgenerator">
+            	<map:parameter name="db" value="{global:db}"/>
+            	<map:parameter name="ad_connect_string" value="{global:ad_connect_string}"/>
+            	<map:parameter name="ad_realm" value="{global:ad_realm}"/>
+            </map:generate>
+            <map:serialize type="xml"/>
+        </map:match>
+    </map:pipeline>

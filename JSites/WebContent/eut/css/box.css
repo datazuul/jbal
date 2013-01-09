@@ -1,0 +1,52 @@
+.box_contenuto .edittextarea {
+	width : 70%;
+	/*font-size: 11px;*/
+}
+
+.box_title {
+	width : 80%;
+	/*font-size: 11px;*/
+}
+
+.box {
+	float: left;
+	width: 50%;
+	margin-bottom: 10px;
+	vertical-align: top;
+	/*position: relative;*/
+	/*min-height: 70px;
+	height: auto !important;
+	height: 70px;*/
+	
+}
+/* box_immagine */
+.box_immagine {
+	float: left;
+	margin-bottom: 0px;
+}
+
+/* box_contenuto */
+.box_contenuto {
+	margin-left: 104px;
+	padding: 0 20px 0 10px;
+}
+
+/* classi da associare a h1, p  */
+.box_titolo {
+	color: #52697A;
+	font-weight: bold;
+	}
+.box_testo {
+}
+
+.box .modifica select {
+	float: right;
+}
+
+.box .box_immagine select {
+	width: 105px;
+}
+
+.box_immagine img{
+	border: 1px solid #CCCCCC;
+	}

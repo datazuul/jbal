@@ -1,0 +1,150 @@
+/*
+Sba
+Header CSS
+$Revision: 1.2 $
+*/
+
+#header {
+	position: relative;
+	width: 100%;
+	min-width: 640px;
+	background-image: url(../images/header_background.gif);
+	background-repeat: repeat-x;
+	height: 125px;
+	text-align: left;
+	margin-left: auto;
+	margin-right: auto;
+	}
+
+
+/* parte sinistra dell'header */
+#logo {
+	position: absolute;
+	top: 0px; 
+	left: 0px;
+	width: 119px;
+	z-index: 1;
+	}
+/* mainbar */
+
+#mainbar {
+	position: absolute;
+	top: 34px;
+	left: 119px;
+	width: 400px;
+	z-index: 2;
+	font-size: 11px;
+	font-weight: bold;
+	}
+
+a.mainbar1lev
+{
+	background:  url(../images/menu_bg1.png) no-repeat;
+	color: #000000;
+	height: 24px;
+	width: 86px;
+	text-align: center;
+	vertical-align: middle;
+	padding-top: 5px;
+	text-decoration: none;
+}
+
+
+#mainbar a {
+	float: left;
+	height /**/:24px;
+	text-decoration: none;
+	}
+	
+#mainbar a:link, { 
+	background: url(../images/menu_bg1.png) no-repeat;
+	color: #000000; 
+	height: 24px;
+	width: 86px;
+	text-align: center;
+	padding-top: 5px;
+	} 
+	
+#mainbar a:hover, #mainbar a:active, #mainbar a.selected {
+	background:  url(../images/menu_bg1.png) no-repeat;
+	color: #000000;
+	background-position: 0px -29px;
+	height: 24px;
+	width: 86px;
+	text-align: center;
+	padding-top: 5px;
+	text-decoration: none;
+	}
+	
+/* fine mainbar */
+
+#scritta_sba {
+	position: absolute;
+	top: 63px;
+	left: 119px;
+	width: 259px;
+		}
+
+/* parte destra dell'header */
+
+#strumenti {
+	position:absolute;
+	top: 40px;
+	right: 14px;
+	text-align: right;
+	z-index: 3;
+}
+
+a.strumenti1lev
+{
+}
+
+/* per le immagini prima img1 e dopo img2 alle scritte nel menu strumenti */
+.strumentiimg1 {
+	vertical-align: bottom;
+}
+
+.strumentiimg2 {
+	vertical-align: bottom;
+}
+
+	
+#lingue {
+	position:absolute;
+	top: 20px;
+	right: 10px;
+	text-align: right;
+}
+
+a.lingue1lev
+{
+}
+	
+#cerca {
+	position:absolute;
+	top: 70px;
+	right: 10px;
+	text-align: right;	
+}
+
+#briciole {
+	font-size: 80%;
+	position:absolute;
+	top: 111px;
+	left: 185px;
+	text-align: right;
+}
+	
+/* per determinare lo scorrimento sopra o sotto dei livelli (+ alto sopra) */
+div#cerca {
+	z-index: 4;
+}
+div#mainbar {
+	z-index: 3;
+}
+div#logo {
+	z-index: 2;
+}
+div#strumenti {
+	z-index: 1;
+}

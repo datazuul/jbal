@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : isisbiblo.xml
+    Created on : 16 gennaio 2004, 21.16
+    Author     : romano
+    Description:
+        Purpose of the document follows.
+-->
+
+<!DOCTYPE class SYSTEM 'class.dtd'>
+<class name="Mdb">
+<description>
+
+</description>
+</class>
+

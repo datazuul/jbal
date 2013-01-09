@@ -1,0 +1,44 @@
+/*
+Sba
+Home_page CSS
+$Revision: 1.2 $
+*/
+
+#home_sidebar {
+	position: absolute;
+	background-color: #ffffff;
+	height: 300px;
+	width: 162px;
+	border: 1px solid #999999;
+}
+#home_immagine {
+	position: relative;
+	width: 162px;
+	clear: left;
+}
+
+#home_testo {
+	position: relative;
+	padding: 10px;
+	width: 142px;
+	
+}
+
+
+
+/*
+.jbox {
+	float: left;
+	width: 100%;
+	margin-bottom: 10px;
+	vertical-align: top;
+	/*position: relative;*/
+	/*min-height: 70px;
+	height: auto !important;
+	height: 70px;
+	
+}*/
+
+
+
+

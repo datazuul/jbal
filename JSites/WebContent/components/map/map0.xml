@@ -1,0 +1,11 @@
+<map>
+	<title>Inserisci qua il titolo</title>
+	<image>images/contentimg/mappa.gif</image>
+	<description>Inserisci qua la descrizione</description>
+	<services>
+		<entry>
+			<image>images/contentimg/serv_clima.gif</image>
+			<text>Immetti il servizio</text>
+		</entry>
+	</services>
+</map>

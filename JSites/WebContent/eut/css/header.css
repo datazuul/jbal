@@ -1,0 +1,47 @@
+/*
+Eut
+Header CSS
+$Revision: 1.2 $
+*/
+
+#header {
+	position: relative;
+	height: 83px;
+	text-align: left;
+	margin-left: auto;
+	margin-right: auto;
+	/*background: #ffffff;*/
+	}
+
+
+/* parte sinistra dell'header */
+#logo {
+	position: absolute;
+	top: 0px; 
+	/*left: 10px;*/
+	width: 119px;
+	z-index: 1;
+	}
+/* mainbar */
+
+#cerca {
+	position:absolute;
+	top: 35px;
+	right: 10px;
+	text-align: right;
+	width: 400px;
+	z-index: 1;
+	}
+#strumenti {
+	position:absolute;
+	top: 5px;
+	right: 15px;
+	text-align: right;
+	z-index: 3;
+	}
+
+
+/*campo_cerca {
+	width: 120px;
+	}
+*/

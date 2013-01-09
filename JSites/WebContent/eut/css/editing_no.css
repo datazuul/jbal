@@ -1,0 +1,66 @@
+/*
+Sba
+Editing CSS
+$Revision: 1.1 $
+*/
+
+.passato {
+	background-color: #e1e1e1;
+}
+.presente {
+	background-color: #ffffff;
+}
+.futuro {
+	background-color: #d9e7f2;
+}
+.strafuturo {
+	background-color: #8BB6D8;
+}
+
+.new_component {
+	background-color: #F3F9FC;
+	/*
+	border-top-width: 1px;
+	border-top-color: #8EDBDB;
+	border-top-style: dotted;
+	border-bottom-width: 1px;
+	border-bottom-color: #8EDBDB;
+	border-bottom-style: dotted;
+	height : 30px;
+	*/
+}
+
+#inviaRichiesta {
+	float: right;
+	width: 400px;
+}
+
+#radios {
+	float: left;
+	width: 270px;
+	text-align: left;
+}
+
+#stateSubmit {
+	float: right;
+	width: 130px;
+	text-align: right;
+}
+#help {
+	float: right;
+	text-align: left;
+	font-family: "Courier New", Courier, mono;
+	font-size: 12px;
+	font-weight: bold;
+}
+.edittextarea {
+	width : 60%;
+}
+#inviaRichiesta {
+	float: right;
+	}
+
+.modifica {
+	
+	
+	}

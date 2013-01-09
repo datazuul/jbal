@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map:sitemap [
+<!ENTITY generalComponentPipeline SYSTEM "../generalComponentPipeline.dat">
+]>
+
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+	
+	<map:components>
+        <map:generators>
+            <map:generator name="newMetaSearch" label="content" pool-max="16" src="JSites.generation.metaSearch.NewMetaSearch"/>
+            <map:generator name="activeMetaSearch" label="content" pool-max="16" src="JSites.generation.metaSearch.ActiveMetaSearch"/>
+            <map:generator name="metaSearchResults" label="content" pool-max="16" src="JSites.generation.metaSearch.MetaSearchResults"/>
+            
+            <!-- map:transformer name="catalogSearchSave" label="content" pool-max="16" src="JSites.transformation.catalogSearch.CatalogSearchSaveTransformer"/ -->
+            </map:generators>
+	</map:components>
+	
+	<map:pipelines>
+			<map:component-configurations>
+				<global-variables>
+					<component-name>metaSearch</component-name>
+				</global-variables>
+			</map:component-configurations>
+			
+			<map:pipeline internal-only="false">
+
+
+	            <map:match pattern="metaSearch">
+	            	
+					<map:act type="request">
+					 	<map:parameter name="parameters" value="true" />
+					 		                    	
+	                    <map:generate type="newMetaSearch" src="server.lst" />
+
+	                </map:act> 	
+                    <map:serialize type="xml"/>
+	                
+	            </map:match>
+	            
+	           <map:match pattern="activeMetaSearch">
+	            	
+					<map:act type="request">
+					 	<map:parameter name="parameters" value="true" />
+					 		                    	
+	                    <map:generate type="activeMetaSearch" />
+
+	                </map:act> 	
+                    <map:serialize type="xml"/>
+	                
+	            </map:match>
+	            
+	            <map:match pattern="metaSearchResults">
+	            	
+					<map:act type="request">
+					 	<map:parameter name="parameters" value="true" />
+					 		                    	
+	                    <map:generate type="metaSearchResults" />
+
+	                </map:act> 	
+                    <map:serialize type="xml"/>
+	                
+	            </map:match>
+		</map:pipeline>
+		
+		&generalComponentPipeline;
+		
+	</map:pipelines>
+	
+</map:sitemap>

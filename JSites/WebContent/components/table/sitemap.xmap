@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map:sitemap [
+<!ENTITY generalComponentPipeline SYSTEM "../generalComponentPipeline.dat">
+]>
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+	
+	<map:components>
+        <map:transformers default="xslt">	
+       		<map:transformer name="upload-parser" src="JSites.transformation.uploadparsing.TableUploadParser"/>
+        </map:transformers>
+	</map:components>
+	
+	<map:pipelines>
+	
+		<map:pipeline internal-only="true"> 
+	            
+	            <map:match pattern="view">
+	                <map:act type="request">
+	                    <map:parameter name="parameters" value="true"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/table{cid}.xml"/>
+	                    <map:transform src="table.xslt">
+	                        <map:parameter name="use-request-parameters" value="true"/>
+	                    </map:transform>
+	                    <map:transform type="wikitrans" />
+	                    <map:serialize type="xml"/>
+	                </map:act>
+	            </map:match>
+	            
+	            <map:match pattern="edit">
+	                <map:act type="request">
+	                	<map:parameter name="parameters" value="true"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/table{cid}.xml"/>
+	                    <map:transform src="tableedit.xslt">
+	                    	<map:parameter name="use-request-parameters" value="true"/>
+	                    </map:transform>
+	                    <map:serialize type="xml"/>
+	                </map:act>
+	            </map:match>
+	            
+	            <map:match pattern="save">
+	            	<map:act type="request">
+						<map:generate type="internalSave"/>
+						<map:transform type="upload-parser"/>
+						<map:transform src="tablesave.xslt">
+							<map:parameter name="use-request-parameters" value="true"/>
+						</map:transform>
+						<map:transform type="write-source"/>
+						<map:transform type="xslt" src="result.xslt">
+							<map:parameter name="use-request-parameters" value="true"/>
+						</map:transform>
+						<map:transform type="wikitrans"/>
+						<map:transform type="cinclude"/>
+						<map:serialize type="xml"/>
+					</map:act>
+				</map:match>
+
+				<map:handle-errors>
+					<map:select type="exception">
+		
+						<map:when test="file-not-found">
+							<map:generate src="not-found.xml"/>
+				        	<map:serialize type="xml"/>
+				    	</map:when>
+				        
+				       
+					</map:select>
+		
+				</map:handle-errors>
+				
+		</map:pipeline>
+		&generalComponentPipeline;
+	</map:pipelines>
+	
+</map:sitemap>

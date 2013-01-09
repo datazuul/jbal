@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE class SYSTEM 'class.dtd'>
+
+<!--
+    Document   : sosebi.xml
+    Created on : 16 gennaio 2004, 21.24
+    Author     : romano
+    Description:
+        Purpose of the document follows.
+-->
+
+<class name="Sosebi">
+<description>
+	<AUT>
+            <element tag="200" field="f" />
+            <element tag="200" field="g" />
+            <element tag="700" field="a" />
+            <element tag="700" field="b" />
+            <element tag="700" field="c" />
+	</AUT>
+	<TIT>
+            <element tag="200" field="a" />
+            <element tag="200" field="c" />
+            <element tag="200" field="d" />
+            <element tag="200" field="e" />
+            <element tag="500" field="a" />
+            <element tag="510" field="a" />
+            <element tag="517" field="a" />
+	</TIT>
+	<NUM>
+            <element tag="010" field="a" />
+            <element tag="011" field="a" />
+            <element tag="013" field="a" />
+	</NUM>
+	<LAN>
+            <element tag="101" field="a" />
+	</LAN>
+	<MAT>
+            <element tag="200" field="b" />
+	</MAT>
+	<DTE>
+            <element tag="500" field="k" />
+	</DTE>
+	<SBJ>
+            <element tag="600" field="a" />
+            <element tag="601" field="a" />
+            <element tag="602" field="a" />
+            <element tag="604" field="1" />
+            <element tag="605" field="a" />
+            <element tag="605" field="a" />
+            <element tag="607" field="a" />
+            <element tag="610" field="a" />
+	</SBJ>
+	<BIB>
+            <element tag="801" field="b" />
+	</BIB>
+	<INV>
+            <element tag="950" field="e" />
+	</INV>
+	<CLL>
+            <element tag="410" field="a" />
+	</CLL>
+</description>
+</class>

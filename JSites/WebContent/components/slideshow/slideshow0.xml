@@ -1,0 +1,14 @@
+<slideshow>
+	<dir>Inserisci la directory qua!</dir>
+	<titolo>Inserisci il titolo qua!</titolo>
+	<effect>fade</effect>
+	<duration>2500</duration>
+	<controller>true</controller>
+	<thumbnails>false</thumbnails>
+	<captions>true</captions>
+	<width>400</width>
+	<height>300</height>
+	<absolute>false</absolute>
+	<top>0</top>
+	<left>0</left>
+</slideshow>

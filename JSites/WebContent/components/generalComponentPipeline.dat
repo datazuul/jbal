@@ -1,0 +1,57 @@
+<map:pipeline>
+
+	<map:match pattern="view">
+        <map:act type="request">
+            <map:parameter name="parameters" value="true"/>
+            <map:generate type="componentGenerator" src="{datadir}/data/{global:component-name}{cid}.xml" label="edit"/>
+			<map:act type="authorize-users">
+	            <map:transform src="{global:component-name}.xslt">
+	                <map:parameter name="use-request-parameters" value="true"/>
+	                <map:parameter name="permissionCode" value="{permissionCode}"/>
+	            </map:transform>
+	        </map:act>
+         
+			<map:transform type="wikitrans" />
+            <map:serialize type="xml"/>
+        </map:act>
+    </map:match>
+    
+    <map:match pattern="order">
+        <map:act type="request">
+            <map:parameter name="parameters" value="true"/>
+            <map:generate src="cocoon:/view" label="edit"/>
+
+            <map:transform src="../../stylesheets/xslt/orderelements.xslt">
+            	<map:parameter name="use-request-parameters" value="true"/>
+            </map:transform>
+            <map:transform src="../../stylesheets/xslt/ordering.xslt">
+            	<map:parameter name="use-request-parameters" value="true"/>
+            </map:transform>
+
+            <map:serialize type="xml"/>
+        </map:act>
+    </map:match>
+
+    <map:match pattern="*">
+        <map:act type="request">
+            <map:parameter name="parameters" value="true"/>
+            <map:generate type="componentGenerator" src="{datadir}/data/{global:component-name}{cid}.xml" label="edit"/>
+			<map:act type="authorize-users">
+	            <map:transform src="{global:component-name}{../../1}.xslt">
+	                <map:parameter name="use-request-parameters" value="true"/>
+	                <map:parameter name="permissionCode" value="{permissionCode}"/>
+	                <map:parameter name="context" value="{context}"/>
+	            </map:transform>
+	        </map:act>
+            <map:act type="auth-loggedIn">
+	        	<map:parameter name="handler" value="JSitesHandler"/>
+		        <map:act type="auth-protect">
+    				<map:parameter name="handler" value="JSitesHandler"/>
+			    </map:act>
+			</map:act>
+			<!--map:transform type="wikitrans" /-->
+            <map:serialize type="xml"/>
+        </map:act>
+    </map:match>
+
+</map:pipeline>

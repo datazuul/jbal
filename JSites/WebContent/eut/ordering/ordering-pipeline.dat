@@ -1,0 +1,56 @@
+<map:pipeline>
+
+	<map:match pattern="OrderAddItem">
+		<map:generate type="request"/>
+		<map:transform src="ordering/xslt/session.xslt" />
+		
+		<map:transform type="session" />
+		<!--map:transform type="tutil" src="/tmp/session" /-->
+		<map:transform src="ordering/xslt/req2addItem.xslt" />
+		<map:transform type="cinclude" />
+		
+		<map:transform type="session" />
+		<map:transform src="ordering/xslt/orders2table.xslt">
+			<map:parameter name="viewForm" value="true"/>
+			<map:parameter name="showCustomer" value="true"/>
+		</map:transform>
+		<map:serialize type="xml"/>
+	</map:match>
+
+	<map:match pattern="OrderSendEmail">
+		<map:generate src="ordering/checkout.xml"/>
+		<map:transform type="session" />
+		<map:transform src="ordering/xslt/session2email.xslt"/>
+		<map:transform type="sendmail">
+			<map:parameter name="sendpartial" value="true" />
+			<map:parameter name="smtphost" value="mail.units.it" />
+		</map:transform>
+		<map:transform src="ordering/xslt/result2content.xslt"/>
+		<map:transform type="session" />
+		<map:serialize type="xml"/>
+	</map:match>
+	
+	<map:match pattern="OrderCustomerInfo">
+		<map:generate src="ordering/customer.xml"/>
+		<map:serialize type="xml"/>
+	</map:match>
+	
+	<map:match pattern="OrderReview">
+		<map:generate type="request"/>
+		<map:transform src="ordering/xslt/request2customer.xslt"/>
+		<map:transform type="session" />
+		<map:transform src="ordering/xslt/orders2table.xslt">
+			<map:parameter name="showCustomer" value="true"/>
+		</map:transform>
+		<map:serialize type="xml"/>
+	</map:match>
+	
+	<map:match pattern="OrderInfoItem">
+		<map:generate src="http://eut.units.it/components/catalogSearch/viewxml?catalog=eutmarc&amp;query=JID={request-param:id}"/>
+		<map:transform src="ordering/xslt/infoFormat.xslt">
+			<map:parameter name="use-request-parameters" value="true"/>
+		</map:transform>
+		<map:serialize type="xml"/>
+	</map:match>
+	
+</map:pipeline>

@@ -1,0 +1,270 @@
+<map:pipeline type="noncaching">
+	<map:parameter name="outputBufferSize" value="4096"/>
+	
+   	<map:match pattern="**/*.pdf">
+   		<map:read mime-type="application/pdf" src="{global:data-directory}/{1}/{2}.pdf">
+	   		<map:parameter name="byte-ranges" value="false" />
+	   		<map:parameter name="buffer-size" value="4096" />
+   		</map:read>
+   	</map:match>
+</map:pipeline>
+
+<map:pipeline>
+	<map:parameter name="outputBufferSize" value="4096"/>
+	
+	<!--
+	     DO NOT REMOVE OR MOVE THE FOLLOWING MATCH PATTERN
+	     (map:match pattern="index.html")
+	     This is a workaround for Apache Tomcat 7.0.x
+	-->
+	<map:match pattern="index.html">
+		<map:redirect-to uri="cocoon:/" />
+    </map:match>
+		
+	<map:match pattern="profile.html">
+		<map:redirect-to uri="cocoon://profile.html"/>
+	</map:match>
+	
+	<map:match pattern="profile.xml">
+		<map:redirect-to uri="cocoon://profile.xml"/>
+	</map:match>
+	
+	<map:match pattern="content">
+		<map:redirect-to uri="cocoon://getcontent?db={global:db}"/>
+	</map:match>
+	
+	<map:match pattern="templates/**">
+		<map:read  src="context://templates/{1}" />
+	</map:match>
+
+<!--	
+	<map:match pattern="listpages">
+		<map:redirect-to uri="cocoon://getlistpages?db={global:db}"/>
+	</map:match>
+-->
+	<map:match pattern="fileManager">
+		<map:act type="auth-protect">
+        	<map:parameter name="handler" value="JSitesHandler"/>
+        	
+        	<map:act type="authorize-users">
+        		<map:parameter name="db" value="{global:db}"/>
+        		<map:parameter name="pid" value="0"/>
+        		<map:parameter name="datadir" value="{global:data-directory}" />
+        		<map:act type="request">
+					<map:generate type="fileManager" src="{global:data-directory}/images/">
+						<map:parameter name="datadir" value="{global:data-directory}" />
+						<map:parameter name="db" value="{global:db}"/>
+						<map:parameter name="context" value="{context}"/>
+					</map:generate>
+				</map:act>
+
+			</map:act>	
+			
+			<map:serialize type="xml" />
+		</map:act>
+	
+	</map:match>
+	
+	
+	<map:match pattern="fileManagerHtml">
+		<map:act type="auth-protect">
+        	<map:parameter name="handler" value="JSitesHandler"/>
+        	
+        	<map:act type="authorize-users">
+        		<map:parameter name="db" value="{global:db}"/>
+        		<map:parameter name="pid" value="0"/>
+        		<map:parameter name="datadir" value="{global:data-directory}" />
+        		<map:act type="request">
+					<map:generate type="fileManager" src="{global:data-directory}/images/">
+						<map:parameter name="datadir" value="{global:data-directory}" />
+						<map:parameter name="db" value="{global:db}"/>
+						<map:parameter name="context" value="{context}"/>
+					</map:generate>
+				</map:act>
+
+			</map:act>	
+			
+			<map:serialize type="html" />
+		</map:act>
+	
+	</map:match>
+	
+	<map:match pattern="importCatalog">
+		<map:act type="auth-protect">
+        	<map:parameter name="handler" value="JSitesHandler"/>
+        	
+        	<map:act type="authorize-users">
+        		<map:parameter name="db" value="{global:db}"/>
+        		<map:parameter name="pid" value="0"/>
+        		<map:parameter name="datadir" value="{global:data-directory}" />
+        		<map:act type="request">
+					<map:generate type="importCatalog" src="{global:data-directory}/catalogs/">
+						<map:parameter name="db" value="{global:db}"/>
+						<map:parameter name="context" value="{context}"/>
+					</map:generate>
+					<map:transform src="context://stylesheets/xslt/importCatalog.xslt">
+						<map:parameter name="db" value="{global:db}"/>
+						<map:parameter name="context" value="{context}"/>
+					</map:transform>
+					
+				</map:act>
+			</map:act>	
+			
+			<map:serialize type="xhtml" />
+		</map:act>
+	
+	</map:match>
+	
+	<map:match pattern="status*">
+		<map:act type="auth-protect">
+        	<map:parameter name="handler" value="JSitesHandler"/>
+        	
+        	<map:act type="authorize-users">
+        		<map:parameter name="db" value="{global:db}"/>
+        		<map:parameter name="pid" value="0"/>
+        		<map:parameter name="datadir" value="{global:data-directory}" />
+        		<map:generate type="logReader" src="{global:data-directory}/catalogs/status{../../1}">
+        			<map:parameter name="db" value="{global:db}"/>
+					<map:parameter name="context" value="{context}"/>
+				</map:generate>
+			</map:act>	
+			
+			<map:serialize type="text" />
+		</map:act>
+	
+	</map:match>
+	
+<!--	
+		<map:match pattern="dir/**">
+        <map:act type="auth-protect">
+        	<map:parameter name="handler" value="JSitesHandler"/>
+        
+        	<map:act type="authorize-users">
+        		<map:parameter name="db" value="{global:db}"/>
+        		<map:parameter name="pid" value="0"/>
+        		<map:parameter name="datadir" value="{global:data-directory}" />
+				<map:generate type="directory" src="{global:data-directory}/images/{../../1}">
+					<map:parameter name="depth" value="1"/>
+					<map:parameter name="sort" value="directory"/>
+				</map:generate>
+				<map:act type="request">
+					<map:transform src="context://stylesheets/xslt/dir2page.xslt">
+						<map:parameter name="parameters" value="true"/>
+						<map:parameter name="permissionCode" value="{../permissionCode}"/>
+						<map:parameter name="base" value="images/{../../../1}"/>
+						<map:parameter name="context" value="{context}"/>
+					</map:transform>
+				</map:act>
+			</map:act>	
+			
+			<map:serialize type="xhtml" />
+		</map:act>
+	</map:match>
+-->
+	  <map:match pattern="**/upload">
+		<map:act type="auth-loggedIn">
+        	<map:parameter name="handler" value="JSitesHandler"/>
+	        <map:act type="auth-protect">
+		        <map:parameter name="handler" value="JSitesHandler"/>
+				<map:generate type="internalSave">
+					<map:parameter name="db" value="{global:db}"/>
+				</map:generate>
+				<map:transform src="context://stylesheets/xslt/prepareCopyFile.xslt">
+					<map:parameter name="components-dir" value="{global:data-directory}"/>
+				</map:transform>
+				<map:transform type="copyFile" />
+				<map:act type="request">
+					<map:transform src="context://stylesheets/xslt/redirect.xslt">
+						<map:parameter name="parameters" value="true"/>
+						<map:parameter name="base" value="{../../../1}"/>
+						<map:parameter name="context" value="{context}"/>
+					</map:transform>
+				</map:act>
+				<map:serialize type="xhtml"/>
+			</map:act>
+		</map:act>
+	</map:match>
+
+    <map:match pattern="images/jopac.jpg">
+  		<map:act type="ImageDateAction" src="WEB-INF/conf/logos.lst">
+    		<map:read mime-type="image/{type}" src="{global:data-directory}/{imagename}">
+    			<map:parameter name="expires" value="21600000"/>  <!-- 6h, in ms -->
+    		</map:read>
+  		</map:act>
+  		<map:serialize/>
+	</map:match>
+
+	<map:match pattern="*.html">
+		<map:generate src="{1}.html"/>
+		<map:serialize type="html"/>
+   	</map:match>
+
+<!--   	
+   	<map:match pattern="mfm/**">
+       	<map:read src="../js/mfm/{1}" />
+   	</map:match>
+-->   	
+   	<map:match pattern="**/*.ico">
+        <map:read src="{global:data-directory}/images/{2}.ico" />
+    </map:match>
+	
+	<map:match pattern="images/**">
+       	<map:read src="{global:data-directory}/images/{1}" />
+       	<map:parameter name="byte-ranges" value="false" />
+   		<map:parameter name="buffer-size" value="163840" />
+   	</map:match>
+   	<!--
+   	<map:match pattern="components/**.css">
+       	<map:read src="../../components/{1}.css" />
+   	</map:match>
+   	-->
+   	<map:match pattern="css/*.css">
+       	<map:read mime-type="text/css" src="css/{1}.css" />
+   	</map:match>
+
+	<map:match pattern="js/**">
+       	<map:read src="../js/{1}" />
+   	</map:match>
+   	
+   	<map:match pattern="_internal/*">
+   		<map:act type="RedirectFromRequestRestoreAction">
+   			<map:redirect-to uri="cocoon:/doview?pcode={request-attr:pagecode}&amp;db={global:db}&amp;site={global:sitename}&amp;datadir={global:data-directory}&amp;showAreasInFirstLevelPages={global:showAreasInFirstLevelPages}"/>
+   		</map:act>
+    </map:match>
+
+	<map:match pattern="">
+		<map:act type="PageCodeAction" src="{global:db}:empty">
+    		<map:redirect-to uri="cocoon:/_internal/{request-attr:pagecode}" />
+	    </map:act>
+    </map:match>
+
+    <map:match pattern="/">
+    	<map:act type="PageCodeAction" src="{global:db}:slash">    		
+    		<map:redirect-to uri="cocoon:/_internal/{request-attr:pagecode}" />
+	    </map:act>
+    </map:match>
+    
+	<map:match pattern="*">
+		<map:act type="PageCodeAction" src="{global:db}:*">
+			<map:redirect-to uri="cocoon:/_internal/{1}" />
+		</map:act>
+    </map:match>
+    
+    <map:match pattern="*/">
+    	<map:act type="PageCodeAction" src="{global:db}:*/">
+			<map:redirect-to uri="cocoon:/_internal/{1}" />
+		</map:act>
+    </map:match>
+    
+	<map:match pattern="*_components/**">
+		<map:read src="/{1}_components/{2}"/>
+	</map:match>
+    
+		    
+</map:pipeline>
+
+<map:pipeline> <!--  internal-only="true" -->
+	<map:match pattern="*/**">
+		<map:mount check-reload="yes" src="context://{1}/" uri-prefix="{1}" />
+	</map:match>
+</map:pipeline>

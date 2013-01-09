@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map:sitemap [
+<!ENTITY generalComponentPipeline SYSTEM "../generalComponentPipeline.dat">
+]>
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+	
+	
+	
+	<map:pipelines>
+		
+		<map:pipeline internal-only="false"> 
+	            
+	            <map:match pattern="view">
+	                <map:act type="request">
+	                    <map:parameter name="parameters" value="true"/>
+	                    <map:generate type="componentGenerator" src="{request-param:datadir}/data/gallery{cid}.xml" label="edit"/>
+	                    <map:transform src="gallery.xslt">
+	                        <map:parameter name="lang" value="{request-param:lang}"/>
+							<map:parameter name="validating"  value="{request-param:validating}"/>
+							<map:parameter name="disabling" value="{request-param:disabling}"/>
+							<map:parameter name="time" value="{request-param:time}"/>
+							<map:parameter name="extra"  value="{request-param:extra}"/>
+							<map:parameter name="type"  value="{request-param:type}"/>
+							<map:parameter name="cid"  value="{request-param:cid}"/>
+							<map:parameter name="pid"  value="{request-param:pid}"/>
+							<map:parameter name="pacid"  value="{request-param:pacid}"/>
+							<map:parameter name="editing"  value="{request-param:editing}"/>
+	                    </map:transform>
+	                    
+	                    <map:transform type="cinclude"/>
+	                    
+	                    <map:transform type="wikitrans"/>
+	                    <map:serialize type="xml"/>
+	                </map:act>
+	            </map:match>
+	            
+	            <map:match pattern="pgallery/**">
+	            	<map:act type="request">
+	                	<map:parameter name="parameters" value="true"/>
+	                	<map:generate type="imagedirectory" src="{request-param:datadir}/{../1}">
+    						<map:parameter name="depth" value="1"/>
+  						</map:generate>
+  						
+  						<map:transform src="pgallery.xslt">
+  							<map:parameter name="base" value="{../1}" />
+  							<map:parameter name="context" value="{context}"/>
+  						</map:transform>
+
+	                    <map:serialize type="xhtml"/>
+	                </map:act>
+	            </map:match>
+	            
+	            <map:match pattern="edit">
+	                <map:act type="request">
+	                	<map:parameter name="parameters" value="true"/>
+	             		<map:generate type="componentGenerator" src="{request-param:datadir}/data/gallery{cid}.xml"/>
+	
+	                    <map:transform src="galleryedit.xslt">
+	                    	<map:parameter name="extra"  value="{request-param:extra}"/>
+							<map:parameter name="time"  value="{request-param:time}"/>
+							<map:parameter name="cid"  value="{request-param:cid}"/>
+							<map:parameter name="pid"  value="{request-param:pid}"/>
+	                    	<map:parameter name="context" value="{context}"/>
+	                    </map:transform>
+	                    
+	                    <map:transform type="cinclude" />
+	                    <map:serialize type="xml"/>
+	                </map:act>
+	            </map:match>
+	            
+	            <map:match pattern="save">
+					<map:generate type="internalSave"/>
+					<map:transform src="gallerysave.xslt">
+						<map:parameter name="datadir"  value="{request-param:datadir}"/>
+					</map:transform>
+
+					<map:transform type="write-source"/>
+					<map:transform src="saving.xslt" />
+					<map:serialize type="xml"/>
+				</map:match>
+				
+				
+		</map:pipeline>
+		&generalComponentPipeline;
+	</map:pipelines>
+	
+</map:sitemap>

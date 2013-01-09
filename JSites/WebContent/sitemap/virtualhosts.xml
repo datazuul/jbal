@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map:selector name="host" logger="sitemap.selector.host" src="org.apache.cocoon.selection.HostSelector">
+	<host name="jopac2" value="www.jopac2" />
+	<host name="eut" value="www.eut" />
+	<host name="biblio" value="www.biblio" />
+	<host name="dbmna" value="www.dbmna.it" />
+	<host name="treviso" value="www.treviso" />
+	<host name="mna" value="www.mna.it" />
+	<host name="energy" value="www.energy.it" />
+	<host name="divulgazione" value="www.divulgazione.it" />
+</map:selector>

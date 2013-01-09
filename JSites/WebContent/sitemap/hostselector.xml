@@ -1,0 +1,34 @@
+<map:select type="host">
+	<map:when test="divulgazione">
+		<map:mount uri-prefix="" src="divulgazione/sitemap.xmap" />
+	</map:when>
+
+	<map:when test="energy">
+		<map:mount uri-prefix="" src="energy/sitemap.xmap" />
+	</map:when>
+
+	<map:when test="mna">
+		<map:mount uri-prefix="" src="mna/sitemap.xmap" />
+	</map:when>
+
+	<map:when test="dbmna">
+		<map:mount uri-prefix="" src="dbmna/sitemap.xmap" />
+	</map:when>
+
+	<map:when test="jopac2">
+		<map:mount uri-prefix="" src="jopac2/sitemap.xmap" />
+	</map:when>
+	<map:when test="biblio">
+		<map:mount uri-prefix="" src="biblio/sitemap.xmap" />
+	</map:when>
+	<map:when test="eut">
+		<map:mount uri-prefix="" src="eut/sitemap.xmap" />
+	</map:when>
+	<map:when test="treviso">
+		<map:mount uri-prefix="" src="treviso/sitemap.xmap" />
+	</map:when>
+	
+	<map:otherwise>
+		<map:mount uri-prefix="" src="biblio/sitemap.xmap" />
+    </map:otherwise>
+</map:select>

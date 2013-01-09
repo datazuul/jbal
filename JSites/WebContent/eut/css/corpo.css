@@ -1,0 +1,15 @@
+/*
+Eut
+Corpo CSS
+$Revision: 1.1 $
+*/
+/* corpo */ 
+#corpo {
+	position: relative;
+	text-align: left;
+	width:100%;
+	text-align:left;
+	margin-right: auto;
+	margin-left: auto;
+	height: auto;
+}

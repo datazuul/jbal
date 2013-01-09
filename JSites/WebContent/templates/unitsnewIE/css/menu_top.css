@@ -1,0 +1,256 @@
+﻿/*-- INIZIO PRINCIPALE --*/
+
+div.barra {
+	z-index:1000;
+	clear:both;
+	position:relative;
+	margin: 0 auto;
+	padding:0 0 0 0;
+	font-size:100%;
+	font-family:Arial;
+	border:solid white 0px;
+	text-align:left;
+	vertical-align:middle;
+	color:#305170;
+	width:100%;
+}
+
+
+/*dimensione la barra */
+#nav #print, 
+#nav #ateneo, 
+#nav #studenti, 
+#nav #didattica,
+#nav #ricerca ,
+#nav #impresa ,
+#nav #international
+	{height:20px; vertical-align:middle;}
+
+#nav #print  {width:25.5%; max-width:50%;border-right:1px solid white;}
+#nav #ateneo ,
+#nav #studenti ,
+#nav #didattica	,
+#nav #ricerca ,
+#nav #impresa {width:11%; border-right:1px solid white;}	
+#nav #international{width:18.5%;}
+
+/*-- FINE PRINCIPALE --*/
+
+/* http://www.htmldog.com/articles/suckerfish/dropdowns/ */
+
+#nav, #nav ul { /* all lists */
+	padding:0;
+	margin:0;
+	list-style:none;
+	line-height:20px;
+	color:#305170;
+	text-align:left;
+	z-index:20;
+}
+
+#nav li { /* all list items */
+	float:left;
+	width:100%; 
+}
+
+#nav a {
+	display:block;
+	color:#305170;
+	text-decoration:none;
+}
+
+#nav li ul { /* second-level lists */
+	position:absolute;
+	width:100%;
+	min-width:6em; 
+	max-width:16em;
+	left:-999em; /* using left instead of display to hide menus because display:none isn't read by screen readers */
+}
+
+#nav li ul ul { /* third-and-above-level lists */
+	margin:0px 0px 0px 0px;
+}
+
+#nav li:hover ul ul,
+#nav li:hover ul ul ul, 
+#nav li.sfhover ul ul, 
+#nav li.sfhover ul ul ul {
+	left:-999em;
+}
+
+#nav li:hover ul, 
+#nav li li:hover ul, 
+#nav li li li:hover ul, 
+#nav li.sfhover ul, 
+#nav li li.sfhover ul, 
+#nav li li li.sfhover ul { /* lists nested under hovered list items */
+	left:auto;
+}
+
+/***/
+
+#nav li a { /* la prima riga/colonna di links */
+	display:block;
+	width:100%;
+	height:100%;
+	padding-top:2px;
+	font-size:15px;
+	color:white;
+	font-weight:bold;
+	text-decoration:none;
+	text-indent:5px;
+}
+
+#nav li li a { /* i links pop-up */
+	padding:2px 0px 2px 0px;
+	color:white;
+	font-size:90%;
+	font-weight:bolder;
+	text-decoration:none;
+	line-height:125%; /* new  Accessibility */
+}
+
+/*** PRINT ***/
+
+#nav #print a:hover {color:#D4D0BC;} 
+
+
+/*** ATENEO - STUDENTI - DIDATTICA - RICERCA - IMPRESA - INTERNATIONAL ***/
+
+
+/*  dimensioni  livello */
+#nav li#ateneo ul,											
+#nav li#studenti ul	,
+#nav li#didattica ul ,	
+#nav li#ricerca ul ,
+#nav li#impresa ul ,
+#nav li#international ul {
+	margin:0px 0px 0px 0px; width:16em;
+} 	
+
+ /* livelli  a dx */
+#nav li#ateneo ul ul,    
+#nav li#studenti ul ul , 
+#nav li#didattica ul ul ,	
+#nav li#ricerca ul ul {
+	margin: -18px 0px 0px 13em;
+}
+
+/* livelli a sx */
+#nav li#impresa ul ul,   
+#nav li#international ul ul {
+	margin:-18px 0px 0px -16em;
+}
+
+ /* freccia sub lists a dx */
+#nav #ateneo ul li.sub, 
+#nav #studenti ul li.sub, 
+#nav #didattica ul li.sub,
+#nav #ricerca ul li.sub , 
+#nav #impresa ul li.sub ,
+#nav #international ul li.sub {
+	background:url(/img/freccia_blu.gif) no-repeat 97% 50%;
+}
+	
+ /* freccia sub lists a sx */
+#nav #impresa ul li.sub ,
+#nav #international ul li.sub {background:url(/img/freccia_blu_r.gif) no-repeat 1px 50%; }
+
+
+#nav #ateneo ul, 
+#nav #studenti ul, 
+#nav #didattica ul, 
+#nav #ricerca ul,  
+#nav #impresa ul , 
+#nav #international ul{
+	background-color:white;
+	border:2px solid #1F3D5A;
+	width:auto;
+	border-top-width:1px;
+}
+
+/* LINK */
+#nav #print a , 
+#nav #ateneo a , 
+#nav #studenti a , 
+#nav #didattica a, 
+#nav #ricerca a, 
+#nav #impresa a , 
+#nav #international a {
+	background:#1F3D5A;
+}
+
+#nav #ateneo a:hover, 
+#nav #studenti a:hover, 
+#nav #didattica a:hover, 
+#nav #ricerca a:hover, 
+#nav #impresa a:hover,  
+#nav #international a:hover  {
+	background-color:#D4D0BC; 	/* GRIGIO_lightateneo */
+	color:#1F3D5A; 			/* BLU_ateneo */
+}
+
+/* tipi di elementi  voce sep tit  */
+#nav #ateneo ul li.voce ,
+#nav #studenti ul li.voce ,
+#nav #didattica ul li.voce ,
+#nav #ricerca ul li.voce ,
+#nav #impresa ul li.voce  
+#nav #international ul li.voce  {
+	width:100%;
+}
+
+#nav #ateneo ul li.sep,  
+#nav #studenti ul li.sep,  
+#nav #didattica ul li.sep,  
+#nav #ricerca ul li.sep , 
+#nav #impresa ul li.sep , 
+#nav #international ul li.sep  {
+	width:98%; 
+	border-bottom:1px dotted #1F3D5A; 
+	margin:0 0 0 0; 
+	height:2px
+}
+
+#nav #ateneo ul li.tit,  
+#nav #studenti ul li.tit,  
+#nav #didattica ul li.tit,  
+#nav #ricerca ul li.tit , 
+#nav #impresa ul li.tit  , 
+#nav #international ul li.tit {
+	width:96%; 
+	border-bottom:1px dotted #1F3D5A; 
+	padding:3px 0px 0px 0px; 
+	font-style: italic;
+}
+
+
+#nav li#ateneo li a, 
+#nav li#studenti li a, 
+#nav li#didattica li a, 
+#nav li#ricerca li a, 
+#nav li#impresa li a, 
+#nav li#international li a  {
+	color:#1F3D5A;
+}
+
+#nav  #ateneo ul li a, 
+#nav  #studenti ul li a,  
+#nav  #didattica ul li a, 
+#nav  #ricerca ul li a, 
+#nav  #impresa ul li a , 
+#nav  #international ul li a {
+	background-color:transparent;
+}
+
+#nav #ateneo ul ul,  
+#nav #studenti ul ul, 
+#nav #didattica ul ul, 
+#nav #ricerca ul ul, 
+#nav #impresa ul ul , 
+#nav #international ul ul {
+	border-left-width:1px; 
+	border-top-width:1px;
+}
+
+

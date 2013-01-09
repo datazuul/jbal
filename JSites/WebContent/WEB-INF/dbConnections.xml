@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--+ Here you add datasources - DB connections to be used
+	| This file is going to be included in cocoon.xconf with a reference
+	+-->
+
+<datasources>
+	<jdbc name="dbdivulgazione">
+		<pool-controller max="500" min="50" />
+		<auto-commit>true</auto-commit>
+		<dburl>jdbc:mysql://localhost/dbdivulgazione?autoReconnect=true</dburl>
+		<user>root</user>
+		<password></password>
+	</jdbc>
+	<jdbc name="dbenergy">
+		<pool-controller max="500" min="50" />
+		<auto-commit>true</auto-commit>
+		<dburl>jdbc:mysql://localhost/dbenergy?autoReconnect=true</dburl>
+		<user>root</user>
+		<password></password>
+	</jdbc>
+	<jdbc name="dbstage">
+		<pool-controller max="500" min="50" />
+		<auto-commit>true</auto-commit>
+		<dburl>jdbc:mysql://localhost/dbstage?autoReconnect=true</dburl>
+		<user>root</user>
+		<password></password>
+	</jdbc>
+	<jdbc name="dbtreviso">
+		<pool-controller max="500" min="50" />
+		<auto-commit>true</auto-commit>
+		<dburl>jdbc:mysql://localhost/dbtreviso?autoReconnect=true</dburl>
+		<user>root</user>
+		<password></password>
+	</jdbc>
+	<jdbc name="dbmna">
+		<pool-controller max="500" min="50" />
+		<auto-commit>true</auto-commit>
+		<dburl>jdbc:mysql://localhost/dbmna?autoReconnect=true</dburl>
+		<user>root</user>
+		<password></password>
+	</jdbc>
+	<jdbc name="dbdbmna">
+		<pool-controller max="500" min="50" />
+		<auto-commit>true</auto-commit>
+		<dburl>jdbc:mysql://localhost/dbdbmna?autoReconnect=true</dburl>
+		<user>root</user>
+		<password></password>
+	</jdbc>
+	<jdbc name="dbjopac2">
+		<pool-controller max="500" min="50" />
+		<auto-commit>true</auto-commit>
+		<dburl>jdbc:mysql://localhost/dbjopac?autoReconnect=true</dburl>
+		<user>root</user>
+		<password></password>
+	</jdbc>
+	<jdbc name="dbempty">
+		<pool-controller max="500" min="50" />
+		<auto-commit>true</auto-commit>
+		<dburl>jdbc:mysql://localhost/dbempty?autoReconnect=true</dburl>
+		<user>root</user>
+		<password></password>
+	</jdbc>
+	<jdbc name="dbsito">
+		<pool-controller max="500" min="50" />
+		<auto-commit>true</auto-commit>
+		<dburl>jdbc:mysql://localhost/dbsito?autoReconnect=true</dburl>
+		<user>root</user>
+		<password></password>
+	</jdbc>
+	<jdbc name="dbeut">
+		<pool-controller max="500" min="50" />
+		<auto-commit>true</auto-commit>
+		<dburl>jdbc:mysql://localhost/dbeut?autoReconnect=true</dburl>
+		<user>root</user>
+		<password></password>
+	</jdbc>
+</datasources>

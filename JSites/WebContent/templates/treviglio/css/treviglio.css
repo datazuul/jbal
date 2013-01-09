@@ -1,0 +1,1465 @@
+/***************************************************************
+*  																	**
+*  foglio di stile generale per la parte pubblica di PiCo 2.0 	*
+*																					*
+****************************************************************/
+
+body{
+	background-color: #FFFFFF;
+	font-family:  Tahoma, Verdana, Arial, Helvetica, sans-serif;
+	font-size: 80%;
+	color: #424242;
+	text-align: center;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	background-image: url(../images/sfondo_body.gif);
+}
+
+
+a{ 
+	/* posizione */
+	/* grafica */
+	/* testo */
+	color: #424242;
+	text-decoration: underline;
+	/* dimensioni */
+}
+
+a:visited{ 
+	/* posizione */
+	/* grafica */
+	/* testo */
+	color: #424242;
+	text-decoration: underline;
+	/* dimensioni */
+}
+
+a:hover, a:visited:hover{ 
+	/* posizione */
+	/* grafica */
+	/* testo */
+	color: #BE0002;
+	text-decoration: underline;
+	/* dimensioni */
+}
+
+.grassetto{
+	font-weight: bold;
+}
+
+.nascosto{
+	display: none;
+}
+
+
+/***************************************************************
+*  								form											*
+****************************************************************/
+
+div.elementoForm, div.elementoInlineForm{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-align: left;
+	/* dimensioni */	
+	margin: 10px auto 10px auto;
+	padding: 10px 10px 10px 10px;
+}
+
+div.elementoForm input, div.elementoForm textarea, div.elementoForm select{
+	/* posizione */
+	display: block;
+	/* grafica */
+	/* testo */
+	/* dimensioni */
+}
+
+div.elementoInlineForm input, div.elementoInlineForm textarea{
+	/* posizione */
+	display: inline;
+	/* grafica */
+	/* testo */
+	/* dimensioni */
+}
+
+div.elementoInlineForm legend{
+	/* posizione */
+	display: inline;
+	/* grafica */
+	color: #717171;
+	/* testo */
+	/* dimensioni */
+}
+
+
+/***************************************************************
+*  								testata										*
+****************************************************************/
+div#testata{
+	display: block;
+	color: #FFFFFF;
+	text-align: left;
+	width: 98%;
+	height: 68px;
+	margin: 5px auto 10px auto;
+	padding: 0px 0px 0px 0px;
+	background-image: url(../images/sfondo_testata.gif);
+	background-repeat: repeat-x;						
+}
+
+
+img#imgTestataSx{
+	/* posizione */
+	position:relative;
+	top: 0px;
+	left: 0px;
+	float:left;
+	/* grafica */
+	/* testo */
+	text-align:left;
+	/* dimensioni */
+	margin: 0px 0px 0px 0px;
+	padding:0px 0px 0px 0px;
+}
+
+
+h1#imgTestataSx{
+	/* posizione */
+	position:relative;
+	top: 0px;
+	left: 0px;
+	float:left;
+	/* grafica */
+	/* testo */
+	text-align:left;
+	color:  #595959;
+	font-family: serif;
+	font-size:160%;
+	/* dimensioni */
+	margin: 0px 0px 0px 0px;
+	padding:0px 0px 0px 0px;
+}
+
+img#imgTestataDx{
+	
+	/* posizione */
+	position:relative;
+	float:right;
+	/* grafica */
+	/* testo */
+	text-align: right;
+	/* dimensioni */
+	margin: 0px 0px 0px 0px;
+	padding:0px 0px 0px 0px;
+}
+
+img#imgTestataCentro{
+	/* posizione */
+	margin: 0px 4px 0px 0px;
+	padding:0px 0px 0px 0px;
+	position:relative;
+	float:right;
+	/* grafica */
+	/* testo */
+	text-align: right;
+	/* dimensioni */
+}
+
+div#barraInformativa{
+	/* posizione */
+	clear: both;
+	display: block;
+	position:relative;
+	/* grafica */
+	background-image: url(../images/sfondo_barra_info.gif);
+	border-top-width: 2px;
+	border-top-style: solid;
+	border-top-color: #BE0002;
+	/* testo */
+	color: white;
+	text-align:left;
+	font-size: 90%;
+	/* dimensioni */
+	width: 100%;
+	min-height: 20px;
+	height: auto !important;
+	height: 25px;
+	padding: 5px 0px 0px 0px;
+}
+
+
+div#barraInformativa ul{
+	/* posizione */
+	display:inline; 
+	/* grafica */
+	/* testo */
+	/* dimensioni */
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 18px;
+}
+
+div#barraInformativa ul.menuOrizzontaleSX{
+	margin-left: 0px;
+}
+
+div#barraInformativa ul li{
+	/* posizione */
+	display:inline; 
+	/* grafica */
+	/* testo */
+	/* dimensioni */
+	padding: 0px 0px 0px 0px;
+	padding-right: 10px;
+}
+
+div#barraInformativa ul li a{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	color: white;
+	text-decoration:none;
+	/* dimensioni */
+	
+}
+
+div#barraInformativa ul li a:hover{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: underline;
+	/* dimensioni */
+	
+}
+
+div#barraInformativa a{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	color: white;
+	/* dimensioni */
+	/*margin: 0px auto 0px auto;*/
+}
+
+div#barraInformativa p{
+	/* posizione */
+	/* grafica */
+	/*background-color: white;*/	
+	/* testo */
+	/* dimensioni */
+	padding: 6px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+}
+
+div#pageFrame ul{
+	text-align: center;
+}
+
+div#pageFrame ul li{
+		padding: 0px 0px 0px 0px;
+                margin: 0px 0px 0px 0px;
+		list-style: none;
+	}
+
+div#barra{
+	/* posizione */
+	clear: both;
+	display: block;
+	position:relative;
+	padding: 6px 0px 0px 0px;
+	/* grafica */
+	background-color: #E6E8D2;
+	border-top: 1px solid #D2CEA9;
+	border-bottom: 1px solid #D2CEA9;
+	/* testo */
+	text-align:left;
+	color: #424242;
+	font-size: 90%;
+	/* dimensioni */
+	width: 100%;
+	min-height: 19px;
+	height: auto !important;
+	height: 19px;
+}
+
+div#barra ul{
+	/* posizione */
+	display:inline; 
+	/* grafica */
+	/* testo */
+	/* dimensioni */
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 18px;
+}
+
+div#barra ul.menuOrizzontaleSX{
+	margin-left: 0px;
+}
+
+div#barra ul li{
+	/* posizione */
+	display:inline; 
+	/* grafica */
+	list-style-type:none;
+	/* testo */
+	/* dimensioni */
+	padding: 0px 0px 0px 0px;
+	padding-right: 5px;
+}
+
+div#barra ul li a, div#barra ul li a:visited{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: none;
+	/* dimensioni */
+	
+}
+
+div#barra ul li a:hover{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: none;
+	/* dimensioni */
+	
+}
+
+
+/***************************************************************
+* 								scheletro generale			   *
+****************************************************************/
+
+div#box{
+	/* posizione */
+	display: block;
+	position: relative;
+	/* grafica */
+	/* testo */
+	text-align: left;
+	/* dimensioni */
+	width: 99%;
+	margin: 5px auto 0px auto;
+	padding: 0px 0px 0px 0px;
+}
+
+
+div#leftBox{
+	/* posizione */
+	position: relative;
+	display: block;
+	float: left;
+	z-index: 2;
+	/* grafica */
+	/* testo */
+	color: #424242;
+	text-align: left;
+	/* dimensioni */
+	width: 200px;
+	margin: 0px 0px 10px 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+div#leftBox img{
+	padding: 0px 0px 0px 0px;
+	border-right: 1px solid #D2CEA9;
+	border-left: 1px solid #D2CEA9;
+	border-top-width: 0px;
+	border-bottom-width: 0px;
+	border-top-style: solid;
+	border-bottom-style: solid;
+	border-top-color: #D2CEA9;
+	border-bottom-color: #D2CEA9;
+	display: block;
+}
+
+div#leftBox input{
+	margin-bottom: -3px;
+}
+
+div#leftBox .bloccoInt {
+	margin: 5px;
+}
+
+div#leftBox .pulsanti {
+	text-align: center;
+}
+
+div#leftBox .pulsanti input{
+	width: 60px;
+}
+div#leftBox form {
+	margin: 0px 5px 5px 5px;
+} 
+
+div#rightBox{
+	/* posizione */
+	display: block;
+	position: relative;
+	z-index: 1;
+	/* grafica */
+	/* testo */
+	text-align: left;
+	/* dimensioni */
+	margin: 0px 0px 0px 202px;
+	padding: 0px 0px 0px 0px;
+}
+
+div#rightBox h2{
+	color: #424242;
+}
+
+/***************************************************************
+* 							contenuto left box								*
+****************************************************************/
+div.bloccoLogin{
+	/* posizione */
+	display: block;
+	margin-bottom: -5px;
+	/* grafica */
+	background-image: url(../images/sfondo_box.gif);
+	background-repeat: repeat-x;
+	background-position: bottom;
+	background-color: #FFFFFF;
+	border-style: solid;
+	border-color: #D2CEA9;
+	border-width: 1px 1px 1px 1px;
+	/* testo */
+	color: #424242;
+	/* dimensioni */
+	width: 100%;
+}
+
+div.bloccoLogin a, div.bloccoMenu a:visited{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: none;
+	white-space: normal;
+	/* dimensioni */
+}
+
+div.bloccoLogin a:hover, div.bloccoMenu a:visited:hover{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: underline;
+	/* dimensioni */
+}
+
+div.bloccoLogin h2{
+	/* posizione */
+	padding: 1px 1px 1px 7px;
+	margin: 0px 0px 0px 0px;
+	/* grafica */
+	background-image: url(../images/sfondo_h2_box.gif);
+	background-color: #E6E8D2;
+	background-repeat: no-repeat;
+	background-position: left bottom;
+	border-bottom: 1px solid #D2CEA9;
+	/* testo */
+	font-size: 100%;
+	font-weight: bold;
+	text-align: left;
+	/* dimensioni */
+}
+
+div.bloccoLogin form {
+	margin: 5px 5px 5px 10px;
+	font-size: 90%;
+}
+
+div.bloccoLogin img {
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: none;
+	/* dimensioni */
+}
+
+div#bloccoLogin input{
+	/* posizione */
+	/* grafica */
+	/*border: 1px solid #424242;
+	margin-bottom: 2px;
+	padding-left: 4px;*/
+	/* testo */
+	/*color: #A0A0A0;
+	font-family: Arial Narrow;*/
+	/* dimensioni */
+	/*width: 90%;*/
+}
+
+div.bloccoMenu{
+	/* posizione */
+	display: block;
+	margin-bottom: -5px;
+	/* grafica */
+	background-image: url(../images/sfondo_box.gif);
+	background-repeat: repeat-x;
+	background-position: bottom;
+	background-color: #FFFFFF;
+	border-style: solid;
+	border-color: #D2CEA9;
+	border-width: 1px 1px 1px 1px;
+	/* testo */
+	color: #424242;
+	/* dimensioni */
+	width: 100%;
+}
+
+div.bloccoMenu a, div.bloccoMenu a:visited{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: none;
+	white-space: normal;
+	/* dimensioni */
+}
+
+div.bloccoMenu a:hover, div.bloccoMenu a:visited:hover{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: none;
+	/* dimensioni */
+}
+
+div.bloccoMenu h2{
+	/* posizione */
+	padding: 1px 1px 1px 7px;
+	margin: 0px 0px 0px 0px;
+	/* grafica */
+	background-image: url(../images/sfondo_h2_box.gif);
+	background-color: #E6E8D2;
+	background-repeat: no-repeat;
+	background-position: left bottom;
+	border-bottom: 1px solid #D2CEA9;
+	/* testo */
+	font-size: 100%;
+	font-weight: bold;
+	text-align: left;
+	/* dimensioni */
+}
+
+div.bloccoMenu ul{
+	/* posizione */
+	padding: 0px 4px 4px 4px;
+	margin: 0px 3px 5px 3px;
+	/* grafica */
+	/* testo */
+	font-size: 90%;
+	color: #424242;
+	text-align: left;
+	white-space: normal;
+	/* dimensioni */
+}
+
+div.bloccoMenu ul li{
+	/* posizione */
+	/* grafica */
+	list-style-type: disc;
+	/* testo */
+	white-space: normal;
+	/* dimensioni */
+	padding: 2px 0px 2px 0px;
+	margin: 3px 0px 2px 15px;
+}
+
+div.bloccoMenu input{
+	/* posizione */
+	/* grafica */
+	/*border: 1px solid #424242;
+	margin-bottom: 2px;
+	padding-left: 4px;*/
+	/* testo */
+	/*color: #A0A0A0;
+	font-family: Arial Narrow;
+	font-size: 110%;*/
+	/* dimensioni */
+	/*width: 90%;*/
+}
+
+div#menuGalleria{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-align: center;
+	/* dimensioni */
+}
+
+div.bloccoInt h3{
+	margin: -2px 0px;
+	font-size: 100%;
+}
+
+div.bloccoInt ul li{
+	list-style-type: none;
+	margin-left: -5px;
+}
+/***************************************************************
+*  								piedipagina									*
+****************************************************************/
+
+div#piedipagina{
+	/* posizione */
+	clear:both;
+	/* grafica */
+	background-image: url(../images/sfondo_barra_info.gif);
+	border-top: 1px solid #D2CEA9;
+	border-bottom: 1px solid #D2CEA9;
+	/* testo */
+	color: white;
+	text-align: center;
+	/* dimensioni */;
+	height: 15px;
+	width: 100%;
+	margin: 15px 0px 5px 0px;
+	padding: 3px 0px 3px 0px;
+}
+
+
+div#piedipagina ul{
+	/* posizione */
+	display: inline;
+	/* grafica */
+	/* testo */
+	/* dimensioni */		
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+div#piedipagina ul li{
+	/* posizione */
+	display: inline;
+	/* grafica */
+	list-style-type: none;
+	/* testo */
+	font-size: 90%;
+	/* dimensioni */		
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+div#piedipagina ul li a, div#piedipagina ul li a:visited, div#piedipagina ul li a:hover{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	color: white;
+	text-decoration: none;
+	/* dimensioni */		
+}
+
+div#piedipagina ul li a:hover{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: underline;
+	/* dimensioni */		
+}
+
+div#bloccoSPAD{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	font-weight: bold;
+	font-size: 80%;
+	text-align:center;
+	/* dimensioni */			
+}
+
+div#bloccoSPAD a{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: none;
+	/* dimensioni */			
+}
+
+div#bloccoWEBMASTER{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	/* dimensioni */		
+}
+
+div#bloccoAccessibilita img{
+	/* posizione */
+	
+	/* grafica */
+	padding: 8px 8px 8px 8px;
+	/* testo */
+	/* dimensioni */			
+}
+
+div#bloccoAccessibilita a{
+	/* posizione */
+	/* grafica */
+	text-decoration: none;
+	/* testo */
+	/* dimensioni */			
+}
+
+div#comandiRicerca form {
+	/* posizione */
+	margin-left: 11px;
+	/* grafica */
+	/* testo */
+	font-size: 90%;
+	/* dimensioni */			
+}
+
+div#comandiRicerca {
+	/* posizione */
+	text-align: left;
+	padding: 0px 0px 0px 0px;
+	/* grafica */
+	/* testo */
+	/* dimensioni */			
+}
+div#messaggioBox {
+	/* posizione */
+	
+	/* grafica */
+	text-align: left;
+	border-style: none;
+	color: red;
+	/* testo */
+	/* dimensioni */			
+}
+/***************************************************************
+*  								testata										*
+****************************************************************/
+div#testataTreviglio{
+	display: block;
+	background-image: url(../images/sfondo_testata.jpg);
+	background-repeat: no-repeat;
+	text-align: left;
+	height: 125px;
+	margin: 0px;
+	width: auto;
+	/*width: auto !important;
+	min-width: 975px;*/
+	background-color: #E6E8D2;
+	background-position: right top;
+}
+
+
+div#imgSXTreviglio{
+	/*width: 490px;*/
+	height: 125px;
+	float: left;
+	padding: 0px 0px 0px 0px;
+}
+
+img#imgTestataDxTreviglio{
+	
+	/* posizione */
+	position:relative;
+	float:right;
+	/* grafica */
+	/* testo */
+	text-align: right;
+	/* dimensioni */
+	margin: 0px 180px 0px 0px;
+	padding:0px 0px 0px 0px;
+}
+
+div#nomeComune{
+	/* posizione */
+	/* grafica */
+	background-image: url(../images/nomeComune.gif);
+	/* testo */
+	/* dimensioni */
+}
+
+
+
+/*********************************************************************/
+
+/******************************************************************
+*  																*
+*																**
+*  foglio di stile specifico dell'home page pubblica di PiCo 2.0 	*
+*																						*
+******************************************************************/
+
+
+div#rightRightBox{
+	/* posizione */
+	display: block;
+	position: relative;
+	z-index: 2;
+	float: right;
+	/* grafica */
+	/* testo */
+	text-align: left;
+	font-size: 100%;
+	/* dimensioni */
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	width: 200px; 
+}
+
+div#rightRightBox img{
+	padding: 0px 0px 0px 0px;
+	margin: 5px 0px 5px 0px;
+}
+
+
+div#rightRightBox h3{
+	font-size: 100%;
+	margin-top: 5px;
+}
+
+div#rightRightBox p{
+	margin-top: 0px;
+	margin-bottom: 5px;
+}
+
+div#rightRightBox img{
+	padding: 0px 0px 0px 0px;
+	margin: 5px auto 0px auto;
+	border: 0px;
+	border-right: 1px solid #D2CEA9;
+	border-left: 1px solid #D2CEA9;
+	display: block;
+}
+
+div#rightRightBox input{
+	margin-bottom: 3px;
+	color: #666666;
+}
+
+div#rightRightBox .bloccoInt {
+	margin: 5px;
+}
+
+div#rightRightBox .pulsanti {
+	text-align: center;
+}
+
+div#rightRightBox .pulsanti input{
+	width: 60px;
+}
+
+div#rightRightBox form {
+	margin: 0px 5px 5px 5px;
+	padding: 5px;
+}
+
+
+div#rightRightBox .bannerlink {
+	margin: 0px 0px 4px 0px;
+}
+
+/***************************************************************
+* 							contenuto rightRightBox							*
+****************************************************************/
+
+div#menuServiziOnline{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	/* dimensioni */
+}
+
+div#menuServiziOnline h2{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	/* dimensioni */	
+}
+
+div#menuVarie{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	/* dimensioni */
+}
+
+div#menuVarie h2{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	/* dimensioni */	
+}
+
+div#menuGalleria h2{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	/* dimensioni */	
+}
+
+div#rightRightBox div.bloccoMenu h2{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	/* dimensioni */	
+}
+
+div#rightRightBox div.bloccoMenu h2{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	/* dimensioni */	
+}
+
+
+/***************************************************************
+* 										news										*
+****************************************************************/
+
+div#bloccoNews{
+	/* posizione */
+	margin-right: 16px;
+	/* grafica */
+	background-color: White;
+	border-style: solid;
+	border-color: #D2CEA9;
+	border-width: 1px 1px 1px 1px;
+	/* testo */
+	font-size: 90%;
+	/* dimensioni */
+	
+}
+
+div#bloccoNews h2{
+	/* posizione */
+	padding: 1px 1px 1px 1px;
+	margin: 0px 0px 0px 0px;
+	/* grafica */
+	/* testo */
+	font-size: 100%;
+	/* dimensioni */
+}
+
+div#bloccoNews h2.h2Blocco{
+	/* posizione */
+	padding: 1px 1px 1px 1px;
+	margin: 0px 0px 0px 0px;
+	/* grafica */
+	border-style: solid;
+	border-color: #D2CEA9;
+	border-width: 0px 0px 1px 0px;
+	background-image: url(../images/sfondo_h2_corpo.gif);
+	/* testo */
+	font-size: 100%;
+	text-align: center;
+	color: white;
+	/* dimensioni */
+	font-size: 110%;
+}
+
+div#bloccoNews ul{
+	/* posizione */
+	/* grafica */
+	display: list-item;
+	list-style-type: none;
+	list-style-position: outside;
+	list-style-image: none;
+	/* testo */
+	text-align: left;
+	text-indent: 0px;
+	white-space: normal;
+	/* dimensioni */
+	padding: 0px 4px 0px 9px;
+	margin: 5px 0px 10px 0px;
+}
+
+div#bloccoNews ul li{
+	/* posizione */
+	/* grafica */
+	/*background-color: White;*/
+	/* testo */
+	display: list-item;
+	color: #424242;
+	font-size: 100%;
+	line-height: 130%;
+	/* dimensioni */
+	margin: 2px 0px 2px 0px;
+	padding: 0px 0px 0px 2px;
+}
+
+div#bloccoNews a{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: none;
+	/* dimensioni */
+	padding-left: 9px;
+}
+
+div#bloccoNews a:visited{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: none;
+	/* dimensioni */
+}
+
+div#bloccoNews a:hover, div#bloccoNews a:visited:hover{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	color: #BE0002;
+	text-decoration: none;
+	/* dimensioni */
+}
+
+span.dataNews{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	font-weight: bold;
+	color: #BE0002;
+	/* dimensioni */
+	font-size: 90%;
+}
+
+/***************************************************************
+* 									eventi										*
+****************************************************************/
+div#bloccoEventi{
+	background-color: White;
+	text-align: left;
+	padding: 0px 0px 20px 0px;
+	margin: -1px 16px 0px 0px;
+	border-style: solid;
+	border-color: #D2CEA9;
+	border-width: 1px 1px 1px 1px;
+	font-size: 90%;
+}
+
+div#bloccoEventi h2{
+	/* posizione */
+	padding: 1px 1px 1px 1px;
+	margin: 0px 0px 0px 0px;
+	/* grafica */
+	/* testo */
+	font-size: 100%;
+	/* dimensioni */
+}
+
+div#bloccoEventi h2.h2Blocco{
+	/* posizione */
+	padding: 1px 1px 1px 1px;
+	margin: 0px 0px 0px 0px;
+	/* grafica */
+	border-style: solid;
+	border-color: #D2CEA9;
+	border-width: 0px 0px 1px 0px;
+	background-image: url(../images/sfondo_h2_corpo.gif);
+	/* testo */
+	font-size: 100%;
+	text-align: center;
+	color: white;
+	/* dimensioni */
+	font-size: 110%;
+}
+
+div#bloccoEventi table#eventi{
+	/* posizione */
+	display: block;
+	position: relative;
+	/* grafica */
+	/* testo */
+	/* dimensioni */	
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+}
+
+div#bloccoEventi table#eventi tr{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	/* dimensioni */
+	padding: 0px 0px 0px 0px;	
+	margin: 0px 0px 0px 0px;
+}
+
+div#bloccoEventi table#eventi td {
+	/* posizione */
+	/* grafica */
+	/*background-color: White;*/
+	border-style: solid;
+	border-color: rgb(201,201,201);
+	border-width: 0px;
+	/* testo */
+	text-align: justify;
+	/* dimensioni */
+	padding: 4px 4px 4px 4px;	
+	margin: 0px 0px 0px 0px;
+	width: 100%;
+}
+
+div#bloccoEventi img{
+	/* posizione */
+	float: left;
+	display: block;
+	/* grafica */
+	/* testo */
+	/* dimensioni */
+	margin: 0px 4px 0px 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+div#bloccoEventi table#eventi td h3{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	font-size: 110%;
+	color: #BE0002;
+	/* dimensioni */
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+}
+
+div#bloccoEventi table#eventi td p{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	/* dimensioni */
+	padding: 0px 0px 0px 0px;	
+	margin: 0px 0px 0px 0px;
+}
+
+/************************ Comunicati Stampa **********************************/
+
+div#bloccoComunicati{
+	/* posizione */
+	margin-right: 16px;
+	margin-top: -1px;
+	/* grafica */
+	background-color: White;
+	border-style: solid;
+	border-color: #D2CEA9;
+	border-width: 1px 1px 1px 1px;
+	/* testo */
+	color: #FFFFFF;
+	font-size: 90%;
+	
+}
+
+div#bloccoComunicati h2{
+	/* posizione */
+	padding: 1px 1px 1px 1px;
+	margin: 0px 0px 0px 0px;
+	/* grafica */
+	/* testo */
+	font-size: 100%;
+	/* dimensioni */
+}
+
+div#bloccoComunicati h2.h2Blocco{
+	/* posizione */
+	padding: 1px 1px 1px 1px;
+	margin: 0px 0px 0px 0px;
+	/* grafica */
+	border-style: solid;
+	border-color: #D2CEA9;
+	border-width: 0px 0px 1px 0px;
+	background-image: url(../images/sfondo_h2_corpo.gif);
+	/* testo */
+	font-size: 100%;
+	text-align: center;
+	color: white;
+	/* dimensioni */
+	font-size: 110%;
+}
+
+div#bloccoComunicati ul{
+	/* posizione */
+	padding: 0px 0px 0px 0px;
+	margin: 5px 0px 10px 0px;
+	/* grafica */
+	/* testo */
+	text-align: left;
+	/* dimensioni */
+}
+
+div#bloccoComunicati ul li{
+	/* posizione */
+	/* grafica */
+	/*background-color: White;*/
+	/* testo */
+	display: list-item;
+	list-style-image: url(../images/bullet_comunicati.gif);
+	line-height: 130%;
+	/* dimensioni */
+	margin: 2px 0px 2px 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+div#bloccoComunicati a{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: none;
+	/* dimensioni */
+	padding-left: 9px;
+}
+
+div#bloccoComunicati a:visited{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: none;
+	/* dimensioni */
+}
+
+div#bloccoComunicati a:hover, div#bloccoComunicati a:visited:hover{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: none;
+	/* dimensioni */
+}
+
+/* ++++++++++++++++++ Blocco newsletter e contatti +++++++++++++++++++++++ */
+
+
+div#bloccoNewsLetter {
+	/* posizione */
+	/* grafica */
+	background-color: #E9E2E8;
+	border-style: solid;
+	border-color: rgb(201,201,201);
+	border-width: 1px 1px 1px 1px;
+	/* testo */
+	
+}
+
+div#bloccoNewsLetter h2{
+	/* posizione */
+	/* grafica */
+	border-style: solid;
+	border-color: rgb(201,201,201);
+	border-width: 0px 0px 1px 0px;
+	/* testo */
+	font-size: 110%;
+	text-align: left;
+	color: rgb(141,10,10);
+	background-color: #E1D5DF;
+	/* dimensioni */
+	padding: 2px 2px 2px 4px;
+	margin: 1px 1px 5px 1px;
+
+}
+
+div#bloccoNewsLetter ul{
+	/* posizione */
+	/* grafica */
+	list-style-type: none;
+	list-style-position: outside;
+	list-style-image: none;
+	/* testo */
+	text-align: left;
+	text-indent: 0px;
+	white-space: normal;
+	/* dimensioni */
+	padding: 0px 4px 0px 4px;
+	margin: 5px 0px 10px 0px;
+}
+
+div#bloccoNewsLetter ul li{
+	/* posizione */
+	/* grafica */
+	/*background-color: White;*/
+	/* testo */
+	color: #595959;
+	font-size: 90%;
+	font-family: Arial, Helvetica, sans-serif;
+	line-height: 130%;
+	/* dimensioni */
+	margin: 2px 0px 2px 0px;
+	padding: 0px 0px 0px 2px;
+}
+
+div#bloccoNewsLetter a{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	color: #595959;
+	text-decoration: none;
+	/* dimensioni */
+	padding-left: 4px;
+}
+
+div#bloccoNewsLetter a:visited{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	color: #7171717;
+	text-decoration: none;
+	/* dimensioni */
+}
+
+div#bloccoNewsLetter a:hover, div#bloccoNewsLetter a:visited:hover{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	text-decoration: underline;
+	/* dimensioni */
+}
+
+
+/* ++++++++++++++++++ Scheletro colonna centrale home page +++++++++++++++++++++++ */
+
+div.rigaHome {
+	text-align: center;
+	/* dimensioni */	
+	padding: 0px 0px 0px 0px;
+	margin: 0px 189px 0px 5px;
+}
+
+div.rigaHome h2{
+	/* posizione */
+	/* grafica */
+	/* testo */
+	font-size: 110%;
+	text-align: left;
+	color: #1C498C;
+	/* dimensioni */
+	padding: 2px 2px 2px 4px;
+	margin: 0px 0px 0px 0px;
+}
+
+div.rigaUnica {
+	/* dimensioni */	
+	/* dimensioni */
+	width	: 99,9%;
+	text-align: left;
+	padding: 0px 0px 10px 0px;
+	margin: 0px 0px 0px 0px;
+}
+
+div.rigaUnicaCentrata {
+	/* dimensioni */	
+	/* dimensioni */
+	width	: 99,9%;
+	text-align: center;
+	padding: 0px 0px 10px 0px;
+	margin: 0px 0px 0px 0px;
+}
+/*********************** Versione con tabella ***********************************/
+
+table#tabellaHome {
+	background-color: red;
+	text-align: left;	
+	/* dimensioni */	
+	margin: 0px 189px 0px 5px;
+}
+
+table#tabellaHome td{
+	
+	vertical-align: top;
+	/* dimensioni */	
+	
+}
+
+
+
+
+
+
+/*Questo css serve per organizzare i link nella heme page "scrivi al sindaco" etc ..*/
+
+
+
+div.rigaHome ul{
+	/* posizione */
+	display: inline;
+	/* grafica */
+	/* testo */
+	/* dimensioni */
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+div.rigaHome ul li{
+	/* posizione */
+	display: inline; 
+	/* grafica */
+	/* testo */
+	/* dimensioni */
+	padding: 0px 0px 0px 20px;
+}
+
+div.rigaHome ul li a {
+	/* posizione */
+	/* grafica */
+	/* testo */
+	/* testo */
+	color: #424242;
+	text-decoration:none;
+	/* dimensioni */
+	
+}
+
+div.rigaHome ul li a:hover {
+	/* posizione */
+	/* grafica */
+	/* testo */
+	color: #BE0002;
+	text-decoration: none;
+	/* dimensioni */
+	
+}
+
+/* infor  */
+
+.listaServiziBotton form { padding: 0; margin: 0; display:inline}
+
+.listaServiziBotton input
+{
+   background:#E6E8D2 none repeat scroll 0%;
+   border:1px solid black;
+   color:#424242;
+   width: 100px;
+   cursor: pointer;
+   margin-bottom: 2px;
+}
+
+.listaServiziBotton
+{
+  text-align : right;
+  margin-top:-20px;
+  border-bottom: 1px solid black;
+ } 
+
+#elencoFamiliari table
+{
+	border: 2px solid black;
+	border-collapse: separate;
+	border-spacing: 5px;
+}
+
+#elencoFamiliari td
+{
+	vertical-align: middle;
+	border-bottom:1px solid #black;
+padding:6px 11px;
+
+	font-size: 12px;
+	font-weight: bold;
+}
+
+#elencoFamiliari form
+{
+	display: inline;	
+}
+
+#elencoFamiliari th
+{
+	background:#E6E8D2 none repeat scroll 0 0;
+	border-right:1px solid #black;
+	color:#424242;
+	font-weight:bold;
+	line-height:1.2;
+	padding:2px 11px;
+	text-align:left;
+}
+
+ 
+ 

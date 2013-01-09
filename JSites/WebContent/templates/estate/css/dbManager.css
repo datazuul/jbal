@@ -1,0 +1,61 @@
+.dbManager .pageInfo {
+	/*float: left;*/
+	/*width: 45%;*/
+	margin: 5px;
+}
+.dbManager .userInfo #dbManagerTable .caption {
+	font-weight: bold;
+	background-color: #ABD1F8;
+}
+
+.pageInfo input {
+	/*width: 48%;*/
+	/*height: 16px;*/
+}
+.dbManager .pageInfo #brform {
+}
+
+
+.dbManager .userInfo {
+	/*float: left;*/
+	/*width: 380px;*/
+	margin: 5px;
+	height: 120px;
+	overflow: auto;
+	border-top-width: 2px;
+	/*border-right-width: 0px;*/
+	border-right-width: 2px;
+	border-bottom-width: 2px;
+	border-left-width: 2px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #666666;
+	border-right-color: #666666;
+	border-bottom-color: #666666;
+	border-left-color: #666666;
+	padding: 2px;
+}
+.dbManager .pageInfo #boton {
+	/*width: 50%;*/
+	height: 25px;
+	margin-top: 10px;
+}
+.dbManager .pageInfo .label {
+	/*width: 100px;*/
+/*	float: left;*/
+	font-weight: bold;
+	vertical-align: middle;
+	line-height: 24px;
+}
+
+.dbManager .userInfo #dbManagerTable .myTableLine {
+	height: 10px;
+	/*line-height: 10px;*/
+}	
+
+.dbManager .userInfo #dbManagerTable tr {
+	/*height: 10px;*/
+	/*line-height: 10px;*/
+}

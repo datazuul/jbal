@@ -1,0 +1,40 @@
+#
+# File di configurazione dei srever Z39.50 da contattare
+# Le righe inizianti per # sono considerate commenti e ignorate
+#
+# Parametri da inserire
+#
+# se e' un server Z3950:
+#       host,port,database[:codice database],z3950manager,tipodati[:sottotipo],username,password,tipo_autenticazione,timeout_millis
+#       
+#   dove tipo_autenticazione e':
+#               0 = nessuna autenticazione
+#               1 = anonymous
+#               2 = open string
+#               3 = usa autenticazione
+#
+#       nome sorgente e' un nome (descrizione) BREVE della sorgente SENZA VIRGOLE.
+#
+# se e' un server http:
+#   host,port,base_url,http_manager[:forcedatabasename],tipodati,0,0,0,10000
+#       
+#       forcedatabasename e' un nome che viene restituito nell'xml come 
+#
+10.0.0.22,2100,sebinaopac,org.jopac2.engine.MetaSearch.Managers.JOpac2Z3950RequestManager,Sutrs:Sol_sutrs,a,a,0,20000
+#10.0.0.22,2100,sebinaopac,org.jopac2.engine.MetaSearch.Managers.JOpac2Z3950RequestManager,unimarc:Sebina,a,a,0,20000
+#192.168.176.42,2100,sebinaopac,org.jopac2.engine.MetaSearch.Managers.JOpac2Z3950RequestManager,Sutrs:Sol_sutrs,a,a,0,20000
+z3950.izum.si,2023,sikkp:50500,org.jopac2.engine.MetaSearch.Managers.JOpac2Z3950RequestManager,Sutrs:Cobiss_sutrs,COBISS,z3950sikkp,3,30000
+z3950.izum.si,2024,nsktrs:51902,org.jopac2.engine.MetaSearch.Managers.JOpac2Z3950RequestManager,Sutrs:Cobiss_sutrs,COBISS,z3950nsktrs,3,20000
+#localhost,8080,/JOpac2/KP/isoSearch(1)?,org.jopac2.engine.MetaSearch.Managers.JOpac2GetManager:KP,Isisbiblo,a,a,0,5000
+#localhost,8080,/JOpac2/pregresso/isoSearch(1)?,org.jopac2.engine.MetaSearch.Managers.JOpac2GetManager:pregresso,Pregresso,a,a,0,5000
+#
+#
+##illiricus.units.it,2100,sol.units.it:2100/sebinaopac:sutrs,org.jopac2.engine.MetaSearch.Managers.JOpac2Z3950RequestManager,sutrs,a,a,0,80000
+##illiricus.units.it,2100,z3950.izum.si:2023/sikkp:sutrs,org.jopac2.engine.MetaSearch.Managers.JOpac2Z3950RequestManager,sutrs:cobiss_sutrs,COBISS,z3950sikkp,3,30000
+##z3950.izum.si,2024,nsktrs,org.jopac2.engine.MetaSearch.Managers.JOpac2Z3950RequestManager,sutrs:cobiss_sutrs,COBISS,z3950nsktrs,3,20000
+#illiricus.units.it,8080,/pregresso/isoSearch(1)?,org.jopac2.engine.MetaSearch.Managers.JOpac2GetManager,unimarc,a,a,0,5000
+#http://opac.units.it,80,/h3/h3.exe/ase/Fanalisi?lingua.x=ita;vdir.x=;dbg.x=0000,org.jopac2.engine.MetaSearch.Managers.SebinaGetManager,sutrs,a,a,0,50000
+##prodorbis.library.yale.edu,7090,VOYAGER,org.jopac2.engine.MetaSearch.Managers.JOpac2Z3950RequestManager,marc21,a,a,0,10000
+##opac.sbn.it,2100,nopac,org.jopac2.engine.MetaSearch.Managers.JOpac2Z3950RequestManager,sutrs,a,a,0,10000
+##212.131.152.85,80,/cgi-bin/easyweb/ewgettest?,org.jopac2.engine.MetaSearch.Managers.EasyWebGetManager,sutrs,a,a,0,10000
+##http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?,80,null,org.jopac2.engine.MetaSearch.Managers.PubMedGetManager,sutrs,a,a,0,10000
