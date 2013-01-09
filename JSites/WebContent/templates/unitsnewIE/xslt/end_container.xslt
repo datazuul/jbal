@@ -1,4 +1,0 @@
-
-</xsl:template>
-</xsl:stylesheet>
-
