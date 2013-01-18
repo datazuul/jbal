@@ -617,8 +617,19 @@ public interface RecordInterface {
 	 * @return
 	 */
 	public String[] getChannels();
-
 	
+	
+	/**
+	 * Aggiunge un accesso alla risorsa in versione elettronica
+	 * (da non confondere con la descrizione di una risorsa elettronica, che - ad
+	 * esempio in unimarc - ha un record type diverso)
+	 * @param electronicResource
+	 */
+	public void addElectronicVersion(ElectronicResource electronicResource);
+
+	public ElectronicResource[] getElectronicVersion();
+	
+	public void removeElectronicVersion(ElectronicResource electronicResource);
 	
 	/**
 	 * Verifica la coerenza NSB - NSE per ogni campo in tutti i tag indicati.

@@ -47,6 +47,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jopac2.jbal.ElectronicResource;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.Readers.IsoRecordReader;
 import org.jopac2.jbal.Readers.RecordReader;
@@ -171,6 +172,19 @@ public ISO2709Impl(byte[] notizia, Charset charset, String dTipo) throws Excepti
 		}
 	}
 	
+	/**
+	 * Rimuove il tag se ha esattamente lo stesso contenuto (incluso tagname e modificatori)
+	 * Anche eventuali duplicati.
+	 * @param tag
+	 */
+	public void removeTag(Tag tag) {
+		for(int i=dati.size()-1;i>=0;i--) {
+			if(dati.elementAt(i).equalsContent(tag)) {
+				dati.removeElementAt(i);
+			}
+		}
+	}
+	
 	public String getPrice() {
 		String ret = null;
 		Tag tag = getFirstTag("010");
@@ -197,5 +211,22 @@ public ISO2709Impl(byte[] notizia, Charset charset, String dTipo) throws Excepti
 		}
 	}*/
 
+	@Override
+	public void addElectronicVersion(ElectronicResource electronicResource) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ElectronicResource[] getElectronicVersion() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeElectronicVersion(ElectronicResource electronicResource) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

@@ -37,6 +37,7 @@ import java.util.Vector;
 
 import java.net.URLDecoder;
 
+import org.apache.commons.lang.StringUtils;
 import org.jopac2.jbal.abstractStructure.Field;
 import org.jopac2.jbal.abstractStructure.Tag;
 
@@ -199,6 +200,17 @@ public class Utils {
 	  if(e1!=null && e1.getContent().length()>0) {
 		  r+=prefix+e1.getContent();
 	  }
+	  return r;
+  }
+  
+  /**
+   * Return true if field is not null and content is not null or empty
+   * @param field
+   * @return
+   */
+  public static boolean ifExists(Field field) {
+	  boolean r=false;
+	  if(field!=null && !StringUtils.isEmpty(field.getContent())) r=true;
 	  return r;
   }
   

@@ -53,6 +53,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import org.jopac2.jbal.ElectronicResource;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.Readers.RecordReader;
@@ -503,6 +504,24 @@ public abstract class XML implements RecordInterface {
 	}
 
 	public void setLanguage(String language) throws JOpac2Exception {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void addElectronicVersion(ElectronicResource electronicResource) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ElectronicResource[] getElectronicVersion() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeElectronicVersion(ElectronicResource electronicResource) {
 		// TODO Auto-generated method stub
 		
 	}

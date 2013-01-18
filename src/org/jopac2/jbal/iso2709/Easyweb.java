@@ -49,6 +49,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.*;
+import org.jopac2.jbal.ElectronicResource;
 //import java.lang.*;
 //import java.sql.*;
 import org.jopac2.jbal.RecordInterface;
@@ -589,4 +590,5 @@ public void removeImage() throws JOpac2Exception {
 	// TODO Auto-generated method stub
 	
 }
+
 }

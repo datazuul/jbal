@@ -44,9 +44,12 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 import javax.imageio.ImageIO;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 //import java.lang.*;
 //import java.sql.*;
 import org.apache.xerces.impl.dv.util.Base64;
+import org.jopac2.jbal.ElectronicResource;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.abstractStructure.Field;
@@ -1221,5 +1224,226 @@ public void initLinkUp() {
         }
         return r;
     }
+	
+	
+	@Override
+	public void addElectronicVersion(ElectronicResource electronicResource) {
+//		Indicatore 1: Modalità di accesso
+//	    Nessuna informazione fornita
+//	    0 Email
+//	    1 FTP
+//	    2 Login da remoto (Telnet)
+//	    3 Dial-up
+//	    4 HTTP
+//	    7 Modalità specifica in $y
+//		$y Metodo di accesso (non ripetibile)
+		Tag resource=new Tag("856",' ',' ');
+		if(!StringUtils.isBlank(electronicResource.getAccessmethod())) {
+			int i=ArrayUtils.indexOf(ElectronicResource.accessType, electronicResource.getAccessmethod());
+			if(i>=0) {
+				resource.setModifier1((char)('0'+i));
+			}
+			else {
+				resource.setModifier1('7');
+				resource.addField(new Field("y",electronicResource.getAccessmethod()));
+			}
+		}
+		
+//	    $a Nome Host (ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getHostaname())) resource.addField(new Field("a",electronicResource.getHostaname()));
+		
+//	    $b Numero di accesso (ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getAccessnumber())) resource.addField(new Field("b",electronicResource.getAccessnumber()));
+
+//		$c Compressione dell'informazione (ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getCompression())) resource.addField(new Field("c",electronicResource.getCompression()));
+		
+//	    $d Percorso (ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getPath())) resource.addField(new Field("d",electronicResource.getPath()));
+		
+//	    $e Data e orario della consultazione e dell'accesso(non ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getLastaccesstime())) resource.addField(new Field("e",electronicResource.getLastaccesstime()));
+		
+//	    $f Nome del file (ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getFilename())) resource.addField(new Field("f",electronicResource.getFilename()));
+		
+//	    $h Processore delle richieste (non ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getRequestprocessor())) resource.addField(new Field("h",electronicResource.getRequestprocessor()));
+		
+//	    $i Istruzione (ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getCommand())) resource.addField(new Field("i",electronicResource.getCommand()));
+		
+//	    $j Bits per second (non ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getBitpersecond())) resource.addField(new Field("j",electronicResource.getBitpersecond()));
+		
+//	    $k Password (Not ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getPassword())) resource.addField(new Field("k",electronicResource.getPassword()));
+		
+//	    $l Logon/login (non ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getLogin())) resource.addField(new Field("l",electronicResource.getLogin()));
+		
+//	    $m Contatto per l'assistenza nell'accesso (ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getContact())) resource.addField(new Field("m",electronicResource.getContact()));
+		
+//	    $n Nome dell'ubicazione dell'host in $a (non ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getLocation())) resource.addField(new Field("n",electronicResource.getLocation()));
+		
+//	    $o Sistema operativo (non ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getOperatingsystem())) resource.addField(new Field("o",electronicResource.getOperatingsystem()));
+		
+//	    $p Porta (non ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getPortnumber())) resource.addField(new Field("p",electronicResource.getPortnumber()));
+		
+//	    $q Tipo di formato elettronico (non ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getMimetype())) resource.addField(new Field("q",electronicResource.getMimetype()));
+		
+//	    $r Impostazioni (non ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getSettings())) resource.addField(new Field("r",electronicResource.getSettings()));
+		
+//	    $s Dimensioni del file (ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getSettings())) resource.addField(new Field("s",electronicResource.getSettings()));
+		
+//	    $t Emulazione del terminale (ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getTerminalemulationsettings())) resource.addField(new Field("t",electronicResource.getTerminalemulationsettings()));
+		
+//	    $u Uniform Resource Locator (non ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getUrl())) resource.addField(new Field("u",electronicResource.getUrl()));
+		
+//	    $v Orario in cui è possibile l'accesso alla risorsa (ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getAccesstime())) resource.addField(new Field("v",electronicResource.getAccesstime()));
+		
+//	    $w Numero di controllo della registrazione (ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getRecordcontrolnumber())) resource.addField(new Field("w",electronicResource.getRecordcontrolnumber()));
+		
+//	    $x Nota non pubblica (ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getNonpublicnote())) resource.addField(new Field("x",electronicResource.getNonpublicnote()));
+		
+//	    $z Nota pubblica (ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getPublicnote())) resource.addField(new Field("z",electronicResource.getPublicnote()));
+		
+//	    $2 Testo del link (ripetibile)
+		if(!StringUtils.isBlank(electronicResource.getLinktext())) resource.addField(new Field("2",electronicResource.getLinktext()));
+		
+		addTag(resource);
+	}
+
+	@Override
+	public ElectronicResource[] getElectronicVersion() {
+		Vector<ElectronicResource> v=new Vector<ElectronicResource>();
+		
+		Vector<Tag> resources=getTags("856");
+		for(Tag resource:resources) {
+			ElectronicResource el=convertElectronicResource(resource);
+			v.addElement(el);
+		}
+		return v.toArray(new ElectronicResource[v.size()]);
+	}
+	
+	private ElectronicResource convertElectronicResource(Tag resource) {
+		ElectronicResource el=new ElectronicResource();
+//		Indicatore 1: Modalità di accesso
+//	    Nessuna informazione fornita
+//	    0 Email
+//	    1 FTP
+//	    2 Login da remoto (Telnet)
+//	    3 Dial-up
+//	    4 HTTP
+//	    7 Modalità specifica in $y
+//		$y Metodo di accesso (non ripetibile)
+			if(resource.getModifier1()<'7') {
+				int i=resource.getModifier1()-'0';
+				el.setAccessmethod(ElectronicResource.accessType[i]);
+			}
+			else if(Utils.ifExists(resource.getField("y"))) {
+				el.setAccessmethod(resource.getField("y").getContent());
+			}
+		
+//	    $a Nome Host (ripetibile)
+			if(Utils.ifExists(resource.getField("a"))) el.setHostaname(resource.getField("a").getContent());
+		
+//	    $b Numero di accesso (ripetibile)
+			if(Utils.ifExists(resource.getField("b"))) el.setAccessnumber(resource.getField("b").getContent());
+
+//		$c Compressione dell'informazione (ripetibile)
+			if(Utils.ifExists(resource.getField("c"))) el.setCompression(resource.getField("c").getContent());
+		
+//	    $d Percorso (ripetibile)
+			if(Utils.ifExists(resource.getField("d"))) el.setPath(resource.getField("d").getContent());
+			
+//	    $e Data e orario della consultazione e dell'accesso(non ripetibile)
+			if(Utils.ifExists(resource.getField("e"))) el.setLastaccesstime(resource.getField("e").getContent());
+		
+//	    $f Nome del file (ripetibile)
+			if(Utils.ifExists(resource.getField("f"))) el.setFilename(resource.getField("f").getContent());
+		
+//	    $h Processore delle richieste (non ripetibile)
+			if(Utils.ifExists(resource.getField("h"))) el.setRequestprocessor(resource.getField("h").getContent());
+		
+//	    $i Istruzione (ripetibile)
+			if(Utils.ifExists(resource.getField("i"))) el.setCommand(resource.getField("i").getContent());
+		
+//	    $j Bits per second (non ripetibile)
+			if(Utils.ifExists(resource.getField("j"))) el.setBitpersecond(resource.getField("j").getContent());
+		
+//	    $k Password (Not ripetibile)
+			if(Utils.ifExists(resource.getField("k"))) el.setPassword(resource.getField("k").getContent());
+		
+//	    $l Logon/login (non ripetibile)
+			if(Utils.ifExists(resource.getField("l"))) el.setLogin(resource.getField("l").getContent());
+		
+//	    $m Contatto per l'assistenza nell'accesso (ripetibile)
+			if(Utils.ifExists(resource.getField("m"))) el.setContact(resource.getField("m").getContent());
+		
+//	    $n Nome dell'ubicazione dell'host in $a (non ripetibile)
+			if(Utils.ifExists(resource.getField("n"))) el.setLocation(resource.getField("n").getContent());
+		
+//	    $o Sistema operativo (non ripetibile)
+			if(Utils.ifExists(resource.getField("o"))) el.setOperatingsystem(resource.getField("o").getContent());
+		
+//	    $p Porta (non ripetibile)
+			if(Utils.ifExists(resource.getField("p"))) el.setPortnumber(resource.getField("p").getContent());
+		
+//	    $q Tipo di formato elettronico (non ripetibile)
+			if(Utils.ifExists(resource.getField("q"))) el.setMimetype(resource.getField("q").getContent());
+		
+//	    $r Impostazioni (non ripetibile)
+			if(Utils.ifExists(resource.getField("r"))) el.setSettings(resource.getField("r").getContent());
+		
+//	    $s Dimensioni del file (ripetibile)
+			if(Utils.ifExists(resource.getField("s"))) el.setFilesize(resource.getField("s").getContent());
+		
+//	    $t Emulazione del terminale (ripetibile)
+			if(Utils.ifExists(resource.getField("t"))) el.setTerminalemulationsettings(resource.getField("t").getContent());
+		
+//	    $u Uniform Resource Locator (non ripetibile)
+			if(Utils.ifExists(resource.getField("u"))) el.setUrl(resource.getField("u").getContent());
+		
+//	    $v Orario in cui è possibile l'accesso alla risorsa (ripetibile)
+			if(Utils.ifExists(resource.getField("v"))) el.setAccesstime(resource.getField("v").getContent());
+		
+//	    $w Numero di controllo della registrazione (ripetibile)
+			if(Utils.ifExists(resource.getField("w"))) el.setRecordcontrolnumber(resource.getField("w").getContent());
+		
+//	    $x Nota non pubblica (ripetibile)
+			if(Utils.ifExists(resource.getField("x"))) el.setNonpublicnote(resource.getField("x").getContent());
+		
+//	    $z Nota pubblica (ripetibile)
+			if(Utils.ifExists(resource.getField("z"))) el.setPublicnote(resource.getField("z").getContent());
+		
+//	    $2 Testo del link (ripetibile)
+			if(Utils.ifExists(resource.getField("2"))) el.setLinktext(resource.getField("2").getContent());
+		return el;
+	}
+
+	/**
+	 * Rimuove confrontando l'url
+	 */
+	public void removeElectronicVersion(ElectronicResource electronicResource) {
+		for(Tag tag:getTags("856")) {
+			ElectronicResource el=convertElectronicResource(tag);
+			if(el.equals(electronicResource)) removeTag(tag);
+		}
+	}
+
 
 }
