@@ -355,4 +355,10 @@ public class Tag implements Comparable<Tag> {
 				if(fields.elementAt(i).getContent()==null || fields.elementAt(i).getContent().length()==0) fields.removeElementAt(i);
 		}
 	}
+
+	public boolean equalsContent(Tag tag) {
+		String q=this.toString();
+		String o=tag.toString();
+		return q.equals(o);
+	}
 }
