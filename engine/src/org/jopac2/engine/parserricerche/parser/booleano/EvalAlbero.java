@@ -41,8 +41,10 @@ package org.jopac2.engine.parserricerche.parser.booleano;
  *
  */
 
+import java.util.StringTokenizer;
 import java.util.logging.*;
 
+import org.jopac2.engine.dbengine.dbGateway.DbGateway;
 import org.jopac2.engine.parserricerche.parser.exception.ExpressionException;
 import org.jopac2.engine.parserricerche.parser.exception.MissingBracketException;
 import org.jopac2.engine.parserricerche.parser.exception.MissingOperatorException;
@@ -169,6 +171,52 @@ public class EvalAlbero {
 	 */
 	public static String eval(Nodo exp) {
 		return exp.toString();
+	}
+	
+	public static void espandeFoglie(Nodo tree){
+		if(tree.isOperatore()){
+			espandeFoglie(tree.getSinistro());
+			espandeFoglie(tree.getDestro());		
+		} else {
+			// sono su una foglia
+			String valore=tree.getValoreAsString();
+			
+			String parola="";
+			StringTokenizer st = new StringTokenizer(valore, "=");			
+			String classe = st.nextToken().trim();
+
+			// se e' presente un solo token, allora impostare la classe come ANY di default
+			if(!st.hasMoreTokens()){
+				parola = classe;
+				classe="ANY";
+			} else {
+				parola=st.nextToken().trim();
+			}
+			StringTokenizer stPar=DbGateway.paroleTokenizer(parola);
+			int numeroParole=stPar.countTokens();
+			//TODO si puo' rendere in maniera ricorsiva inserendo un nodo and, a sx la prima parola
+			// a dx il resto delle parole e poi richiamando espandeFoglie
+			if(numeroParole>1){				
+				// il nodo attuale diventa un nodo and
+				tree.setAND();
+				tree.setValore(null);
+				// il nodo sx prende il primo token
+				Nodo sx=new Nodo(classe+"="+stPar.nextToken());
+				tree.setSinistro(sx);
+				Nodo currNode=tree;
+				// nel ciclo for aggiungo 2 nodi: un sinistro e un and
+				for(int i=1;i<numeroParole-1;i++){					
+					Nodo nsx=new Nodo(classe+"="+stPar.nextToken());
+					Nodo nroot=new Nodo(nsx,null,null);  // il nodo dx non e' ancora fissato					
+					nroot.setAND();
+					currNode.setDestro(nroot);
+					currNode=nroot;
+				}
+				// il nodo dx prende l'ultimo token
+				Nodo dx=new Nodo(classe+"="+stPar.nextToken());
+				currNode.setDestro(dx);				
+			}
+		}		
 	}
 	
 	public static void main(String[] args) {
