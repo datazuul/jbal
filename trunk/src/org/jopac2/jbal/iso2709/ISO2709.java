@@ -56,6 +56,45 @@ import org.jopac2.utils.TokenWord;
 import org.jopac2.utils.Utils;
 
 public abstract class ISO2709 implements RecordInterface {
+	  protected Charset _charset=null;
+	  private DirEntry[] Directory;
+	  public String inString;
+	  public Vector<Tag> dati;
+	  public Vector<TokenWord> tw;
+	  public static String[] channels={"ANY","AUT","TIT","NUM","LAN","MAT","DTE","SBJ","BIB","INV","CLL","ANY","JID","ABS","NAT"};
+
+	  public byte cr=13;
+	  public byte lf=10;
+	  public Delimiters delimiters=new Delimiters();
+	  private String JOpacID="0";
+	  protected String bid=null;
+	  protected String descrizioneTipo;
+	  private String charset="utf-8";
+	  private int _livello =0;  // serve a gestire le notizie per linkup e down
+
+	  public Vector<RecordInterface> linkUp=null;
+	  public Vector<RecordInterface> linkDown=null;
+	  public Vector<RecordInterface> linkSerie=null;
+	  
+	  /**
+	   * 01/10/2003 - RT
+	   *          Definisce il tipo di record e lo stato.
+	   */
+	    protected long recordlength=-1;
+	    protected String recordStatus="n";
+	    protected String implementationCodes="    "; // 4 char (recordType, recordBiblioLevel, hierarchicalLevel , 'blanck')
+	    protected String recordType="a";
+	    protected String recordBiblioLevel="m";
+	    protected String recordHierarchicalLevel="#"; // hierarchical relationship undefined in UNIMARC
+	    protected String indicatorLength="2";  // One numeric digit giving the length of the indicators. This is invariably 2 in UNIMARC.
+	    protected String subfieldIdentifierLength="2"; // One numeric digit giving the length of the subfield identifier; e.g. '$a'. This is invariably 2 in UNIMARC.
+	    protected String baseAddressOfData="     "; // 5 bytes
+	    protected String additionalRecordDefinition="   "; // 3 bytes
+//	    protected String directoryMap="    "; // 4 bytes  // R.T.: 29/07/2011 see init()
+	    protected String recordCharacterEncodingScheme="a"; // 1 byte, a=utf8, blank=normal
+
+
+	
   @Override
 	public void addAuthorsFromTitle() throws JOpac2Exception {
 		// TODO Auto-generated method stub
@@ -79,27 +118,10 @@ public String getHierarchicalLevel() {
 		this.recordHierarchicalLevel = recordHierarchicalLevel;
 	}
 
-public Vector<Tag> dati;
-  public Vector<TokenWord> tw;
-  public static String[] channels={"ANY","AUT","TIT","NUM","LAN","MAT","DTE","SBJ","BIB","INV","CLL","ANY","JID","ABS","NAT"};
-
-  public byte cr=13;
-  public byte lf=10;
-  public Delimiters delimiters=new Delimiters();
-  private long JOpacID=0;
-  protected String bid=null;
-  protected String descrizioneTipo;
-  private String charset="utf-8";
-  private int _livello =0;  // serve a gestire le notizie per linkup e down
-
-  public Vector<RecordInterface> linkUp=null;
-  public Vector<RecordInterface> linkDown=null;
-  public Vector<RecordInterface> linkSerie=null;
-  
   public RecordInterface clone() {
 	  RecordInterface ma=null;
 	  try {
-		  ma=RecordFactory.buildRecord(0, this.toString().getBytes(), this.getTipo(), this.getLivello());
+		  ma=RecordFactory.buildRecord("0", this.toString().getBytes(), this.getTipo(), this.getLivello());
 	  }
 	  catch(Exception e) {
 		  e.printStackTrace();
@@ -200,18 +222,15 @@ public Vector<Tag> dati;
     return colour;
   }
 
-  private DirEntry[] Directory;
-  public String inString;
-
   public String getTipo() {
     return descrizioneTipo;
   }
 
-  public void setJOpacID(long l) {
+  public void setJOpacID(String l) {
     JOpacID=l;
   }
 
-  public long getJOpacID() {
+  public String getJOpacID() {
     return JOpacID;
   }
 
@@ -220,7 +239,7 @@ public Vector<Tag> dati;
   }
 
   public String getBid() {
-    if(bid==null) {return Long.toString(getJOpacID());}
+    if(bid==null) {return getJOpacID();}
     if(bid.contains("/")){
 		String[] bidparts = bid.split("/");
 		bid = bidparts[bidparts.length-2]+bidparts[bidparts.length-1];
@@ -507,29 +526,14 @@ private String my_trimo(String t) {
     delimiters.setDl(dl);
   }
   
-  /**
-   * 01/10/2003 - RT
-   *          Definisce il tipo di record e lo stato.
-   */
-    protected long recordlength=-1;
-    protected String recordStatus="n";
-    protected String implementationCodes="    "; // 4 char (recordType, recordBiblioLevel, hierarchicalLevel , 'blanck')
-    protected String recordType="a";
-    protected String recordBiblioLevel="m";
-    protected String recordHierarchicalLevel="#"; // hierarchical relationship undefined in UNIMARC
-    protected String indicatorLength="2";  // One numeric digit giving the length of the indicators. This is invariably 2 in UNIMARC.
-    protected String subfieldIdentifierLength="2"; // One numeric digit giving the length of the subfield identifier; e.g. '$a'. This is invariably 2 in UNIMARC.
-    protected String baseAddressOfData="     "; // 5 bytes
-    protected String additionalRecordDefinition="   "; // 3 bytes
-//    protected String directoryMap="    "; // 4 bytes  // R.T.: 29/07/2011 see init()
-    protected String recordCharacterEncodingScheme="a"; // 1 byte, a=utf8, blank=normal
-
+  
   /**
  * @param stringa
  * @throws Exception
  */
 public void init(byte[] stringa, Charset charset) throws Exception {
 //    inString=stringa;
+	_charset=charset;
     if(stringa==null || stringa.length==0) return;
 
     try {
@@ -623,14 +627,15 @@ public void init(byte[] stringa, Charset charset) throws Exception {
 
           dati.addElement(new Tag(tag, s, charset, delimiters));
           if(tag.equals("001")) {
-            bid=new String(s,charset);;
+            bid=new String(s,charset);
           }
         }
       }
     }
     catch (Exception e) {
       // ops, non e' Unimarc? forse e' codificato, riproviamoci
-//      System.out.print("Codificato: "+stringa);
+//      System.out.print("Codificato: "+new String(stringa));
+    	
         
       /** todo
        * Fare meglio questa parte, initCoded digerisce tutto, deve dare una eccezione
@@ -716,7 +721,9 @@ public void init(byte[] stringa, Charset charset) throws Exception {
     dati=new Vector<Tag>();
     tw=new Vector<TokenWord>();
     descrizioneTipo=dTipo;
-    init(notizia, charset);
+    _charset=charset;
+    if(notizia!=null)
+    	init(notizia, charset);
 
     _livello=livello+1;  //  salva il livello creato per evitare ricorsione
   }
@@ -890,21 +897,28 @@ private boolean isEmpty(Tag tag) {
 	    int ba=0;
 	    String directory="";
 	    String data="";
-	
+//	    ArrayList<Byte> data=new ArrayList<Byte>();
+//	    ArrayList<Byte> directory=new ArrayList<Byte>();
+//	    ArrayList<Byte> leader=new ArrayList<Byte>();
 	    
+//	    addStringAsByte(leader,_leader);
+	    
+	    Delimiters outputDelimiters=new Delimiters(); // use always standard delimiters
 	    
 	    
 	    int maxFL=getMaxFieldLength();
 	    int entryLength=maxFL+maxFL+1+3; // 3 = tag length
 	    
 	    long temp = 24 + entryLength * getRows() + 1;             // base address of data
+//	    addStringAsByte(leader,Utils.pad("00000",temp));
 	    leader = leader.concat(Utils.pad("00000",temp));
-	    
+//	    addStringAsByte(leader,additionalRecordDefinition);	 // implementation defined
 	    leader=leader.concat(additionalRecordDefinition);                  // implementation defined
 	    
 	    
 	    
-	    leader=leader.concat(Integer.toString(maxFL)+Integer.toString(maxFL+1)+"0 ");                 // entry map, maxFL and maxFL+1 digit padding, see in the for loop beyond 
+	    leader=leader.concat(Integer.toString(maxFL)+Integer.toString(maxFL+1)+"0 ");                 
+//	    addStringAsByte(leader,Integer.toString(maxFL)+Integer.toString(maxFL+1)+"0 "); // entry map, maxFL and maxFL+1 digit padding, see in the for loop beyond 
 	    String lengthPad=pad0(maxFL);
 	    String posPad=lengthPad+"0";    
 	    
@@ -912,27 +926,31 @@ private boolean isEmpty(Tag tag) {
 	    
 	    Vector<Tag> t=this.getTags();
 	    Collections.sort(t);
-	
-	    
-	    
+
 	    ba+=this.getRows()*entryLength;
 	    long c=0;
 	    for(int z=0;z<t.size();z++) {
+//	    	byte[] kb=t.elementAt(z).toBytes();
+//	    	int kLength=kb.length;
+//	        directory=directory.concat(new String(kb,0,3)); // 3 bytes (tag length)
+
 	    	String k=t.elementAt(z).toString();
-	    	int kLength=k.getBytes().length;
-	        directory=directory.concat(k.substring(0,3)); // 3 bytes (tag length)
+	    	int kLength=k.getBytes("utf-8").length;
+	    	String tag=k.substring(0,3);
+	        directory=directory.concat(tag); // 3 bytes (tag length)
+	        
 	        directory=directory.concat(Utils.pad(lengthPad,kLength-2)); // modified for byte counting! pad to 4 digit (see entry map definition above).
 	        directory=directory.concat(Utils.pad(posPad,c)); // pad to 5 digit (see entry map definition above)
 	        c+=kLength-2;  // is always full lenght - tag length (3) + 1 for ft at end of each data. Total = kLength - 3 +1
 	        ba+=kLength-2; // is always full lenght - tag length (3) + 1 for ft at end of each data. Total = kLength - 3 +1
-	        data=data+k.substring(3)+delimiters.getFt(); // get data starting at position 3 (ommitting tag) + one byte for ft
+	        data=data+k.substring(3)+outputDelimiters.getFt(); // get data starting at position 3 (ommitting tag) + one byte for ft
 	    }
-	    data=data.concat(delimiters.getRt());
+	    data=data+outputDelimiters.getRt();
 	        
 	    ba = 5 + leader.length() + ba + 2; // 5 digit for record length + directory + 1 ft + 1 rt
 	    
 	    leader=Utils.pad("00000", ba).concat(leader); // it was ba-1, I don't understand why :-(
-	    r=leader+directory+delimiters.getFt()+data;
+	    r=leader+directory+outputDelimiters.getFt()+data;
 	}
 	catch(java.lang.StringIndexOutOfBoundsException e) {
 		r=null;
@@ -943,7 +961,12 @@ private boolean isEmpty(Tag tag) {
     return r;
 }
   
-  private String pad0(int n) {
+  private void addStringAsByte(ArrayList<Byte> arrayList, String dataToAdd) throws UnsupportedEncodingException {
+	byte[] t=dataToAdd.getBytes("utf-8");
+	for(int i=0;i<t.length;i++) arrayList.add(new Byte(t[i]));
+}
+
+private String pad0(int n) {
 	  String r="";
 	for(int i=0;i<n;i++) r+="0";
 	return r;
@@ -987,37 +1010,45 @@ public Delimiters getTerminators() {
   
   public Enumeration<TokenWord> getItems() {
 		tw.removeAllElements();
-		String ctk;
-		boolean unico = true;
+//		String ctk;
+//		boolean unico = true;
 
 		for (int z = 0; z < dati.size(); z++) {
-			String valore_tag = dati.elementAt(z).toString().substring(3);
 			String tag = dati.elementAt(z).getTagName();
+			
+			Vector<Field> fields=dati.elementAt(z).getFields();
 
-			if (valore_tag.indexOf(delimiters.getByteDl()) >= 0)
-				unico = false;
-
-			StringTokenizer tk = new StringTokenizer(valore_tag, delimiters.getDl());
-			while (tk.hasMoreTokens()) {
-				String valore = "";
-
-				ctk = tk.nextToken().trim();
-				try {
-					if (ctk.length() > 0) {
-						String de = "";
-						if (!unico) {
-							de = ctk.substring(0, 1);
-							valore = ctk.substring(1);
-						} else {
-							de = "";
-							valore = ctk;
-						}
-						tw.addElement(new TokenWord(valore, tag, de));
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
+			if (fields!=null && fields.size()>0) {
+				for(int i=0;i<fields.size();i++) {
+					tw.addElement(new TokenWord(fields.elementAt(i).getContent(), tag, fields.elementAt(i).getFieldCode()));
 				}
 			}
+			else {
+				tw.addElement(new TokenWord(dati.elementAt(z).getRawContent(), tag, ""));
+			}
+//				unico = false;
+
+//			StringTokenizer tk = new StringTokenizer(valore_tag, delimiters.getDl());
+//			while (tk.hasMoreTokens()) {
+//				String valore = "";
+//
+//				ctk = tk.nextToken().trim();
+//				try {
+//					if (ctk.length() > 0) {
+//						String de = "";
+//						if (!unico) {
+//							de = ctk.substring(0, 1);
+//							valore = ctk.substring(1);
+//						} else {
+//							de = "";
+//							valore = ctk;
+//						}
+//						tw.addElement(new TokenWord(valore, tag, de));
+//					}
+//				} catch (Exception ex) {
+//					ex.printStackTrace();
+//				}
+//			}
 		}
 
 		return tw.elements();
@@ -1034,6 +1065,27 @@ public Delimiters getTerminators() {
 	@Override
 	public void setBase64Image(String base64EncodedImage) throws JOpac2Exception {
 		throw new JOpac2Exception("Unimplemented method");
+	}
+	
+	@Override
+	public void buildRecord(int id, byte[] rawdata, int level) throws Exception {
+		destroy();
+		dati=new Vector<Tag>();
+	    tw=new Vector<TokenWord>();
+	    Directory=new DirEntry[1000];
+		init(rawdata,_charset);
+		
+	}
+	
+	@Override
+	public void setDelimiters(Delimiters delimiters) {
+		this.delimiters=delimiters;
+		
+	}
+
+	@Override
+	public Delimiters getDelimiters() {
+		return delimiters;
 	}
 
 }

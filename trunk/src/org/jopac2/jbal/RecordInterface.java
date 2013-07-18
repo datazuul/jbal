@@ -35,6 +35,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.jbal.abstractStructure.Delimiters;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.subject.SubjectInterface;
@@ -200,14 +201,14 @@ public interface RecordInterface {
 	public String getTipo();
 
 	/**
-	 * Imposta u codice univoco di identificazione per il database di JOpac2
+	 * Imposta un codice univoco di identificazione per il database di JOpac2
 	 */
-	public void setJOpacID(long l);
+	public void setJOpacID(String l);
 
 	/**
 	 * Restituisce il codice univoco di identificazione del database JOpac2
 	 */
-	public long getJOpacID();
+	public String getJOpacID();
 	
 	/**
 	 * Restituisce la lingua
@@ -628,8 +629,60 @@ public interface RecordInterface {
 	public void addElectronicVersion(ElectronicResource electronicResource);
 
 	public ElectronicResource[] getElectronicVersion();
+	public ElectronicResource getElectronicVersion(String type);
+	
+	/**
+	 * Imposta i delimititatori FT, RT, DL per i record ISO2709
+	 * Non fa nulla per i formati txt, xml, mdb
+	 * @param delimiters
+	 */
+	public void setDelimiters(Delimiters delimiters);
+	
+	/**
+	 * The date is entered in ISO standard form (ISO 8601-2004) 
+	 * for dates: YYYYMMDD where YYYY represents the year, MM the month and 
+	 * DD the day of the month. 
+	 * 
+	 * The time is entered in the form HHMMSS.T where HH represents the hour using 
+	 * the twenty four hour clock, MM the minutes, SS the seconds and .T tenths of a second. 
+	 * In all cases a leading 0 is added if necessary.
+	 * 
+	 * @return data ultima modifica
+	 */
+	public String getRecordModificationDate();
+	
+	/**
+	 * @param date YYYYMMDDHHMMSS.T
+	 * 
+	 * The date is entered in ISO standard form (ISO 8601-2004) 
+	 * for dates: YYYYMMDD where YYYY represents the year, MM the month and 
+	 * DD the day of the month. 
+	 * 
+	 * The time is entered in the form HHMMSS.T where HH represents the hour using 
+	 * the twenty four hour clock, MM the minutes, SS the seconds and .T tenths of a second. 
+	 * In all cases a leading 0 is added if necessary.
+	 * @throws JOpac2Exception 
+	 */
+	public void setRecordModificationDate(String date) throws JOpac2Exception;
+	
+	/**
+	 * Restituisce i elimititatori FT, RT, DL per i record ISO2709
+	 * Restituisce null per i formati txt, xml, mdb
+	 * @return Delimiters
+	 */
+	public Delimiters getDelimiters();
 	
 	public void removeElectronicVersion(ElectronicResource electronicResource);
+
+	/**
+	 * Load into current Record data from rawdata
+	 * @param id
+	 * @param line
+	 * @param tipo
+	 * @param level
+	 * @throws Exception 
+	 */
+	public void buildRecord(int id, byte[] rawdata, int level) throws Exception;
 	
 	/**
 	 * Verifica la coerenza NSB - NSE per ogni campo in tutti i tag indicati.

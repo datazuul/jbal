@@ -4,7 +4,13 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
-public class Field {
+public class Field implements Cloneable {
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		Field f=new Field(fieldCode, content, delimiter);
+		return f;
+	}
+
 	private String fieldCode;
 	private String delimiter=String.valueOf((char)0x1f);
 	private String content;
@@ -40,7 +46,8 @@ public class Field {
 	}
 	
 	public String toString() {
-		return delimiter+fieldCode+content.replaceAll("\n", "");
+//		return delimiter+fieldCode+content.replaceAll("\n", "");
+		return (new Delimiters()).getDl()+fieldCode+content.replaceAll("\n", "");
 	}
 	
 	public static String printableNSBNSE(String string) {
@@ -67,5 +74,10 @@ public class Field {
 		r=r+"\">"+StringEscapeUtils.escapeXml(content.trim());
 		r=r+"</subfield>";
 		return r;
+	}
+
+	public static String getContent(Field field) {
+		if(field!=null) return field.getContent();
+		else return "";
 	}
 }

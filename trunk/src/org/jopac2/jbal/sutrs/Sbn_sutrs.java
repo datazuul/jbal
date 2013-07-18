@@ -143,7 +143,7 @@ public void init(String stringa) throws Exception {
   			if(linkUp==null) linkUp=new Vector<RecordInterface>();
 			RecordInterface ma;
 			try {
-				ma = RecordFactory.buildRecord(0, ("Titolo:"+temp).getBytes(), "sbn_sutrs", 0);
+				ma = RecordFactory.buildRecord("0", ("Titolo:"+temp).getBytes(), "sbn_sutrs", 0);
 				linkUp.addElement(ma);
 			} catch (SecurityException e) {
 				e.printStackTrace();
@@ -168,7 +168,7 @@ public void init(String stringa) throws Exception {
   			if(linkSerie==null) linkSerie=new Vector<RecordInterface>();
 			RecordInterface ma;
 			try {
-				ma = RecordFactory.buildRecord(0, ("Titolo:"+temp).getBytes(), "sbn_sutrs", 0);
+				ma = RecordFactory.buildRecord("0", ("Titolo:"+temp).getBytes(), "sbn_sutrs", 0);
 				linkSerie.addElement(ma);
 			} catch (SecurityException e) {
 				e.printStackTrace();
@@ -197,7 +197,7 @@ public void init(String stringa) throws Exception {
   				addTag(ta);
   				RecordInterface ma;
 				try {
-					ma = RecordFactory.buildRecord(0, ("Titolo:"+temp).getBytes(), "sbn_sutrs", 0);
+					ma = RecordFactory.buildRecord("0", ("Titolo:"+temp).getBytes(), "sbn_sutrs", 0);
 	  				linkDown.addElement(ma);
 				} catch (SecurityException e) {
 					e.printStackTrace();

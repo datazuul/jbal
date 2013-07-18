@@ -5,12 +5,12 @@ import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.TestCase;
 
+import org.apache.xerces.impl.dv.util.Base64;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.junit.After;
 import org.junit.Before;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 public class CreationTest extends TestCase {
 
@@ -105,7 +105,7 @@ public class CreationTest extends TestCase {
 	private String rebuild(String record, String type) throws InvocationTargetException {
 		RecordInterface ma=null;
 		try {
-			ma = RecordFactory.buildRecord(0, record.getBytes(), type, 0);
+			ma = RecordFactory.buildRecord("0", record.getBytes(), type, 0);
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {

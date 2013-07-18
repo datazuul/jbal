@@ -44,7 +44,7 @@ public class RecordInfoUtils {
 			String prezzo=ma.getAvailabilityAndOrPrice();
 			r.setPrezzo(prezzo);
 		
-			r.setJid(Long.toString(ma.getJOpacID()));
+			r.setJid(ma.getJOpacID());
 			r.setBid(ma.getBid());
 			
 			try {
@@ -58,8 +58,8 @@ public class RecordInfoUtils {
 		public static RecordInterface setRecord(RecordInfo recordInfo, String type) {
 			RecordInterface ma=null;
 			try {
-				ma=RecordFactory.buildRecord(0, null, type, 0);
-				ma.setJOpacID(Long.parseLong(recordInfo.getJid()));
+				ma=RecordFactory.buildRecord("0", null, type, 0);
+				ma.setJOpacID(recordInfo.getJid());
 				ma.setTitle(recordInfo.getTitolo());
 				ma.addAuthorsFromTitle();
 				String areaDisciplinare=recordInfo.getAreadisciplinare();
@@ -74,7 +74,7 @@ public class RecordInfoUtils {
 	//			recordInfo.getBibliografia();
 				String collana=recordInfo.getCollana();
 				if(collana!=null && collana.trim().length()>0) {
-					RecordInterface c=RecordFactory.buildRecord(0, null, type, 0);
+					RecordInterface c=RecordFactory.buildRecord("0", null, type, 0);
 					c.setTitle(collana);
 					c.setBiblioLevel(Unimarc.LEVEL_COLLECTION);
 					ma.addSerie(c);
@@ -95,7 +95,7 @@ public class RecordInfoUtils {
 	//			recordInfo.getSintesiposseduto();
 				ma.setAbstract(recordInfo.getTestoabstract());
 				
-				ma.setJOpacID(Long.parseLong(recordInfo.getJid()));
+				ma.setJOpacID(recordInfo.getJid());
 				ma.setBid(recordInfo.getBid());
 				
 //				Connection conn=null;

@@ -223,7 +223,7 @@ public class Utils {
    */
   public static String ifExists(String prefix, Tag tag) {
 	  String r="";
-	  if(tag!=null && tag.getRawContent().length()>0) {
+	  if(tag!=null && tag.getRawContent()!=null && tag.getRawContent().length()>0) {
 		  r+=prefix+tag.getRawContent();
 	  }
 	  return r;

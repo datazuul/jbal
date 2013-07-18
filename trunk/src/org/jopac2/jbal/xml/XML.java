@@ -57,6 +57,7 @@ import org.jopac2.jbal.ElectronicResource;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.jbal.abstractStructure.Delimiters;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.iso2709.ISO2709Impl;
@@ -68,7 +69,7 @@ public abstract class XML implements RecordInterface {
 
   public static String cr=String.valueOf((char)13);
   public static String lf=String.valueOf((char)10);
-  private long JOpacID=0;
+  private String JOpacID="0";
   protected String bid=null;
   private String descrizioneTipo;
   private int _livello =0;  // serve a gestire le notizie per linkup e down
@@ -85,7 +86,7 @@ public abstract class XML implements RecordInterface {
   
   public RecordInterface clone() {
 	  try {
-		return RecordFactory.buildRecord(0, this.toString().getBytes(), this.getTipo(), this.getLivello());
+		return RecordFactory.buildRecord("0", this.toString().getBytes(), this.getTipo(), this.getLivello());
 	} catch (SecurityException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -233,11 +234,11 @@ public abstract class XML implements RecordInterface {
     return descrizioneTipo;
   }
 
-  public void setJOpacID(long l) {
+  public void setJOpacID(String l) {
     JOpacID=l;
   }
 
-  public long getJOpacID() {
+  public String getJOpacID() {
     return JOpacID;
   }
 
@@ -255,7 +256,7 @@ public abstract class XML implements RecordInterface {
 
   public String getBid() {
 	  Node bid=getNode("bid");
-      if(bid==null) {return Long.toString(getJOpacID());}
+      if(bid==null) {return getJOpacID();}
       else return bid.getTextContent();
   }
 
@@ -524,5 +525,28 @@ public abstract class XML implements RecordInterface {
 	public void removeElectronicVersion(ElectronicResource electronicResource) {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public ElectronicResource getElectronicVersion(String type) {
+		ElectronicResource el=null;
+		
+		return el;
+	}
+	
+	@Override
+	public void buildRecord(int id, byte[] rawdata, int level) throws Exception {
+		init(rawdata);
+		
+	}
+	
+	@Override
+	public void setDelimiters(Delimiters delimiters) {
+		// non fa niente
+		
+	}
+
+	@Override
+	public Delimiters getDelimiters() {
+		return null;
 	}
 }

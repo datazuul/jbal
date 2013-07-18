@@ -40,22 +40,22 @@ public class RecordFactory {
 	
 	public static final String defaultCharset="utf-8";
 
-	public static final RecordInterface buildRecord(long id, byte[] codedData,
+	public static final RecordInterface buildRecord(String id, byte[] codedData, Charset charset,
 			String type, String syntax, long level) throws SecurityException,
 			IllegalArgumentException, NoSuchMethodException,
 			InstantiationException, IllegalAccessException, InvocationTargetException {
 		RecordInterface ma = null;
 		if (syntax != null && syntax.length() > 0) {
-			ma = buildRecord(id, codedData, syntax, level);
+			ma = buildRecord(id, codedData, charset, syntax, level);
 			if (ma == null)
-				ma = buildRecord(id, codedData, type, level);
+				ma = buildRecord(id, codedData, charset, type, level);
 		} else {
-			ma = buildRecord(id, codedData, type, level);
+			ma = buildRecord(id, codedData, charset, type, level);
 		}
 		return ma;
 	}
 	
-	public static final RecordInterface buildRecord(long id, byte[] codedData, 
+	public static final RecordInterface buildRecord(String id, byte[] codedData, 
 			String type, long level) throws SecurityException,
 			NoSuchMethodException, IllegalArgumentException,
 			InstantiationException, IllegalAccessException, InvocationTargetException {
@@ -65,7 +65,7 @@ public class RecordFactory {
 
 	// Object not=ISO2709.creaNotizia(id,contenuto,tipo,livelloPadre);
 	@SuppressWarnings("unchecked")
-	public static final RecordInterface buildRecord(long id, byte[] codedData, Charset charset,
+	public static final RecordInterface buildRecord(String id, byte[] codedData, Charset charset,
 			String type, long level) throws SecurityException,
 			NoSuchMethodException, IllegalArgumentException,
 			InstantiationException, IllegalAccessException, InvocationTargetException {
@@ -173,7 +173,7 @@ public class RecordFactory {
 				String rName = file.getName().substring(0,
 						file.getName().length() - 6);
 				try {
-					RecordInterface ma = RecordFactory.buildRecord(0, null,
+					RecordInterface ma = RecordFactory.buildRecord("0", null,
 							rName, 0);
 					ma.destroy();
 					classes.add(rName);

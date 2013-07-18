@@ -66,7 +66,7 @@ public class unimarcUtils {
 		
 		RecordInterface ma=null;
 		try {
-			ma=RecordFactory.buildRecord(0, null, tipo, 0);
+			ma=RecordFactory.buildRecord("0", null, tipo, 0);
 			RecordReader r=ma.getRecordReader(is,charset);
 			
 			int i=0,min=0;
@@ -94,7 +94,7 @@ public class unimarcUtils {
 				try {
 					System.out.println("--> "+i);
 					if(i>=min) {
-						ma=RecordFactory.buildRecord(0, line, tipo, 0);
+						ma=RecordFactory.buildRecord("0", line, tipo, 0);
 						
 						if(delete) ma.setStatus(Unimarc.STATUS_DELETED_RECORD);
 						if(recordtype!=null) {

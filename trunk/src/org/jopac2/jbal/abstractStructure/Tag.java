@@ -1,13 +1,30 @@
 package org.jopac2.jbal.abstractStructure;
 
 import java.nio.charset.Charset;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.jopac2.utils.JOpac2Exception;
 
-public class Tag implements Comparable<Tag> {
+public class Tag implements Comparable<Tag>, Cloneable {
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		Tag t=new Tag(tagName,modifier1,modifier2);
+		if(fields!=null) {
+			for(int i=0;i<fields.size();i++) {
+				t.addField((Field)fields.elementAt(i).clone());
+			}
+		}
+		else {
+			try {
+				t.setRawContent(rawContent);
+			} catch (JOpac2Exception e) {
+
+			}
+		}
+		return t;
+	}
+
 	String tagName;
 	char modifier1=0,modifier2=0;
 	Vector<Field> fields=null;
@@ -63,6 +80,11 @@ public class Tag implements Comparable<Tag> {
 		this.tagName=tagName;
 		int tl=tag.length;
 		if(tl>0 && tag[tag.length-1]==d.getByteFt()) tl--;
+//		System.out.println(tagName+": "+new String(tag));
+		
+		/**
+		 * TODO se ft == dl questo controllo non funziona.
+		 */
 		
 		if(ArrayUtils.contains(tag, d.getByteDl())) {
 			// check if there are modifiers
@@ -255,7 +277,7 @@ public class Tag implements Comparable<Tag> {
 		} else {
 			r = tagName + rawContent;
 		}
-		return r.getBytes();
+		return r.getBytes(Charset.forName("utf-8"));
 	}
 	
 	
@@ -360,5 +382,11 @@ public class Tag implements Comparable<Tag> {
 		String q=this.toString();
 		String o=tag.toString();
 		return q.equals(o);
+	}
+
+	public static String getRawContent(Tag tag) {
+		String r="";
+		if(tag!=null) r=tag.getRawContent();
+		return r;
 	}
 }

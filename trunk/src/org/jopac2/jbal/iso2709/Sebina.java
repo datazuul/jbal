@@ -40,6 +40,7 @@ import java.awt.image.BufferedImage;
 import java.nio.charset.Charset;
 import java.util.*;
 
+import org.jopac2.jbal.abstractStructure.Delimiters;
 import org.jopac2.jbal.abstractStructure.Field;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.*;
@@ -187,8 +188,7 @@ public BufferedImage getImage() {
 	// TODO Auto-generated method stub
 	return null;
 }
-    
-    
-    
+
+ 
 
 }
