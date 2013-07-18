@@ -18,12 +18,12 @@ public class ListSearch {
 	}
 	
 	public static SearchResultSet listSearch(Connection conn, String catalog, String classe,long jid,int limit) throws SQLException {
-		String testo=DbGateway.getClassContentFromJID(conn, catalog.trim(), classe, jid);
+		String testo=DbGateway.getClassContentFromJID(conn, catalog.trim(), classe, Long.toString(jid));
 		return listSearch(conn, catalog.trim(), classe, testo, limit);
 	}
 	
 	public static SearchResultSet listSearchBackward(Connection conn, String catalog, String classe,long jid,int limit) throws SQLException {
-		String testo=DbGateway.getClassContentFromJID(conn, catalog.trim(), classe, jid);
+		String testo=DbGateway.getClassContentFromJID(conn, catalog.trim(), classe, Long.toString(jid));
 		return listSearchBackward(conn, catalog.trim(), classe, testo,limit);
 	}
 }

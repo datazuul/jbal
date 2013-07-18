@@ -37,7 +37,7 @@ import org.jopac2.jbal.RecordInterface;
  */
 public class DoSearchNew {
 
-	private Vector<Long> resultSet;
+	private Vector<String> resultSet;
 	protected Connection conn = null;
 //	protected StaticDataComponent staticdata;
 	private String[] channels=null;
@@ -47,10 +47,18 @@ public class DoSearchNew {
 		this.conn = c;
 //		this.staticdata = d;
 		this.catalog = catalog;
-		this.resultSet = new Vector<Long>();
-		RecordInterface ma=DbGateway.getNotiziaByJID(c, catalog, 1);
-		channels=ma.getChannels();
-		ma.destroy();
+		this.resultSet = new Vector<String>();
+		RecordInterface ma=null;
+		try {
+//			long i=DbGateway.getMaxIdTable(c, "je_"+catalog+"_notizie");
+			ma=DbGateway.getNotiziaByJID(c, catalog, "1");
+			if(ma!=null) {
+				channels=ma.getChannels();
+				ma.destroy();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public SearchResultSet executeSearch(String query, boolean useStemmer) throws ExpressionException, SQLException {
@@ -115,7 +123,7 @@ public class DoSearchNew {
 		return query;
 	}
 
-	public RecordInterface getRecord(Long t) {
-		return DbGateway.getNotiziaByJID(conn, catalog, t.longValue());
+	public RecordInterface getRecord(String t) throws SQLException {
+		return DbGateway.getNotiziaByJID(conn, catalog, t);
 	}
 }

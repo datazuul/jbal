@@ -235,7 +235,7 @@ public class mysql extends DbGateway {
 	}
 	
 	public SearchResultSet listSearchFB(Connection conn,String catalog,String classe,String parole,int limit, boolean forward) throws SQLException {
-		Vector<Long> listResult=new Vector<Long>();
+		Vector<String> listResult=new Vector<String>();
 		
 		String d=">=";
 		if(!forward) d="<=";
@@ -261,11 +261,11 @@ public class mysql extends DbGateway {
 			stmt.setString(1, parole);
 			stmt.setLong(2, limit);
 			rs = stmt.executeQuery();
-			int id_notizia;
+			String id_notizia;
 			while (rs.next()) {
-				if(jid) id_notizia = rs.getInt("id");
-				else id_notizia = rs.getInt("id_notizia");
-				listResult.addElement(new Long(id_notizia));
+				if(jid) id_notizia = rs.getString("id");
+				else id_notizia = rs.getString("id_notizia");
+				listResult.addElement(id_notizia);
 			}
 		}
 		catch(SQLException e) {

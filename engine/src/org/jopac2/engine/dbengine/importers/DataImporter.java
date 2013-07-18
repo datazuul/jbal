@@ -42,12 +42,14 @@ import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.jopac2.engine.dbengine.dbGateway.DbGateway;
 import org.jopac2.engine.dbengine.dbGateway.LoadData;
 import org.jopac2.jbal.Readers.XsltTransformer;
+import org.jopac2.jbal.abstractStructure.Delimiters;
 import org.jopac2.jbal.stemmer.Radice;
 import org.jopac2.jbal.stemmer.StemmerItv2;
 
@@ -65,8 +67,11 @@ public class DataImporter extends Thread {
 	String[] channels=null;
 	PrintStream out=null;
 	PrintStream outputErrorRecords=out;
+	private Charset _charset=Charset.forName("utf-8");
+	private Delimiters _delimiters=new Delimiters();
 	
-	public DataImporter(InputStream f,String filetype,String JOpac2confdir,Connection[] conns, String catalog, boolean clearDatabase, Cache cache, PrintStream console, PrintStream outputErrorRecords) { //, Transliterator t) {
+	public DataImporter(InputStream f,String filetype,Charset charset, Delimiters delimiters, String JOpac2confdir,
+			Connection[] conns, String catalog, boolean clearDatabase, Cache cache, PrintStream console, PrintStream outputErrorRecords) { //, Transliterator t) {
 		this.f=f;
 		this.filetype=filetype;
 //		confdir=JOpac2confdir;
@@ -77,6 +82,8 @@ public class DataImporter extends Thread {
 		this.out=console;
 		this.outputErrorRecords=outputErrorRecords;
 		this.catalog=catalog.trim();
+		this._charset=charset;
+		if(delimiters!=null) _delimiters=delimiters;
 	}
 	
 
@@ -93,8 +100,8 @@ public class DataImporter extends Thread {
     	String[] r=null;
     	DbGateway.commitAll(conn);
     	Radice stemmer=new StemmerItv2();
-        LoadData ld=new LoadData(conn,catalog,clearDatabase,out,outputErrorRecords);
-        r=ld.doJob(f,dbType,temporaryDir,cache,stemmer); //,t);
+        LoadData ld=new LoadData(conn,catalog,_delimiters,clearDatabase,out,outputErrorRecords);
+        r=ld.doJob(f,_charset,dbType,temporaryDir,cache,stemmer); //,t);
         ld.destroy();
         return r;
     }

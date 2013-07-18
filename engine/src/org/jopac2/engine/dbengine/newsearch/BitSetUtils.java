@@ -61,10 +61,10 @@ public class BitSetUtils {
 	 * restituisce un vettore con i valori rispettivi dei bit popolati
 	 * @return Vettore di long
 	 */
-	public static Vector<Long> ToVector(BitSet bitArray) {
-		Vector<Long> r = new Vector<Long>();		
+	public static Vector<String> ToVector(BitSet bitArray) {
+		Vector<String> r = new Vector<String>();		
 			for(int i=bitArray.nextSetBit(0); i>=0; i=bitArray.nextSetBit(i+1)) {
-				r.add(new Long(i));	//TODO: sistemare r.add conforme java5
+				r.add(Long.toString(i));	//TODO: sistemare r.add conforme java5
 			}
 		return r;
 	}	
