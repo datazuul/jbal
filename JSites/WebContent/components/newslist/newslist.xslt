@@ -52,27 +52,55 @@
 					</xsl:variable>
 					<xsl:value-of select="substring($idate,9,2)" />/<xsl:value-of select="substring($idate,6,2)" />/<xsl:value-of select="substring($idate,1,4)" />&#160;</span> 
 				<!-- span class="newsitem_pagina">
-					<xsl:value-of select="@pageName" />:&#160;</spani -->
+					<xsl:value-of select="@pageName" />:&#160;</span -->
 				<span class="newsitem_titolo">
 					<xsl:value-of select="div/div[@class='sezione']/h2[@class='sezione_titolo']" />
 					<xsl:value-of select="div/div[@class='sezione']/h1[@class='sezione_titolo']" />
 					<xsl:value-of select="div/div[@class='sezione']/div[@class='sezione_contenuto']/h2[@class='sezione_titolo']" />
 					<xsl:value-of select="div/div[@class='sezione']/div[@class='sezione_contenuto']/h1[@class='sezione_titolo']" />&#160;</span>
+				
+				<xsl:variable name="nt"><xsl:value-of select="substring(div/div[@class='sezione']/div[@class='sezione_testo'],1,50)" /><xsl:value-of select="substring(div/div[@class='sezione']/div[@class='sezione_contenuto']/div[@class='sezione_testo'],1,50)" />...</xsl:variable>
+				
+				
+				
 				<span class="newsitem_testo">
-					<xsl:value-of select="substring(div/div[@class='sezione']/div[@class='sezione_testo'],1,50)" />
-					<xsl:value-of select="substring(div/div[@class='sezione']/div[@class='sezione_contenuto']/div[@class='sezione_testo'],1,50)" />...
+					<xsl:call-template name="replace-string">
+					  <xsl:with-param name="text" select="$nt"/>
+					  <xsl:with-param name="replace" select="'&lt;p&gt;'" />
+					  <xsl:with-param name="with" select="'- '"/>
+					</xsl:call-template>
 				</span>
 			</a>
 		</div>
 	</xsl:template>
 	
-
+	<xsl:template name="replace-string">
+	    <xsl:param name="text"/>
+	    <xsl:param name="replace"/>
+	    <xsl:param name="with"/>
+	    <xsl:choose>
+	      <xsl:when test="contains($text,$replace)">
+	        <xsl:value-of select="substring-before($text,$replace)"/>
+	        <xsl:value-of select="$with"/>
+	        <xsl:call-template name="replace-string">
+	          <xsl:with-param name="text" select="substring-after($text,$replace)"/>
+	          <xsl:with-param name="replace" select="$replace"/>
+	          <xsl:with-param name="with" select="$with"/>
+	        </xsl:call-template>
+	      </xsl:when>
+	      <xsl:otherwise>
+	        <xsl:value-of select="$text"/>
+	      </xsl:otherwise>
+	    </xsl:choose>
+	  </xsl:template>
 	
 	<xsl:template match="@*|node()|text()">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()|text()|*" />
 		</xsl:copy>
 	</xsl:template>
+	
+
 
 
 </xsl:stylesheet>

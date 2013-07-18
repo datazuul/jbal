@@ -13,7 +13,6 @@
 	            <map:match pattern="view">
 	                <map:act type="request">
 	                    <map:parameter name="parameters" value="true"/>
-	                    <!-- http://www.biblio:8080/JOpac2/components/newslist/view?cid=5923&pid=1 -->
 	                    <map:generate type="newsListGenerator">
 	                    	<map:parameter name="db" value="{global:db}" />
 	                    	<map:parameter name="datadir" value="{global:data-directory}" />
@@ -29,9 +28,9 @@
 	                    
 	                    <!-- map:transform type="tutil" src="/t/newsafter" / -->
 	                    
-	                    <map:transform type="wikitrans">
+	                    <!-- map:transform type="wikitrans">
 	                    	<map:parameter name="db" value="{global:db}" />
-	                    </map:transform>
+	                    </map:transform -->
 	                    <map:serialize type="xml"/>
 	                </map:act>
 	            </map:match>
