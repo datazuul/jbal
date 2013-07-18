@@ -33,6 +33,7 @@
 					<option value="slideshow">slideshow</option>
 					<option value="catalogSearch">ricerca catalogo</option>
 					<option value="sendmail">invio form per email</option>
+					<option value="embed">include parti esterne</option>
 					<option value="sitemap">mappa sito</option>
 					<xsl:if test="starts-with($pcode,'_')">
 						<option value="sidebar">sidebar verticale</option>
