@@ -41,7 +41,6 @@ import org.jopac2.engine.dbengine.dbGateway.derby.derby;
 import org.jopac2.engine.dbengine.dbGateway.mysql.mysql;
 import org.jopac2.engine.dbengine.importers.LoadClasses;
 import org.jopac2.engine.utils.SearchResultSet;
-import org.jopac2.engine.utils.ZipUnzip;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.stemmer.Radice;
@@ -54,6 +53,7 @@ import org.jopac2.utils.JOpac2Exception;
 import org.jopac2.utils.ObjectPair;
 import org.jopac2.utils.TokenWord;
 import org.jopac2.utils.Utils;
+import org.jopac2.utils.ZipUnzip;
 
 import com.whirlycott.cache.Cache;
 import com.whirlycott.cache.CacheConfiguration;
@@ -318,17 +318,17 @@ public abstract class DbGateway {
 //        System.out.println(currentItem);
 	}
 	
-	public static RecordInterface getNotiziaByJID(Connection conn, String catalog, long jid) {
-		RecordInterface ma=null;
-		try {
-			ma = getNotiziaByJID(conn, catalog, Long.toString(jid));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		if((ma!=null) && (ma.getJOpacID() != jid))
-			ma.setJOpacID(jid);
-		return  ma;
-	}
+//	public static RecordInterface getNotiziaByJID(Connection conn, String catalog, String jid) {
+//		RecordInterface ma=null;
+//		try {
+//			ma = getNotiziaByJID(conn, catalog, jid);
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//		if((ma!=null) && (ma.getJOpacID() != jid))
+//			ma.setJOpacID(jid);
+//		return  ma;
+//	}
 	
 	public static String getNotiziaTypeByJID(Connection conn, String catalog, String jid) throws SQLException {
 		String tipo=null;
@@ -358,7 +358,7 @@ public abstract class DbGateway {
 	public static Vector<RecordInterface> getNotiziaByHash(Connection conn, String catalog, String hash) throws SQLException {
 		Vector<RecordInterface> r=new Vector<RecordInterface>();
 		
-		Iterator<Long> jid=getJIDByHash(conn, catalog, hash).iterator();
+		Iterator<String> jid=getJIDByHash(conn, catalog, hash).iterator();
 		
 		while(jid.hasNext()) {
 			r.addElement(getNotiziaByJID(conn,catalog,jid.next()));
@@ -366,15 +366,15 @@ public abstract class DbGateway {
 		return r;
 	}
 	
-	public static Vector<Long> getJIDByHash(Connection conn, String catalog, String hash) throws SQLException {
-		Vector<Long> r=new Vector<Long>();
+	public static Vector<String> getJIDByHash(Connection conn, String catalog, String hash) throws SQLException {
+		Vector<String> r=new Vector<String>();
 		Statement stmt=null;
 		ResultSet rs=null;
 		try {
 			stmt=conn.createStatement();
 			rs=stmt.executeQuery("select id_notizia from je_"+catalog+"_hash where hash='"+hash+"'");
 			while(rs.next()) {
-				r.addElement(rs.getLong("id_notizia"));
+				r.addElement(rs.getString("id_notizia"));
 			}
 		}
 		catch (SQLException e) {
@@ -405,7 +405,7 @@ public abstract class DbGateway {
 	            String tipo=rs.getString("nome");
 	            Blob notizia=rs.getBlob("notizia");
 //	            ma=RecordFactory.buildRecord(rs.getLong("id"),rs.getString("notizia").getBytes(),tipo,0);
-	            ma=RecordFactory.buildRecord(rs.getLong("id"),ZipUnzip.decompressString(notizia.getBytes(1, (int)notizia.length())),tipo,0);
+	            ma=RecordFactory.buildRecord(rs.getString("id"),ZipUnzip.decompressString(notizia.getBytes(1, (int)notizia.length())),tipo,0);
 	            
             }
             
@@ -450,7 +450,7 @@ public abstract class DbGateway {
 	    	qry=conn.createStatement();
 	        rs=qry.executeQuery("select id from je_"+catalog+"_notizie where bid='"+bid+"'");
 	        while(rs.next()) {
-	        	cancellaNotiziaFromJid(conn, catalog, rs.getLong("ID"));
+	        	cancellaNotiziaFromJid(conn, catalog, rs.getString("ID"));
 	        }
     	}
     	catch(SQLException e) {
@@ -468,7 +468,7 @@ public abstract class DbGateway {
      * @param jid
      * @throws SQLException
      */
-    public static void cancellaNotiziaFromJid(Connection conn, String catalog, long jid) throws SQLException {
+    public static void cancellaNotiziaFromJid(Connection conn, String catalog, String jid) throws SQLException {
     	Statement qry2=null;
 		ResultSet lcpn=null;
 		try {
@@ -500,7 +500,7 @@ public abstract class DbGateway {
     	cancellaNotiziaDaListe(conn, catalog, jid);
     }
     
-    public static void cancellaNotiziaDaListe(Connection conn, String catalog, long jid) throws SQLException {
+    public static void cancellaNotiziaDaListe(Connection conn, String catalog, String jid) throws SQLException {
     	String[] listTables=getListTables(conn, catalog);
     	for(int i=0;i<listTables.length;i++) {
     		cancellaNotiziaDaLista(conn, listTables[i],jid);
@@ -508,7 +508,7 @@ public abstract class DbGateway {
     }
     
     private static void cancellaNotiziaDaLista(Connection conn, String listName,
-			long jid) throws SQLException {
+			String jid) throws SQLException {
     	Statement st=null;
     
     	try {
@@ -570,7 +570,7 @@ public abstract class DbGateway {
     		byte[] notizia) throws SQLException {
   	  RecordInterface ma;
   	  try {
-			ma=RecordFactory.buildRecord(0,notizia,tipo,0);
+			ma=RecordFactory.buildRecord("0",notizia,tipo,0);
 			inserisciNotizia(conn,catalog,stemmer,paroleSpooler,ma);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -578,13 +578,13 @@ public abstract class DbGateway {
   	  
     }
     
-    public long inserisciNotizia(Connection conn, String catalog, Radice stemmer, ParoleSpooler paroleSpooler, RecordInterface notizia) throws SQLException {
+    public String inserisciNotizia(Connection conn, String catalog, Radice stemmer, ParoleSpooler paroleSpooler, RecordInterface notizia) throws SQLException {
     	long idTipo=getIdTipo(conn, catalog, notizia.getTipo());
-    	long jid=insertTableNotizie(conn,catalog,notizia, idTipo);
+    	String jid=insertTableNotizie(conn,catalog,notizia, idTipo);
     	return inserisciNotiziaInner(conn,catalog,notizia,stemmer, paroleSpooler, jid);
     }
     
-    public long inserisciNotizia(Connection conn, String catalog, Radice stemmer, ParoleSpooler paroleSpooler, RecordInterface notizia, long jid) throws SQLException {
+    public String inserisciNotizia(Connection conn, String catalog, Radice stemmer, ParoleSpooler paroleSpooler, RecordInterface notizia, String jid) throws SQLException {
     	long idTipo=getIdTipo(conn, catalog, notizia.getTipo());
     	insertTableNotizie(conn,catalog, notizia, idTipo, jid);
     	return inserisciNotiziaInner(conn,catalog, notizia,stemmer,paroleSpooler, jid);
@@ -596,7 +596,7 @@ public abstract class DbGateway {
      * @param notizia ISO2709
      * @throws SQLException
      */
-    private long inserisciNotiziaInner(Connection conn, String catalog, RecordInterface notizia, Radice stemmer, ParoleSpooler paroleSpooler, long jid) throws SQLException {
+    private String inserisciNotiziaInner(Connection conn, String catalog, RecordInterface notizia, Radice stemmer, ParoleSpooler paroleSpooler, String jid) throws SQLException {
     	long idTipo=getIdTipo(conn, catalog, notizia.getTipo());
     	
     	
@@ -612,7 +612,7 @@ public abstract class DbGateway {
 	    	String[] channels=notizia.getChannels();
 	    	if(notizia!=null) {
 				for(int i=0;i<channels.length;i++)
-					updateTableListe(conn,catalog,channels[i],(int)jid,notizia);
+					updateTableListe(conn,catalog,channels[i],jid,notizia);
 				
 			}
     	}
@@ -620,7 +620,7 @@ public abstract class DbGateway {
     }
     
     public void updateNotizia(Connection conn, String catalog, Radice stemmer, ParoleSpooler paroleSpooler, RecordInterface notizia) throws SQLException {
-    	long jid=notizia.getJOpacID();
+    	String jid=notizia.getJOpacID();
     	cancellaNotiziaFromJid(conn, catalog, jid);
     	inserisciNotizia(conn,catalog,stemmer,paroleSpooler,notizia,jid);
     }
@@ -631,7 +631,7 @@ public abstract class DbGateway {
      * @param notizia
      * @param idTipo
      */
-	private static void insertHashNotizia(Connection conn, String catalog, RecordInterface notizia, long jid) throws SQLException {
+	private static void insertHashNotizia(Connection conn, String catalog, RecordInterface notizia, String jid) throws SQLException {
 		String hash;
 		try {
 			hash = notizia.getHash();
@@ -643,17 +643,17 @@ public abstract class DbGateway {
 		}
 	}
 	
-	private static void insertHashNotizia(Connection conn, String catalog, String hash, long jid) throws SQLException {
+	private static void insertHashNotizia(Connection conn, String catalog, String hash, String jid) throws SQLException {
 		String sql="insert into je_"+catalog+"_hash (id_notizia, hash) values("+jid+",'"+hash+"')";
 		DbGateway.execute(conn, sql);
 	}
 	
-	public static void updateHashNotizia(Connection conn, String catalog, String hash, long jid) throws SQLException {
+	public static void updateHashNotizia(Connection conn, String catalog, String hash, String jid) throws SQLException {
 		String sql="update je_"+catalog+"_hash set hash='"+hash+"' where id_notizia="+jid;
 		DbGateway.execute(conn, sql);
 	}
 	
-	public static void insertHashNotizia(Connection conn, String catalog, long jid) throws SQLException {
+	public static void insertHashNotizia(Connection conn, String catalog, String jid) throws SQLException {
 		RecordInterface ma=getNotiziaByJID(conn,catalog,jid);
 		if(ma!=null) {
 			insertHashNotizia(conn,catalog,ma,jid);
@@ -661,7 +661,7 @@ public abstract class DbGateway {
 		}
 	}
 
-	public static void updateHashNotizia(Connection conn, String catalog, long jid) throws SQLException {
+	public static void updateHashNotizia(Connection conn, String catalog, String jid) throws SQLException {
 		RecordInterface ma=getNotiziaByJID(conn,catalog,jid);
 		String hash;
 		if(ma!=null) {
@@ -680,11 +680,11 @@ public abstract class DbGateway {
 		}
 	}
 	
-	public static String getHashNotizia(Connection conn, String catalog, String jid) throws SQLException {
-		return getHashNotizia(conn,catalog,Long.parseLong(jid));
-	}
+//	public static String getHashNotizia(Connection conn, String catalog, String jid) throws SQLException {
+//		return getHashNotizia(conn,catalog,Long.parseLong(jid));
+//	}
 	
-	public static String getHashNotizia(Connection conn, String catalog, long jid) throws SQLException {
+	public static String getHashNotizia(Connection conn, String catalog, String jid) throws SQLException {
 		String hash=null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -715,7 +715,7 @@ public abstract class DbGateway {
 	 * @param paroleSpooler
 	 * @throws SQLException
 	 */
-	private static void insertNotizia(Connection[] conn, String catalog, Radice stemmer, RecordInterface notizia, long idTipo, long jid, ParoleSpooler paroleSpooler) throws SQLException {
+	private static void insertNotizia(Connection[] conn, String catalog, Radice stemmer, RecordInterface notizia, long idTipo, String jid, ParoleSpooler paroleSpooler) throws SQLException {
     	Vector<ClasseDettaglio> clDettaglio=initClDettaglio(conn[conn.length>1?1:conn.length-1],catalog, idTipo);
     	long idSequenzaTag=0;
     	
@@ -733,12 +733,12 @@ public abstract class DbGateway {
         clDettaglio=null; 
     }
 	
-	private static long insertTableNotizie(Connection conn, String catalog, RecordInterface notizia, long idTipo) throws SQLException {
-		long jid=getMaxIdTable(conn,"je_"+catalog+"_notizie")+1;
+	private static String insertTableNotizie(Connection conn, String catalog, RecordInterface notizia, long idTipo) throws SQLException {
+		String jid=getMaxIdTable(conn,"je_"+catalog+"_notizie")+"1"; // TODO NON VA BENE!
 		return insertTableNotizie(conn, catalog, notizia, idTipo, jid);
 	}
 
-	private static long insertTableNotizie(Connection conn, String catalog, RecordInterface notizia, long idTipo, long jid) throws SQLException {
+	private static String insertTableNotizie(Connection conn, String catalog, RecordInterface notizia, long idTipo, String jid) throws SQLException {
     	
     	String record = notizia.getBid();
     	if(record.equals("0")) {record=String.valueOf(jid);}
@@ -747,7 +747,7 @@ public abstract class DbGateway {
 		try {
         	preparedNotizia=conn.prepareStatement("insert into je_"+catalog+"_notizie (id,bid,id_tipo,notizia) values (?,?,?,?)");
         	
-        	preparedNotizia.setLong(1,jid);
+        	preparedNotizia.setString(1,jid);
         	preparedNotizia.setString(2,record);
         	preparedNotizia.setLong(3,idTipo);
         	//preparedNotizia.setString(4,notizia.toString());
@@ -763,15 +763,15 @@ public abstract class DbGateway {
 		return jid;
 	}
 	
-	public static Vector<Long> getJIDbyBID(Connection conn, String catalog, String bid) throws SQLException {
-		Vector<Long> r=new Vector<Long>();
+	public static Vector<String> getJIDbyBID(Connection conn, String catalog, String bid) throws SQLException {
+		Vector<String> r=new Vector<String>();
 		ResultSet rs=null;
 		Statement qry=null;
 		try {
 	    	qry=conn.createStatement();
 	    	rs=qry.executeQuery("select id from je_"+catalog+"_notizie where bid='"+bid+"'");
 	        while(rs.next()) {
-	        	r.addElement(rs.getLong("id"));
+	        	r.addElement(rs.getString("id"));
 	        }
 		}
 		catch(SQLException e) {
@@ -797,7 +797,7 @@ public abstract class DbGateway {
 		for(long jid=0;jid<maxid;jid++) {
 			if(jid % step == 0)
 				System.out.println("Rebuilding hash: "+Utils.percentuale(maxid,jid)+"%");
-			DbGateway.insertHashNotizia(conn, catalog, jid);
+			DbGateway.insertHashNotizia(conn, catalog, Long.toString(jid));
 		}
 
 	}
@@ -835,7 +835,7 @@ public abstract class DbGateway {
 //				String tipo=tipiNotizie.get(new Integer(idTipo));
 				RecordInterface ma=null;
 				try {
-					long jid=rs.getLong("id");
+					String jid=rs.getString("id");
 					ma=DbGateway.getNotiziaByJID(conn[0], catalog, jid);
 					if(first) {
 						first=false;
@@ -845,7 +845,7 @@ public abstract class DbGateway {
 					ma.setJOpacID(jid);
 					execute(conn[0],"delete from je_"+catalog+"_notizie where id='"+jid+"'");
 					insertTableNotizie(conn[0], catalog, ma, idTipo, ma.getJOpacID());
-					insertNotizia(conn,catalog,stemmer,ma,idTipo,rs.getLong("id"),paroleSpooler); //ISO2709 notizia, long idTipo, long jid
+					insertNotizia(conn,catalog,stemmer,ma,idTipo,rs.getString("id"),paroleSpooler); //ISO2709 notizia, long idTipo, long jid
 				} catch (Exception e) {
 					e.printStackTrace();
 				} 
@@ -952,7 +952,7 @@ public abstract class DbGateway {
 	 * @param paroleSpooler
 	 * @throws SQLException
 	 */
-	private static void insertParole(Connection conn[], String catalog, Radice stemmer, String valore, long jid, long idSequenzaTag, ClasseDettaglio cl, 
+	private static void insertParole(Connection conn[], String catalog, Radice stemmer, String valore, String jid, long idSequenzaTag, ClasseDettaglio cl, 
 			ParoleSpooler paroleSpooler) throws SQLException {
 	    String parola;
 	    StringTokenizer tk=paroleTokenizer(valore);
@@ -975,7 +975,7 @@ public abstract class DbGateway {
 	
 
 
-	private static long insertLClassiParoleNotizie(Connection conn, String catalog, long jid, long id_lcp) throws SQLException {
+	private static long insertLClassiParoleNotizie(Connection conn, String catalog, String jid, long id_lcp) throws SQLException {
     	long id_lcpn=getMaxIdTable(conn,"je_"+catalog+"_l_classi_parole_notizie")+1;
     	String sql="INSERT INTO je_"+catalog+"_l_classi_parole_notizie (id,id_l_classi_parole,id_notizia) " +
     			"VALUES (" + id_lcpn + ", " + id_lcp + ", " + jid +")";
@@ -1252,13 +1252,13 @@ public abstract class DbGateway {
 		if(DEBUG) System.out.println(sqlToHtml(conn, "desc "+sql,false));
 	}
 
-	public static Vector<Long> getIdNotizie(Connection conn, String catalog) throws SQLException {
-		Vector<Long> r=new Vector<Long>();
+	public static Vector<String> getIdNotizie(Connection conn, String catalog) throws SQLException {
+		Vector<String> r=new Vector<String>();
 		long max=0;
 		
 		max=DbGateway.getMaxIdTable(conn, "je_"+catalog+"_notizie ");
 				    
-	    for(long i=1;i<=max;i++) r.addElement(new Long(i));
+	    for(long i=1;i<=max;i++) r.addElement(Long.toString(i));
 	    
 		return r;
 	}
@@ -1316,7 +1316,7 @@ public abstract class DbGateway {
 	
 	public abstract void createTableListe(Connection conn,String catalog, String classe) throws SQLException;
 	
-	public static void updateTableListe(Connection conn, String catalog, String classe, long id_notizia, String testo) throws SQLException {//CR_LISTE
+	public static void updateTableListe(Connection conn, String catalog, String classe, String id_notizia, String testo) throws SQLException {//CR_LISTE
 		if(testo!=null) {
 			String tab="je_"+catalog+"_"+nomeTableListe(classe);
 			String dl=String.valueOf((char)0x1b);
@@ -1326,7 +1326,7 @@ public abstract class DbGateway {
 			PreparedStatement pst=null;
 			try {
 				pst=conn.prepareStatement(sql);
-				pst.setLong(1, id_notizia);
+				pst.setString(1, id_notizia);
 				testo=testo.replaceAll(dl+"I", ""); // rimuove delimitatori asterisco
 				testo=testo.replaceAll(dl+"H", "");
 				if(testo.length()>50) testo=testo.substring(0,49);
@@ -1344,11 +1344,12 @@ public abstract class DbGateway {
 	
 	public void rebuildList(Connection conn, String catalog) {
 //		String done="";
-		RecordInterface ma=DbGateway.getNotiziaByJID(conn, catalog, 1);
-		String[] channels=ma.getChannels();
-		ma.destroy();
 		
 		try {
+			RecordInterface ma=DbGateway.getNotiziaByJID(conn, catalog, "1");
+			String[] channels=ma.getChannels();
+			ma.destroy();
+			
 			rebuildList(conn,catalog,channels);
 		} catch (SQLException e) {
 			if(out==null) out=System.out;
@@ -1378,17 +1379,17 @@ public abstract class DbGateway {
 		for(int jid=0;jid<=maxid;jid++) {
 			if(step==0 || jid % step == 0)
 				out.println("Rebuilding list indexes: "+Utils.percentuale(maxid,jid)+"%");
-			RecordInterface ma=DbGateway.getNotiziaByJID(conn, catalog, jid);
+			RecordInterface ma=DbGateway.getNotiziaByJID(conn, catalog, Long.toString(jid));
 			if(ma!=null) {
 				for(int i=0;i<channels.length;i++)
-					updateTableListe(conn,catalog,channels[i],jid,ma);
+					updateTableListe(conn,catalog,channels[i],Long.toString(jid),ma);
 				ma.destroy();
 			}
 		}
 	}
 
 
-	private void updateTableListe(Connection conn, String catalog, String classe, int jid,
+	private void updateTableListe(Connection conn, String catalog, String classe, String jid,
 			RecordInterface ma) throws SQLException {
 		if(classe.equals("TIT")) {
 			try {
@@ -1446,14 +1447,14 @@ public abstract class DbGateway {
 		for(int jid=0;jid<maxid;jid++) {
 			if(step==0 || jid % step == 0)
 				out.println("Rebuilding list index ("+nomeTableListe(classe)+"): "+Utils.percentuale(maxid,jid)+"%");
-			RecordInterface ma=DbGateway.getNotiziaByJID(conn, catalog, jid);
-			inserisciNotiziaListe(conn,catalog, classe,jid,ma);
+			RecordInterface ma=DbGateway.getNotiziaByJID(conn, catalog, Long.toString(jid));
+			inserisciNotiziaListe(conn,catalog, classe,Long.toString(jid),ma);
 			ma.destroy();
 		}
 
 	}
 	
-	private void inserisciNotiziaListe(Connection conn, String catalog, String classe, long jid, RecordInterface ma) throws SQLException {
+	private void inserisciNotiziaListe(Connection conn, String catalog, String classe, String jid, RecordInterface ma) throws SQLException {
 		if(ma!=null) {
 			if(classe.equals("TIT")) DbGateway.updateTableListe(conn, catalog, classe, jid, ma.getTitle()); //testo=ma.getTitle();
 			else if(classe.equals("NUM")) DbGateway.updateTableListe(conn, catalog, classe, jid, ma.getStandardNumber()); // testo=ma.getStandardNumber();
@@ -1485,7 +1486,7 @@ public abstract class DbGateway {
 
 
 	private static void updateTableListe(Connection conn, String catalog, String classe,
-			long jid, Vector<String> testi) throws SQLException {
+			String jid, Vector<String> testi) throws SQLException {
 		for(int i=0;testi!=null && i<testi.size();i++) {
 			DbGateway.updateTableListe(conn, catalog, classe, jid, testi.elementAt(i));
 		}
@@ -1507,12 +1508,12 @@ public abstract class DbGateway {
 			stmt.setString(2, result.getOptimizedQuery());
 			stmt.execute();
 			String sql;
-			if(myConnection.toString().contains("mysql")) {
-	    		sql="select last_insert_id()";
-	    	}
-			else {
+//			if(myConnection.toString().contains("mysql")) {
+//	    		sql="select last_insert_id()";
+//	    	}
+//			else {
 				sql="select max(id) from je_"+catalog+"_ricerche where jsession_id='"+id+"'";
-			}
+//			}
 			rs=st.executeQuery(sql);
 			if (rs.next())
 				newId=rs.getInt(1);
@@ -1520,12 +1521,12 @@ public abstract class DbGateway {
 			stmt.close();
 			
 			stmt=myConnection.prepareStatement("insert into je_"+catalog+"_ricerche_dettaglio values(?,?)");
-			Enumeration<Long> e=result.getRecordIDs().elements();
-			long l;
+			Enumeration<String> e=result.getRecordIDs().elements();
+			String l;
 			stmt.setInt(2, newId);
 			while(e.hasMoreElements()){
-				l=e.nextElement().longValue();
-				stmt.setLong(1, l);
+				l=e.nextElement();
+				stmt.setString(1, l);
 				stmt.execute();
 			}
 		}
@@ -1587,10 +1588,10 @@ public abstract class DbGateway {
 			stmt=conn.prepareStatement(sql);
 			stmt.setLong(1, rset.getQueryID());
 			rs=stmt.executeQuery();
-			Vector<Long> rid =rset.getRecordIDs();
+			Vector<String> rid =rset.getRecordIDs();
 			rid.clear();
 			while(rs.next()){
-				rid.addElement(new Long(rs.getLong(1)));
+				rid.addElement(Long.toString(rs.getLong(1)));
 			}
 		}
 		catch(SQLException e) {
@@ -1608,7 +1609,7 @@ public abstract class DbGateway {
 		return null;
 	}
 	
-	public static String getClassContentFromJID(Connection conn, String catalog, String classe, long jid) throws SQLException {
+	public static String getClassContentFromJID(Connection conn, String catalog, String classe, String jid) throws SQLException {
 		String sql="select * from je_"+catalog+"_"+nomeTableListe(classe)+" where id_notizia="+jid;
 		String r=null;
 	
