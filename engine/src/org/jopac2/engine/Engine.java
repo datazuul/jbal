@@ -2,6 +2,7 @@ package org.jopac2.engine;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.Vector;
 
@@ -26,24 +27,32 @@ public interface Engine {
 
 	SearchResultSet listSearch(String classe, long sjid, int limit) throws Exception;
 
-	Vector<Long> getJIDbyBID(Connection conn, String catalogConnection,
+	Vector<String> getJIDbyBID(Connection conn, String catalogConnection,
 			String bid) throws Exception;
 
 	long getMaxId() throws Exception;
 
-	RecordInterface getNotiziaByJID(long jid) throws Exception;
+//	RecordInterface getNotiziaByJID(String jid) throws Exception;
 
 	void updateRecord(Radice stemmer, RecordInterface m) throws Exception;
 
-	void deleteRecordFromJid(long jid) throws Exception;
+	void deleteRecordFromJid(String jid) throws Exception;
+	
+	void truncateCatalog() throws Exception;
 
-	long insertRecord(Radice stemmer, RecordInterface record) throws Exception;
+	String insertRecord(Radice stemmer, RecordInterface record) throws Exception;
 
-	void insertRecord(Radice stemmer, RecordInterface ma, long jid) throws Exception;
+	void insertRecord(Radice stemmer, RecordInterface ma, String jid) throws Exception;
 
-	void importRecords(InputStream in, String format, boolean background, PrintStream console,
+	void importRecords(InputStream in, Charset charset, String format, boolean background, PrintStream console,
 			PrintStream console2) throws Exception;
 
-	String[] getChannels(String string) throws Exception;
+	/**
+	 * Get channels for selected type
+	 * @param type
+	 * @return
+	 * @throws Exception
+	 */
+	String[] getChannels(String type) throws Exception;
 
 }
