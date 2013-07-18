@@ -101,103 +101,62 @@
 			<link type="text/css" rel="stylesheet" href="./components/section/css/dhtmlgoodies_calendar.css?random=20051112" media="screen"></link>
 			<script type="text/javascript" src="./components/section/js/dhtmlgoodies_calendar.js?random=20060118"></script>
 			
-			<b>Data inizio:</b>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
-			<b>Data fine:</b>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<b>Nelle liste</b>
-			<br/>
-
-			<input type="text" size="8" name="startdate" value="{sql:rowset/sql:row/sql:startdate}" id="startdate" readonly="1" />
-			<!-- id="f_trigger_c" -->
-			<img src="./components/section/images/calendar.gif"  style="cursor: pointer; border: 1px solid red;" title="Date selector"
-      onmouseover="this.style.background='red';" onmouseout="this.style.background=''" 
-      onclick="displayCalendar(document.getElementById('startdate'),'yyyymmdd',this)"/>&#160;&#160;
+			<table style="border: 0">
+				<tr>
+					<td><b>Data inizio pubblicazione:</b></td>
+					<td><input type="text" size="8" name="startdate" value="{sql:rowset/sql:row/sql:startdate}" id="startdate" readonly="1" />
+						<img src="./components/section/images/calendar.gif"  style="cursor: pointer; border: 1px solid red;" title="Date selector"
+						      onmouseover="this.style.background='red';" onmouseout="this.style.background=''" 
+						      onclick="displayCalendar(document.getElementById('startdate'),'yyyymmdd',this)"/>
+			      </td>
+				</tr>
+				<tr>
+					<td><b>Data fine pubblicazione:</b></td>
+					<td><input type="text" size="8" name="enddate" value="{sql:rowset/sql:row/sql:enddate}" id="enddate" readonly="1" />
+						<img src="./components/section/images/calendar.gif" style="cursor: pointer; border: 1px solid red;" title="Date selector"
+						      onmouseover="this.style.background='red';" onmouseout="this.style.background=''" 
+						      onclick="displayCalendar(document.getElementById('enddate'),'yyyymmdd',this)"/>
+					</td>
+				</tr>
+				<tr>
+					<td><b>Data inizio evento:</b></td>
+					<td><input type="text" size="12" name="eventstarttime" value="{sql:rowset/sql:row/sql:eventstarttime}" id="eventstarttime" readonly="1" />
+						<img src="./components/section/images/calendar.gif"  style="cursor: pointer; border: 1px solid red;" title="Date selector"
+						      onmouseover="this.style.background='red';" onmouseout="this.style.background=''" 
+						      onclick="displayCalendar(document.getElementById('eventstarttime'),'yyyymmddhhii',this,true)"/>
+			      </td>
+				</tr>
+				<tr>
+					<td><b>Data fine evento:</b></td>
+					<td><input type="text" size="12" name="eventendtime" value="{sql:rowset/sql:row/sql:eventendtime}" id="eventendtime" readonly="1" />
+						<img src="./components/section/images/calendar.gif" style="cursor: pointer; border: 1px solid red;" title="Date selector"
+						      onmouseover="this.style.background='red';" onmouseout="this.style.background=''" 
+						      onclick="displayCalendar(document.getElementById('eventendtime'),'yyyymmddhhii',this,true)"/>
+					</td>
+				</tr>
+				
+				<tr>
+					<td><b>Nelle liste</b></td>
+					<td><input type="checkbox" name="list">
+						<xsl:choose>
+							<xsl:when test="sql:rowset/sql:row/sql:list = 'true'">
+								<xsl:attribute name="checked">checked</xsl:attribute>
+							</xsl:when>
+							<xsl:otherwise></xsl:otherwise>
+						</xsl:choose>
+					</input>
+					</td>
+				</tr>
+				
+			</table>
 	
-			<input type="text" size="8" name="enddate" value="{sql:rowset/sql:row/sql:enddate}" id="enddate" readonly="1" />
-			<img src="./components/section/images/calendar.gif" style="cursor: pointer; border: 1px solid red;" title="Date selector"
-	      onmouseover="this.style.background='red';" onmouseout="this.style.background=''" 
-	      onclick="displayCalendar(document.getElementById('enddate'),'yyyymmdd',this)"/>&#160;&#160;
-		
-			
 
-			<input type="checkbox" name="list">
-				<xsl:choose>
-					<xsl:when test="sql:rowset/sql:row/sql:list = 'true'">
-						<xsl:attribute name="checked">checked</xsl:attribute>
-					</xsl:when>
-					<xsl:otherwise></xsl:otherwise>
-				</xsl:choose>
-			</input>
+
+			
 			
 
 			<br/>
-			
-			
-			
-			
-			<!-- 
-			<link type="text/css" rel="stylesheet" href="components/section/css/calendar.css" />
-			
-			
-			<script src="js/calendar.js" type="text/javascript"></script>
-			<script src="js/calendar-en.js" type="text/javascript"></script>
-			<script src="js/calendar-setup.js" type="text/javascript"></script>
-			
-			
-			<script type="text/javascript">
-			<![CDATA[
-			    function catcalc(cal) {
-			        var date = cal.date;
-			        var time = date.getTime();
-			        var modifico=cal.params.inputField;
-			        
-			        // use the _other_ field
-			        var field = document.getElementById("startdate");
-			        if (field == cal.params.inputField) {
-			            field = document.getElementById("enddate");
-			        }
 
-			        // se è vuoto metti la data uguale
-			        if(Number(field.value)==0) {
-			            	field.value=date.print("%Y%m%d");
-			        }
-			        
-			        var data=new Date();
-			        data.setFullYear(Number(field.value.substr(0,4))); // substr inizia a contare da 0
-			        data.setMonth(Number(field.value.substr(4,2))-1);  // i mesi vanno da 0 a 11
-			        data.setDate(Number(field.value.substr(6,2)));
-			        
-			        if((modifico==document.getElementById("startdate") && time > data.getTime()) || 
-			        		(modifico==document.getElementById("enddate") && data.getTime() > time)) {
-			        	alert("La data di inizio deve essere antecedente o uguale alla data di fine avviso!");
-			        	field.value=date.print("%Y%m%d");
-			        }
-			        
-			        if(Math.abs(time-data.getTime())>2592000000) {
-			        	alert("Un avviso no può essere valido per piu' di 30 giorni!")
-			        	field.value=date.print("%Y%m%d");
-			        }
-			        
-			        
-			    }
-			    Calendar.setup({
-			        inputField     :    "startdate",     // id of the input field
-			        ifFormat       :    "%Y%m%d",      // format of the input field
-			        button         :    "f_trigger_c",  // trigger for the calendar (button ID)
-			        align          :    "Br",           // alignment (defaults to "Bl")
-			        singleClick    :    true,
-			        onUpdate       :    catcalc
-			    });
-			    Calendar.setup({
-			        inputField     :    "enddate",     // id of the input field
-			        ifFormat       :    "%Y%m%d",      // format of the input field
-			        button         :    "f_trigger_d",  // trigger for the calendar (button ID)
-			        align          :    "Br",           // alignment (defaults to "Bl")
-			        singleClick    :    true,
-			        onUpdate       :    catcalc
-			    });
-			   ]]>
-			</script>
-			
-			 -->
 		</xsl:if>
 	</xsl:template>
 	

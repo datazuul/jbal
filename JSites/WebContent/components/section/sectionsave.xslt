@@ -25,10 +25,12 @@
 		<xsl:if test="startdate != ''">
 			<sql:execute-query xmlns:sql="http://apache.org/cocoon/SQL/2.0">
 				<sql:query>
-					insert into tblnews (CID,startdate,enddate,list) values(<xsl:value-of select="cid/text()"/>,
+					insert into tblnews (CID,startdate,enddate,list,eventstarttime,eventendtime) values(<xsl:value-of select="cid/text()"/>,
 						'<xsl:value-of select="startdate" />',
 						'<xsl:value-of select="enddate" />',
-						<xsl:value-of select="$list" />)
+						<xsl:value-of select="$list" />,
+						'<xsl:value-of select="eventstarttime" />',
+						'<xsl:value-of select="eventendtime" />')
 				</sql:query>
 			</sql:execute-query>
 			<sql:execute-query xmlns:sql="http://apache.org/cocoon/SQL/2.0">
@@ -36,7 +38,9 @@
 					update tblnews set 
 						startdate = '<xsl:value-of select="startdate" />',
 						enddate = '<xsl:value-of select="enddate" />',
-						list = <xsl:value-of select="$list" />
+						list = <xsl:value-of select="$list" />,
+						eventstarttime = '<xsl:value-of select="eventstarttime" />',
+						eventendtime = '<xsl:value-of select="eventendtime" />'
 						where cid = <xsl:value-of select="cid/text()"/>
 				</sql:query>
 			</sql:execute-query>
@@ -45,6 +49,8 @@
 	
 	<xsl:template match="startdate" />
 	<xsl:template match="enddate" />
+	<xsl:template match="eventstarttime" />
+	<xsl:template match="eventendtime" />
 	<xsl:template match="list" />
 	
 	<xsl:template match="text">

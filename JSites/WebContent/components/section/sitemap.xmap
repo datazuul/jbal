@@ -28,9 +28,9 @@
 	                        <map:parameter name="use-request-parameters" value="true"/>
 	                    </map:transform>
 	                    <map:transform type="metadata" />
-	                    <map:transform type="wikitrans">
+	                    <!-- map:transform type="wikitrans">
 	                    	<map:parameter name="db" value="{global:db}" />
-	                    </map:transform>
+	                    </map:transform -->
 	                    <map:serialize type="xml"/>
 	                </map:act>
 	            </map:match>
