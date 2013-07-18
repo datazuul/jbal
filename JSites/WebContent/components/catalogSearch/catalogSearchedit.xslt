@@ -40,6 +40,11 @@
 					<td><input type="text" size="40" name="defaultQuery" id="defaultQuery" value="{defaultQuery}" /></td>
 					</tr>
 					
+					<tr>
+					<td><label class="cat_data_label">Query preprocess</label></td>
+					<td><input type="text" size="40" name="querypreprocess" id="querypreprocess" value="{querypreprocess}" /></td>
+					</tr>
+					
 					<!--   <xsl:apply-templates select="dbType" /> -->
 					</table>
 					<script type="text/javascript" wiki="false">

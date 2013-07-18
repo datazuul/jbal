@@ -17,21 +17,21 @@
    
 	<xsl:template match="queryData">
 		<xsl:if test="string-length(/root/listRecord) = 0 and queryCount !=0">
-			<DIV class="queryData">
+			<div class="queryData">
 				<xsl:value-of select="queryCount" />
 				<xsl:text> </xsl:text>
 				record trovati in
 				<xsl:value-of select="queryTime" />
 				<xsl:text> </xsl:text>
 				secondi. (<xsl:value-of select="query"/>)
-			</DIV>
+			</div>
 		</xsl:if>
 	</xsl:template>
    
    <xsl:template match="searchData">
-      <DIV class="searchData">
+      <div class="searchData">
         <xsl:apply-templates select="item"/>
-      </DIV>
+      </div>
    </xsl:template>
 	<xsl:template match="resultSet">
 		<xsl:if test="count(record)!=0">

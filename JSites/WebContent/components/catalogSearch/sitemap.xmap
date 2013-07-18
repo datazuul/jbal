@@ -64,7 +64,7 @@
 	                    	<map:parameter name="rxp" value="{request-attr:rxp}"/>
 	                    </map:transform>
 	                </map:act> 	
-                    <map:transform type="wikitrans"/>
+                    <!-- map:transform type="wikitrans"/ -->
                     <map:serialize type="xml"/>
 	                
 	            </map:match>

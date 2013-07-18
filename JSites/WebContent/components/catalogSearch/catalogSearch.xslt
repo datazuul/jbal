@@ -32,9 +32,9 @@
 			<xsl:if test="string-length($rxp)=0"><xsl:value-of select="//rxp" /></xsl:if>
 		</xsl:variable>
 		<div class="{$time}">
-			<div class="catalogSearch" id="{$cid}" wiki="false">
+			<div class="catalogSearch" id="cid{$cid}">
 			 	
-				<script type="text/javascript" wiki="false">
+				<script type="text/javascript">
 				<![CDATA[
 				function readParam(){
 				
@@ -180,7 +180,8 @@
 	
 	<xsl:template match="catalogFormat"></xsl:template>
 	<xsl:template match="catalogOrder"></xsl:template>
-		<xsl:template match="rxp"></xsl:template>
+	<xsl:template match="rxp"></xsl:template>
+	<xsl:template match="querypreprocess" />
 	
 	
 	<xsl:template match="search">
