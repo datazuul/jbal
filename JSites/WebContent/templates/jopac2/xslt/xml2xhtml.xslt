@@ -5,7 +5,8 @@
 		xmlns:cinclude="http://apache.org/cocoon/include/1.0"
 	-->
 <xsl:stylesheet version="1.0"
-	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns="http://www.w3.org/1999/xhtml">
 	
 	<xsl:param name="template"/>
 	<xsl:param name="context"/>
@@ -39,46 +40,46 @@
 	
 	<xsl:template match="/page">
 		<html lang="it">
-			<HEAD>
+			<head>
 				<title><xsl:value-of select="$sitename" /> - <xsl:value-of select="/page/content/@pageTitle" /></title>
-				<META content="catalogo on line per biblioteche" name="description" />
-				<META content="biblioteca, libro, ricerca, opac" name="keywords" />
-				<META content="index, follow" name="robots" />
-				<LINK rel="shortcut icon" href="icon/favicon.ico" />
-				<META http-equiv="Content-Type" content="text/html; charset=utf-8" />
-				<LINK href="./templates/{$template}/css/template_css.css" type="text/css" rel="stylesheet" />
-				<STYLE type="text/css"> DIV.wrapper { MARGIN: 0px auto; WIDTH: 950px }
+				<meta content="catalogo on line per biblioteche" name="description" />
+				<meta content="biblioteca, libro, ricerca, opac" name="keywords" />
+				<meta content="index, follow" name="robots" />
+				<link rel="shortcut icon" href="icon/favicon.ico" />
+				<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+				<link href="./templates/{$template}/css/template_css.css" type="text/css" rel="stylesheet" />
+				<style type="text/css"> div.wrapper { MARGIN: 0px auto; WIDTH: 950px }
 					#sidecol { WIDTH: 25%
 					}
 					#main-column {
 						MARGIN-LEFT: 25%
 					}
-				</STYLE>
+				</style>
 				
 
 				<!--  APPLICO I RIFERIMENTI AI STYLESHEETS -->
 				<xsl:apply-templates select="styles/css" />
 				<xsl:apply-templates select="redirect" />
 
-			</HEAD>
+			</head>
 			
-			<BODY class="f-default ">
+			<body class="f-default ">
 				<xsl:apply-templates select="header" />
 
 				<xsl:apply-templates select="navbar" />
 				<xsl:apply-templates select="content" />
 
 				<xsl:apply-templates select="footer" />
-			</BODY>
+			</body>
 
 		</html>
 	</xsl:template>
 
 	<xsl:template match="header">
 		<!--Begin Menu-->
-		<DIV id="menu-bar">
-		  <DIV class="wrapper">
-		    <DIV class="splitmenu" id="horiz-menu">
+		<div id="menu-bar">
+		  <div class="wrapper">
+		    <div class="splitmenu" id="horiz-menu">
 		    
 		    <ul class="nav" id="horiznav">
 		    
@@ -88,21 +89,21 @@
 		    	</xsl:for-each>
 			</ul>
 
-		    </DIV>
-		  </DIV>
-		</DIV>
+		    </div>
+		  </div>
+		</div>
 		<!--End Menu-->
 		<!--Begin Inset Area-->
-		<DIV id="inset">
-		  <DIV class="wrapper">
-		  	<A class="nounder" 
+		<div id="inset">
+		  <div class="wrapper">
+		  	<a class="nounder" 
 				href=".">
-				<IMG id="logo" style="BORDER-WIDTH: 0px;" alt="" src="./templates/{$template}/images/content/blank.gif" /></A>
-		    <!--<DIV class="content"><a href="link" target="_blank"><img alt=Advertisement src="/images/content/osmbanner1.png" 
-		border="0"></a></DIV>-->
-		  </DIV>
+				<img id="logo" style="BORDER-WIDTH: 0px;" alt="" src="./templates/{$template}/images/content/blank.gif" /></a>
+		    <!--<div class="content"><a href="link" target="_blank"><img alt=Advertisement src="/images/content/osmbanner1.png" 
+		border="0"></a></div>-->
+		  </div>
 		  <xsl:copy-of select="div[@id='briciole']" />
-		</DIV>
+		</div>
 		
 		<!--End Inset Area-->
 	
@@ -128,15 +129,15 @@
 
 	<xsl:template match="content">
 		<!--Begin Main Content Area-->
-		<DIV id="content">
-			<DIV class="wrapper">
-				<DIV id="sidecol">
-					<DIV id="side-column">
-						<DIV class="padding">
-							<DIV class="inner">
-								<DIV class="moduletable">
-									<H3>Main Menu</H3>
-									<A class="mainlevel" id="active_menu" href=".">Home</A>
+		<div id="content">
+			<div class="wrapper">
+				<div id="sidecol">
+					<div id="side-column">
+						<div class="padding">
+							<div class="inner">
+								<div class="moduletable">
+									<h3>Main Menu</h3>
+									<a class="mainlevel" id="active_menu" href=".">Home</a>
 									<ul>
 									<xsl:apply-templates select="/page/navbar/navigator/navpage"/>
 									</ul>
@@ -164,28 +165,28 @@
 										</xsl:if>
 									</xsl:for-each>
 									-->
-								</DIV>
-							</DIV>
-						</DIV>
-					</DIV>
-				</DIV>
-				<DIV id="main-column">
-					<DIV class="padding">
-						<DIV class="inner">
-							<DIV id="top">
-								<DIV class="block">
-									<DIV class="moduletable">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="main-column">
+					<div class="padding">
+						<div class="inner">
+							<div id="top">
+								<div class="block">
+									<div class="moduletable">
 										<xsl:copy-of select="*" />
-									</DIV>
-								</DIV>
-								<DIV class="clr"></DIV>
-							</DIV>
-						</DIV>
-					</DIV>
-				</DIV>
-			</DIV>
+									</div>
+								</div>
+								<div class="clr"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 			<!--End Main Content Area-->
-			<DIV class="clr"></DIV>
+			<div class="clr"></div>
 		
 	<!--  
 		
@@ -193,7 +194,7 @@
 				<xsl:copy-of select="*" />
 			</div>
 	-->
-		</DIV>
+		</div>
 	</xsl:template>
 
 	<xsl:template match="footer">
