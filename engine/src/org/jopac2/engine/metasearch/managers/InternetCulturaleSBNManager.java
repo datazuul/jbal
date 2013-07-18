@@ -34,8 +34,12 @@ package org.jopac2.engine.metasearch.managers;
 import java.io.*;
 import java.util.*;
 //import com.k_int.IR.*;
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.*;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.jopac2.utils.RecordItem;
 import org.jopac2.utils.Utils;
 
@@ -113,15 +117,14 @@ public class InternetCulturaleSBNManager extends AbstractManager
     	result = new Vector<RecordItem>();
     	System.out.println("rit: "+ss.getHost()+req);
         try{
-                HttpConnection conn = new HttpConnection(ss.getHost(),ss.getPort());
-                HttpState state = new HttpState();
-                GetMethod get = new GetMethod(req);
-                InputStream resp;
+        	HttpClient conn = new DefaultHttpClient();
+            HttpGet httpget = new HttpGet(ss.getHost()+":"+ss.getPort()+"/"+req);
+            InputStream resp;
                 
                 try{
-                    conn.open();
-                    get.execute(state,conn);
-                    resp = get.getResponseBodyAsStream();
+                	HttpResponse response = conn.execute(httpget);
+                	HttpEntity entity = response.getEntity();
+                    resp = entity.getContent();
                     BufferedReader br = new BufferedReader(new InputStreamReader(resp));
 
                     result.addAll(parser.parse(br,ss.getHost(),getContextDir(),ss.getDbname()));

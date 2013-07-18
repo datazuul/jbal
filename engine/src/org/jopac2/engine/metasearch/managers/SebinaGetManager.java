@@ -37,8 +37,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 //import com.k_int.IR.*;
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.*;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.jopac2.utils.RecordItem;
 
 
@@ -132,39 +140,37 @@ public class SebinaGetManager extends AbstractManager
 			soggetto=(String)params.get("soggetto");			
 			libera=(String)params.get("**");
 			
-			NameValuePair[] form_data = {
-					new NameValuePair("lingua.x", "ita;vdir.x=;dbg.x=0000"),
-					new NameValuePair("xform.x", "seb_qbe"),
-					new NameValuePair("BIBEA", autore),
-					new NameValuePair("XTITS|BIBTT", titolo),
-					new NameValuePair("XSOGG|XDESD", soggetto),
-					new NameValuePair("XDDW|XCDW", ""),
-					new NameValuePair("libera.x", libera),
-					new NameValuePair("|\"XCATM", ""),
-					new NameValuePair("gruppo.x", ""),
-					new NameValuePair("XNADET", ""),
-					new NameValuePair("|\"XBIBC", ""),
-					new NameValuePair("submit.x", "31"),
-					new NameValuePair("submit.y", "13") };
+			List<NameValuePair> form_data = new ArrayList<NameValuePair>(13);
+			
+			form_data.add(new BasicNameValuePair("lingua.x", "ita;vdir.x=;dbg.x=0000"));
+			form_data.add(new BasicNameValuePair("xform.x", "seb_qbe"));
+			form_data.add(new BasicNameValuePair("BIBEA", autore));
+			form_data.add(new BasicNameValuePair("XTITS|BIBTT", titolo));
+			form_data.add(new BasicNameValuePair("XSOGG|XDESD", soggetto));
+			form_data.add(new BasicNameValuePair("XDDW|XCDW", ""));
+			form_data.add(new BasicNameValuePair("libera.x", libera));
+			form_data.add(new BasicNameValuePair("|\"XCATM", ""));
+			form_data.add(new BasicNameValuePair("gruppo.x", ""));
+			form_data.add(new BasicNameValuePair("XNADET", ""));
+			form_data.add(new BasicNameValuePair("|\"XBIBC", ""));
+			form_data.add(new BasicNameValuePair("submit.x", "31"));
+			form_data.add(new BasicNameValuePair("submit.y", "13"));
+			
 			// Create an instance of HttpClient.
-			HttpClient client = new HttpClient();
-			// crea istanza del metodo post con url di destinazione
-			PostMethod post = new PostMethod(url);
-			// setta i dati da passare
-			post.setRequestBody(form_data);
-			// execute method and handle any error responses.
-			client.executeMethod(post);
+            HttpClient conn = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(url);
+            httppost.setEntity(new UrlEncodedFormEntity(form_data));
 
-			// Read the response body.
-			InputStream responseBody = post.getResponseBodyAsStream();
-			
-			// Release the connection.
-//			post.releaseConnection();
-			
-			// Deal with the response. Use caution: ensure correct character
-			// encoding and is not binary data
-			//String pagina = new String(responseBody);
-			return responseBody;
+            InputStream resp=null;
+		                
+            try{
+            	HttpResponse response = conn.execute(httppost);
+            	HttpEntity entity = response.getEntity();
+                resp = entity.getContent();
+            }
+            catch(Exception e){e.printStackTrace();}
+
+			return resp;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

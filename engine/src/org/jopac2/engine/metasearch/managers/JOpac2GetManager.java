@@ -31,8 +31,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.*;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.jopac2.utils.RecordItem;
 
 
@@ -83,23 +87,21 @@ public class JOpac2GetManager extends AbstractManager
     	Vector<RecordItem> result = new Vector<RecordItem>();
   
                 //HttpConnection conn = new HttpConnection((String)addressVector.get(reqindex),Integer.parseInt((String)portaVector.get(reqindex)));
-                HttpConnection conn = new HttpConnection(ss.getHost(),ss.getPort());
-                HttpState state = new HttpState();
-                GetMethod get = new GetMethod(req);
+    	HttpClient conn = new DefaultHttpClient();
+        HttpGet httpget = new HttpGet(ss.getHost()+":"+ss.getPort()+"/"+req);
+        InputStream resp;
                 
-                InputStream resp;
                 //HttpConnectionParams httpparam = new HttpConnectionParams();
             	//conn.setHttpConnectionManager(new SimpleHttpConnectionManager());
-                conn.open();
-                get.execute(state,conn);
-                resp = get.getResponseBodyAsStream();
+        HttpResponse response = conn.execute(httpget);
+    	HttpEntity entity = response.getEntity();
+        resp = entity.getContent();
                 //String risposta = new String(resp);
 
                 //
                 //risposta = elaboraResult(risposta);
                 //risposta = (new EncodeDecode()).encode(risposta);
-                result.addAll(p.parse(new BufferedReader(new InputStreamReader(resp)),ss.getHost(),getContextDir(),ss.getDbname()));
-                conn.close();
+        result.addAll(p.parse(new BufferedReader(new InputStreamReader(resp)),ss.getHost(),getContextDir(),ss.getDbname()));
 
                 
                 //result.add(risposta);
