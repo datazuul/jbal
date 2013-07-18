@@ -66,7 +66,7 @@ public static String[] findClasses(ClassLoader classLoader, String packageFilter
           try {
         	  if(className.contains(".")) className=className.substring(className.lastIndexOf(".")+1);
 //	          System.out.println(className);
-        	  RecordInterface ma=RecordFactory.buildRecord(0, null, className, 0);
+        	  RecordInterface ma=RecordFactory.buildRecord("0", null, className, 0);
 	          if(ma!=null) {
 		          classTable.addElement(className);
 		          ma.destroy();

@@ -23,10 +23,10 @@ package org.jopac2.utils;
 public class TokenWord {
 	String parola,tag,dataelement;
 	
-	public TokenWord(String value, String tag, String de) {
+	public TokenWord(String value, String tag, String dataelement) {
 		this.parola=value;
 		this.tag=tag;
-		this.dataelement=de;
+		this.dataelement=dataelement;
 	}
 
 	/**

@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import org.jopac2.jbal.Readers.MdbTableRecordReader;
 import org.jopac2.jbal.Readers.RecordReader;
+import org.jopac2.jbal.abstractStructure.Delimiters;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.subject.SubjectInterface;
@@ -238,5 +239,19 @@ public class Mdb extends XML {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public String getRecordModificationDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setRecordModificationDate(String date) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 
 }

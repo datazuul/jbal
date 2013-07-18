@@ -158,7 +158,7 @@ public void initLinkUp() {
     try {
       if(v.size()>0) { // se il vettore ha elementi, allora faro' almeno una query
         for(int i=0;i<v.size();i++) {
-        	RecordInterface not=RecordFactory.buildRecord(0,v.elementAt(i).toString().getBytes(),this.getTipo(),this.getLivello());
+        	RecordInterface not=RecordFactory.buildRecord("0",v.elementAt(i).toString().getBytes(),this.getTipo(),this.getLivello());
           //ISO2709 not=ISO2709.creaNotizia(0,(String)v.elementAt(i),this.getTipo(),this.getLivello());
         	if(tag.equals("410")) {
         		not.removeTags("410");
@@ -588,6 +588,7 @@ public void initLinkUp() {
 		
 		 // 1. determina se esiste 200^f. Se esiste aggiungi in ^g, altrimenti in ^f
 				Tag tag200=getFirstTag("200");
+				if(tag200==null) tag200=new Tag("200",' ',' ');
 				Field auth=new Field("f",author);
 				Field mr=tag200.getField("f");
 				if(mr!=null && !mr.getContent().equals(author)) {
@@ -1445,5 +1446,37 @@ public void initLinkUp() {
 		}
 	}
 
-
+	/**
+	 * Restituisce la versione elettronica corrispondente al type indicato.
+	 */
+	public ElectronicResource getElectronicVersion(String type) {
+		ElectronicResource el=null;
+		for(Tag tag:getTags("856")) {
+			el=convertElectronicResource(tag);
+			if(type.equals(el.getAccessmethod())) {
+				break;
+			}
+			else {
+				el=null;
+			}
+		}
+		return el;
+	}
+	
+	public String getRecordModificationDate() {
+		String r="";
+		Tag t=getFirstTag("005");
+		if(t!=null) r=t.getRawContent();
+		return r;
+	}
+	
+	public void setRecordModificationDate(String date) throws JOpac2Exception {
+		Tag t=new Tag("005");
+		try {
+			removeTags("005");
+		} catch (JOpac2Exception e) {
+		}
+		t.setRawContent(date);
+		addTag(t);
+	}
 }

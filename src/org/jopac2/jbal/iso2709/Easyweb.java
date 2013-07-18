@@ -591,4 +591,16 @@ public void removeImage() throws JOpac2Exception {
 	
 }
 
+@Override
+public String getRecordModificationDate() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public void setRecordModificationDate(String date) {
+	// TODO Auto-generated method stub
+	
+}
+
 }

@@ -26,12 +26,12 @@ public class X2uni {
 		
 		PrintWriter p=new PrintWriter(outFile);
 		
-		RecordInterface mat=RecordFactory.buildRecord(0, null, "isisbiblo", 0);
+		RecordInterface mat=RecordFactory.buildRecord("0", null, "isisbiblo", 0);
 		RecordReader recordReader=mat.getRecordReader(f);
 		
 		byte[] line=recordReader.readRecord();
 		while(line!=null) {
-			RecordInterface ma=RecordFactory.buildRecord(0, line, "isisbiblo", 0);
+			RecordInterface ma=RecordFactory.buildRecord("0", line, "isisbiblo", 0);
 			RecordInterface uni=null;
 			
 //			p.println(uni.toString());
@@ -60,7 +60,7 @@ public class X2uni {
 	}
 
 	private static RecordInterface record2Unimarc(RecordInterface ma) throws SecurityException, IllegalArgumentException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		RecordInterface uni=RecordFactory.buildRecord(0, null, "sebina", 0);
+		RecordInterface uni=RecordFactory.buildRecord("0", null, "sebina", 0);
 		uni.setType(ma.getType());
 		
 		try {

@@ -54,6 +54,7 @@ import org.jopac2.jbal.Readers.RecordReader;
 import org.jopac2.jbal.abstractStructure.Field;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.utils.SimilarityHelp;
+import org.jopac2.utils.TokenWord;
 //import java.lang.*;
 //import JOpac2.utils.*;
 import org.jopac2.utils.JOpac2Exception;
@@ -227,6 +228,13 @@ public ISO2709Impl(byte[] notizia, Charset charset, String dTipo) throws Excepti
 	public void removeElectronicVersion(ElectronicResource electronicResource) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public ElectronicResource getElectronicVersion(String type) {
+		ElectronicResource el=null;
+		
+		return el;
 	}
 	
 }

@@ -1,7 +1,9 @@
 package org.jopac2.jbal.abstractStructure;
 
 public class Delimiters {
-
+	public static byte standardRt=0x1d;
+	public static byte standardFt=0x1e;
+	public static byte standardDl=0x1f;        //' delimiter
 	
 	private byte rt=0x1d;
 	private byte ft=0x1e;
@@ -47,5 +49,12 @@ public class Delimiters {
 	public void setDl(byte dl) {
 		this.dl = dl;
 	}
+
+	@Override
+	public String toString() {
+		return getFt()+getDl()+getRt();
+	}
+	
+	
   
 }

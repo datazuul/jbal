@@ -48,6 +48,7 @@ import java.util.*;
 //import java.lang.*;
 //import java.sql.*;
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.abstractStructure.Field;
 import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.subject.SubjectInterface;
@@ -62,7 +63,7 @@ public class Isisbiblo extends ISO2709Impl {
 
     public Isisbiblo(byte[] stringa, Charset charset, String dTipo)  throws Exception {
     super();
-    setTerminator((byte)'#',(byte)'#',(byte)'^');
+//    setTerminator((byte)'#',(byte)'#',(byte)'^');
     iso2709Costruttore(stringa,charset,dTipo,0);
     initLinkUp();
     initLinkDown();
@@ -71,7 +72,7 @@ public class Isisbiblo extends ISO2709Impl {
 
     public Isisbiblo(byte[] stringa, Charset charset, String dTipo, String livello)  throws Exception {
     super();
-    setTerminator((byte)'#',(byte)'#',(byte)'^');
+//    setTerminator((byte)'#',(byte)'#',(byte)'^');
     iso2709Costruttore(stringa,charset,dTipo,Integer.parseInt(livello));
     initLinkUp();
     initLinkDown();
@@ -129,7 +130,7 @@ public class Isisbiblo extends ISO2709Impl {
 		tit.add(new Tag("045","T",""));
 		tit.add(new Tag("045","P",""));
 		
-		tit.add(new Tag("011","a",""));
+		tit.add(new Tag("011","t",""));
 		tit.add(new Tag("011","c",""));
 		tit.add(new Tag("011","p",""));
 		tit.add(new Tag("011","s",""));
@@ -168,9 +169,9 @@ public class Isisbiblo extends ISO2709Impl {
 //		mat.add(new Tag("040","a",""));
 //		r.put("MAT", mat);
 //		
-//		List<Tag> sbj=new Vector<Tag>();
-//		sbj.add(new Tag("730","a",""));
-//		r.put("SBJ", sbj);
+		List<Tag> sbj=new Vector<Tag>();
+		sbj.add(new Tag("061","S",""));
+		r.put("SBJ", sbj);
 		
 		List<Tag> bib=new Vector<Tag>();
 		bib.add(new Tag("741","B",""));
@@ -178,6 +179,7 @@ public class Isisbiblo extends ISO2709Impl {
 		
 		List<Tag> inv=new Vector<Tag>();
 		inv.add(new Tag("001","",""));
+		inv.add(new Tag("742","",""));
 		r.put("INV", inv);
 		
 //		712 = biblioteca (o codice biblioteca)
@@ -208,20 +210,16 @@ public class Isisbiblo extends ISO2709Impl {
   // ritorna un vettore di elementi biblo
 public Vector<RecordInterface> getLink(String tag) {
     Tag v=getFirstTag(tag);
-
+    
     Vector<RecordInterface> r=new Vector<RecordInterface>();
     try {
       if(v!=null) { // se il vettore ha elementi, allora faro' almeno una query
+    	  Tag nv=(Tag)v.clone();
+    	  nv.setTagName("011");
           Isisbiblo not=new Isisbiblo();    // crea un nuovo elemento Isisbiblo
           not.dati=new Vector<Tag>();
-          Tag t=new Tag("011",' ',' ');
-          t.setRawContent(v.getRawContent());
-          not.dati.addElement(t);
- //          ISO2709.creaNotizia(0,v,this.getTipo(),this.getLivello());
- //         Utils.Log("Display:");
- //         Utils.Log(not.toTag());
+          not.dati.addElement(nv);
           not.setBid(getBid());
-          not.setTerminator((byte)'#',(byte)'#',(byte)'^');
           r.addElement(not);
       }
     }
@@ -276,16 +274,17 @@ public Vector<BookSignature> getSignatures() {
     
     try {
 	    String codiceBib=Utils.ifExists("", v.getField("B"))+Utils.ifExists("", v.getField("b"));
-	    String b=getFirstTag("712").getRawContent(); // prende la biblioteca (nome?)
+	    String b=Tag.getRawContent(getFirstTag("712")); // prende la biblioteca (nome?)
+	    
+	    String col=Field.getContent(v.getField("S"))+Field.getContent(v.getField("s"))+Field.getContent(v.getField("B"))+
+	    	"/"+Field.getContent(v.getField("F"))+Field.getContent(v.getField("f"))+Field.getContent(v.getField("I"));     // collocazione
 	    
 	    
-	    String col=v.getField("S").getContent()+v.getField("s").getContent()+
-	    	"/"+v.getField("F").getContent()+v.getField("f").getContent();     // collocazione
 	    col+=Utils.ifExists("/",v.getField("N"),v.getField("n"));
-	    String inv=getFirstTag("001").getRawContent(); // prende l'inventario
+	    String inv=Tag.getRawContent(getFirstTag("742")); // prende l'inventario
 	    String con="";
 	    try {
-	        con=getFirstTag("173").getRawContent();     // consistenza del periodico
+	        con=Tag.getRawContent(getFirstTag("173"));     // consistenza del periodico
 	    }
 	    catch (Exception e) {
 	        con="";
@@ -418,12 +417,15 @@ public Vector<BookSignature> getSignatures() {
       Utils.ifExists(", ",tag.getField("R"),tag.getField("r"));
     }
     tag=getFirstTag("014");
-    r+=Utils.ifExists(". - ",tag.getField("L"),tag.getField("l"))+
-        Utils.ifExists(" : ",tag.getField("N"),tag.getField("n"))+
-        Utils.ifExists(", ",tag.getField("D"),tag.getField("d"));
+    if(tag!=null) {
+	    r+=Utils.ifExists(". - ",tag.getField("L"),tag.getField("l"))+
+	        Utils.ifExists(" : ",tag.getField("N"),tag.getField("n"))+
+	        Utils.ifExists(", ",tag.getField("D"),tag.getField("d"));
+    }
     tag=getFirstTag("015");
-    r+=Utils.ifExists(" ; ",tag.getField("E"),tag.getField("e"));
-    
+    if(tag!=null) {
+    	r+=Utils.ifExists(" ; ",tag.getField("E"),tag.getField("e"));
+    }
     // commento
     r+=Utils.ifExists(" ((", getFirstTag("172"));
     
@@ -483,8 +485,15 @@ public String getPublicationPlace() {
 
 @Override
 public Vector<SubjectInterface> getSubjects() {
-	// TODO Auto-generated method stub
-	return null;
+	String r="";
+    Tag tag=getFirstTag("061");
+    if(tag!=null)
+    	r=Utils.ifExists("", tag.getField("S"));
+    org.jopac2.jbal.subject.UncontrolledSubjectTerms s=new org.jopac2.jbal.subject.UncontrolledSubjectTerms('0');
+    s.setSubjectData(r);
+    Vector<SubjectInterface> v=new Vector<SubjectInterface>();
+    if(!r.isEmpty()) v.addElement(s);
+	return v;
 }
 
 public void addAuthor(String author) throws JOpac2Exception {
@@ -643,4 +652,18 @@ public void setPublisherName(String publisherName) throws JOpac2Exception {
 	// TODO Auto-generated method stub
 	
 }
+
+@Override
+public String getRecordModificationDate() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public void setRecordModificationDate(String date) {
+	// TODO Auto-generated method stub
+	
+}
+
+
 }

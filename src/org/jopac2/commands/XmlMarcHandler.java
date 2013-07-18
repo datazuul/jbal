@@ -75,7 +75,7 @@ public class XmlMarcHandler extends DefaultHandler {
         	try {
         		if(ma!=null) throw new JOpac2Exception("Not null record at beginning of new record. " +
         				"Previous record could be not processed?");
-				ma=RecordFactory.buildRecord(0, null, "pregresso",0);
+				ma=RecordFactory.buildRecord("0", null, "pregresso",0);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

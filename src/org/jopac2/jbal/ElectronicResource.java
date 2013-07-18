@@ -82,6 +82,16 @@ public class ElectronicResource implements Comparable<ElectronicResource> {
 	private String accessmethod="";
 	private String publicnote="";
 	private String linktext=""; // da visualizzare al posto dell'url nella pagina html
+	
+	public ElectronicResource(String type, String url) {
+		setAccessmethod(type);
+		setUrl(url);
+	}
+	
+	public ElectronicResource() {
+		
+	}
+	
 	public static String[] getAccessType() {
 		return accessType;
 	}

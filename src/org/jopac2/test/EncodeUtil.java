@@ -5,8 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import org.apache.xerces.impl.dv.util.Base64;
 
 public class EncodeUtil {
 
