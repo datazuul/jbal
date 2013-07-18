@@ -3,6 +3,7 @@ package org.jopac2.test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -72,7 +73,7 @@ public class ImportTestMdb1 extends TestCase {
 
 			in = new FileInputStream(f);
 
-			JOpac2Import ji = new JOpac2Import(in, catalog, filetype, JOpac2confdir,
+			JOpac2Import ji = new JOpac2Import(in, catalog, filetype, Charset.forName("utf-8"), JOpac2confdir,
 					dbUrl, dbUser, dbPassword, true, System.out, System.out);
 			ji.doJob(false);
 			// ji.wait();
@@ -320,11 +321,11 @@ public class ImportTestMdb1 extends TestCase {
 
 		long[] unordered = { 24, 25, 26, 27, 28, 29, 53, 59, 60 };
 		long[] ordered = { 53, 24, 25, 26, 28, 29, 27, 59, 60 };
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
+		boolean r1 = TestUtils.checkIdSequence(rs.getRecordIDs(), unordered);
 		DBUtils.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
 		DbGateway.orderBy(conn, catalog, "NomeRisorsa", rs);
 		DBUtils.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
-		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
+		boolean r2 = TestUtils.checkIdSequence(rs.getRecordIDs(), ordered);
 		assertTrue("Done ", r1 && r2);
 	}
 

@@ -2,6 +2,7 @@ package org.jopac2.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -97,7 +98,7 @@ public class InsertTest extends TestCase {
 			
 			// carica con la procedura il primo record, per creare tutto il db, i canali di ricerca, le liste
 			InputStream in1 = new ByteArrayInputStream(rec.getBytes());
-			JOpac2Import ji = new JOpac2Import(in1, catalog, filetype, JOpac2confdir,
+			JOpac2Import ji = new JOpac2Import(in1, catalog, filetype, Charset.forName("utf-8"), JOpac2confdir,
 					dbUrl, dbUser, dbPassword, true, System.out, System.out);
 			ji.doJob(false);
 			// ji.wait();
@@ -109,7 +110,7 @@ public class InsertTest extends TestCase {
 			// avanti con l'inserimento dei prossimi
 			
 			for(int i=1;i<recs.length;i++) {
-				ma=RecordFactory.buildRecord(0, recs[i].getBytes(), filetype, 0);
+				ma=RecordFactory.buildRecord("0", recs[i].getBytes(), filetype, 0);
 				if(ma!=null) {
 					dbgw.inserisciNotizia(c, catalog, stemmer, paroleSpooler, ma);
 					ma.destroy();
@@ -162,19 +163,7 @@ public class InsertTest extends TestCase {
 		return r;
 	}
 
-	private boolean checkIdSequence(Vector<Long> recordIDs, long[] a) {
-		boolean r = false;
-		if (recordIDs != null && recordIDs.size() == a.length) {
-			r = true;
-			for (int i = 0; i < recordIDs.size(); i++) {
-				if (recordIDs.elementAt(i) != a[i]) {
-					r = false;
-					break;
-				}
-			}
-		}
-		return r;
-	}
+	
 
 	private void outputJava(Vector<String> v1) {
 		for (int i = 0; v1 != null && i < v1.size(); i++) {
@@ -222,11 +211,11 @@ public class InsertTest extends TestCase {
 		SearchResultSet rs = doSearch("(TIT=in)|(TIT=der)");
 		long[] unordered = { 1, 3, 6, 7, 9, 10 };
 		long[] ordered = { 7, 6, 1, 10, 3, 9 };
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
+		boolean r1 = TestUtils.checkIdSequence(rs.getRecordIDs(), unordered);
 		//SearchResultSet.dumpSearchResultSet(conn, rs);
 		DbGateway.orderBy(conn, catalog, "TIT", rs);
 		//SearchResultSet.dumpSearchResultSet(conn, rs);
-		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
+		boolean r2 = TestUtils.checkIdSequence(rs.getRecordIDs(), ordered);
 		assertTrue("Done ", r1 && r2);
 	}
 
@@ -235,7 +224,7 @@ public class InsertTest extends TestCase {
 				"English grammar in use", 100);
 		long[] listres = { 1, 10, 2, 11, 17, 8, 5, 3, 4, 18, 20, 9 };
 		//SearchResultSet.dumpSearchResultSet(conn, rs);
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
+		boolean r1 = TestUtils.checkIdSequence(rs.getRecordIDs(), listres);
 		assertTrue("Done ", r1);
 	}
 	
@@ -244,7 +233,7 @@ public class InsertTest extends TestCase {
 				"a", 100);
 		long[] listres = { 17, 19, 6, 3, 8, 4, 11, 4, 9, 5, 7, 10, 15, 1, 15, 16, 2, 5, 8, 12, 10, 13, 10, 14, 7, 15, 6, 6 };
 		//SearchResultSet.dumpSearchResultSet(conn, rs);
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
+		boolean r1 = TestUtils.checkIdSequence(rs.getRecordIDs(), listres);
 		assertTrue("Done ", r1);
 	}
 	 

@@ -3,6 +3,7 @@ package org.jopac2.test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -73,7 +74,7 @@ public class ImportTestMdb extends TestCase {
 
 			in = new FileInputStream(f);
 
-			JOpac2Import ji = new JOpac2Import(in, catalog, filetype, JOpac2confdir,
+			JOpac2Import ji = new JOpac2Import(in, catalog, filetype, Charset.forName("utf-8"), JOpac2confdir,
 					dbUrl, dbUser, dbPassword, true, System.out, System.out);
 			ji.doJob(false);
 			// ji.wait();
@@ -120,12 +121,12 @@ public class ImportTestMdb extends TestCase {
 		return r;
 	}
 
-	private boolean checkIdSequence(Vector<Long> recordIDs, long[] a) {
+	private boolean checkIdSequence(Vector<String> recordIDs, long[] a) {
 		boolean r = false;
 		if (recordIDs != null && recordIDs.size() == a.length) {
 			r = true;
 			for (int i = 0; i < recordIDs.size(); i++) {
-				if (recordIDs.elementAt(i) != a[i]) {
+				if (recordIDs.elementAt(i).equals(a[i])) {
 					r = false;
 					break;
 				}

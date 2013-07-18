@@ -2,6 +2,7 @@ package org.jopac2.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -95,7 +96,7 @@ public class UpdateTest extends TestCase {
 			
 			// carica con la procedura il primo record, per creare tutto il db, i canali di ricerca, le liste
 			InputStream in1 = new ByteArrayInputStream(rec.getBytes());
-			JOpac2Import ji = new JOpac2Import(in1, catalog, filetype, JOpac2confdir,
+			JOpac2Import ji = new JOpac2Import(in1, catalog, filetype, Charset.forName("utf-8"), JOpac2confdir,
 					dbUrl, dbUser, dbPassword, true, System.out, System.out);
 			ji.doJob(false);
 			// ji.wait();
@@ -107,7 +108,7 @@ public class UpdateTest extends TestCase {
 	    	ParoleSpooler paroleSpooler=new ParoleSpooler(new Connection[] {conn},catalog,1,cache,stemmer,System.out);
 			
 			for(int i=1;i<recs.length;i++) {
-				ma=RecordFactory.buildRecord(0, recs[i].getBytes(), filetype, 0);
+				ma=RecordFactory.buildRecord("0", recs[i].getBytes(), filetype, 0);
 				if(ma!=null) {
 					dbgw.inserisciNotizia(c, catalog, stemmer, paroleSpooler, ma);
 					ma.destroy();
@@ -220,7 +221,7 @@ public class UpdateTest extends TestCase {
 	  public void testUpdate() throws Exception {
 		Connection conn=CreaConnessione();
 		DbGateway dbgw=DbGateway.getInstance("mysql", null);
-		RecordInterface ma=DbGateway.getNotiziaByJID(conn, catalog, 1);
+		RecordInterface ma=DbGateway.getNotiziaByJID(conn, catalog, "1");
 		System.out.println(ma.toReadableString());
 		ma.setTitle("Titolo prova");
 		Cache cache=DbGateway.getCache();
@@ -229,7 +230,7 @@ public class UpdateTest extends TestCase {
 		
 		ma.destroy();
 		DbGateway.shutdownCache();
-		ma=DbGateway.getNotiziaByJID(conn, catalog, 1);
+		ma=DbGateway.getNotiziaByJID(conn, catalog, "1");
 		System.out.println(ma.toReadableString());
 		conn.close();
 		assertTrue("Done ", true);

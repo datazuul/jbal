@@ -9,7 +9,7 @@ public class JOpac2TestSuite {
 	private static String catalog="catalog";
 	
     public static Test suite() throws Exception {    	
-    	DBUtils.Prepara(catalog, TEST_COMPLETO);    	
+//    	DBUtils.Prepara(catalog, TEST_COMPLETO);    	
         TestSuite suite = new TestSuite();
         suite.addTestSuite(MainDoSearch.class);
         suite.addTestSuite(MainBug.class);

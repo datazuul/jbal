@@ -3,6 +3,7 @@ package org.jopac2.test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.Vector;
 
@@ -20,12 +21,12 @@ public class DBUtils {
 	//public static String PATH="C:/Docs/mysource/JOpac2/";
 	public static String PATH="/java_source/keiko/";
 	
-	public static void Prepara(String catalog, boolean completo) throws Exception{
-		if(completo){
-//			CreaDB();
-			CaricaDati(catalog);
-		}
-	} 
+//	public static void Prepara(String catalog, boolean completo) throws Exception{
+//		if(completo){
+////			CreaDB();
+//			CaricaDati(catalog);
+//		}
+//	} 
 	
 //	public static void CreaDB(String catalog) throws SQLException{
 //		Connection conn=CreadbMySql.CreaConnessione("mysql");
@@ -39,24 +40,24 @@ public class DBUtils {
 	 * @deprecated
 	 * @throws FileNotFoundException
 	 */
-	public static void CaricaDati(String catalog) throws FileNotFoundException{
-		FileInputStream is =new FileInputStream(new File(PATH+"docs/DBTest/kp.iso"));
-		String ft="Isisbiblo";
-		
-		Connection[] connessioni=new Connection[NUM_CONNESSIONI];
-		for(int i=0;i<NUM_CONNESSIONI;i++)
-			connessioni[i]=CreadbMySql.CreaConnessione(DBNAME);
-		
-		DataImporter d = new DataImporter(is,ft,PATH+"WebContent/WEB-INF/conf",connessioni,catalog, true,null, System.out, System.out); //,null);
-		System.out.println("caricamento dati...");
-		d.start();
-		try {
-			d.join();
-		} catch (InterruptedException e) {		
-			e.printStackTrace();
-		}
-		System.out.println("...completato");
-	}
+//	public static void CaricaDati(String catalog) throws FileNotFoundException{
+//		FileInputStream is =new FileInputStream(new File(PATH+"docs/DBTest/kp.iso"));
+//		String ft="Isisbiblo";
+//		
+//		Connection[] connessioni=new Connection[NUM_CONNESSIONI];
+//		for(int i=0;i<NUM_CONNESSIONI;i++)
+//			connessioni[i]=CreadbMySql.CreaConnessione(DBNAME);
+//		
+//		DataImporter d = new DataImporter(is,ft,Charset.forName("utf-8"),PATH+"WebContent/WEB-INF/conf",connessioni,catalog, true,null, System.out, System.out); //,null);
+//		System.out.println("caricamento dati...");
+//		d.start();
+//		try {
+//			d.join();
+//		} catch (InterruptedException e) {		
+//			e.printStackTrace();
+//		}
+//		System.out.println("...completato");
+//	}
 	
 	/*
 	 * inizializza classe per le ricerche, generando un oggetto sd stile Cocoon
@@ -74,12 +75,12 @@ public class DBUtils {
 	}
 	
 	public static void dumpSearchResultSet(Connection conn, String catalog, SearchResultSet rs, String f){
-		Vector<Long> v = rs.getRecordIDs();
+		Vector<String> v = rs.getRecordIDs();
 		System.out.println(v);
 		for (int i = 0; i < v.size(); i++) {
 			RecordInterface m=null;
 			try {
-				m = DbGateway.getNotiziaByJID(conn, catalog, v.elementAt(i).toString());
+				m = DbGateway.getNotiziaByJID(conn, catalog, v.elementAt(i));
 				String o=null;
 				if(f!=null) o=m.getField(f);
 				if(o==null) o=m.getTitle();

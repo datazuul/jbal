@@ -3,6 +3,7 @@ package org.jopac2.test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -74,7 +75,7 @@ public class ImportTestMdbTable extends TestCase {
 
 			in = new FileInputStream(f);
 
-			JOpac2Import ji = new JOpac2Import(in, catalog, filetype, JOpac2confdir,
+			JOpac2Import ji = new JOpac2Import(in, catalog, filetype, Charset.forName("utf-8"), JOpac2confdir,
 					dbUrl, dbUser, dbPassword, true, System.out, System.out);
 			ji.doJob(false);
 			// ji.wait();
@@ -113,20 +114,6 @@ public class ImportTestMdbTable extends TestCase {
 			r = true;
 			for (int i = 0; i < v1.size(); i++) {
 				if (!v1.elementAt(i).equals(a[i])) {
-					r = false;
-					break;
-				}
-			}
-		}
-		return r;
-	}
-
-	private boolean checkIdSequence(Vector<Long> recordIDs, long[] a) {
-		boolean r = false;
-		if (recordIDs != null && recordIDs.size() == a.length) {
-			r = true;
-			for (int i = 0; i < recordIDs.size(); i++) {
-				if (recordIDs.elementAt(i) != a[i]) {
 					r = false;
 					break;
 				}
@@ -194,7 +181,7 @@ public class ImportTestMdbTable extends TestCase {
 			"a", 10);
 	long[] listres = { 1, 37, 5, 6, 7, 8, 9, 38, 10, 11 };
 	DBUtils.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
-	boolean r1 = checkIdSequence(rs.getRecordIDs(), listres);
+	boolean r1 = TestUtils.checkIdSequence(rs.getRecordIDs(), listres);
 	assertTrue("Done ", r1);
 }
 	
@@ -203,11 +190,11 @@ public class ImportTestMdbTable extends TestCase {
 
 		long[] unordered = { 5 };
 		long[] ordered = { 5 };
-		boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
+		boolean r1 = TestUtils.checkIdSequence(rs.getRecordIDs(), unordered);
 		DBUtils.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
 		DbGateway.orderBy(conn, catalog,"NomeRisorsa", rs);
 		DBUtils.dumpSearchResultSet(conn, catalog, rs, "NomeRisorsa");
-		boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
+		boolean r2 = TestUtils.checkIdSequence(rs.getRecordIDs(), ordered);
 		assertTrue("Done ", r1 && r2);
 	}
 //	

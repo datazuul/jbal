@@ -126,19 +126,7 @@ public class SearchTest extends TestCase {
 		return r;
 	}
 
-	private boolean checkIdSequence(Vector<Long> recordIDs, long[] a) {
-		boolean r = false;
-		if (recordIDs != null && recordIDs.size() == a.length) {
-			r = true;
-			for (int i = 0; i < recordIDs.size(); i++) {
-				if (recordIDs.elementAt(i) != a[i]) {
-					r = false;
-					break;
-				}
-			}
-		}
-		return r;
-	}
+	
 
 	@SuppressWarnings("unused")
 	private void outputJava(Vector<String> v1) {
@@ -152,11 +140,11 @@ public class SearchTest extends TestCase {
 			SearchResultSet rs = doSearch("(DTE=2010)");
 			long[] unordered = { 1, 3, 6, 7, 9, 10 };
 			long[] ordered = { 7, 6, 1, 10, 3, 9 };
-			boolean r1 = checkIdSequence(rs.getRecordIDs(), unordered);
+			boolean r1 = TestUtils.checkIdSequence(rs.getRecordIDs(), unordered);
 			DBUtils.dumpSearchResultSet(conn, catalog, rs);
 			DbGateway.orderBy(conn, catalog,"AUT", rs);
 			DBUtils.dumpSearchResultSet(conn, catalog, rs);
-			boolean r2 = checkIdSequence(rs.getRecordIDs(), ordered);
+			boolean r2 = TestUtils.checkIdSequence(rs.getRecordIDs(), ordered);
 			assertTrue("Done ", r1 && r2);
 		}
 	
