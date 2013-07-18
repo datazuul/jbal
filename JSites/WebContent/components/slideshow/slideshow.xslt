@@ -180,7 +180,7 @@ function findPos(obj) {
 	</script>
 
 	
-	 <div id="show{$cid}" class="slideshow" style="width: {width}px; height: {height}px; position: absolute; ">
+	 <div id="show{$cid}" class="slideshow" style="width: {width}px; height: {height}px;  "> <!-- position: absolute; -->
     <img src="" alt="" width="{width}px" height="{height}px"/>
   </div>
 		
