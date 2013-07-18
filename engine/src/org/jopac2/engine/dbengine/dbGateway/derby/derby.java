@@ -247,7 +247,7 @@ public class derby extends DbGateway {
 	}
 	
 	public SearchResultSet listSearchFB(Connection conn, String catalog, String classe,String parole,int limit,boolean forward) throws SQLException {
-		Vector<Long> listResult=new Vector<Long>();
+		Vector<String> listResult=new Vector<String>();
 		catalog=catalog.trim();
 		
 		/**
@@ -280,10 +280,10 @@ public class derby extends DbGateway {
 			stmt.setString(1, parole.toLowerCase());
 			stmt.setLong(2, limit);
 			rs = stmt.executeQuery();
-			int id_notizia;
+			String id_notizia;
 			while (rs.next()) {
-				id_notizia = rs.getInt("id_notizia");
-				listResult.addElement(new Long(id_notizia));
+				id_notizia = rs.getString("id_notizia");
+				listResult.addElement(id_notizia);
 			}
 		}
 		catch(SQLException e) {
