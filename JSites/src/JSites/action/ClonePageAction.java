@@ -25,8 +25,10 @@ package JSites.action;
 *
 *******************************************************************************/
 
+import java.sql.Connection;
 import java.util.Map;
 
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.SourceResolver;
@@ -41,16 +43,20 @@ public class ClonePageAction extends PageAction {
 	public Map act(Redirector redirector, SourceResolver resolver, Map objectModel, String source, Parameters parameters) throws Exception {
 		
 		super.act(redirector, resolver, objectModel, source, parameters);
-				
-		try{
+		DataSourceComponent datasourceComponent=null;
+		try {
+			datasourceComponent=((DataSourceComponent)dbselector.select(dbname));
 			String sourcePageCode=request.getParameter("source");
 			String container=parameters.getParameter("containerType");
 			if(container.equals("content") && permission.hasPermission(Permission.VALIDABLE)) {
-				long sourcePid=DBGateway.getPidFrom(sourcePageCode, conn);
+				long sourcePid=DBGateway.getPidFrom(datasourceComponent,sourcePageCode);
 				if(pid!=-1)
-					PageClone.cloneRecursiveIntoPage((int)sourcePid, (int)pid, dataDirectory, username, remoteAddr, conn);
+					PageClone.cloneRecursiveIntoPage(datasourceComponent,(int)sourcePid, (int)pid, dataDirectory, username, remoteAddr);
 			}
 		}catch(Exception e){e.printStackTrace();}
+		finally {
+			if(datasourceComponent!=null) this.manager.release(datasourceComponent);
+		}
 		
 		return objectModel;
 	}

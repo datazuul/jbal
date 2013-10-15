@@ -53,7 +53,7 @@ public class PageEditor extends MyAbstractPageGenerator {
 	private long order = -1;
 	boolean notYetDone = true;
 	
-	protected void init(Connection conn){
+	protected void init(){
 		editedcid = 0;
 		pacid4new = 0;
 		type4new = "";  
@@ -84,18 +84,18 @@ public class PageEditor extends MyAbstractPageGenerator {
 		
 	}
 
-	protected void subClassProcess(String componentType, long id, AttributesImpl attrCid, boolean hasChildren, Connection conn) throws SAXException, SQLException{
+	protected void subClassProcess(String componentType, long id, AttributesImpl attrCid, boolean hasChildren) throws SAXException, SQLException{
 	
     	if(componentType.equals("content") && !containerType.equals("content")) { //shift content on footer, header, ...
     		componentType=containerType;
     	}
 		if(containerType.equals("header") || containerType.equals("footer") || containerType.equals("navbar")){
-			super.subClassProcess(componentType, id, attrCid, hasChildren, conn);
+			super.subClassProcess(componentType, id, attrCid, hasChildren);
 			return;
 		}
 		if(permission.hasPermission(Permission.EDITABLE)){
 		
-			attrCid = doColor(id, attrCid,conn);
+			attrCid = doColor(id, attrCid);
 			if(componentType.equals("content")){
 				attrCid.addCDATAAttribute("accessible",String.valueOf(permission.hasPermission(Permission.ACCESSIBLE)));
 				attrCid.addCDATAAttribute("editable",String.valueOf(permission.hasPermission(Permission.EDITABLE)));
@@ -108,7 +108,7 @@ public class PageEditor extends MyAbstractPageGenerator {
 				if(pacid4new!=0 && pacid4new == id && notYetDone)
 		    		newChild(order);
 				else
-					editChild(editedcid,id,conn);
+					editChild(editedcid,id);
 // resumed				
 //				else {
 //					long pacid=DBGateway.getPacid(editedcid, conn);
@@ -119,14 +119,14 @@ public class PageEditor extends MyAbstractPageGenerator {
 			contentHandler.endElement("",componentType,componentType);	
 		}
 		else
-			super.subClassProcess(componentType, id, attrCid, hasChildren, conn);
+			super.subClassProcess(componentType, id, attrCid, hasChildren);
 			
 	}
     
 	@SuppressWarnings("unchecked")
-	private void editChild(long cid, long pacid, Connection conn) throws SAXException, SQLException{
+	private void editChild(long cid, long pacid) throws SAXException, SQLException{
 
-    	String type = DBGateway.getTypeForCid(cid,conn);
+    	String type = DBGateway.getTypeForCid(datasourceComponent,cid);
     	if(type==null)return;
     	AttributesImpl editing_attrs = new AttributesImpl();
     	
@@ -144,7 +144,7 @@ public class PageEditor extends MyAbstractPageGenerator {
     	}
     	editing_attrs.addCDATAAttribute("type",type);
     	
-    	editing_attrs = doColor(cid,editing_attrs, conn);
+    	editing_attrs = doColor(cid,editing_attrs);
     	
     	contentHandler.startElement("","editing","editing",editing_attrs);
     	contentHandler.endElement("","editing","editing");

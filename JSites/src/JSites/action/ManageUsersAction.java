@@ -25,9 +25,11 @@ package JSites.action;
 *
 *******************************************************************************/
 
+import java.sql.Connection;
 import java.util.Enumeration;
 import java.util.Map;
 
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.SourceResolver;
@@ -43,13 +45,14 @@ public class ManageUsersAction extends PageAction {
 	public Map act(Redirector redirector, SourceResolver resolver, Map objectModel, String source, Parameters parameters) throws Exception {
 		
 		super.act(redirector, resolver, objectModel, source, parameters);
-		
 		if(parameters.getParameter("containerType").equals("content")) {
-			try{
+			DataSourceComponent datasourceComponent=null;
+			try {
+				datasourceComponent=((DataSourceComponent)dbselector.select(dbname));
 				String pcode = request.getParameter("pcode");
 				
 				if(pid==-1 || pid==0) {
-					pid=DBGateway.getPidFrom(pcode, conn);
+					pid=DBGateway.getPidFrom(datasourceComponent, pcode);
 				}
 				if(pid==-1) pid=1;
 				
@@ -80,38 +83,41 @@ public class ManageUsersAction extends PageAction {
 							p.setPermission(Permission.ACCESSIBLE);
 	
 						if(pid != -1 && username.length()>0 && permission.hasPermission(Permission.VALIDABLE))
-							DBGateway.setPermission(pid, cUsername, p, conn);					
+							DBGateway.setPermission(datasourceComponent, pid, cUsername, p);					
 					}
 					else if(name.equals("pageTitle") && permission.hasPermission(Permission.EDITABLE)){
 						String titolo = Util.getRequestData(request, name); //Util.readRequestParameter(request.getParameter(name));
-						DBGateway.setPageName(pid, titolo, conn);
+						DBGateway.setPageName(datasourceComponent, pid, titolo);
 					}
 					else if(name.equals("pageCode") && permission.hasPermission(Permission.EDITABLE)){
 						String code = request.getParameter(name);
-						DBGateway.setPageCode(pid, code, conn);
+						DBGateway.setPageCode(datasourceComponent, pid, code);
 					}
 					else if(name.equals("pagePaPCode") && permission.hasPermission(Permission.VALIDABLE)){
 						String PaPCode = request.getParameter(name);
 						if(PaPCode!=null && PaPCode.trim().length()>0) {
-							long papid=DBGateway.getPidFrom(PaPCode, conn);
+							long papid=DBGateway.getPidFrom(datasourceComponent, PaPCode);
 //							Permission p=DBGateway.getPermission(username, null, papid, conn);
 //							if(p.hasPermission(Permission.VALIDABLE))
-							DBGateway.setPaPid(pid,papid,conn);
+							DBGateway.setPaPid(datasourceComponent, pid,papid);
 //							p.erasePermissions();
 						}
 					}
 					else if(name.equals("resp") && permission.hasPermission(Permission.VALIDABLE)){
 						String code = request.getParameter(name);
-						DBGateway.setPageResp(pid, code, conn);
+						DBGateway.setPageResp(datasourceComponent, pid, code);
 					}
 					else if(name.startsWith("priority_") && permission.hasPermission(Permission.VALIDABLE)) {
 						String code=name.substring(9);
 						String priority=request.getParameter(name);
-						DBGateway.setPagePriority(code,priority,conn);
+						DBGateway.setPagePriority(datasourceComponent, code,priority);
 					}
 				}
 				
 			}catch(Exception e){e.printStackTrace();}
+			finally {
+				if(datasourceComponent!=null) this.manager.release(datasourceComponent);
+			}
 		
 		}
 		

@@ -37,6 +37,7 @@ import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.xml.AttributesImpl;
+import org.jopac2.utils.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -56,7 +57,7 @@ public class ChildrenListingTransformer extends MyAbstractPageTransformer{
 	
 	private AttributesImpl emptyAttrs = new AttributesImpl();
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
 		super.setup(arg0, arg1, arg2, arg3);
 		listing = false;
@@ -97,19 +98,22 @@ public class ChildrenListingTransformer extends MyAbstractPageTransformer{
 			String papid = (new String(c).substring(s,s+e));
 
 			Connection conn = null;
+			Statement st=null;
+			PreparedStatement ps=null;
+			ResultSet rs=null;
 			try{
-				conn = getConnection(dbname);
-				Statement st = conn.createStatement();
-				PreparedStatement ps = conn.prepareStatement("Select PID, name from tblpagine where Valid=1 and InSidebar=1 and PaPID = ?");
-						
-				ResultSet rs = null;
+				conn = datasourceComponent.getConnection();
+				st = conn.createStatement();
+				ps = conn.prepareStatement("Select PID, name from tblpagine where Valid=1 and InSidebar=1 and PaPID = ?");
 				
 				String query = "";
 				if(papid.matches("\\d+"))
 					query = "select PID, Name from tblpagine where Valid=1 and InSidebar=1 and PID="+papid;
 				else
 					query = "select PID, Name from tblpagine where Valid=1 and InSidebar=1 and Name='"+papid+"'";
-					
+				
+				
+				
 				rs = st.executeQuery(query);
 				
 				if(rs.next()){
@@ -119,6 +123,7 @@ public class ChildrenListingTransformer extends MyAbstractPageTransformer{
 					titolo = "[" + link + ">" + titoloPrinc + "]";
 				}
 				rs.close();
+				rs=null;
 				
 				emptyAttrs.addCDATAAttribute("type","2");
 				super.startElement("", "titolo", "titolo", emptyAttrs);
@@ -132,18 +137,39 @@ public class ChildrenListingTransformer extends MyAbstractPageTransformer{
 				
 				while(rs.next()){
 					ps.setLong(1,rs.getLong(1));
-					ResultSet rs1 = ps.executeQuery();
-					while(rs1.next()){
-						treelist.add(rs1.getString("Name") + " #" + rs1.getString("PID"));
+					ResultSet rs1 = null;
+					try {
+						rs1 = ps.executeQuery();
+						while(rs1.next()){
+							treelist.add(rs1.getString("Name") + " #" + rs1.getString("PID"));
+						}
 					}
-					rs1.close();
+					catch(Exception ers1) {
+						System.out.println(Utils.currentDate()+" - ChildrenListingTransformer.characters exception " + ers1.getMessage()+": "+dbname);
+					}
+					finally {
+						rs1.close();
+					}
 				}
-				ps.close();
-				rs.close();
-				st.close();
+				
 			}catch(Exception ex) {ex.printStackTrace();}
+			finally {
+				
+				try{if(rs!=null)rs.close();} catch(Exception ex){
+					System.out.println(Utils.currentDate()+" - ChildrenListingTransformer.characters exception " + ex.getMessage()+": "+dbname);
+					System.out.println("Non ho potuto chiudere resultset");}
+				try{if(ps!=null)ps.close();} catch(Exception ex){
+					System.out.println(Utils.currentDate()+" - ChildrenListingTransformer.characters exception " + ex.getMessage()+": "+dbname);
+					System.out.println("Non ho potuto chiudere prepared statement");}
+				try{if(st!=null)st.close();} catch(Exception ex){
+					System.out.println(Utils.currentDate()+" - ChildrenListingTransformer.characters exception " + ex.getMessage()+": "+dbname);
+					System.out.println("Non ho potuto chiudere statement");}
+				try{ if(conn!=null)conn.close(); } catch(Exception ex){
+					System.out.println(Utils.currentDate()+" - ChildrenListingTransformer.characters exception " + ex.getMessage()+": "+dbname);
+					System.out.println("Non ho potuto chiudere la connessione");}
+			}
 			
-			try{ if(conn!=null)conn.close(); } catch(Exception ex){System.out.println("Non ho potuto chiudere la connessione");}
+			
 				
 			list = Section.listChilds(treelist);
 		}

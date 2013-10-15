@@ -43,56 +43,40 @@ package JSites.transformation.catalogSearch;
  * Connection e' globale allora non viene rilasciata e il pool si satura.
  */
 
-import org.apache.cocoon.environment.SourceResolver;
-import org.apache.cocoon.ProcessingException;
-
-import org.apache.avalon.framework.parameters.Parameters;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.ProcessingInstruction;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.Attributes;
-import org.apache.cocoon.xml.AttributesImpl;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.net.URLDecoder;
-
-import org.apache.avalon.framework.activity.Disposable;
-import org.apache.avalon.framework.component.ComponentManager;
-import org.apache.avalon.framework.component.ComponentSelector;
-import org.apache.avalon.framework.component.ComponentException;
-import org.apache.avalon.excalibur.datasource.DataSourceComponent;
-import org.apache.avalon.framework.component.Composable;
-import org.jopac2.jbal.RecordInterface;
-
-import JSites.transformation.MyAbstractPageTransformer;
-import JSites.utils.XMLUtil;
-
-import java.sql.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
+import org.apache.avalon.framework.activity.Disposable;
+import org.apache.avalon.framework.component.ComponentException;
+import org.apache.avalon.framework.component.ComponentManager;
+import org.apache.avalon.framework.component.ComponentSelector;
+import org.apache.avalon.framework.component.Composable;
+import org.apache.avalon.framework.parameters.Parameters;
+import org.apache.cocoon.ProcessingException;
+import org.apache.cocoon.environment.SourceResolver;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import JSites.transformation.MyAbstractPageTransformer;
+import JSites.utils.XMLUtil;
 
 public class Templator extends MyAbstractPageTransformer implements Composable,
 		Disposable // , CacheableProcessingComponent
@@ -112,25 +96,25 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 	private Hashtable<String, Boolean> v=null;
 	private Hashtable<String, String> para = null; //new Hashtable<String, String>();
 
-	public void sendElement(String element, String value) throws SAXException {
-		if (value != null) {
-			if (debug)
-				System.out.println("Templator: element " + element + ": "
-						+ value);
-			value = value.replaceAll(String.valueOf((char) 30), "");
-			if (value.length() > 0) {
-				contentHandler.startElement("", element, element,
-						new AttributesImpl());
-				contentHandler.characters(value.toCharArray(), 0, value
-						.length());
-				contentHandler.endElement("", element, element);
-			}
-		} else {
-			if (debug)
-				System.out
-						.println("Templator: ELEMENT " + element + " IS NULL");
-		}
-	}
+//	public void sendElement(String element, String value) throws SAXException {
+//		if (value != null) {
+//			if (debug)
+//				System.out.println("Templator: element " + element + ": "
+//						+ value);
+//			value = value.replaceAll(String.valueOf((char) 30), "");
+//			if (value.length() > 0) {
+//				contentHandler.startElement("", element, element,
+//						new AttributesImpl());
+//				contentHandler.characters(value.toCharArray(), 0, value
+//						.length());
+//				contentHandler.endElement("", element, element);
+//			}
+//		} else {
+//			if (debug)
+//				System.out
+//						.println("Templator: ELEMENT " + element + " IS NULL");
+//		}
+//	}
 
 	@SuppressWarnings("unchecked")
 	public void setup(SourceResolver resolver, Map objectModel, String src,
@@ -233,7 +217,7 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 //				String rRecord = parseTemplate(template, document);
 				String rRecord=null;
 				try {
-					rRecord = Templator.parseContext(document, "{{/::"+template+"}}");
+					rRecord = Templator.parseContext(document, "{{/::"+template+"}}",false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -271,7 +255,302 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 		node.getParentNode().removeChild(node);
 	}
 
+	
+	
+	public static String parseContext(Document doc, String in, boolean escape) throws Exception {
+		StringBuffer buffer=new StringBuffer();
+		int bc=0,be=0,c=0;
+		String context="/";
+		if(in.startsWith("[[*escape*]]")) {
+			in=in.substring(12);
+			in=in.trim();
+			escape=true;
+		}
+		if(!in.startsWith("{{") || !in.endsWith("}}")) throw new Exception("Template context error");
+		int u=in.indexOf("::");
+		int old=0;
+		if(u==-1) {
+			u=in.indexOf(":"); // old style context
+			old=-1;
+		}
+		context=in.substring(2, u);
+		in=in.substring(u+2+old,in.length()-2);
+		
+		if(in.startsWith("<p>[[*escape*]]</p>")) {
+			in=in.substring(19);
+			in=in.trim();
+			escape=true;
+		}
+		
+		if(context.startsWith("^")) {
+			return parseFunction(doc,context,in,escape);
+		}
+		
+		Object result=null;
+		XPath xpath = XPathFactory.newInstance().newXPath();
+	    XPathExpression expr=null;
+		try {
+			expr = xpath.compile(context);
+			result = expr.evaluate(doc, XPathConstants.NODESET);
+		} catch (XPathExpressionException e2) {
+			throw e2;
+			//e2.printStackTrace();
+		}
+		
 
+	    NodeList nodes = (NodeList) result;
+	    String ctx0=context;
+	    for (int j = 0; j < nodes.getLength(); j++) {
+	    	if(nodes.getLength()>1) context=ctx0+"["+(j+1)+"]";
+	    	bc=0;be=0;c=0;
+			while(c<in.length()) {
+				bc=in.indexOf("{{",c);
+				be=in.indexOf("[[",c);
+				if(bc==-1) bc=in.length();
+				if(be==-1) be=in.length();
+				int o=Math.min(bc, be);
+				buffer.append(in.substring(c, o));
+				c=o;
+				if(c<in.length()) {
+					if(o==bc) {
+						int z=closeBracket(in,o)+2;
+						
+						buffer.append(parseContext(doc,in.substring(o,z),escape));
+						c=z;
+					}
+					else if(o==be) {
+						int z=in.indexOf("]]",o)+2;
+						String element=in.substring(o,z);
+						if(element.startsWith("[[//")) {
+							// ahah, l'elemento non ha contesto!
+							buffer.append(parseContext(doc,"{{"+element.substring(2,element.length()-2)+"::[[.]]}}",escape));
+						}
+						else {
+							buffer.append(parseElement(doc,context,element,escape));
+						}
+						c=z;
+					}
+				}
+			}
+	    }
+		return buffer.toString();
+	}
+
+	/**
+	 * TODO: fare in modo che le funzioni siano pluggable
+	 * @param doc
+	 * @param context
+	 * @param in
+	 * @return
+	 * @throws Exception 
+	 */
+	private static String parseFunction(Document doc, String context, String in, boolean escape) throws Exception {
+		int i=context.indexOf("(");
+		int f=context.lastIndexOf(")");
+		String fName=context.substring(1,i);
+		String fArguments=context.substring(i+1,f);
+		fArguments=StringEscapeUtils.unescapeHtml(fArguments);
+		String[] args=fArguments.split("\\|");
+		String ret="";
+		@SuppressWarnings("unchecked")
+		Class<TextFunction> fClass=(Class<TextFunction>)Class.forName("JSites.transformation.catalogSearch."+fName);
+		TextFunction tFunction=null;
+		if(fClass!=null) {
+			@SuppressWarnings("rawtypes")
+			java.lang.reflect.Constructor c = fClass.getConstructor();
+			tFunction = (TextFunction) c.newInstance();
+			ret=tFunction.parse(doc,in,escape,args);
+		}
+		
+		
+		
+//		if(fName.equals("Group")) {
+//			Templator.groupPair(doc, args[0],args[1],(String[]) ArrayUtils.subarray(args, 2,args.length));
+//			String newContext=args[2];
+//			newContext=newContext.substring(0,newContext.lastIndexOf("/")+1)+args[1];
+//			ret=parseContext(doc,"{{"+newContext+":"+in+"}}");
+//		}
+		return ret;
+	}
+
+	/**
+	 * ....{{......{{......{{....}}.....{{....}}......}}......}}.....
+	 * 
+	 * ......{{....}}......{{....}}....             // non va bene lastIndexOf
+	 * 
+	 * @param in
+	 * @param o
+	 * @return
+	 */
+	private static int closeBracket(String in, int o) {
+		int i=o;
+		int count=0;
+		
+		for(i=o; i<in.length()-1;i++) {
+			if(in.charAt(i)=='{' && in.charAt(i+1)=='{') {
+				count++;i++;
+				continue;
+			}
+			if(in.charAt(i)=='}' && in.charAt(i+1)=='}') {
+				count--;i++;
+				if(count==0) {
+					i--;break;
+				}
+				else {
+					continue;
+				}
+			}
+		}
+		return i;
+	}
+
+	private static String parseElement(Document doc, String context, String element, boolean escape) {
+		String value="";
+		String sep=" - ";
+		int n=-1;
+		
+		
+		if(element.equals("[[*RAW*]]")) {
+			
+			value="<pre>"+StringEscapeUtils.escapeXml(XMLUtil.XML2String(doc))+"</pre>";
+			return value;
+		}
+		
+		element=element.substring(2, element.length()-2);
+		if(element.equals(".") && context.startsWith("//") && context.endsWith("]")) {
+			int y=context.indexOf("[");
+			String p=context.substring(y+1, context.indexOf("]"));
+			element=context.substring(0,y);
+			n=Integer.parseInt(p);
+		}
+		else {
+			if(!context.equals("/") || !element.startsWith("/")) {
+				if(context.endsWith("/")) element=context+element;
+				else element=context+"/"+element;
+			}
+		}
+		Object result=null;
+		XPath xpath = XPathFactory.newInstance().newXPath();
+	    XPathExpression expr=null;
+		try {
+			expr = xpath.compile(element);
+			result = expr.evaluate(doc, XPathConstants.NODESET);
+		} catch (XPathExpressionException e2) {
+			e2.printStackTrace();
+		}
+		
+
+	    NodeList nodes = (NodeList) result;
+	    if(n==-1) {
+		    if(nodes.getLength()>0) value=nodes.item(0).getTextContent();
+		    for (int j = 1; j < nodes.getLength(); j++) {
+		    	value=value+sep+nodes.item(j).getTextContent();;
+		    }
+	    }
+	    else {
+	    	value=nodes.item(n-1).getTextContent();
+	    }
+	    value=StringEscapeUtils.unescapeXml(value);
+	    if(escape) value=StringEscapeUtils.escapeXml(value);
+	    return value;
+//		return value.replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&", "&amp;");
+	}
+	
+
+	public static void listNodes(Node node, String indent) {
+		String nodeName = node.getNodeName();
+		System.out.println(indent + nodeName + " Node, type is "
+				+ node.getClass().getName() + ":");
+		System.out.println(indent + " " + node);
+
+		NodeList list = node.getChildNodes();
+		if (list.getLength() > 0) {
+			System.out.println(indent + "Child Nodes of " + nodeName + " are:");
+			for (int i = 0; i < list.getLength(); i++)
+				listNodes(list.item(i), indent + " ");
+		}
+	}
+
+	private String markWord(String value) {
+		String left = "", right = "", r = "";
+		StringTokenizer tk = new StringTokenizer(value,
+				" ,.;()/-'\\:=@%$&!?[]#*<>\016\017", true);
+		while (tk.hasMoreTokens()) {
+			right = tk.nextToken();
+			if (isParola(right.toLowerCase())) {
+				right += " ";
+				r += left;
+				r += "<span class=\"match\">" + right + "</span>";
+				left = "";
+			} else {
+				left += right;
+			}
+		}
+		if (left.length() > 0) {
+			r += left;
+		}
+		return r;
+	}
+
+	private boolean isParola(String parola) {
+		return v.containsKey(quota(parola));
+	}
+
+	private String quota(String parola) {
+		parola = parola.toLowerCase();
+		parola = parola.replaceAll("\u010d", "c");
+		// parola = parola.replaceAll("�","s");
+		// parola = parola.replaceAll("�","z");//
+		parola = parola.replaceAll("\u0107", "c");
+		parola = parola.replaceAll("\u0111", "d");
+		parola = parola.replaceAll("dj", "d");
+		return parola;
+	}
+
+	private void populateHashParole() {
+		/*
+		 * optimizedQuery e' della forma:
+		 * 
+		 * 
+		 * [Ritter(6:0ms,qry:123ms,op:0ms)](2:0ms,qry:0ms,op:0ms)AND[Alexander(9:
+		 * 0ms,qry:76ms,op:0ms)]
+		 * 
+		 * Le parole cercate sono sempre comprese tra [......(
+		 */
+		String[] parole = buffer.toString().split("\\[");
+		for (int i = 0; i < parole.length; i++) {
+			int k = parole[i].indexOf('(');
+			if (k > 1) {
+				v.put(quota(parole[i].substring(0, k)), new Boolean(true));
+			}
+		}
+		// v.put(quota(new String(ch,start,len).toLowerCase()),new
+		// Boolean(true));
+		// System.out.println("Got: "+new String(ch,start,len));
+	}
+
+	private void dispatch() throws SAXException {
+		super.characters(buffer.toString().toCharArray(), 0, buffer.length());
+		buffer.delete(0, buffer.length());
+	}
+
+	public Connection getConnection(String db) throws ComponentException,
+			SQLException {
+		return ((DataSourceComponent) dbselector.select(db)).getConnection();
+	}
+
+	public void compose(ComponentManager manager) throws ComponentException {
+		this.manager = manager;
+		
+
+		dbselector = (ComponentSelector) manager
+				.lookup(DataSourceComponent.ROLE + "Selector");
+	}
+
+	public void dispose() {
+		this.manager.release(dbselector);
+	}
+	
 
 	
 	
@@ -643,287 +922,6 @@ public class Templator extends MyAbstractPageTransformer implements Composable,
 //		string=string.replaceAll("\\|\\|", "<").replaceAll("!!",">");
 //		return string;
 //	}
-	
-	
-	public static String parseContext(Document doc, String in) throws Exception {
-		StringBuffer buffer=new StringBuffer();
-		int bc=0,be=0,c=0;
-		String context="/";
-		if(!in.startsWith("{{") || !in.endsWith("}}")) throw new Exception("Template context error");
-		int u=in.indexOf("::");
-		int old=0;
-		if(u==-1) {
-			u=in.indexOf(":"); // old style context
-			old=-1;
-		}
-		context=in.substring(2, u);
-		in=in.substring(u+2+old,in.length()-2);
-		
-		if(context.startsWith("^")) {
-			return parseFunction(doc,context,in);
-		}
-		
-		Object result=null;
-		XPath xpath = XPathFactory.newInstance().newXPath();
-	    XPathExpression expr=null;
-		try {
-			expr = xpath.compile(context);
-			result = expr.evaluate(doc, XPathConstants.NODESET);
-		} catch (XPathExpressionException e2) {
-			throw e2;
-			//e2.printStackTrace();
-		}
-		
-
-	    NodeList nodes = (NodeList) result;
-	    String ctx0=context;
-	    for (int j = 0; j < nodes.getLength(); j++) {
-	    	if(nodes.getLength()>1) context=ctx0+"["+(j+1)+"]";
-	    	bc=0;be=0;c=0;
-			while(c<in.length()) {
-				bc=in.indexOf("{{",c);
-				be=in.indexOf("[[",c);
-				if(bc==-1) bc=in.length();
-				if(be==-1) be=in.length();
-				int o=Math.min(bc, be);
-				buffer.append(in.substring(c, o));
-				c=o;
-				if(c<in.length()) {
-					if(o==bc) {
-						int z=closeBracket(in,o)+2;
-						
-						buffer.append(parseContext(doc,in.substring(o,z)));
-						c=z;
-					}
-					else if(o==be) {
-						int z=in.indexOf("]]",o)+2;
-						String element=in.substring(o,z);
-						if(element.startsWith("[[//")) {
-							// ahah, l'elemento non ha contesto!
-							buffer.append(parseContext(doc,"{{"+element.substring(2,element.length()-2)+"::[[.]]}}"));
-						}
-						else {
-							buffer.append(parseElement(doc,context,element));
-						}
-						c=z;
-					}
-				}
-			}
-	    }
-		return buffer.toString();
-	}
-
-	/**
-	 * TODO: fare in modo che le funzioni siano pluggable
-	 * @param doc
-	 * @param context
-	 * @param in
-	 * @return
-	 * @throws Exception 
-	 */
-	private static String parseFunction(Document doc, String context, String in) throws Exception {
-		int i=context.indexOf("(");
-		int f=context.lastIndexOf(")");
-		String fName=context.substring(1,i);
-		String fArguments=context.substring(i+1,f);
-		fArguments=StringEscapeUtils.unescapeHtml(fArguments);
-		String[] args=fArguments.split("\\|");
-		String ret="";
-		@SuppressWarnings("unchecked")
-		Class<TextFunction> fClass=(Class<TextFunction>)Class.forName("JSites.transformation.catalogSearch."+fName);
-		TextFunction tFunction=null;
-		if(fClass!=null) {
-			@SuppressWarnings("rawtypes")
-			java.lang.reflect.Constructor c = fClass.getConstructor();
-			tFunction = (TextFunction) c.newInstance();
-			ret=tFunction.parse(doc,in,args);
-		}
-		
-		
-		
-//		if(fName.equals("Group")) {
-//			Templator.groupPair(doc, args[0],args[1],(String[]) ArrayUtils.subarray(args, 2,args.length));
-//			String newContext=args[2];
-//			newContext=newContext.substring(0,newContext.lastIndexOf("/")+1)+args[1];
-//			ret=parseContext(doc,"{{"+newContext+":"+in+"}}");
-//		}
-		return ret;
-	}
-
-	/**
-	 * ....{{......{{......{{....}}.....{{....}}......}}......}}.....
-	 * 
-	 * ......{{....}}......{{....}}....             // non va bene lastIndexOf
-	 * 
-	 * @param in
-	 * @param o
-	 * @return
-	 */
-	private static int closeBracket(String in, int o) {
-		int i=o;
-		int count=0;
-		
-		for(i=o; i<in.length()-1;i++) {
-			if(in.charAt(i)=='{' && in.charAt(i+1)=='{') {
-				count++;i++;
-				continue;
-			}
-			if(in.charAt(i)=='}' && in.charAt(i+1)=='}') {
-				count--;i++;
-				if(count==0) {
-					i--;break;
-				}
-				else {
-					continue;
-				}
-			}
-		}
-		return i;
-	}
-
-	private static String parseElement(Document doc, String context, String element) {
-		String value="";
-		String sep=" - ";
-		int n=-1;
-		
-		
-		if(element.equals("[[*RAW*]]")) {
-			
-			value="<pre>"+XMLUtil.XML2String(doc).replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</pre>";
-			return value;
-		}
-		
-		element=element.substring(2, element.length()-2);
-		if(element.equals(".") && context.startsWith("//") && context.endsWith("]")) {
-			int y=context.indexOf("[");
-			String p=context.substring(y+1, context.indexOf("]"));
-			element=context.substring(0,y);
-			n=Integer.parseInt(p);
-		}
-		else {
-			if(!context.equals("/") || !element.startsWith("/")) {
-				if(context.endsWith("/")) element=context+element;
-				else element=context+"/"+element;
-			}
-		}
-		Object result=null;
-		XPath xpath = XPathFactory.newInstance().newXPath();
-	    XPathExpression expr=null;
-		try {
-			expr = xpath.compile(element);
-			result = expr.evaluate(doc, XPathConstants.NODESET);
-		} catch (XPathExpressionException e2) {
-			e2.printStackTrace();
-		}
-		
-
-	    NodeList nodes = (NodeList) result;
-	    if(n==-1) {
-		    if(nodes.getLength()>0) value=nodes.item(0).getTextContent();
-		    for (int j = 1; j < nodes.getLength(); j++) {
-		    	value=value+sep+nodes.item(j).getTextContent();;
-		    }
-	    }
-	    else {
-	    	value=nodes.item(n-1).getTextContent();
-	    }
-		return value.replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&", "&amp;");
-	}
-	
-
-	public static void listNodes(Node node, String indent) {
-		String nodeName = node.getNodeName();
-		System.out.println(indent + nodeName + " Node, type is "
-				+ node.getClass().getName() + ":");
-		System.out.println(indent + " " + node);
-
-		NodeList list = node.getChildNodes();
-		if (list.getLength() > 0) {
-			System.out.println(indent + "Child Nodes of " + nodeName + " are:");
-			for (int i = 0; i < list.getLength(); i++)
-				listNodes(list.item(i), indent + " ");
-		}
-	}
-
-	private String markWord(String value) {
-		String left = "", right = "", r = "";
-		StringTokenizer tk = new StringTokenizer(value,
-				" ,.;()/-'\\:=@%$&!?[]#*<>\016\017", true);
-		while (tk.hasMoreTokens()) {
-			right = tk.nextToken();
-			if (isParola(right.toLowerCase())) {
-				right += " ";
-				r += left;
-				r += "<span class=\"match\">" + right + "</span>";
-				left = "";
-			} else {
-				left += right;
-			}
-		}
-		if (left.length() > 0) {
-			r += left;
-		}
-		return r;
-	}
-
-	private boolean isParola(String parola) {
-		return v.containsKey(quota(parola));
-	}
-
-	private String quota(String parola) {
-		parola = parola.toLowerCase();
-		parola = parola.replaceAll("\u010d", "c");
-		// parola = parola.replaceAll("�","s");
-		// parola = parola.replaceAll("�","z");//
-		parola = parola.replaceAll("\u0107", "c");
-		parola = parola.replaceAll("\u0111", "d");
-		parola = parola.replaceAll("dj", "d");
-		return parola;
-	}
-
-	private void populateHashParole() {
-		/*
-		 * optimizedQuery e' della forma:
-		 * 
-		 * 
-		 * [Ritter(6:0ms,qry:123ms,op:0ms)](2:0ms,qry:0ms,op:0ms)AND[Alexander(9:
-		 * 0ms,qry:76ms,op:0ms)]
-		 * 
-		 * Le parole cercate sono sempre comprese tra [......(
-		 */
-		String[] parole = buffer.toString().split("\\[");
-		for (int i = 0; i < parole.length; i++) {
-			int k = parole[i].indexOf('(');
-			if (k > 1) {
-				v.put(quota(parole[i].substring(0, k)), new Boolean(true));
-			}
-		}
-		// v.put(quota(new String(ch,start,len).toLowerCase()),new
-		// Boolean(true));
-		// System.out.println("Got: "+new String(ch,start,len));
-	}
-
-	private void dispatch() throws SAXException {
-		super.characters(buffer.toString().toCharArray(), 0, buffer.length());
-		buffer.delete(0, buffer.length());
-	}
-
-	public Connection getConnection(String db) throws ComponentException,
-			SQLException {
-		return ((DataSourceComponent) dbselector.select(db)).getConnection();
-	}
-
-	public void compose(ComponentManager manager) throws ComponentException {
-		this.manager = manager;
-		
-
-		dbselector = (ComponentSelector) manager
-				.lookup(DataSourceComponent.ROLE + "Selector");
-	}
-
-	public void dispose() {
-		this.manager.release(dbselector);
-	}
 
 	/*
 	 * public Serializable getKey() { if(src.startsWith("debug,")) {

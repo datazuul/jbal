@@ -33,7 +33,7 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.transformation.AbstractTransformer;
 import org.apache.cocoon.xml.AttributesImpl;
-import org.jopac2.engine.utils.ZipUnzip;
+import org.jopac2.utils.ZipUnzip;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

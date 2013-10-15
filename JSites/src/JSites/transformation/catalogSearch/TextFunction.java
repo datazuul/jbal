@@ -13,6 +13,6 @@ public interface TextFunction {
 	 * @return
 	 * @throws Exception
 	 */
-	String parse(Document doc, String in, String... args) throws Exception;
+	String parse(Document doc, String in, boolean escape, String... args) throws Exception;
 
 }

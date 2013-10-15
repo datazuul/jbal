@@ -32,11 +32,11 @@ import org.w3c.dom.Document;
 
 public class If implements TextFunction {
 
-	public String parse(Document doc, String in, String... args) throws Exception {
+	public String parse(Document doc, String in, boolean escape, String... args) throws Exception {
 			String expression="";
 			String r="";
 			try {
-				expression=Templator.parseContext(doc, "{{/::"+args[0]+"}}");
+				expression=Templator.parseContext(doc, "{{/::"+args[0]+"}}",escape);
 				
 				JexlEngine jexl = new JexlEngine();
 				// Create an expression object
@@ -54,7 +54,7 @@ public class If implements TextFunction {
 				Boolean test = (Boolean)e.evaluate(jctx);
 				
 				if(test) {
-					r=Templator.parseContext(doc, "{{/::"+in+"}}");
+					r=Templator.parseContext(doc, "{{/::"+in+"}}",escape);
 				}
 				
 //				

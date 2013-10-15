@@ -27,6 +27,7 @@ package JSites.action;
 
 import java.util.Map;
 
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.SourceResolver;
@@ -40,6 +41,7 @@ public class DisablePageAction extends PageAction {
 	public Map act(Redirector redirector, SourceResolver resolver, Map objectModel, String source, Parameters parameters) throws Exception {
 		
 		super.act(redirector, resolver, objectModel, source, parameters);
+		DataSourceComponent datasourceComponent=((DataSourceComponent)dbselector.select(dbname));
 		if(parameters.getParameter("containerType").equals("content")){
 			
 			long pid = Long.parseLong(request.getParameter("pid"));
@@ -47,8 +49,8 @@ public class DisablePageAction extends PageAction {
 			
 			if(permission.hasPermission(Permission.VALIDABLE)) {
 				try{
-					if(cid!=0)DBGateway.disableComponent(cid, username, remoteAddr, conn);
-					else DBGateway.disablePage(pid, username, remoteAddr, conn);
+					if(cid!=0)DBGateway.disableComponent(datasourceComponent,cid, username, remoteAddr);
+					else DBGateway.disablePage(datasourceComponent,pid, username, remoteAddr);
 				}catch(Exception e){e.printStackTrace();}
 			}
 		}

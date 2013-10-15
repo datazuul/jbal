@@ -103,7 +103,7 @@ public class MetaDataTransformer extends MyAbstractPageTransformer {
 		String ds=new String(a,s,e);
 		if(metadata!=null && ds.contains("/metadata")) {
 			try {
-				ds = Templator.parseContext(metadata, "{{/:"+ds+"}}");
+				ds = Templator.parseContext(metadata, "{{/:"+ds+"}}",false);
 				super.characters(ds.toCharArray(), 0, ds.length());
 			} catch (Exception ex) {
 				ex.printStackTrace();

@@ -33,6 +33,7 @@ import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.xml.AttributesImpl;
+import org.jopac2.utils.Utils;
 import org.xml.sax.SAXException;
 
 import JSites.authentication.Permission;
@@ -45,13 +46,15 @@ public class FullListingGenerator extends MyAbstractPageGenerator {
 		contentHandler.startDocument();
 		
 		Connection conn = null;
+		Statement st=null;
+		ResultSet rs=null;
 		try{
-			conn = this.getConnection(dbname);
-			Statement st = conn.createStatement();
+			conn = datasourceComponent.getConnection();
+			st = conn.createStatement();
 			String query = "select PID, name from tblpagine where PaPID="+pageId + " and PID!=14 and Valid=1 and InSidebar = 1 order by Name";
 			if(permission.hasPermission(Permission.VALIDABLE))
 				query = "select PID, Name from tblpagine where PaPID="+pageId + " and PID!=14 order by Name";
-			ResultSet rs = st.executeQuery(query);
+			rs = st.executeQuery(query);
 			while(rs.next()){
 				long cpid = rs.getLong("PID");
 				String src = "cocoon://components/listing/view?pid=" + cpid;
@@ -62,12 +65,15 @@ public class FullListingGenerator extends MyAbstractPageGenerator {
 				contentHandler.startElement("http://apache.org/cocoon/include/1.0", "include", "include", attrs);
 				contentHandler.endElement("http://apache.org/cocoon/include/1.0", "include", "include");
 			}
-			rs.close();
-			st.close();
+
 		} catch(Exception e) {e.printStackTrace();}
-		
-		try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
-		
+		finally {
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - FullListingGenerator.generate resultset exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - FullListingGenerator.generate statement exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - FullListingGenerator.generate connection exception " + fe.getMessage());}
+	
+		}
+				
 		contentHandler.endDocument();
 	}
 

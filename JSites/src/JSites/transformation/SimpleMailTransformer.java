@@ -26,14 +26,18 @@ package JSites.transformation;
 *******************************************************************************/
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.util.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
+import java.util.Vector;
 
 import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -41,16 +45,19 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.ProcessingException;
-import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.SourceResolver;
+import org.jopac2.utils.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+
+import com.sun.mail.smtp.SMTPAddressFailedException;
 
 public class SimpleMailTransformer extends MyAbstractPageTransformer {
 	
 	private TreeMap<String,Vector<String>> elements=new TreeMap<String,Vector<String>>();
 	private StringBuffer sb=new StringBuffer();
 	private boolean maildebug=false;
+	private static final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
 	
 	@SuppressWarnings("unchecked")
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
@@ -94,22 +101,26 @@ public class SimpleMailTransformer extends MyAbstractPageTransformer {
 			}
 			catch(Exception e) {}
 			
+			String from=getFirstElement("sendmail:from"); // from must be a valid email address			
+			
 			Vector<String> to=elements.get("sendmail:to");
-			for(int i=0;to!=null&&i<to.size();i++) {
+			for(int i=0;success&&to!=null&&i<to.size();i++) {
 				try {
 						sendmail(getFirstElement("sendmail:smtphost"), 
-								getFirstElement("sendmail:from"), 
+								getFirstElement("sendmail:smtpport"), 
+								getFirstElement("sendmail:smtpfqdn"), 
+								getFirstElement(from), 
 								to.elementAt(i), 
 								getFirstElement("sendmail:subject"), 
 								getFirstElement("sendmail:body"),
-								null, // username
-								null, // password
+								getFirstElement("sendmail:smtpuser"), // username
+								getFirstElement("sendmail:smtppassword"), // password
 								ps, // debug print stream
 								maildebug); // debug
 					ps.print("\n");
 				} catch (Exception e) {
-					e.printStackTrace();
-					ps.println(e.getMessage());
+//					e.printStackTrace();
+//					ps.println(e.getMessage());
 					success=false;
 				}
 				finally {
@@ -150,22 +161,45 @@ public class SimpleMailTransformer extends MyAbstractPageTransformer {
 
 	}
 	
-    private void sendmail(String server, String from, String to, String subject, String body, String user, String password, PrintStream debugOutput, boolean debug) throws Exception{
-        
+    private void sendmail(String server, String smtpport, String fqdn, String from, String to, String subject, String body, final String user, final String password, PrintStream debugOutput, boolean debug) throws Exception{
     	Properties props = new Properties();
-        props.setProperty("mail.transport.protocol", "smtp");
-        props.setProperty("mail.host", server);
-        if(user!=null && password!=null) {
-	        props.setProperty("mail.user", user);
-	        props.setProperty("mail.password", password);
-        }
+    	props.put("mail.smtp.transport.protocol", "smtp"); 
+        props.put("mail.smtp.host", server);
+        props.put("mail.smtp.localhost", fqdn);
+        props.put("mail.smtps.localhost", fqdn);
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.debug", maildebug);
+        props.put("mail.smtp.port", smtpport);
+        props.put("mail.smtp.socketFactory.port", smtpport);
+        props.put("mail.smtp.socketFactory.class", SSL_FACTORY);
+        props.put("mail.smtp.socketFactory.fallback", "false");
 
-        Session mailSession = Session.getDefaultInstance(props, null);
+        Session mailSession = Session.getDefaultInstance(props,
+                new javax.mail.Authenticator() {
+
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(
+                        		user, password);
+                    }
+                });
+    	
+    	
+    	
+//    	Properties props = new Properties();
+//        props.setProperty("mail.transport.protocol", "smtp");
+//        props.setProperty("mail.host", server);
+//        if(user!=null && password!=null) {
+//	        props.setProperty("mail.user", user);
+//	        props.setProperty("mail.password", password);
+//        }
+
+//        Session mailSession = Session.getDefaultInstance(props, null);
+//        Session mailSession = Session.getDefaultInstance(props);
         if(debug && debugOutput!=null) {
 	        mailSession.setDebug(debug);
 	        mailSession.setDebugOut(debugOutput);
         }
-        Transport transport = mailSession.getTransport();
+        Transport transport = mailSession.getTransport("smtp");
 
         MimeMessage message = new MimeMessage(mailSession);
         message.setSubject(subject);
@@ -174,10 +208,20 @@ public class SimpleMailTransformer extends MyAbstractPageTransformer {
         message.addRecipient(Message.RecipientType.TO,
              new InternetAddress(to));
 
-        transport.connect();
-        transport.sendMessage(message,
-            message.getRecipients(Message.RecipientType.TO));
-        transport.close();
+        try {
+	        transport.connect();
+	        transport.sendMessage(message,
+	            message.getRecipients(Message.RecipientType.TO));
+	        transport.close();
+        }
+        catch(Exception e) {
+        	System.out.println(Utils.currentDate()+" - SimpleMailTransformer:"+e.getMessage());
+        	System.out.println("from: "+from);
+        	System.out.println("to: "+to);
+        	System.out.println("user: "+user);
+        	System.out.println("remoteAddr: "+getParameter("compositeRemoteAddr"));
+        	throw e;
+        }
    }
 
 }

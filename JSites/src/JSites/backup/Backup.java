@@ -40,7 +40,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.binarystor.mysql.MySQLDump;
-import org.jopac2.engine.utils.ZipUnzip;
+import org.jopac2.utils.ZipUnzip;
 
 import JSites.utils.DirectoryHelper;
 

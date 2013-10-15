@@ -63,7 +63,7 @@ public class PageCodeAction implements Action, Composable, Disposable {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Map act(Redirector redirector, SourceResolver resolver,
-			Map objectModel, String source, Parameters params) {	
+			Map objectModel, String source, Parameters params) throws ComponentException {	
 
 		Map<String,String> lastdata=new Hashtable<String,String>();
 		Request request = ObjectModelHelper.getRequest(objectModel);
@@ -83,6 +83,7 @@ public class PageCodeAction implements Action, Composable, Disposable {
 			e1.printStackTrace();
 		}
 
+		String compositeRemoteAddr=getRemoteAddr(request);
 		
 		Connection conn=null;
 		
@@ -128,6 +129,8 @@ public class PageCodeAction implements Action, Composable, Disposable {
 			}
 		}
 		
+		
+		
 		String uri=request.getRequestURI();
 		String querystring=request.getQueryString();
 		
@@ -136,18 +139,18 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		else lastdata.put("querystring", "");
 
 		if(pid==null && pcode.length()==0) pid="1"; // homepage
-		
+		DataSourceComponent datasourceComponent=((DataSourceComponent)dbselector.select(dbname));
 		if(pid==null || pid.length()==0) {
 			try {
-				conn=getConnection(dbname);
+				conn=datasourceComponent.getConnection();
 				if(pcode!=null) {
-					long _pid=DBGateway.getPidFrom(pcode, conn);
+					long _pid=DBGateway.getPidFrom(datasourceComponent,pcode);
 					if(_pid==-1) {
-						metadata=DBGateway.getPageMetadata(1, lastdata, conn);
+						metadata=DBGateway.getPageMetadata(datasourceComponent,1, lastdata);
 						pcode=lastdata.get("pcode");
 					}
 					else {
-						metadata=DBGateway.getPageMetadata(pcode, lastdata, conn);
+						metadata=DBGateway.getPageMetadata(datasourceComponent,pcode, lastdata);
 					}
 					pid=lastdata.get("pid");
 					
@@ -164,17 +167,16 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		}
 		else if((pcode==null || pcode.length()==0) && !pid.equals("0") ) {
 			try {
-				conn=getConnection(dbname);
-				metadata=DBGateway.getPageMetadata(Long.parseLong(pid), lastdata, conn);
+				metadata=DBGateway.getPageMetadata(datasourceComponent,Long.parseLong(pid), lastdata);
 				pcode=lastdata.get("pcode");
 				
 //				pcode=DBGateway.getPageCode(Long.parseLong(pid), conn);
 			}
 			catch(Exception e) {
-				e.printStackTrace();
+				pid="0";pcode="";
+//				e.printStackTrace();
 			}
 			finally {
-				if(conn!=null) try{conn.close();} catch(Exception e) {}
 			}
 		}
 		
@@ -187,6 +189,12 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		if(pid!=null) lastdata.put("pageid", pid);
 		if(pcode!=null) lastdata.put("pagecode", pcode);
 //		lastdata.put("pagename", pname);
+		
+		lastdata.put("compositeRemoteAddr", compositeRemoteAddr);
+		if(request.getParameter("rxp")!=null) {
+			session.setAttribute("rxp", request.getParameter("rxp"));
+			lastdata.put("rxp", (String)request.getParameter("rxp"));
+		}
 		
 		Set<String> set=lastdata.keySet();
 		Iterator<String> i=set.iterator();
@@ -203,11 +211,25 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		lastdata.put("pagerequest", ru);
 		
 		session.setAttribute("redirectfrom", lastdata);
+		session.setAttribute("compositeRemoteAddr", compositeRemoteAddr);
 		
 		if(metadata!=null) session.setAttribute("metadata", metadata);
+		this.manager.release(datasourceComponent);
 		return objectModel;
 	}
 	
+	private String getRemoteAddr(Request request) {
+		@SuppressWarnings("unchecked")
+		Enumeration<String> e = request.getHeaders("X-Forwarded-For");
+		String addr="";     
+        while(e.hasMoreElements()) {
+	        String xf=e.nextElement();
+	        addr+=xf+",";
+		}
+        addr+=request.getRemoteAddr();
+		return addr;
+	}
+
 	public Object getAttribute(String name) throws ConfigurationException  {
 		SitemapVariableHolder holder = null;
         try {
@@ -229,7 +251,7 @@ public class PageCodeAction implements Action, Composable, Disposable {
 		this.manager.release(dbselector);
 	}
 	
-	public Connection getConnection(String db) throws ComponentException, SQLException {
-    	return ((DataSourceComponent)dbselector.select(db)).getConnection();
-    }
+//	public Connection getConnection(String db) throws ComponentException, SQLException {
+//    	return ((DataSourceComponent)dbselector.select(db)).getConnection();
+//    }
 }

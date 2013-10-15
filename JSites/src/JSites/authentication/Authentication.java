@@ -29,6 +29,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.webapps.authentication.user.UserState;
@@ -58,10 +59,10 @@ public class Authentication {
 		return UID;
 	}
 	
-	public static Permission assignPermissions(Session session, String remoteaddr, long pid, Connection conn) throws SQLException, JOpac2Exception {
+	public static Permission assignPermissions(DataSourceComponent datasourceComponent, Session session, String string, long pageId) throws SQLException, JOpac2Exception {
 		
 		Permission ret = new Permission();
-		ret = DBGateway.getPermission(getUsername(session), remoteaddr, pid, conn);
+		ret = DBGateway.getPermission(datasourceComponent, getUsername(session), string, pageId);
 		return ret;
 			
 	}

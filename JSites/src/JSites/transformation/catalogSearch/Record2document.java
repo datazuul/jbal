@@ -63,7 +63,9 @@ import org.apache.avalon.framework.component.ComponentManager;
 import org.apache.avalon.framework.component.ComponentSelector;
 import org.apache.cocoon.xml.AttributesImpl;
 import org.apache.cocoon.xml.dom.DOMStreamer;
+import org.jopac2.jbal.ElectronicResource;
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.jbal.abstractStructure.Tag;
 import org.jopac2.jbal.classification.ClassificationInterface;
 import org.jopac2.jbal.subject.SubjectInterface;
 import org.jopac2.utils.BookSignature;
@@ -96,7 +98,7 @@ public class Record2document
 
     		XMLUtil.appendNode(document, rec, "isbd", v.elementAt(i).getISBD());
     		XMLUtil.appendNode(document, rec, "bid", v.elementAt(i).getBid());
-    		XMLUtil.appendNode(document, rec, "jid", Long.toString(v.elementAt(i).getJOpacID()));
+    		XMLUtil.appendNode(document, rec, "jid", v.elementAt(i).getJOpacID());
     	}
     	return node;
     }
@@ -219,12 +221,20 @@ public class Record2document
             root.appendChild(serie);
             if(vma!=null) {vma.clear();vma=null;}
         }
+        ElectronicResource[] elResources=ma2.getElectronicVersion();
+        if(elResources!=null)
+	        for(ElectronicResource el:elResources) {
+	        	Node resource=document.createElement("resource");
+	        	root.appendChild(resource);
+	        	 XMLUtil.appendNode(document, resource, "type",el.getAccessmethod());
+	        	 XMLUtil.appendNode(document, resource, "url",el.getUrl());
+			}
 
     	XMLUtil.appendNode(document, root, "abstract", ma2.getAbstract());
         
         try {
-        	if(v!=null) v.clear();
-        	v=null;
+//        	if(v!=null) v.clear();
+//        	v=null;
         	vbs=ma2.getSignatures();
         }
         catch(Exception e) {
@@ -300,9 +310,9 @@ public class Record2document
 	public Document getDocument(RecordInterface ma, String catalog, String id, String display, String datadir) throws ParserConfigurationException {
 		Document document=XMLUtil.createDocument();
 		Node root=document.createElement("record");
-		ma.setJOpacID(Long.parseLong(id));
+		ma.setJOpacID(id);
     	
-    	XMLUtil.appendNode(document,root,"jid",String.valueOf(ma.getJOpacID()));
+    	XMLUtil.appendNode(document,root,"jid",ma.getJOpacID());
     	XMLUtil.appendNode(document,root,"db",catalog);
     	XMLUtil.appendNode(document,root,"bid",ma.getBid());
     	

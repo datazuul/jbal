@@ -50,7 +50,7 @@ public class Setup {
 	public static void main(String[] args) {
 		String sourcePath=getPath();
 		String dataComponentsDir="/siti";
-		String siteName="divulgazione";
+		String siteName="villafloragrado";
 		String dbName="db"+siteName.toLowerCase();
 		String virtualDomainName="www."+siteName+".it";
 		String dbUrl="jdbc:mysql://localhost/";
@@ -72,13 +72,7 @@ public class Setup {
 	public static void displayNotes(String siteName, String virtualDomainName, String dataComponentsDir) {
 		System.out.println("" +
 				"OPERAZIONI DA FARE A MANO:" +
-				"1. nel file "+siteName+"/xslt/xml2html.xslt modificare:\n" +
-				"\ta. il titolo della pagina nella sezione <HEAD>\n" +
-				"\tb. nel match header l'alt relativo al logo, eventualmente il file del logo\n" +
-				"\tc. nel <div id=\"scritta_sba\"> l'indicazione della scritta e dell'alt associato\n" +
-				"\n" +
-				"2. inserire il logo in "+dataComponentsDir+"/"+siteName+"/images/logo.jpg (o come indicato nel punto 1b\n" +
-				"" +
+				
 				"\nIL SITO RISPONDERA' SOLO ALLE RICHIESTE HTTP DI "+virtualDomainName+"\n" +
 				"(aggiornare dns o /etc/hosts)\n");
 	}
@@ -108,22 +102,24 @@ public class Setup {
 	public static void creaDirectory(String sourcePath, String dataDirectory) {
 		// Crea la directory se non esiste
 		boolean success = (new File(dataDirectory)).mkdirs();
+		success &= (new File(dataDirectory+"/data")).mkdirs();
+		success &= (new File(dataDirectory+"/images")).mkdirs();
 	    if (!success) {
 	        System.out.println("ERROR creating dataDirectory");
 	    }
 
 		// copiare il contenuto di JSites/example/example_components in dataDirectory
-	    try {
-			FileUtils.copyDirectory(new File(sourcePath+"/../example/example_components"), new File(dataDirectory));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//	    try {
+//			FileUtils.copyDirectory(new File(sourcePath+"/../example/example_components"), new File(dataDirectory));
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 	
 	public static void creaSito(String sourcePath, String nomeSito) {
 		// copia il contenuto di WebContent/exmple in nomeSito
 		try {
-			FileUtils.copyDirectory(new File(sourcePath+"/example"), new File(sourcePath+"/"+nomeSito));
+			FileUtils.copyDirectory(new File(sourcePath+"/jopac2"), new File(sourcePath+"/"+nomeSito));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

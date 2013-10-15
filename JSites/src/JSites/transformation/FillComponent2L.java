@@ -40,6 +40,7 @@ import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.xml.AttributesImpl;
+import org.jopac2.utils.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -136,7 +137,8 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 			}
 			else if(level==2){
 				if(!isSidebar || viewsidebar.equals("1"))
-					fill(localName, attributes);
+					if(!localName.isEmpty())
+						fill(localName, attributes);
 			}
 			
 			else super.startElement(namespaceURI, localName, qName, attributes);
@@ -271,22 +273,39 @@ public class FillComponent2L extends MyAbstractPageTransformer {
 		else {
 			
 			Connection conn = null;
-			
+			ResultSet rs=null;
+			PreparedStatement ps=null;
 			try{
-				conn = getConnection(dbname);
-				PreparedStatement ps = conn.prepareStatement("select PaCID from tblcontenuti where CID = ?");
+				conn = datasourceComponent.getConnection();
+				ps = conn.prepareStatement("select PaCID from tblcontenuti where CID = ?");
 				ps.setLong(1,cid);
 				ps.execute();
-				ResultSet rs = ps.getResultSet();
+				rs = ps.getResultSet();
 				
 				if(rs.next())
 					pacid = rs.getLong(1);
 				
-				rs.close();
-				ps.close();
+				
 			}catch(Exception ex) {ex.printStackTrace();}
+			finally {
+				try{ if(rs!=null)rs.close(); } 
+				catch(Exception ex){
+					System.out.println(Utils.currentDate()+" - FillCOmponent2L.edit exception " + ex.getMessage()+": "+dbname);
+				}
+				
+				try{ if(ps!=null)ps.close(); } 
+				catch(Exception ex){
+					System.out.println(Utils.currentDate()+" - FillCOmponent2L.edit exception " + ex.getMessage()+": "+dbname);
+				}
+				
+				try{ if(conn!=null)conn.close(); } 
+				catch(Exception ex){
+					System.out.println(Utils.currentDate()+" - FillCOmponent2L.edit exception " + ex.getMessage()+": "+dbname);
+				}
+				
+			}
 			
-			try{ if(conn!=null)conn.close(); } catch(Exception ex){System.out.println("Non ho potuto chiudere la connessione");}
+			
 
 		}
 		

@@ -47,7 +47,7 @@ public class PartSelector extends MyAbstractPageTransformer {
 	private long cid;
 	private boolean write = true; 
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
 		super.setup(arg0, arg1, arg2, arg3); 
 		write = true;   
@@ -60,14 +60,9 @@ public class PartSelector extends MyAbstractPageTransformer {
 			 if(stringCid != null)
 				 cid = Long.parseLong(stringCid);
 			 
-			 Connection conn = null; 
 			 try{
-				 conn = this.getConnection(dbname);
-//				 Session session = this.sessionManager.getSession(true);
-				 permission = Authentication.assignPermissions(session, request.getRemoteAddr(), pageId, conn);
+				 permission = Authentication.assignPermissions(datasourceComponent,session, request.getRemoteAddr(), pageId);
 			 }catch(Exception e) {e.printStackTrace();}
-				
-			 try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
 			 
 		 }
 		 catch(Exception e){e.printStackTrace();}
@@ -78,9 +73,7 @@ public class PartSelector extends MyAbstractPageTransformer {
 	public void startElement(String namespaceURI, String localName, String qName, Attributes attributes) throws SAXException
 	{
 		try{
-			Connection conn = this.getConnection(dbname);
-
-			if(DBGateway.getState(cid, conn) == 4){
+			if(DBGateway.getState(datasourceComponent, cid) == 4){
 				if(localName.equals("titolo"))
 					super.startElement(namespaceURI, localName, qName, attributes);
 				else if(localName.equals("section"))
@@ -91,7 +84,6 @@ public class PartSelector extends MyAbstractPageTransformer {
 			else 
 				super.startElement(namespaceURI, localName, qName, attributes);
 
-			conn.close();
 		}
 		catch(Exception e){e.printStackTrace();}
 	}
@@ -99,9 +91,7 @@ public class PartSelector extends MyAbstractPageTransformer {
 	public void endElement(String namespaceURI, String localName, String qName) throws SAXException
     {
 		try{
-			Connection conn = this.getConnection(dbname);
-
-			if(DBGateway.getState(cid, conn) == 4){
+			if(DBGateway.getState(datasourceComponent, cid) == 4){
 				if(localName.equals("titolo"))
 					super.endElement(namespaceURI, localName, qName);
 				else
@@ -109,8 +99,6 @@ public class PartSelector extends MyAbstractPageTransformer {
 			}
 			else 
 				super.endElement(namespaceURI, localName, qName);
-
-			conn.close();
 		}
 		catch(Exception e){e.printStackTrace();}
     }

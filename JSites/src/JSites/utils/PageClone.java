@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Vector;
 
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.commons.io.FileUtils;
 import org.jopac2.utils.JOpac2Exception;
 
@@ -25,24 +26,24 @@ public class PageClone {
 	 * @throws SQLException 
 	 * @throws IOException 
 	 */
-	public static int cloneSinglePage(int sourcePid, int papid, String dataDirectory, String username, String remoteaddr, Connection conn) throws SQLException, IOException {
-		String title=DBGateway.getPageName(sourcePid, conn);
-		int pid = DBGateway.getNewPageId(conn);
-		DBGateway.createPage(title, pid, papid, conn);
+	public static int cloneSinglePage(DataSourceComponent datasourceComponent, int sourcePid, int papid, String dataDirectory, String username, String remoteaddr) throws SQLException, IOException {
+		String title=DBGateway.getPageName(datasourceComponent, sourcePid);
+		int pid = DBGateway.getNewPageId(datasourceComponent);
+		DBGateway.createPage(datasourceComponent, title, pid, papid);
 		
-		long newContentCid = DBGateway.getNewFreeCid(conn);
-		DBGateway.saveDBComponent(newContentCid,"content",1,0,new Date(), pid, "", 
-				username, remoteaddr, conn);
-		DBGateway.linkPageContainers(newContentCid, pid, conn);
+		long newContentCid = DBGateway.getNewFreeCid(datasourceComponent);
+		DBGateway.saveDBComponent(datasourceComponent, newContentCid,"content",1,0,new Date(), pid, "", 
+				username, remoteaddr);
+		DBGateway.linkPageContainers(datasourceComponent, newContentCid, pid);
 		
-		DBGateway.clonePermission(papid,pid,conn);
+		DBGateway.clonePermission(datasourceComponent, papid,pid);
 
-		DBGateway.cloneComponents(pid,sourcePid, dataDirectory, username,remoteaddr,conn);
+		DBGateway.cloneComponents(datasourceComponent, pid,sourcePid, dataDirectory, username,remoteaddr);
 		return pid;
 	}
 	
-	public static void clonePageComponents(int sourcePid, int destPid, String dataDirectory, String username, String remoteaddr, Connection conn) throws SQLException, IOException {
-		DBGateway.cloneComponents(destPid,sourcePid, dataDirectory, username,remoteaddr,conn);
+	public static void clonePageComponents(DataSourceComponent datasourceComponent, int sourcePid, int destPid, String dataDirectory, String username, String remoteaddr) throws SQLException, IOException {
+		DBGateway.cloneComponents(datasourceComponent, destPid,sourcePid, dataDirectory, username,remoteaddr);
 	}
 
 
@@ -57,25 +58,25 @@ public class PageClone {
 	 * @throws IOException 
 	 * @throws SQLException 
 	 */
-	public static int cloneRecursivePage(int sourcePid, int papid, String dataDirectory, String username, String remoteaddr, Connection conn) throws SQLException, IOException {
-		int pid=cloneSinglePage(sourcePid,papid,dataDirectory,username,remoteaddr,conn);
-		Vector<Long> clds=DBGateway.getChildPages(sourcePid, conn);
+	public static int cloneRecursivePage(DataSourceComponent datasourceComponent, int sourcePid, int papid, String dataDirectory, String username, String remoteaddr) throws SQLException, IOException {
+		int pid=cloneSinglePage(datasourceComponent, sourcePid,papid,dataDirectory,username,remoteaddr);
+		Vector<Long> clds=DBGateway.getChildPages(datasourceComponent, sourcePid);
 		for(int i=0;clds!=null && i<clds.size();i++) {
 			int curPid=clds.elementAt(i).intValue();
-			if(DBGateway.isPageValid(curPid, conn)) {
-				cloneRecursivePage(curPid,pid,dataDirectory,username,remoteaddr,conn);
+			if(DBGateway.isPageValid(datasourceComponent, curPid)) {
+				cloneRecursivePage(datasourceComponent, curPid,pid,dataDirectory,username,remoteaddr);
 			}
 		}
 		return pid;
 	}
 	
-	public static void cloneRecursiveIntoPage(int sourcePid, int destPid, String dataDirectory, String username, String remoteaddr, Connection conn) throws SQLException, IOException {
-		clonePageComponents(sourcePid, destPid, dataDirectory, username, remoteaddr, conn);
-		Vector<Long> clds=DBGateway.getChildPages(sourcePid, conn);
+	public static void cloneRecursiveIntoPage(DataSourceComponent datasourceComponent, int sourcePid, int destPid, String dataDirectory, String username, String remoteaddr) throws SQLException, IOException {
+		clonePageComponents(datasourceComponent, sourcePid, destPid, dataDirectory, username, remoteaddr);
+		Vector<Long> clds=DBGateway.getChildPages(datasourceComponent, sourcePid);
 		for(int i=0;clds!=null && i<clds.size();i++) {
 			int curPid=clds.elementAt(i).intValue();
-			if(DBGateway.isPageValid(curPid, conn)) {
-				cloneRecursivePage(curPid,destPid,dataDirectory,username,remoteaddr,conn);
+			if(DBGateway.isPageValid(datasourceComponent, curPid)) {
+				cloneRecursivePage(datasourceComponent, curPid,destPid,dataDirectory,username,remoteaddr);
 			}
 		}
 	}

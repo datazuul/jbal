@@ -22,11 +22,11 @@ public class Group implements TextFunction {
 	 * @return
 	 * @throws Exception
 	 */
-	public String parse(Document doc, String in, String... args) throws Exception {
+	public String parse(Document doc, String in, boolean escape, String... args) throws Exception {
 			groupPair(doc, args[0],args[1],(String[]) ArrayUtils.subarray(args, 2,args.length));
 			String newContext=args[2];
 			newContext=newContext.substring(0,newContext.lastIndexOf("/")+1)+args[1];
-			return Templator.parseContext(doc,"{{"+newContext+":"+in+"}}");
+			return Templator.parseContext(doc,"{{"+newContext+":"+in+"}}",escape);
 	}
 	
 	public static void groupPair(Document doc, String separator, String child, String... elements) {

@@ -7,10 +7,12 @@ import java.io.StringWriter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -23,7 +25,10 @@ public class XMLUtil {
 				.newInstance();
 		javax.xml.transform.Transformer xform;
 		try {
+			
 			xform = tfactory.newTransformer();
+			xform.setOutputProperty(OutputKeys.INDENT, "yes");
+			xform.setOutputProperty("{http://xml.apache.org/xslt}indent-number", "3");
 			javax.xml.transform.Source src = new DOMSource(document2);
 			java.io.StringWriter writer = new StringWriter();
 			StreamResult result = new javax.xml.transform.stream.StreamResult(
@@ -54,7 +59,11 @@ public class XMLUtil {
 	public static void appendNode(Document document, Node node, String name,
 			String value) {
 	    	Node e=document.createElement(name);
-			e.setTextContent(value);
+	    	if(value!=null) {
+	    		value=value.replaceAll("<>", " ");
+	    		String xmlvalue=StringEscapeUtils.escapeXml(value);
+	    		e.setTextContent(xmlvalue);
+	    	}
 			node.appendChild(e);
 	}
 }

@@ -50,6 +50,7 @@ import org.apache.cocoon.generation.AbstractGenerator;
 import org.apache.cocoon.webapps.session.SessionManager;
 import org.apache.cocoon.xml.AttributesImpl;
 import org.jopac2.utils.JOpac2Exception;
+import org.jopac2.utils.Utils;
 import org.xml.sax.SAXException;
 
 import java.util.logging.Level;
@@ -70,6 +71,7 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 	protected String containerType = "";
 	protected ComponentSelector dbselector;
 	protected ComponentManager manager;
+	protected DataSourceComponent datasourceComponent = null;
 	protected Request request = null;
 	protected long pageId = 0;
 	protected long lastPageId = 0;
@@ -89,22 +91,29 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
         sessionManager = (SessionManager) manager.lookup(SessionManager.ROLE);
     }
     
-    public void generate() throws SAXException {
+    @Override
+	public void recycle() {
+		super.recycle();
+		this.manager.release(datasourceComponent);
+	}
+
+	public void generate() throws SAXException {
 
     	contentHandler.startDocument();
-    	Connection conn = null;
     	boolean content=true;
     	
+    	Connection conn=null;
+    	PreparedStatement ps=null;
+    	ResultSet rs1=null;
 		try {
-			conn = this.getConnection(dbname);
+
 			logger.log(Level.CONFIG, dbname + ": "+ "Connesso a DB: " + dbname);
 			if(!(permission.hasPermission(Permission.ACCESSIBLE))){
-				conn.close();
 				contentHandler.endDocument();
 				return;
 			}
-			
-			PreparedStatement ps = conn.prepareStatement("SELECT tblstrutture.PID, tblstrutture.CID, tblcomponenti.Type\n" +
+			conn=datasourceComponent.getConnection();
+			ps = conn.prepareStatement("SELECT tblstrutture.PID, tblstrutture.CID, tblcomponenti.Type\n" +
 					"FROM tblcomponenti INNER JOIN tblstrutture ON tblcomponenti.CID = tblstrutture.CID\n" +
 					"WHERE (((tblstrutture.PID)=?) AND ((tblcomponenti.Type)=?))");
 			
@@ -113,7 +122,7 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 				ps.setString(2, containerType);
 			}
 			else {
-				long tpid=DBGateway.getPidFrom("_"+containerType, conn);
+				long tpid=DBGateway.getPidFrom(datasourceComponent,"_"+containerType);
 				if(tpid==-1) tpid=1;
 				if(tpid!=1) { // 1 = sempre HOMEPAGE, ed e' il default restituito se la pagina non esiste
 					ps.setLong(1, tpid);
@@ -126,51 +135,43 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 				}
 			}
 				
-//			if(!content) {
-//				contentHandler.startElement("",containerType,containerType,new AttributesImpl());
-//			}
-			
-			
-			ResultSet rs1 = ps.executeQuery();
+
+			rs1 = ps.executeQuery();
 			while(!rs1.isClosed() && rs1.next()){
 				long cid = rs1.getLong("CID");
 				logger.log(Level.CONFIG, dbname + ": "+ "Processing CID: " + cid);
-				processChild(cid, conn);
+				processChild(cid);
 			}
-			
-//			if(!content) {
-//				contentHandler.endElement("",containerType, containerType);
-//			}
-			
-			rs1.close();
-			ps.close();
 
 		} catch (Exception e1) {
 			System.out.println(request.getRequestURI() + " - " + request.getQueryString());
 			e1.printStackTrace();
 		}
-					
-		try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
+		finally {
+			if(rs1!=null) try{rs1.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - MyAbstractPageGenerator.generate() exception " + fe.getMessage());}
+			if(ps!=null) try{ps.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - MyAbstractPageGenerator.generate() exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - MyAbstractPageGenerator.generate() exception " + fe.getMessage());}
+		}
 		
 		contentHandler.endDocument();
 	}
 
-	public Connection getConnection(String db) {
-		Connection conn=null;
-		try {
-			conn = ((DataSourceComponent)dbselector.select(db)).getConnection();
-		} catch (ComponentException e) {e.printStackTrace();
-		} catch (SQLException e) {e.printStackTrace();
-		}
-    	return conn;
-    }
+//	public Connection getConnection(String db) {
+//		Connection conn=null;
+//		try {
+//			conn = ((DataSourceComponent)dbselector.select(db)).getConnection();
+//		} catch (ComponentException e) {e.printStackTrace();
+//		} catch (SQLException e) {e.printStackTrace();
+//		}
+//    	return conn;
+//    }
     
     public String getResource(String name) {
     	String path = ObjectModelHelper.getContext(objectModel).getRealPath(name);
     	return path;
     }
     
-    public void processChild(long id, Connection conn) throws SAXException, SQLException {
+    public void processChild(long id) throws SAXException, SQLException {
 		
     	String[] componentType = {""};
 		String attributes = "";
@@ -178,9 +179,13 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 		long cState = 0;
 		boolean isNews = false;
 				
+		Connection conn=null;
+		Statement st=null;
+		ResultSet rs=null;
 		try {
-			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("select * from tblcomponenti where CID=" + id);
+			conn=datasourceComponent.getConnection();
+			st = conn.createStatement();
+			rs = st.executeQuery("select * from tblcomponenti where CID=" + id);
 			if(!rs.isClosed() && rs.next()){
 				
 				componentType = rs.getString("Type").split(":");
@@ -188,12 +193,14 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 				
 				attributes = rs.getString("Attributes");
 				hasChildren = rs.getBoolean("HasChildren");
-				cState = DBGateway.getState(id, conn);
+				cState = DBGateway.getState(datasourceComponent,id);
 			}
-			
-			rs.close();
-			st.close();
 		} catch (Exception e) {e.printStackTrace();}
+		finally {
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - MyAbstractPageGenerator.processChild exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - MyAbstractPageGenerator.processChild exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - MyAbstractPageGenerator.processChild exception " + fe.getMessage());}
+		}
 		
 		if(isNews && ! (this instanceof PageEditor || this instanceof PageSaver)) return;
 		
@@ -204,7 +211,7 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 			AttributesImpl attrCid = new AttributesImpl();
 			attrCid.addCDATAAttribute("cid",String.valueOf(id));
 			attrCid.addCDATAAttribute("pid",String.valueOf(pageId));
-			long order = DBGateway.getOrederNumber(id,conn);
+			long order = DBGateway.getOrderNumber(datasourceComponent,id);
 			if(order>0){
 				attrCid.addCDATAAttribute("order",String.valueOf(order));
 			}
@@ -217,7 +224,7 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 			
 			attrCid.addCDATAAttribute("container", containerType);
 			
-			subClassProcess(componentType[0], id, attrCid, hasChildren, conn); // was componentType[0]
+			subClassProcess(componentType[0], id, attrCid, hasChildren); // was componentType[0]
 		}
 
 	}
@@ -249,31 +256,45 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 		
 		dbname = request.getParameter("db");
 		datadir = request.getParameter("datadir");
-		Connection conn = null;
 		logger.log(Level.CONFIG, dbname + ": "+ "Request: " + request.getQueryString());
+		
 		
 		try{
 			try {
 				dbname = dbname == null ? par.getParameter("db") : dbname; 
 				datadir = datadir == null ? par.getParameter("datadir") : datadir; 
 			} catch (ParameterException e) {
-				System.out.println("The QueryString was: " + request.getQueryString());
+//				System.out.println("The QueryString was: " + request.getQueryString());
 				System.out.println("Class: "+this.getClass().getCanonicalName());
 				System.out.println(e.getMessage());
 			}
 			if(dbname!=null) {
-				conn = this.getConnection(dbname);
-				pageId = ManagePageID(conn);
-				init(conn);
+				try {
+					datasourceComponent=((DataSourceComponent)dbselector.select(dbname));
+				} catch (ComponentException e1) {
+					e1.printStackTrace();
+					throw new ProcessingException(e1.getMessage());
+				}
+				
+				pageId = ManagePageID();
+				init();
 				logger.log(Level.CONFIG, dbname + ": "+ "Take the permissions.");
 				String remoteaddr=request.getRemoteAddr();
-				permission = Authentication.assignPermissions(session, remoteaddr, pageId, conn);
+				try {
+					permission = Authentication.assignPermissions(datasourceComponent,session, remoteaddr, pageId);
+				}
+				catch(Exception e) {
+					System.out.println("Authentication Error");
+					System.out.println("Class: "+this.getClass().getCanonicalName());
+					System.out.println(e.getMessage());
+					System.out.println("dbname: "+dbname);
+					System.out.println("datadir: "+datadir);
+					System.out.println("remoteaddr: "+remoteaddr);
+				}
 				session.setAttribute("permission",permission);
 				
 				logger.log(Level.CONFIG, dbname + ": "+ "Permissions taken.");
-				
-				conn.close();
-			}
+							}
 			try{
 				containerType = parameters.getParameter("containerType");
 			}
@@ -281,34 +302,32 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 			//System.out.println(this.containerType + ": " + this);
 		}
 		catch (Exception e2){ e2.printStackTrace(); }
-		
-		try { if(conn!=null) conn.close(); } catch (SQLException e) { e.printStackTrace();	}
 	}
 
-	protected void init(Connection conn){}
+	protected void init(){}
 	
     
-    protected void subClassProcess(String componentType, long id, AttributesImpl attrCid, boolean hasChildren, Connection conn) throws SAXException, SQLException {
+    protected void subClassProcess(String componentType, long id, AttributesImpl attrCid, boolean hasChildren) throws SAXException, SQLException {
 
     	if(componentType.equals("content") && !containerType.equals("content")) { //shift content on footer, header, ...
     		componentType=containerType;
     	}
     	
     	if(permission.getPermissionCode()>Permission.ACCESSIBLE)
-    		attrCid = doColor(id, attrCid, conn);
+    		attrCid = doColor(id, attrCid);
     	
 		String queryString = queryString4Children(id);
 
-		long pacid = DBGateway.getPacid(id, conn);
+		long pacid = DBGateway.getPacid(datasourceComponent, id);
 		attrCid.addCDATAAttribute("pacid",String.valueOf(pacid));
     	
-		Statement st = conn.createStatement();
+		
 		if(componentType.equals("content")){
 			attrCid.addCDATAAttribute("accessible",String.valueOf(permission.hasPermission(Permission.ACCESSIBLE)));
 			attrCid.addCDATAAttribute("editable",String.valueOf(permission.hasPermission(Permission.EDITABLE)));
 			attrCid.addCDATAAttribute("validable",String.valueOf(permission.hasPermission(Permission.VALIDABLE)));
 			attrCid.addCDATAAttribute("sfa",String.valueOf(permission.hasPermission(Permission.SFA)));
-			attrCid.addCDATAAttribute("pageTitle",String.valueOf(DBGateway.getPageName(pageId, conn)   ));
+			attrCid.addCDATAAttribute("pageTitle",String.valueOf(DBGateway.getPageName(datasourceComponent,pageId)));
 		}
 		
 		contentHandler.startElement("",componentType,componentType,attrCid);
@@ -320,34 +339,47 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 			dbAttrs.addCDATAAttribute("disabling", "false");
 			dbAttrs.addCDATAAttribute("editing", "false");
 			dbAttrs.addCDATAAttribute("pacid",String.valueOf(pacid));
-			dbAttrs.addCDATAAttribute("contentcid",String.valueOf(DBGateway.getContentCID(pageId, conn)));
+			dbAttrs.addCDATAAttribute("contentcid",String.valueOf(DBGateway.getContentCID(datasourceComponent,pageId)));
 			
 			contentHandler.startElement("","dbManager","dbManager",dbAttrs);
 			contentHandler.endElement("","dbManager", "dbManager");
 
 		}
 		if(hasChildren){
-	    	ResultSet rs = st.executeQuery(queryString); // ho tolto and IDStato=3
-			while(!rs.isClosed() && rs.next()){
-				processChild(rs.getLong(1), conn);
+			Connection conn=null;
+			Statement st=null;
+			ResultSet rs=null;
+			try {
+				conn=datasourceComponent.getConnection();
+				st = conn.createStatement();
+		    	rs = st.executeQuery(queryString); // ho tolto and IDStato=3
+				while(!rs.isClosed() && rs.next()){
+					processChild(rs.getLong(1));
+				}
 			}
-			rs.close();
+			catch(SQLException e) {
+				e.printStackTrace();
+			}
+			finally {
+				if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - MyAbstractPageGenerator.subClassProcess resultset exception " + fe.getMessage());}
+				if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - MyAbstractPageGenerator.subClassProcess statement exception " + fe.getMessage());}
+				if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - MyAbstractPageGenerator.subClassProcess connection exception " + fe.getMessage());}
+			}
 		}
 		contentHandler.endElement("",componentType,componentType);
-		st.close();
 	}
 	
 	protected String queryString4Children(long id) {
 		return "select CID from tblcontenuti where StateID<4 and PaCID=" + id + " order by OrderNumber";
 	}
 
-	private long ManagePageID(Connection conn) throws SQLException { 
+	private long ManagePageID() throws SQLException { 
 		
 		long ret=-1;
 		String spid=request.getParameter("pid");
 		String pcode = request.getParameter("pcode");
 		if(pcode!= null && !pcode.equals("null")){
-			ret = DBGateway.getPidFrom(pcode, conn);
+			ret = DBGateway.getPidFrom(datasourceComponent,pcode);
 		}
 		else{
 			try {
@@ -363,15 +395,15 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 				Long l = (Long) session.getAttribute("newPageID");
 			
 				if(l==null){
-					int ln = DBGateway.getNewPageId(conn);
-					DBGateway.creaPaginaInDB(ln,request, conn);
+					int ln = DBGateway.getNewPageId(datasourceComponent);
+					DBGateway.creaPaginaInDB(datasourceComponent,ln,request);
 					String remoteaddr=request.getRemoteAddr();
 					try {
-						Permission p=DBGateway.getPermission(Authentication.getUserData(session, "ID"), remoteaddr, ret, conn);
-						DBGateway.setPermission(new Long(ln), Authentication.getUserData(session, "ID"), p, conn);
+						Permission p=DBGateway.getPermission(datasourceComponent, Authentication.getUserData(session, "ID"), remoteaddr, ret);
+						DBGateway.setPermission(datasourceComponent, new Long(ln), Authentication.getUserData(session, "ID"), p);
 
 					} catch (JOpac2Exception e) {
-						DBGateway.setPermission(new Long(ln), Authentication.getUserData(session, "ID"), conn);
+						DBGateway.setPermission(datasourceComponent, new Long(ln), Authentication.getUserData(session, "ID"));
 					}
 					session.setAttribute("newPageID",new Long(ln));
 					ret=ln;
@@ -383,17 +415,17 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 		} 
 		try {
 			if(request.getRequestURI().endsWith("dodelete") && request.getParameter("cid").equals("0")){
-				ret = DBGateway.getPapid(ret, conn);
+				ret = DBGateway.getPapid(datasourceComponent, ret);
 			}
 		} catch (Exception e) { e.printStackTrace(); }
 		
 		return ret;
 	}
 
-	protected AttributesImpl doColor(long id, AttributesImpl attrCid, Connection conn){
+	protected AttributesImpl doColor(long id, AttributesImpl attrCid){
 		try{
-			long cState = DBGateway.getState(id, conn); 
-			if(cState==1 && !(DBGateway.hasNewVersion(id, conn))){ //in lavoro
+			long cState = DBGateway.getState(datasourceComponent, id); 
+			if(cState==1 && !(DBGateway.hasNewVersion(datasourceComponent, id))){ //in lavoro
 				if(permission.hasPermission(Permission.EDITABLE))
 					attrCid.addCDATAAttribute("editing","true");
 					attrCid.addCDATAAttribute("time","strafuturo");
@@ -415,7 +447,7 @@ public abstract class MyAbstractPageGenerator extends AbstractGenerator implemen
 					attrCid.addCDATAAttribute("editing","true");
 			}
 			
-			else if(cState==4 || DBGateway.hasNewVersion(id, conn)){ //vecchio
+			else if(cState==4 || DBGateway.hasNewVersion(datasourceComponent, id)){ //vecchio
 				attrCid.addCDATAAttribute("time","passato");
 			}
 			

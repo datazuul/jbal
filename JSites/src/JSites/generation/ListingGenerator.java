@@ -36,6 +36,7 @@ import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.SourceResolver;
 import org.jopac2.utils.JOpac2Exception;
+import org.jopac2.utils.Utils;
 import org.xml.sax.SAXException;
 
 import JSites.authentication.Authentication;
@@ -50,30 +51,31 @@ public class ListingGenerator extends MyAbstractPageGenerator {
 			
 		contentHandler.startDocument();
 		long pid = Long.parseLong(request.getParameter("pid"));
-
-		Connection conn = null;
+		Connection conn=null;
 		try{
-			conn = this.getConnection(dbname);
+			conn=datasourceComponent.getConnection();
 			Section s = new Section();
-			String nome = DBGateway.getPageName(pid, conn);
-			if(!(DBGateway.isPageValid(pid, conn))){
+			String nome = DBGateway.getPageName(datasourceComponent,pid);
+			if(!(DBGateway.isPageValid(datasourceComponent,pid))){
 				nome = nome + " (questa pagina non e' attiva)";
 			}
 			if(nome.startsWith("Altre")){
-				try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
 				contentHandler.endDocument();
 				return;
 			}
 			s.titolo = "[pageview?pid=" + pid + ">" + nome + "]";
-			s.testo = getChildList(conn, pid);
+			s.testo = getChildList(conn,pid);
 			if(!(s.testo.equals(""))){
 				s.testo = s.testo;
 			}
 			
 			s.ThrowSax(contentHandler);
 		} catch(Exception e) {e.printStackTrace();}
+		finally {
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - ListingGenerator.generate() connection exception " + fe.getMessage());}
+
+		}
 		
-		try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
 		
 		contentHandler.endDocument();
 	}
@@ -91,8 +93,8 @@ public class ListingGenerator extends MyAbstractPageGenerator {
 		long tempPid = 0; Permission tempP = null;
 		while(rs.next()){
 			tempPid = rs.getLong("PID");
-			tempP = Authentication.assignPermissions(session, request.getRemoteAddr(), tempPid, conn);
-			if(tempP.hasPermission(Permission.ACCESSIBLE) && DBGateway.isPageValid(tempPid,conn) && DBGateway.isPageInSidebar(tempPid,conn)){
+			tempP = Authentication.assignPermissions(datasourceComponent, session, request.getRemoteAddr(), tempPid);
+			if(tempP.hasPermission(Permission.ACCESSIBLE) && DBGateway.isPageValid(datasourceComponent, tempPid) && DBGateway.isPageInSidebar(datasourceComponent, tempPid)){
 				tree.add(rs.getString("Name") + " #" + tempPid);
 				tree.addAll(getTree(conn, tempPid));
 			}

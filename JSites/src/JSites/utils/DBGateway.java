@@ -40,12 +40,14 @@ import java.util.Vector;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.component.ComponentException;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.Session;
 import org.apache.commons.io.FileUtils;
 import org.hsqldb.Types;
 import org.jopac2.utils.JOpac2Exception;
+import org.jopac2.utils.Utils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -59,9 +61,11 @@ import JSites.authentication.Permission;
 public class DBGateway {
 	
 	
-	public static void executeStatement(Connection conn, String sql) throws SQLException {
+	public static void executeStatement(DataSourceComponent datasourceComponent, String sql) throws SQLException {
 		Statement st=null;
+		Connection conn=null;
 		try {
+			conn=datasourceComponent.getConnection();
 			st = conn.createStatement();
 			st.executeUpdate(sql);
 		}
@@ -69,11 +73,18 @@ public class DBGateway {
 			throw e;
 		}
 		finally {
-			if(st!=null) st.close();
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.executeStatement exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.executeStatement exception " + fe.getMessage());}
 		}
 	}
 	
 	/**
+
+ALTER TABLE tblnews ADD COLUMN eventstarttime VARCHAR(12) NULL  , 
+	ADD COLUMN eventendtime VARCHAR(12) NULL  , 
+	ADD INDEX evstarttime (eventstarttime ASC) , 
+	ADD INDEX evendtime (eventendtime ASC) ;
+
 
  ALTER TABLE tblcomponenti 
  	ADD COLUMN username VARCHAR(50)  NOT NULL DEFAULT 'unknown', 
@@ -95,30 +106,30 @@ ALTER TABLE tblpagine
  
  ALTER TABLE tblpagine 
 	ADD COLUMN priority int(10) NOT NULL default '99',
-	ADD INDEX Index_priority(priority)
+	ADD INDEX Index_priority(priority);
 	
  ALTER TABLE tblpagine 
-	ADD COLUMN viewsidebar tinyint(1) NOT NULL default '1'
+	ADD COLUMN viewsidebar tinyint(1) NOT NULL default '1';
  
 	 **/
 	
-	public static void updateTblPagineForSidebarView(Connection conn) throws SQLException {
+	public static void updateTblPagineForSidebarView(DataSourceComponent datasourceComponent) throws SQLException {
 		String sql="ALTER TABLE tblpagine " +
 				"ADD COLUMN viewsidebar tinyint(1) NOT NULL default '1'";
-		DBGateway.executeStatement(conn,sql);
+		DBGateway.executeStatement(datasourceComponent,sql);
 	}
 	
-	public static void updateTblComponentiForUsernameRemoteip(Connection conn) throws SQLException {
+	public static void updateTblComponentiForUsernameRemoteip(DataSourceComponent datasourceComponent) throws SQLException {
 		String sql="ALTER TABLE tblcomponenti " +
 			"ADD COLUMN username VARCHAR(50)  NOT NULL DEFAULT 'unknown', " +
 			"ADD COLUMN remoteip VARCHAR(20)  NOT NULL DEFAULT 'unknown', " +
 			"ADD INDEX Index_3(username), " +
 			"ADD INDEX Index_4(remoteip)";
 		
-		DBGateway.executeStatement(conn,sql);
+		DBGateway.executeStatement(datasourceComponent,sql);
 	}
 	
-	public static void updateTblPagineForUsernameRemoteip(Connection conn) throws SQLException {
+	public static void updateTblPagineForUsernameRemoteip(DataSourceComponent datasourceComponent) throws SQLException {
 		String sql="ALTER TABLE tblpagine " +
 			"ADD COLUMN resp VARCHAR(50)  NOT NULL DEFAULT 'unknown', " +
 			"ADD COLUMN username VARCHAR(50)  NOT NULL DEFAULT 'unknown', " +
@@ -131,37 +142,39 @@ ALTER TABLE tblpagine
 			"ADD INDEX Index_remoteip(remoteip)," +
 			"ADD INDEX Index_insertdate(insertdate)";
 		
-		DBGateway.executeStatement(conn,sql);
+		DBGateway.executeStatement(datasourceComponent,sql);
 	}
 	
-	public static void updateTblPagineForPriority(Connection conn) throws SQLException {
+	public static void updateTblPagineForPriority(DataSourceComponent datasourceComponent) throws SQLException {
 		String sql="ALTER TABLE tblpagine " +
 			"ADD COLUMN priority int(10) NOT NULL default '99'," +
 			"ADD INDEX Index_priority(priority)";
 		
-		DBGateway.executeStatement(conn,sql);
+		DBGateway.executeStatement(datasourceComponent,sql);
 	}
 	
-	public static void updateComponentCid(long cid, String username, String remoteip, Connection conn) throws SQLException {
+	public static void updateComponentCid(DataSourceComponent datasourceComponent,long cid, String username, String remoteip) throws SQLException {
 		// current_timestamp
 		String sql="update tblcomponenti " +
 				"set username = '"+username+"', " +
 					"remoteip = '"+remoteip+"', " +
 					"InsertDate = current_timestamp " +
 				"where CID="+cid;
-		DBGateway.executeStatement(conn, sql);
-		long pid=DBGateway.getPidFromCid(cid,conn);
-		DBGateway.updateComponentPid(pid, username, remoteip, conn);
+		DBGateway.executeStatement(datasourceComponent,sql);
+		long pid=DBGateway.getPidFromCid(datasourceComponent,cid);
+		DBGateway.updateComponentPid(datasourceComponent,pid, username, remoteip);
 	}
 	
-	private static long getPidFromCid(long cid, Connection conn) throws SQLException {
+	private static long getPidFromCid(DataSourceComponent datasourceComponent,long cid) throws SQLException {
 		long pid=-1;
 		String sql="select PID from tblstrutture s,tblcontenuti c " +
 				"where c.PaCID=s.CID and " +
 				"c.CID="+cid;
 		ResultSet rs=null;
     	Statement st=null;
+    	Connection conn=null;
     	try {
+    		conn=datasourceComponent.getConnection();
 	    	st=conn.createStatement();
 	    	rs=st.executeQuery(sql);
 	    	if(rs.next()){
@@ -172,70 +185,77 @@ ALTER TABLE tblpagine
 	    	throw e;
     	}
     	finally {
-    		if(rs!=null) rs.close();
-    		if(st!=null) st.close();
+    		if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPidFromCid exception " + fe.getMessage());}
+    		if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPidFromCid exception " + fe.getMessage());}
+    		if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPidFromCid exception " + fe.getMessage());}
     	}
 		return pid;
 	}
 
-	public static void updateComponentPid(long pid, String username, String remoteip, Connection conn) throws SQLException {
+	public static void updateComponentPid(DataSourceComponent datasourceComponent,long pid, String username, String remoteip) throws SQLException {
 		// current_timestamp
 		String sql="update tblpagine " +
 				"set username = '"+username+"', " +
 					"remoteip = '"+remoteip+"', " +
 					"insertdate = current_timestamp " +
 				"where PID="+pid;
-		DBGateway.executeStatement(conn, sql);
+		DBGateway.executeStatement(datasourceComponent,sql);
 	}
 	
-    public static void activateComponent(long cid, String username, String remoteip, Connection conn) throws SQLException, ComponentException {
+    public static void activateComponent(DataSourceComponent datasourceComponent, long cid, String username, String remoteip) throws SQLException, ComponentException {
     	ResultSet rs=null;
     	Statement st=null;
+    	Connection conn=null;
     	try {
-	    	executeStatement(conn,"update tblcontenuti set StateID=3 where CID="+cid);
+    		
+	    	executeStatement(datasourceComponent,"update tblcontenuti set StateID=3 where CID="+cid);
+	    	conn=datasourceComponent.getConnection();
 	    	st=conn.createStatement();
 	    	rs=st.executeQuery("select HistoryCid from tblcomponenti where CID="+cid);
 	    	if(rs.next()){
 	    		long hCid = rs.getLong(1);
-	    		executeStatement(conn,"update tblcontenuti set StateID=4 where CID="+hCid);
+	    		executeStatement(datasourceComponent,"update tblcontenuti set StateID=4 where CID="+hCid);
 	    	}
-	    	updateComponentCid(cid, username, remoteip, conn);
+	    	updateComponentCid(datasourceComponent,cid, username, remoteip);
     	}
     	catch(SQLException e) {
 	    	throw e;
     	}
     	finally {
-    		if(rs!=null) rs.close();
-    		if(st!=null) st.close();
+    		if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.activateComponent exception " + fe.getMessage());}
+    		if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.activateComponent exception " + fe.getMessage());}
+    		if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.activateComponent exception " + fe.getMessage());}
     	}
 	}
 
-	public static void activatePage(long pid, String username, String remoteip, Connection conn) throws SQLException {
-		executeStatement(conn, "update tblpagine set Valid=1 where PID="+pid);
-		updateComponentPid(pid, username, remoteip, conn);
+	public static void activatePage(DataSourceComponent datasourceComponent, long pid, String username, String remoteip) throws SQLException {
+		executeStatement(datasourceComponent,"update tblpagine set Valid=1 where PID="+pid);
+		updateComponentPid(datasourceComponent,pid, username, remoteip);
 	}
 	
-	public static void deleteComponent(long cid, String username, String remoteip, Connection conn) throws SQLException {
-		executeStatement(conn, "update tblcontenuti set StateID=5 where CID="+cid);
-		updateComponentCid(cid, username, remoteip, conn);
-		long pacid = DBGateway.getPacid(cid, conn);
-    	OrdinaDB.normalizeDB(pacid, conn);
+	public static void deleteComponent(DataSourceComponent datasourceComponent, long cid, String username, String remoteip) throws SQLException {
+		executeStatement(datasourceComponent,"update tblcontenuti set StateID=5 where CID="+cid);
+		updateComponentCid(datasourceComponent,cid, username, remoteip);
+		long pacid = DBGateway.getPacid(datasourceComponent,cid);
+    	OrdinaDB.normalizeDB(datasourceComponent,pacid);
 	}
 
-	public static void creaPaginaInDB(int pid, Request o, Connection conn) throws SQLException {
+	public static void creaPaginaInDB(DataSourceComponent datasourceComponent, int pid, Request o) throws SQLException {
 		String title = o.getParameter("title");
 		String papid = o.getParameter("papid");
 		int _papid=Integer.parseInt(papid);
-		createPage(title,pid,_papid,conn);
+		createPage(datasourceComponent,title,pid,_papid);
 	}
 	
-	public static void createPage(String title, int pid, int papid, Connection conn) throws SQLException {
-		String code = doCode(title,conn);
+	public static void createPage(DataSourceComponent datasourceComponent, String title, int pid, int papid) throws SQLException {
+		String code = doCode(datasourceComponent,title);
 		String query1 = "insert into tblpagine (PID,Name,PaPID,Valid,HasChild,PCode,priority) values (?,?,?,0,0,?,99)";
 		String query2 = "update tblpagine set HasChild = 1 where PID="+papid;
 		
 		PreparedStatement ps = null;
+		Connection conn=null;
 		try {
+			conn=datasourceComponent.getConnection();
 			ps = conn.prepareStatement(query1);
 			ps.setLong(1, pid);
 			ps.setString(2, title);
@@ -251,12 +271,13 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(ps!=null) ps.close();
+			if(ps!=null) try{ps.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.createPage exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.createPage exception " + fe.getMessage());}
 		}
-		executeStatement(conn, query2);
+		executeStatement(datasourceComponent,query2);
 	}
     
-    private static String doCode(String name, Connection conn) throws SQLException {
+    private static String doCode(DataSourceComponent datasourceComponent, String name) throws SQLException {
 		
     	name = name.toUpperCase();
     	String ret = "";
@@ -283,32 +304,32 @@ ALTER TABLE tblpagine
 		
 		index = 0;
 		ret = ret.substring(0,3).toUpperCase();
-		if(codeExists(ret, conn)){
+		if(codeExists(datasourceComponent,ret)){
 			String a = ret;
 			
 			for(int j=2;j>0;j--){
 				for(index=0;index<10;index++){
 					ret = a.substring(0,j) + index + a.substring(j+1);
-					if(!codeExists(ret, conn)) break;
+					if(!codeExists(datasourceComponent,ret)) break;
 				}
-				if(!codeExists(ret, conn)) break;
+				if(!codeExists(datasourceComponent,ret)) break;
 			}
 		}
 		
-		if(codeExists(ret, conn)){
+		if(codeExists(datasourceComponent,ret)){
 			String a = ret;
 			
 			for(index=10;index<100;index++){
 				ret = a.substring(0,1) + index;
-				if(!codeExists(ret, conn)) break;
+				if(!codeExists(datasourceComponent,ret)) break;
 			}
 		}
 		
-		if(codeExists(ret, conn)){
+		if(codeExists(datasourceComponent,ret)){
 			
 			for(index=100;index<1000;index++){
 				ret = index + "";
-				if(!codeExists(ret, conn)) break;
+				if(!codeExists(datasourceComponent,ret)) break;
 			}
 		}
 		
@@ -317,11 +338,13 @@ ALTER TABLE tblpagine
 	}
 
 
-	private static boolean codeExists(String ret, Connection conn) throws SQLException {
+	private static boolean codeExists(DataSourceComponent datasourceComponent, String ret) throws SQLException {
 		PreparedStatement st = null;
 		ResultSet rs = null;
+		Connection conn=null;
 		long a=0;
 		try {
+			conn=datasourceComponent.getConnection();
 			st = conn.prepareStatement("select count(*) from tblpagine where PCode=?");
 			st.setString(1, ret);
 			rs = st.executeQuery();
@@ -332,30 +355,33 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.codeExists exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.codeExists exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.codeExists exception " + fe.getMessage());}
 		}
 		return a>0;
 	}
 
-	public static void disableComponent(long cid, String username, String remoteip, Connection conn) throws SQLException {
-		executeStatement(conn, "update tblcontenuti set StateID=2 where CID="+cid);
-		updateComponentCid(cid, username, remoteip, conn);
+	public static void disableComponent(DataSourceComponent datasourceComponent, long cid, String username, String remoteip) throws SQLException {
+		executeStatement(datasourceComponent,"update tblcontenuti set StateID=2 where CID="+cid);
+		updateComponentCid(datasourceComponent,cid, username, remoteip);
 	}
 
-	public static void disablePage(long pid, String username, String remoteip, Connection conn) throws SQLException {
-		executeStatement(conn, "update tblpagine set Valid=0 where PID="+pid);
-		updateComponentCid(pid, username, remoteip, conn);
+	public static void disablePage(DataSourceComponent datasourceComponent, long pid, String username, String remoteip) throws SQLException {
+		executeStatement(datasourceComponent,"update tblpagine set Valid=0 where PID="+pid);
+		updateComponentCid(datasourceComponent,pid, username, remoteip);
 	}
 
-	public static String getAreaName(long pid, Connection conn) throws SQLException{
+	public static String getAreaName(DataSourceComponent datasourceComponent, long pid) throws SQLException{
 		ResultSet rs = null;
 		Statement st = null;
 		String a=null;
+		Connection conn=null;
 
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
-			rs=st.executeQuery("select name from tblpagine where PID=" + getStartFromPid(pid, conn));
+			rs=st.executeQuery("select name from tblpagine where PID=" + getStartFromPid(datasourceComponent,pid));
 			rs.next();
 			a = rs.getString(1);
 		}
@@ -363,18 +389,21 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getAreaName exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getAreaName exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getAreaName exception " + fe.getMessage());}
 		}
 		return a;
 	}
 	
-	public static int getNewPageId(Connection conn) throws SQLException {
+	public static int getNewPageId(DataSourceComponent datasourceComponent) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet temp = null;
 		int ret=1;
+		Connection conn=null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			ps = conn.prepareStatement("select max(PID) as max from tblpagine");
 			temp = ps.executeQuery();
 			if(temp.next()) {
@@ -386,8 +415,9 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(temp!=null) temp.close();
-			if(ps!=null) ps.close();
+			if(temp!=null) try{temp.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getNewPageId exception " + fe.getMessage());}
+			if(ps!=null) try{ps.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getNewPageId exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getNewPageId exception " + fe.getMessage());}
 		}
 		return ret;
 	}
@@ -424,12 +454,14 @@ ALTER TABLE tblpagine
 //		return ret;
 //	}
 
-	public static int getPageLevel(long pid, int c, Connection conn) throws SQLException {
+	public static int getPageLevel(DataSourceComponent datasourceComponent, long pid, int c) throws SQLException {
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn = null;
 		long newpid = 0;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rs = st.executeQuery("SELECT PaPID from tblpagine where PID="+pid);
 			if(rs.next()){newpid = rs.getLong(1);}
@@ -440,22 +472,25 @@ ALTER TABLE tblpagine
 		finally {
 			if(rs!=null) rs.close();
 			if(st!=null) st.close();
+			if(conn!=null) conn.close();
 		}
 		if(newpid==0 || newpid==pid) {
 			return c;
 		}
 		else {
-			return getPageLevel(newpid,++c, conn);
+			return getPageLevel(datasourceComponent,newpid,++c);
 		}
 	
 	}
 
-	public static long getPapid(long pid, Connection conn) throws SQLException {
+	public static long getPapid(DataSourceComponent datasourceComponent, long pid) throws SQLException {
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn = null;
 		long ret = 0;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st = conn.createStatement();
 			rs = st.executeQuery("select PaPID from tblpagine where PID="+pid);
 			if(rs.next())ret = rs.getLong(1);
@@ -464,19 +499,22 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPapid exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPapid exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPapid exception " + fe.getMessage());}
 		}
 		
 		return ret;
 	}
 	
-	public static long getNewFreeCid(Connection conn) throws SQLException {
+	public static long getNewFreeCid(DataSourceComponent datasourceComponent) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet temp = null;
+		Connection conn=null;
 		long ret=1;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			ps = conn.prepareStatement("select max(CID) as newcid from tblcomponenti");
 			temp = ps.executeQuery();
 			if(temp.next()){
@@ -488,8 +526,9 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(temp!=null) temp.close();
-			if(ps!=null) ps.close();
+			if(temp!=null) try{temp.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getNewFreePid exception " + fe.getMessage());}
+			if(ps!=null) try{ps.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getNewFreePid exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getNewFreePid exception " + fe.getMessage());}
 		}
 		return ++ret;
 	}
@@ -525,14 +564,16 @@ ALTER TABLE tblpagine
 //		return ret;
 //	}
 
-	public static long getStartFromPid(long startFromPid, Connection conn) throws SQLException {
+	public static long getStartFromPid(DataSourceComponent datasourceComponent, long startFromPid) throws SQLException {
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn=null;
 		long newStartFromPid = 0;	long ret = 0;
 		
 		String query = "SELECT PaPID from tblpagine where PID=" + startFromPid;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rs = st.executeQuery(query);
 			rs.next();
@@ -542,21 +583,24 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getStartFromPid exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getStartFromPid exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getStartFromPid exception " + fe.getMessage());}
 		}
 		if(newStartFromPid<=1)ret = startFromPid;
-		else ret = getStartFromPid(newStartFromPid, conn);
+		else ret = getStartFromPid(datasourceComponent,newStartFromPid);
 		
 		return ret;
 	}
 
-	public static long getState(long id, Connection conn) throws SQLException{
+	public static long getState(DataSourceComponent datasourceComponent, long id) throws SQLException{
 		ResultSet rsState = null;
 		Statement st = null;
+		Connection conn = null;
 		long ret = 0;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rsState = st.executeQuery("select StateID from tblcontenuti where CID = "+id);
 			if(rsState.next()) ret = rsState.getLong(1);
@@ -565,18 +609,21 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rsState!=null) rsState.close();
-			if(st!=null) st.close();
+			if(rsState!=null) try{rsState.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getState exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getState exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getState exception " + fe.getMessage());}
 		}
 		return ret;
 	}
 
-	public static String getTypeForCid(long cid, Connection conn) throws SQLException {
+	public static String getTypeForCid(DataSourceComponent datasourceComponent, long cid) throws SQLException {
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn=null;
 		String ret = "";
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rs=st.executeQuery("select Type from tblcomponenti where CID=" + cid);
 			if(rs.next()){
@@ -587,25 +634,28 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getState exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getState exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getState exception " + fe.getMessage());}
 		}
 		return ret;
 	}
     
-    public static boolean is2Validate(long id, Connection conn) throws SQLException {
-		return getState(id, conn)==2;
+    public static boolean is2Validate(DataSourceComponent datasourceComponent, long id) throws SQLException {
+		return getState(datasourceComponent, id)==2;
 	}
 	
-	public static boolean isValid(long id, Connection conn) throws SQLException {
-		return getState(id, conn)==3;
+	public static boolean isValid(DataSourceComponent datasourceComponent, long id) throws SQLException {
+		return getState(datasourceComponent, id)==3;
 	}
 	
-	public static boolean isPageValid(long pid, Connection conn) throws SQLException {
+	public static boolean isPageValid(DataSourceComponent datasourceComponent, long pid) throws SQLException {
 		long ret = 0;
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn = null;
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rs = st.executeQuery("select Valid from tblpagine where PID="+pid);
 			if(rs.next()) ret = rs.getLong(1);
@@ -614,17 +664,20 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.isPageValid exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.isPageValid exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.isPageValid exception " + fe.getMessage());}
 		}
 		return ret==1;
 	}
 	
-	public static boolean isPageInSidebar(long pid, Connection conn) throws SQLException {
+	public static boolean isPageInSidebar(DataSourceComponent datasourceComponent, long pid) throws SQLException {
 		Statement st = null;
 		long ret = 0;
 		ResultSet rs = null;
+		Connection conn=null;
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rs = st.executeQuery("select InSidebar from tblpagine where PID="+pid);
 			if(rs.next()) ret = rs.getLong(1);
@@ -633,18 +686,21 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.isPageInSidebar exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.isPageInSidebar exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.isPageInSidebar exception " + fe.getMessage());}
 		}
 		return ret==1;
 	}
 
-	public static long getPacid(long id, Connection conn) throws SQLException {
+	public static long getPacid(DataSourceComponent datasourceComponent, long id) throws SQLException {
 		long ret = 0;
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn=null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rs = st.executeQuery("select PaCID from tblcontenuti where CID="+id);
 			if(rs.next()) ret = rs.getLong(1);
@@ -653,18 +709,21 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPacid exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPacid exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPacid exception " + fe.getMessage());}
 		}
 		return ret;
 	}
 
-	public static long getOrederNumber(long cid, long pacid, Connection conn) throws SQLException {
+	public static long getOrderNumber(DataSourceComponent datasourceComponent, long cid, long pacid) throws SQLException {
 		long ret = -1;
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn=null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rs = st.executeQuery("select OrderNumber from tblcontenuti where CID="+cid + " and PaCID="+pacid);
 			if(rs.next()) ret = rs.getLong(1);
@@ -680,22 +739,25 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getOrderNumber exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getOrderNumber exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getOrderNumber exception " + fe.getMessage());}
 		}
 		return ret;
 	}
 	
-	public static long getOrederNumber(long cid, Connection conn) throws SQLException {
-		return getOrederNumber(cid, DBGateway.getPacid(cid, conn) ,conn);
+	public static long getOrderNumber(DataSourceComponent datasourceComponent, long cid) throws SQLException {
+		return getOrderNumber(datasourceComponent, cid, DBGateway.getPacid(datasourceComponent, cid));
 	}
 
-	public static boolean hasNewVersion(long id, Connection conn) throws SQLException {
+	public static boolean hasNewVersion(DataSourceComponent datasourceComponent, long id) throws SQLException {
 		int ret = 0;
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn = null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rs = st.executeQuery("select count(*) from tblcomponenti where HistoryCid="+id);
 			if(rs.next()) ret = rs.getInt(1);
@@ -704,24 +766,27 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.hasNewVersion exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.hasNewVersion exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.hasNewVersion exception " + fe.getMessage());}
 		}
 		return ret>0;
 	}
 	
-	public static boolean hasChild(long pid, String remoteaddr, Connection conn, Session session) throws SQLException, JOpac2Exception {
+	public static boolean hasChild(DataSourceComponent datasourceComponent,long pid, String remoteaddr, Session session) throws SQLException, JOpac2Exception {
 		if(pid==0)return false;
 		int ret = 0;
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn=null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rs = st.executeQuery("select PID,Valid from tblpagine where PaPID="+pid);
 			while(rs.next()){
 				long tempPid = rs.getLong("PID");
-				Permission tempP = Authentication.assignPermissions(session, remoteaddr, tempPid, conn);
+				Permission tempP = Authentication.assignPermissions(datasourceComponent,session, remoteaddr, tempPid);
 				if(tempP.hasPermission(Permission.ACCESSIBLE)) ret++;
 			}
 		}
@@ -729,23 +794,24 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.hasChild exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.hasChild exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.hasChild exception " + fe.getMessage());}
 		}
 		
 		return ret>0;
 	}
 
-	public static void setPending(long cid, Connection conn) throws SQLException {
-		executeStatement(conn,"update tblcontenuti set StateID=2 where CID="+cid);
+	public static void setPending(DataSourceComponent datasourceComponent, long cid) throws SQLException {
+		executeStatement(datasourceComponent,"update tblcontenuti set StateID=2 where CID="+cid);
 	}
 
-	public static void setWorking(long cid, Connection conn) throws SQLException {
-		executeStatement(conn,"update tblcontenuti set StateID=1 where CID="+cid);
+	public static void setWorking(DataSourceComponent datasourceComponent, long cid) throws SQLException {
+		executeStatement(datasourceComponent, "update tblcontenuti set StateID=1 where CID="+cid);
 	}
 
-	public static void setHasChild(long id, Connection conn) throws SQLException {
-		executeStatement(conn, "update tblcomponenti set HasChildren=1 where CID="+id);
+	public static void setHasChild(DataSourceComponent datasourceComponent, long id) throws SQLException {
+		executeStatement(datasourceComponent,"update tblcomponenti set HasChildren=1 where CID="+id);
 	}
 
 //	public static void orderComponents(Vector<String> cids, Vector<String> ordernumbers, String pacid, Connection conn) throws SQLException {
@@ -804,17 +870,19 @@ ALTER TABLE tblpagine
 //		return ret;
 //	}
 
-	public static long getStateCode(String state, Connection conn) throws SQLException {
+	public static long getStateCode(DataSourceComponent datasourceComponent, String state) throws SQLException {
 		long ret = 0;
 		PreparedStatement sqlState = null;
 		ResultSet temp = null;
-		
-		sqlState = conn.prepareStatement("select StateID from tblstati where StateName=?");
-		sqlState.setString(1, state);
-		sqlState.executeQuery();
-		
-		temp = sqlState.getResultSet();
+		Connection conn=null;
+
 		try{
+			conn=datasourceComponent.getConnection();
+			sqlState = conn.prepareStatement("select StateID from tblstati where StateName=?");
+			sqlState.setString(1, state);
+			sqlState.executeQuery();
+			
+			temp = sqlState.getResultSet();
 			temp.next();
 			ret = temp.getLong(1);
 		}catch(SQLException sqle){
@@ -822,18 +890,21 @@ ALTER TABLE tblpagine
 			System.out.println(sqle.getMessage());
 		}
 		finally {
-			if(temp!=null) temp.close();
-			if(temp!=null) sqlState.close();
+			if(temp!=null) try{temp.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getStateCode exception " + fe.getMessage());}
+			if(sqlState!=null) try{sqlState.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getStateCode exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getStateCode exception " + fe.getMessage());}
 		}
 		return ret;
 	}
 
-	public static String getPageName(long pid, Connection conn) throws SQLException {
+	public static String getPageName(DataSourceComponent datasourceComponent, long pid) throws SQLException {
 		ResultSet temp = null;
 		String ret = null;
 		Statement st = null;
+		Connection conn=null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			temp=st.executeQuery("select Name from tblpagine where PID="+pid);
 			temp.next();
@@ -843,37 +914,40 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(temp!=null) temp.close();
-			if(st!=null) st.close();
+			if(temp!=null) try{temp.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPageName exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPageName exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPageName exception " + fe.getMessage());}
 		}
 		return ret;
 	}
 	
-	public static Document getPageMetadata(String l, Map<String, String> lastdata, Connection conn) throws SQLException, SAXException, IOException, ParserConfigurationException {
+	public static Document getPageMetadata(DataSourceComponent datasourceComponent, String l, Map<String, String> lastdata) throws SQLException, SAXException, IOException, ParserConfigurationException {
 		String sql="select * from tblpagine where pcode='"+l+"'";
-		return _getPageMetadata(sql, lastdata, conn);
+		return _getPageMetadata(datasourceComponent, sql, lastdata);
 	}
 	
-	public static Document getPageMetadata(long pid, Map<String, String> lastdata, Connection conn) throws SQLException, SAXException, IOException, ParserConfigurationException {
+	public static Document getPageMetadata(DataSourceComponent datasourceComponent, long pid, Map<String, String> lastdata) throws SQLException, SAXException, IOException, ParserConfigurationException {
 		String sql="select * from tblpagine where PID="+pid;
-		return _getPageMetadata(sql, lastdata, conn);
+		return _getPageMetadata(datasourceComponent, sql, lastdata);
 	}
 	
 	
-	private static Document _getPageMetadata(String sql, Map<String, String> lastdata, Connection conn) throws SQLException, SAXException, IOException, ParserConfigurationException {
+	private static Document _getPageMetadata(DataSourceComponent datasourceComponent, String sql, Map<String, String> lastdata) throws SQLException, SAXException, IOException, ParserConfigurationException {
 		ResultSet temp = null;
 		Statement st = null;
+		Connection conn=null;
 		
 		StringBuffer d=new StringBuffer("<metadata>\n");
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			try {
 				temp=st.executeQuery(sql);
 			}
 			catch (SQLException e2) {
 				try {
-					caricaDB(conn);
+					caricaDB(datasourceComponent);
 					temp=st.executeQuery(sql);
 				}
 				catch(SQLException e1) {
@@ -925,8 +999,9 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(temp!=null) temp.close();
-			if(st!=null) st.close();
+			if(temp!=null) try{temp.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway._getPageMetadata exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway._getPageMetadata exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway._getPageMetadata exception " + fe.getMessage());}
 		}
 		d.append("</metadata>");
 		return XMLUtil.String2XML(d.toString());
@@ -939,12 +1014,14 @@ ALTER TABLE tblpagine
 		return l;
 	}
 
-	public static String getPageCode(long pid, Connection conn) throws SQLException {
+	public static String getPageCode(DataSourceComponent datasourceComponent, long pid) throws SQLException {
 		ResultSet temp = null;
 		String ret = null;
 		Statement st = null;
+		Connection conn=null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			temp=st.executeQuery("select PCode from tblpagine where PID="+pid);
 			temp.next();
@@ -954,16 +1031,19 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(temp!=null) temp.close();
-			if(st!=null) st.close();
+			if(temp!=null) try{temp.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPageCode exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPageCode exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPageCode exception " + fe.getMessage());}
 		}
 		return ret;
 	}
 	
-	public static void setPageName(long pid, String newTitle, Connection conn) throws SQLException {
+	public static void setPageName(DataSourceComponent datasourceComponent, long pid, String newTitle) throws SQLException {
 		String temp = newTitle;
 		PreparedStatement ps =null;
+		Connection conn=null;
 		try {
+			conn=datasourceComponent.getConnection();
 			ps = conn.prepareStatement("update tblpagine set Name=? where PID=?");
 			ps.setString(1, temp);
 			ps.setLong(2, pid);
@@ -973,25 +1053,28 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(ps!=null) ps.close();
+			if(ps!=null) try{ps.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.setPageName exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.setPageName exception " + fe.getMessage());}
 		}
 	}
 	
-	public static void setPageCode(long pid, String newCode, Connection conn) throws SQLException {
-		executeStatement(conn, "update tblpagine set PCode='"+newCode+"' where PID="+pid);
+	public static void setPageCode(DataSourceComponent datasourceComponent, long pid, String newCode) throws SQLException {
+		executeStatement(datasourceComponent,"update tblpagine set PCode='"+newCode+"' where PID="+pid);
 	}
 
-	public static void setPageResp(long pid, String newCode, Connection conn) throws SQLException {
-		executeStatement(conn, "update tblpagine set resp='"+newCode+"' where PID="+pid);
+	public static void setPageResp(DataSourceComponent datasourceComponent, long pid, String newCode) throws SQLException {
+		executeStatement(datasourceComponent,"update tblpagine set resp='"+newCode+"' where PID="+pid);
 	}
 
 	
-	public static boolean pageExists(long pid, Connection conn) throws SQLException {
+	public static boolean pageExists(DataSourceComponent datasourceComponent, long pid) throws SQLException {
 		ResultSet temp =null;
 		boolean ret = false;
 		Statement st = null;
+		Connection conn=null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			temp = st.executeQuery("select Name from tblpagine where PID="+pid);
 			ret = temp.next();
@@ -1000,8 +1083,9 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(temp!=null) temp.close();
-			if(st!=null) st.close();
+			if(temp!=null) try{temp.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.pageExists exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.pageExists exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.pageExists exception " + fe.getMessage());}
 		}
 		return ret;
 	}
@@ -1030,13 +1114,16 @@ ALTER TABLE tblpagine
 //	}
 //}
 
-	public static Permission getPermission(String username, String remoteaddr, long pid, Connection conn) throws SQLException, JOpac2Exception {
+	public static Permission getPermission(DataSourceComponent datasourceComponent, String username, String remoteaddr, long pid) throws SQLException, JOpac2Exception {
 		String sql="select PermissionCode from tblroles where PID="+pid+" and Username='"+username+"'";
 		ResultSet temp =null;
 		Statement st = null;
+		Connection conn=null;
 		byte ret = -1;
 		
+		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			temp=st.executeQuery(sql);
 
@@ -1051,7 +1138,7 @@ ALTER TABLE tblpagine
 					ret=temp.getByte(1);
 				}
 				else{
-					if(DBGateway.isPageValid(pid, conn)) ret = 1;
+					if(DBGateway.isPageValid(datasourceComponent,pid)) ret = 1;
 					else ret = 0;
 				}
 			}
@@ -1060,8 +1147,9 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(temp!=null) temp.close();
-			if(st!=null) st.close();
+			if(temp!=null) try{temp.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPermission resultset exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPermission statement exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPermission connection exception " + fe.getMessage());}
 		}
 		Permission p = new Permission();
 		p.setPermissionCode(ret);
@@ -1069,13 +1157,15 @@ ALTER TABLE tblpagine
 		return p;
 	}
 
-	public static long getPidFrom(String pcode, Connection conn) throws SQLException {
+	public static long getPidFrom(DataSourceComponent datasourceComponent, String pcode) throws SQLException {
 		long ret = -1;
 		ResultSet temp = null;
 		PreparedStatement st = null;
 		String sql="select PID from tblpagine where PCode= ? "; //'"+pcode+"'";
+		Connection conn=null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.prepareStatement(sql);
 			st.setString(1, pcode);
 			temp=st.executeQuery();
@@ -1088,37 +1178,40 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(temp!=null) temp.close();
-			if(st!=null) st.close();
+			if(temp!=null) try{temp.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPidFrom exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPidFrom exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getPidFrom exception " + fe.getMessage());}
 		}
 		return ret;
 	}
 
-	public static void setPageInSidebar(Connection conn, long pid, boolean insidebar) throws SQLException {
+	public static void setPageInSidebar(DataSourceComponent datasourceComponent, long pid, boolean insidebar) throws SQLException {
 		String query = "update tblpagine set InSidebar=0 where PID="+pid;
 		if(insidebar) query = "update tblpagine set InSidebar=1 where PID="+pid;
-		executeStatement(conn,query);
+		executeStatement(datasourceComponent, query);
 		
 	}
 	
-	public static void setPageViewSidebar(Connection conn, long pid, boolean viewsidebar) throws SQLException {
+	public static void setPageViewSidebar(DataSourceComponent datasourceComponent, long pid, boolean viewsidebar) throws SQLException {
 		String query = "update tblpagine set viewsidebar=0 where PID="+pid;
 		if(viewsidebar) query = "update tblpagine set viewsidebar=1 where PID="+pid;
 		try {
-			executeStatement(conn,query);
+			executeStatement(datasourceComponent, query);
 		}
 		catch(Exception e) {
-			updateTblPagineForSidebarView(conn);
-			executeStatement(conn,query);
+			updateTblPagineForSidebarView(datasourceComponent);
+			executeStatement(datasourceComponent, query);
 		}
 	}
 
-	public static String getRedirectURL(long pageId, Connection conn) throws SQLException {
+	public static String getRedirectURL(DataSourceComponent datasourceComponent, long pageId) throws SQLException {
 		String url = null;
 		ResultSet temp = null;
 		Statement st = null;
+		Connection conn=null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			temp=st.executeQuery("select Url from tblredirects where PID="+pageId);
 			if(temp.next()){
@@ -1129,25 +1222,28 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(temp!=null) temp.close();
-			if(st!=null) st.close();
+			if(temp!=null) try{temp.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getRedirectURL exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getRedirectURL exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getRedirectURL exception " + fe.getMessage());}
 		}
 		return url;
 	}
 	
-	public static void erasePage(long pid, String username, String remoteip, Connection conn) throws SQLException{
+	public static void erasePage(DataSourceComponent datasourceComponent, long pid, String username, String remoteip) throws SQLException{
 		String q = "select CID from tblstrutture where PID="+pid;
 		Statement st = null;
 		ResultSet containers = null;
 		ResultSet childPages = null;
+		Connection conn=null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			containers=st.executeQuery(q);
 			while(containers.next()){
 				long cid = containers.getLong(1);
-				if(uniquePageRelation(pid, cid, conn)){
-					eraseContent(cid, username, remoteip, conn);
+				if(uniquePageRelation(datasourceComponent,pid, cid)){
+					eraseContent(datasourceComponent,cid, username, remoteip);
 				}
 			}
 			
@@ -1156,84 +1252,93 @@ ALTER TABLE tblpagine
 			childPages = st.executeQuery(q);
 			while(childPages.next()){
 				long childpid = childPages.getLong(1);
-				erasePage(childpid,username,remoteip,conn);
+				erasePage(datasourceComponent,childpid,username,remoteip);
 			}
-			updateComponentPid(pid, username, remoteip, conn);
+			updateComponentPid(datasourceComponent,pid, username, remoteip);
 		}
 		catch(SQLException e) {
 			throw e;
 		}
 		finally {
-			if(containers!=null) containers.close();
-			if(childPages!=null) childPages.close();
-			if(st!=null) st.close();
+			if(containers!=null) try{containers.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.erasePage exception " + fe.getMessage());}
+			if(childPages!=null) try{childPages.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.erasePage exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.erasePage exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.erasePage exception " + fe.getMessage());}
 		}
 
-    	executeStatement(conn,"delete from tblstrutture where PID="+pid);
-    	executeStatement(conn,"delete from tblpagine where PID="+pid);
-    	executeStatement(conn,"delete from tblredirects where PID="+pid);
-    	executeStatement(conn,"delete from tblroles where PID="+pid);
+    	executeStatement(datasourceComponent,"delete from tblstrutture where PID="+pid);
+    	executeStatement(datasourceComponent,"delete from tblpagine where PID="+pid);
+    	executeStatement(datasourceComponent,"delete from tblredirects where PID="+pid);
+    	executeStatement(datasourceComponent,"delete from tblroles where PID="+pid);
 	}
 
-	private static void eraseContent(long cid, String username, String remoteip, Connection conn) throws SQLException {
+	private static void eraseContent(DataSourceComponent datasourceComponent,long cid, String username, String remoteip) throws SQLException {
 		String q = "select CID from tblcontenuti where PaCID="+cid;
 		ResultSet children = null;
 		Statement st = null;
+		Connection conn=null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			children = st.executeQuery(q);
 			while(children.next()){
 				long childId = children.getLong(1);
-				eraseComponent(childId, username, remoteip, conn);
+				eraseComponent(datasourceComponent,childId, username, remoteip);
 			}
-			updateComponentCid(cid, username, remoteip, conn);
+			updateComponentCid(datasourceComponent,cid, username, remoteip);
 		}
 		catch(SQLException e) {
 			throw e;
 		}
 		finally {
-			if(children!=null) children.close();
-			if(st!=null) st.close();
+			if(children!=null) try{children.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.eraseContent exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.eraseContent exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.eraseContent exception " + fe.getMessage());}
 		}
 		
-		executeStatement(conn,"delete from tblstrutture where CID="+cid);
-		executeStatement(conn,"delete from tblcomponenti where CID="+cid);
+		executeStatement(datasourceComponent,"delete from tblstrutture where CID="+cid);
+		executeStatement(datasourceComponent,"delete from tblcomponenti where CID="+cid);
 	}
 
-	private static void eraseComponent(long cid, String username, String remoteip, Connection conn) throws SQLException {
+	private static void eraseComponent(DataSourceComponent datasourceComponent, long cid, String username, String remoteip) throws SQLException {
 		ResultSet hCid = null;
 		Statement st = null;
+		Connection conn=null;
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			hCid=st.executeQuery("select HistoryCid from tblcomponenti where CID="+cid);
 			if(hCid.next()){
 				long historyCid = hCid.getLong(1);
 				if(historyCid!=0){
-					updateComponentCid(historyCid, username, remoteip, conn);
-					eraseComponent(historyCid, username, remoteip, conn);
+					updateComponentCid(datasourceComponent,historyCid, username, remoteip);
+					eraseComponent(datasourceComponent,historyCid, username, remoteip);
 				}
 			}
-			updateComponentCid(cid, username, remoteip, conn);
+			updateComponentCid(datasourceComponent,cid, username, remoteip);
 		}
 		catch(SQLException e) {
 			throw e;
 		}
 		finally {
-			if(hCid!=null) hCid.close();
-			if(st!=null) st.close();
+			if(hCid!=null) try{hCid.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.eraseComponent exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.eraseComponent exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.eraseComponent exception " + fe.getMessage());}
 		}
-		executeStatement(conn,"delete from tblcontenuti where CID="+cid);
-		executeStatement(conn,"delete from tblcomponenti where CID="+cid);
+		executeStatement(datasourceComponent,"delete from tblcontenuti where CID="+cid);
+		executeStatement(datasourceComponent,"delete from tblcomponenti where CID="+cid);
 	}
 
-	private static boolean uniquePageRelation(long pid, long cid, Connection conn) throws SQLException {
+	private static boolean uniquePageRelation(DataSourceComponent datasourceComponent, long pid, long cid) throws SQLException {
 		boolean ret = true;
 		String q = "select PID from tblstrutture where CID="+cid;
 		ResultSet pages = null;
 		Statement st = null;
+		Connection conn=null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			pages = st.executeQuery(q);
 			while(pages.next()){
@@ -1248,25 +1353,28 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(pages!=null) pages.close();
-			if(st!=null) st.close();
+			if(pages!=null) try{pages.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.uniquePageRelation exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.uniquePageRelation exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.uniquePageRelation exception " + fe.getMessage());}
 		}
 		return ret;
 	}
 	
-	public static boolean isLeaf(long tempPid, String remoteaddr, Session session, Connection conn) throws SQLException, JOpac2Exception {
+	public static boolean isLeaf(DataSourceComponent datasourceComponent, long tempPid, String remoteaddr, Session session) throws SQLException, JOpac2Exception {
 		boolean ret = true;
 		String q = "select PID from tblpagine where PaPID="+tempPid;
 		ResultSet pages = null;
 		Statement st = null;
+		Connection conn=null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			pages=st.executeQuery(q);
 			while(pages.next()){
 				long pid = pages.getLong(1);
-				Permission tempperm = Authentication.assignPermissions(session, remoteaddr, pid, conn);
-				if(	( tempperm.hasPermission(Permission.ACCESSIBLE) && DBGateway.isPageInSidebar(pid,conn) ) ||
+				Permission tempperm = Authentication.assignPermissions(datasourceComponent,session, remoteaddr, pid);
+				if(	( tempperm.hasPermission(Permission.ACCESSIBLE) && DBGateway.isPageInSidebar(datasourceComponent,pid) ) ||
 					  tempperm.hasPermission(Permission.EDITABLE) || tempperm.hasPermission(Permission.VALIDABLE) ){
 					ret = false;
 					break;
@@ -1277,18 +1385,19 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(pages!=null) pages.close();
-			if(st!=null) st.close();
+			if(pages!=null) try{pages.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.isLeaf exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.isLeaf exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.isLeaf exception " + fe.getMessage());}
 		}
 		return ret;
 	}
 
-	public static void setPermission(Long pid, String userData, Permission p, Connection conn) {
+	public static void setPermission(DataSourceComponent datasourceComponent, Long pid, String userData, Permission p) {
 		
 		String query1 = "";
 		Permission tempP = null;
 		try {
-			tempP = DBGateway.getPermission(userData, null, 0, conn);
+			tempP = DBGateway.getPermission(datasourceComponent, userData, null, 0);
 		} catch (Exception e2) {e2.printStackTrace();}
 		
 		if(tempP.getPermissionCode() != p.getPermissionCode() || p.getPermissionCode() == 0 )
@@ -1302,28 +1411,30 @@ ALTER TABLE tblpagine
 			
 			
 			try {
-				executeStatement(conn, query1);
+				executeStatement(datasourceComponent,query1);
 			} catch (SQLException e) {
 				query1  = "update tblroles set PermissionCode=" + (int)p.getPermissionCode() +
 							" where Username = '" + userData + "' and PID=" + pid;
 				try{
-					executeStatement(conn, query1);
+					executeStatement(datasourceComponent,query1);
 				}catch(Exception e1){e1.printStackTrace();}
 			}
 		}
 		
 	}
 	
-	public static void setPermission(Long pid, String userData, Connection conn) {
+	public static void setPermission(DataSourceComponent datasourceComponent, Long pid, String userData) {
 		Permission p = new Permission();
-		p.setPermissionCode((byte)7);
-		setPermission(pid, userData, p, conn);
+		p.setPermissionCode((byte)15);
+		setPermission(datasourceComponent, pid, userData, p);
 		
 	}
 	
-	public static void linkPageContainers(long ret, long pid, Connection conn) throws SQLException {
+	public static void linkPageContainers(DataSourceComponent datasourceComponent, long ret, long pid) throws SQLException {
 		PreparedStatement ps = null;
+		Connection conn=null;
 		try {
+			conn=datasourceComponent.getConnection();
 			ps = conn.prepareStatement("insert into tblstrutture (PID,CID) values (?,?)");
 			ps.setLong(1,pid);
 			for(int i=1;i<5;i++){
@@ -1337,53 +1448,56 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(ps!=null) ps.close();
+			if(ps!=null) try{ps.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.linkPageContainers exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.linkPageContainers exception " + fe.getMessage());}
 		}
 	}
 	
-	public static void saveDBComponent(long cid, String componentType, int hasChild, long historycid, Date date, 
-			long pid, String url, String user, String remoteIp, Connection conn) throws SQLException {
+	public static void saveDBComponent(DataSourceComponent datasourceComponent, long cid, String componentType, int hasChild, long historycid, Date date, 
+			long pid, String url, String user, String remoteIp) throws SQLException {
 //		java.sql.Date sqlDate = new java.sql.Date(date.getTime());
 		
 		String sqlComponenteNuovo = "INSERT INTO tblcomponenti (InsertDate,CID,Type,Attributes,HasChildren,HistoryCid, username, remoteip)" + // ,InsertDate
 									"VALUES (current_timestamp," + cid + ",'" + componentType + "',null,"+ hasChild+"," + historycid+",'" + user+"','" + remoteIp + "')"; // ,'" + sqlDate + "'
-		executeStatement(conn,sqlComponenteNuovo);
+		executeStatement(datasourceComponent, sqlComponenteNuovo);
 		
 		if(componentType.equals("externalLink")){
-			String redir = DBGateway.getRedirectURL(pid, conn);
+			String redir = DBGateway.getRedirectURL(datasourceComponent, pid);
 			
 			if(redir==null){
 				String sqlExternalLink = "INSERT INTO tblredirects (PID,Url) " + 
 										 "VALUES (" + pid + ",'" + url + "')";
 				
-				executeStatement(conn,sqlExternalLink);
+				executeStatement(datasourceComponent, sqlExternalLink);
 			}
 
 		}
 	}
 	
-	public static void saveDBComponentAndRelationship(long id, String componentType, int hasChild, long pacid, 
-			long historycid, Date date, long intStatecode, long pid, String url, long order, String user, String remoteIp, Connection conn) throws SQLException {
+	public static void saveDBComponentAndRelationship(DataSourceComponent datasourceComponent, long id, String componentType, int hasChild, long pacid, 
+			long historycid, Date date, long intStatecode, long pid, String url, long order, String user, String remoteIp) throws SQLException {
 		
 		long orderNumber = 1;
 		if(order == -1)
-			orderNumber = DBGateway.getOrederNumber(historycid, pacid, conn);
+			orderNumber = DBGateway.getOrderNumber(datasourceComponent, historycid, pacid);
 		else{
 			orderNumber = order;
-			updateOrder(order, pacid, conn);
+			updateOrder(datasourceComponent,order, pacid);
 		}
-		saveDBComponent(id, componentType,hasChild,historycid,date,pid,url,user,remoteIp,conn);
+		saveDBComponent(datasourceComponent, id, componentType,hasChild,historycid,date,pid,url,user,remoteIp);
 		
 		if(intStatecode==0){
 			System.out.println("Wait... there's a problem\nState Code is 0... Couldn't be!");
 		}
 		else{
 			if(componentType.equals("news")) intStatecode = 3;
-			saveCIDrelationship(id,pacid,intStatecode,orderNumber,conn);
+			saveCIDrelationship(datasourceComponent,id,pacid,intStatecode,orderNumber);
 			
-			long state = DBGateway.getState(id, conn);
+			long state = DBGateway.getState(datasourceComponent,id);
 			if(state==0){
+				Connection conn=datasourceComponent.getConnection();
 				String dbname=conn.getCatalog();
+				conn.close();
 				System.out.println("Wait... there's a problem\nState Code is 0... Couldn't be!");
 //				System.out.println("User Data: " + Authentication.getUserData(session, "ID"));
 				System.out.println("while saving: cid="+id);
@@ -1396,19 +1510,21 @@ ALTER TABLE tblpagine
 		}
 	}
 
-	public static void saveCIDrelationship(long cid, long pacid,
-			long state, long orderNumber, Connection conn) throws SQLException {
+	public static void saveCIDrelationship(DataSourceComponent datasourceComponent, long cid, long pacid,
+			long state, long orderNumber) throws SQLException {
 		String sqlRelazioneNuovo = "INSERT INTO tblcontenuti (PaCID,CID,StateID,OrderNumber)" + 
 				   "VALUES (" + pacid + "," + cid + "," + state + "," + (orderNumber) + ")";
-		executeStatement(conn,sqlRelazioneNuovo);
+		executeStatement(datasourceComponent, sqlRelazioneNuovo);
 		
 	}
 
-	public static void updateOrder(long ord, long pacid, Connection conn) throws SQLException {
+	public static void updateOrder(DataSourceComponent datasourceComponent, long ord, long pacid) throws SQLException {
 		ResultSet rs = null;
 		Statement st = null;
 		PreparedStatement ps = null;
+		Connection conn = null;
 		try{
+			conn=datasourceComponent.getConnection();
 			String select = "select CID, OrderNumber from tblcontenuti where PaCID="+pacid+" and OrderNumber>="+ord;
 			ps = conn.prepareStatement("update tblcontenuti set OrderNumber = ? where CID = ? and PaCID="+pacid);
 			
@@ -1428,21 +1544,24 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(ps!=null) ps.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.updateOrder exception " + fe.getMessage());}
+			if(ps!=null) try{ps.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.updateOrder exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.updateOrder exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.updateOrder exception " + fe.getMessage());}
 		}
 	}
 
-	public static long getContentCID(long pageId, Connection conn) throws SQLException {
+	public static long getContentCID(DataSourceComponent datasourceComponent, long pageId) throws SQLException {
 		long cid = 0;
 		String query = "SELECT tblstrutture.CID " +
 						"FROM tblcomponenti INNER JOIN tblstrutture ON tblcomponenti.CID = tblstrutture.CID " +
 						"WHERE (((tblstrutture.PID)=" + pageId+ ") AND ((tblcomponenti.Type)='content'))";
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn = null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rs = st.executeQuery(query);
 			if(rs.next()){
@@ -1453,13 +1572,14 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getContentCID exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getContentCID exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getContentCID exception " + fe.getMessage());}
 		}
 		return cid;
 	}
 	
-	public static Vector<NewsItem> getNewsCID(Connection conn, String date) throws SQLException {
+	public static Vector<NewsItem> getNewsCID(DataSourceComponent datasourceComponent, String date) throws SQLException {
 		Vector<NewsItem> v = new Vector<NewsItem>();
 		String query =	"SELECT s.PID as pid, " +
 						"p.Name as pagename, " +
@@ -1483,8 +1603,10 @@ ALTER TABLE tblpagine
 						"ORDER BY co.InsertDate DESC";
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn=null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rs = st.executeQuery(query);
 			while(rs.next()){
@@ -1502,20 +1624,35 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getNewsCID exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getNewsCID exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getNewsCID exception " + fe.getMessage());}
 		}
 		return v;
 	}
 	
-	public static boolean isGrandParent(long pid, long child, Connection conn) throws SQLException {
+	public static boolean isGrandParent(DataSourceComponent datasourceComponent, long pid, long child) throws SQLException {
 		boolean r=false;
 		long papid=child;
 		while(papid>1 && papid!=pid) {
-			papid=DBGateway.getPapid(papid, conn);
+			papid=DBGateway.getPapid(datasourceComponent,papid);
 		}
 		if(papid==pid) r=true;
 		return r;
+	}
+	
+	public static void caricaDB(DataSourceComponent datasourceComponent) throws SQLException {
+		Connection conn=null;
+		try {
+			conn=datasourceComponent.getConnection();
+			caricaDB(conn);
+		}
+		catch(SQLException e) {
+			throw e;
+		}
+		finally {
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.caricaDB exception " + fe.getMessage());}
+		}
 	}
 
 	public static void caricaDB(Connection conn) throws SQLException {
@@ -1557,13 +1694,15 @@ ALTER TABLE tblpagine
 		}
 	}
 
-	public static Vector<Long> getChildPages(long pageId, Connection conn) throws SQLException {
+	public static Vector<Long> getChildPages(DataSourceComponent datasourceComponent, long pageId) throws SQLException {
 		Vector<Long> v = new Vector<Long>();
 		String query =	"SELECT PID FROM tblpagine where PaPID="+pageId;
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn = null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rs=st.executeQuery(query);
 			while(rs.next()){
@@ -1574,20 +1713,23 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getChildPages exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getChildPages exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getChildPages exception " + fe.getMessage());}
 		}
 		return v;
 		
 	}
 
-	public static String getLastModifiedPID(long pageId, Connection conn) throws SQLException {
+	public static String getLastModifiedPID(DataSourceComponent datasourceComponent, long pageId) throws SQLException {
 		String r = "";
 		String query =	"SELECT last PID FROM tblpagine where PaPID="+pageId;
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn = null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rs=st.executeQuery(query);
 			while(rs.next()){
@@ -1598,43 +1740,43 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getLastModifiedPID exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getLastModifiedPID exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.getLastModifiedPID exception " + fe.getMessage());}
 		}
 		return r;
 		
 	}
 
-	public static void setPagePriority(String code, String priority,Connection conn) throws SQLException {
-		executeStatement(conn, "update tblpagine set priority="+priority+" where PCode='"+code+"'");
+	public static void setPagePriority(DataSourceComponent datasourceComponent, String code, String priority) throws SQLException {
+		executeStatement(datasourceComponent, "update tblpagine set priority="+priority+" where PCode='"+code+"'");
 	}
 
-	public static void setPaPid(long pid, long papid, Connection conn) throws SQLException {
-		executeStatement(conn, "update tblpagine set PaPID="+papid+" where PID="+pid);
+	public static void setPaPid(DataSourceComponent datasourceComponent, long pid, long papid) throws SQLException {
+		executeStatement(datasourceComponent, "update tblpagine set PaPID="+papid+" where PID="+pid);
 	}
 
-	public static void clonePermission(int sourcepid, int destpid, Connection conn) throws SQLException {
+	public static void clonePermission(DataSourceComponent datasourceComponent, int sourcepid, int destpid) throws SQLException {
 		String sql="insert into tblroles (username,permissioncode,pid) " +
 				"select username,permissioncode,"+destpid+" from tblroles where pid="+sourcepid;
-		executeStatement(conn,sql);
+		executeStatement(datasourceComponent, sql);
 	}
 
-	public static long createComponent(String component,Connection conn) throws SQLException {
+	public static long createComponent(DataSourceComponent datasourceComponent, String component) throws SQLException {
 		long newComponent=-1;
-		conn.setAutoCommit(false);
-		newComponent=getNewFreeCid(conn);
+
+		newComponent=getNewFreeCid(datasourceComponent);
 		
-		conn.setAutoCommit(true);
 		return newComponent;
 	}
 
-	public static void cloneComponents(int pid, int sourcePid, String dataDirectory, String username,
-			String remoteaddr, Connection conn) throws SQLException {
+	public static void cloneComponents(DataSourceComponent datasourceComponent, int pid, int sourcePid, String dataDirectory, String username,
+			String remoteaddr) throws SQLException {
 		
-		long sourceContentCid=getContentCID(sourcePid, conn);
-		long destContentCid=getContentCID(pid, conn);
+		long sourceContentCid=getContentCID(datasourceComponent, sourcePid);
+		long destContentCid=getContentCID(datasourceComponent, pid);
 		String url=null;
-		setHasChild(destContentCid, conn);
+		setHasChild(datasourceComponent, destContentCid);
 		String componentType="section"; // esempio
 		long sourceCid=0,destCid;
 		long orderNumber=1;
@@ -1645,18 +1787,20 @@ ALTER TABLE tblpagine
 		
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn = null;
 		
 		try {
+			conn=datasourceComponent.getConnection();
 			st=conn.createStatement();
 			rs=st.executeQuery(sql);
 			while(rs.next()){
 				componentType=rs.getString("type");
 				sourceCid=rs.getLong("cid");
-				destCid = DBGateway.getNewFreeCid(conn);
-				DBGateway.saveDBComponent(destCid,componentType,0,0,new java.util.Date(), pid, url, 
-						username, remoteaddr, conn);
-				DBGateway.saveCIDrelationship(destCid, destContentCid, 2, orderNumber++, conn);
-				DBGateway.setPending(destCid, conn);
+				destCid = DBGateway.getNewFreeCid(datasourceComponent);
+				DBGateway.saveDBComponent(datasourceComponent, destCid,componentType,0,0,new java.util.Date(), pid, url, 
+						username, remoteaddr);
+				DBGateway.saveCIDrelationship(datasourceComponent, destCid, destContentCid, 2, orderNumber++);
+				DBGateway.setPending(datasourceComponent, destCid);
 				
 				File s=new File(dataDirectory+"/data/"+componentType+sourceCid+".xml");
 				File d=new File(dataDirectory+"/data/"+componentType+destCid+".xml");
@@ -1673,8 +1817,9 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.cloneComponents exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.cloneComponents exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.cloneComponents exception " + fe.getMessage());}
 		}
 	}
 
@@ -1689,8 +1834,8 @@ ALTER TABLE tblpagine
 	 * @param conn
 	 * @throws SQLException 
 	 */
-	public static synchronized void exchangeCidOrder(long cid, long pacid, String dir,
-			String username, String remoteAddr, Connection conn) throws SQLException {
+	public static synchronized void exchangeCidOrder(DataSourceComponent datasourceComponent, long cid, long pacid, String dir,
+			String username, String remoteAddr) throws SQLException {
 		int order=-1;
 		int previous=-1;
 		int next=-1;
@@ -1702,6 +1847,7 @@ ALTER TABLE tblpagine
 		
 		ResultSet rs = null;
 		Statement st = null;
+		Connection conn = null;
 		String update="update tblcontenuti set ordernumber=? where pacid="+pacid+" and ordernumber=?";
 		
 		String correctOrder="update tblcontenuti t1 " +
@@ -1710,11 +1856,14 @@ ALTER TABLE tblpagine
 				"on t1.cid = o.cid " +
 				"set t1.ordernumber = o.posizione";
 		
-		PreparedStatement pst=conn.prepareStatement(update);
+		PreparedStatement pst=null;
+		
 				
 		Vector<Component> components=new Vector<Component>();
 		
 		try {
+			conn=datasourceComponent.getConnection();
+			pst=conn.prepareStatement(update);
 			st=conn.createStatement();
 			st.execute(correctOrder);
 			rs=st.executeQuery(sql);
@@ -1753,9 +1902,10 @@ ALTER TABLE tblpagine
 			throw e;
 		}
 		finally {
-			if(rs!=null) rs.close();
-			if(st!=null) st.close();
-			if(pst!=null) pst.close();
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.exchangeCidOrder exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.exchangeCidOrder exception " + fe.getMessage());}
+			if(pst!=null) try{pst.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.exchangeCidOrder exception " + fe.getMessage());};
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - DBGateway.exchangeCidOrder exception " + fe.getMessage());}
 		}
 	}
 

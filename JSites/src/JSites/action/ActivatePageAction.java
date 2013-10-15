@@ -25,9 +25,9 @@ package JSites.action;
 *
 *******************************************************************************/
 
-import java.sql.Connection;
 import java.util.Map;
 
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.SourceResolver;
@@ -42,13 +42,18 @@ public class ActivatePageAction extends PageAction {
 		
 		super.act(redirector, resolver, objectModel, source, parameters);
 		if(parameters.getParameter("containerType").equals("content") && permission.hasPermission(Permission.VALIDABLE)){
-			
-			try{
-				if(cid!=0)DBGateway.activateComponent(cid, username, remoteAddr, conn);
-				else DBGateway.activatePage(pid, username, remoteAddr, conn);
+			DataSourceComponent datasourceComponent=null;
+			try {
+				datasourceComponent=((DataSourceComponent)dbselector.select(dbname));
+				if(cid!=0) DBGateway.activateComponent(datasourceComponent,cid, username, remoteAddr);
+				else DBGateway.activatePage(datasourceComponent,pid, username, remoteAddr);
+			} catch(Exception e) {
+				throw e;
 			}
-			catch(Exception e){e.printStackTrace();}
-			
+			finally {
+				if(datasourceComponent!=null) this.manager.release(datasourceComponent);
+			}
+
 		}
 		return objectModel;
 	}

@@ -25,8 +25,10 @@ package JSites.action;
 *
 *******************************************************************************/
 
+import java.sql.Connection;
 import java.util.Map;
 
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Redirector;
@@ -55,16 +57,21 @@ public class MoveComponentAction extends PageAction {
 			if(permission.hasPermission(Permission.VALIDABLE)) {
 				try{
 					if(cid!=0) {
+						DataSourceComponent datasourceComponent=null;
 						try {
+							datasourceComponent=((DataSourceComponent)dbselector.select(dbname));
 							if(direction!=null && direction.equals("up")) {
-								DBGateway.exchangeCidOrder(cid,pacid,"prev",username,remoteAddr,conn);
+								DBGateway.exchangeCidOrder(datasourceComponent, cid,pacid,"prev",username,remoteAddr);
 							}
 							if(direction!=null && direction.equals("down")) {
-								DBGateway.exchangeCidOrder(cid,pacid,"next",username,remoteAddr,conn);
+								DBGateway.exchangeCidOrder(datasourceComponent, cid,pacid,"next",username,remoteAddr);
 							}
 						}
 						catch(Exception e) {
 							e.printStackTrace();
+						}
+						finally {
+							if(datasourceComponent!=null) this.manager.release(datasourceComponent);
 						}
 					}
 				}catch(Exception e){e.printStackTrace();}

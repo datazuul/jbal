@@ -38,6 +38,7 @@ import org.apache.cocoon.environment.Session;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.xml.AttributesImpl;
 import org.jopac2.utils.JOpac2Exception;
+import org.jopac2.utils.Utils;
 import org.xml.sax.SAXException;
 
 import JSites.authentication.Authentication;
@@ -70,9 +71,7 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 //		contentHandler.characters("navbar".toCharArray(),0,"navbar".length());
 		contentHandler.endElement("","id","id");
 		
-		Connection conn = null;
 		try{
-			conn = this.getConnection(dbname); 
 			activePids.add(Long.valueOf(pageId));
 			
  			try{ newpage = Boolean.parseBoolean((String) request.getParameter("newpage")); }
@@ -82,9 +81,9 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 			
 			AttributesImpl hrefAttrs = new AttributesImpl();
 			if(pageId!=1){
-				String areaName = DBGateway.getAreaName(pageId, conn);
+				String areaName = DBGateway.getAreaName(datasourceComponent, pageId);
 				
-				hrefAttrs.addCDATAAttribute("href","pageview?pid="+DBGateway.getStartFromPid(pageId, conn));
+				hrefAttrs.addCDATAAttribute("href","pageview?pid="+DBGateway.getStartFromPid(datasourceComponent, pageId));
 				hrefAttrs.addCDATAAttribute("areaname",areaName);
 			}
 			contentHandler.startElement("","selectedarea","selectedarea", hrefAttrs);
@@ -98,21 +97,29 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 			if(username==null || username.length()==0 || username.equals("guest"))
 				authenticated=false;
 			
-			generateTree(1,level,authenticated,conn);
+			Connection conn=null;
+			try {
+				conn=datasourceComponent.getConnection();
+				generateTree(conn,1,level,authenticated);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+			finally {
+				if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - NavbarGenerator.generate connection exception " + fe.getMessage());}
+			}
 			
 						
 //			processTree(tree,0,conn);
 
 		}catch(Exception e) {e.printStackTrace();}
-			
-		try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
-		
+					
 		contentHandler.endElement("","navigator","navigator");
 		contentHandler.endDocument();
 	}
 	
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "deprecation" })
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par) throws ProcessingException, SAXException, IOException{
 		
 		super.setup(resolver, objectModel, src, par);
@@ -257,16 +264,16 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 	 * @throws SQLException
 	 * @throws JOpac2Exception
 	 */
-	private PageTree getPadre(PageTree me, Connection conn) throws SQLException, JOpac2Exception {
-		long padre = DBGateway.getPapid(me.getRootPid(), conn);
-		TreeSet<PageTree> fratelli = getChildren(padre, conn);
-		fratelli.remove(me);
-		fratelli.add(me);
-
-		PageTree ret = new PageTree(fratelli,false, padre, conn);
-
-		return ret;
-	}
+//	private PageTree getPadre(PageTree me, Connection conn) throws SQLException, JOpac2Exception {
+//		long padre = DBGateway.getPapid(me.getRootPid(), conn);
+//		TreeSet<PageTree> fratelli = getChildren(padre, conn);
+//		fratelli.remove(me);
+//		fratelli.add(me);
+//
+//		PageTree ret = new PageTree(fratelli,false, padre, conn);
+//
+//		return ret;
+//	}
 
 	/**
 	 * @deprecated
@@ -277,21 +284,21 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 	 * @throws SQLException
 	 * @throws JOpac2Exception
 	 */
-	private TreeSet<PageTree> fill2L(TreeSet<PageTree> areaChildrenL2, PageTree nonno, Connection conn) throws SQLException, JOpac2Exception{
-		
-		Iterator<PageTree> ai = areaChildrenL2.iterator();
-    	while(ai.hasNext()) {
-    		PageTree areaChild = ai.next();
-    		TreeSet<PageTree> areaChildChildrenL3 = getChildren(areaChild.getRootPid(), conn);
-    		if(areaChildChildrenL3.contains(nonno)){
-    			areaChildChildrenL3.remove(nonno);
-    			areaChildChildrenL3.add(nonno);
-    		}
-    		areaChild.addAndReplaceChildren(areaChildChildrenL3);
-    	}
-    	return areaChildrenL2;
-
-	}
+//	private TreeSet<PageTree> fill2L(TreeSet<PageTree> areaChildrenL2, PageTree nonno, Connection conn) throws SQLException, JOpac2Exception{
+//		
+//		Iterator<PageTree> ai = areaChildrenL2.iterator();
+//    	while(ai.hasNext()) {
+//    		PageTree areaChild = ai.next();
+//    		TreeSet<PageTree> areaChildChildrenL3 = getChildren(areaChild.getRootPid(), conn);
+//    		if(areaChildChildrenL3.contains(nonno)){
+//    			areaChildChildrenL3.remove(nonno);
+//    			areaChildChildrenL3.add(nonno);
+//    		}
+//    		areaChild.addAndReplaceChildren(areaChildChildrenL3);
+//    	}
+//    	return areaChildrenL2;
+//
+//	}
 
 
 	/**
@@ -302,48 +309,58 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 	 * @throws SQLException
 	 * @throws JOpac2Exception
 	 */
-	private TreeSet<PageTree> getChildren(long pid, Connection conn) throws SQLException, JOpac2Exception {
-		return getChildren(pid,1,conn);
-	}
+//	private TreeSet<PageTree> getChildren(long pid, Connection conn) throws SQLException, JOpac2Exception {
+//		return getChildren(pid,1,conn);
+//	}
 	
 	
-	private void generateTree(int pid, int level, boolean authenticated, Connection conn) throws SQLException, JOpac2Exception, SAXException {
-		String pageName=DBGateway.getPageName(pid, conn);
-		String pageCode=DBGateway.getPageCode(pid, conn);
+	private void generateTree(Connection conn, int pid, int level, boolean authenticated) throws SQLException, JOpac2Exception, SAXException {
+		String pageName=DBGateway.getPageName(datasourceComponent, pid);
+		String pageCode=DBGateway.getPageCode(datasourceComponent, pid);
 		
 		createNavPage(pageName,pageCode,pid,level);
 		
 		Statement st = conn.createStatement();
 		ResultSet rs = st.executeQuery("Select PID,PCode,Name,HasChild,Valid,InSidebar from tblpagine where PaPID=" +  pid + " order by priority,Name");
-		while(rs.next()){
-			int dbid = rs.getInt("PID");
+		try {
+			while(rs.next()){
+				int dbid = rs.getInt("PID");
+				
+				Permission tempperm = null;
+				if(authenticated) {
+					tempperm = Authentication.assignPermissions(datasourceComponent, session, request.getRemoteAddr(), dbid);
+					if( (rs.getBoolean("Valid") && rs.getBoolean("InSidebar")) || 
+							tempperm.hasPermission(Permission.EDITABLE) || 
+							tempperm.hasPermission(Permission.VALIDABLE)) {
+						if(rs.getBoolean("haschild")) {
+								generateTree(conn, dbid, level+1, authenticated);
+						}
+						else {
+							createNavPage(rs.getString("Name"),rs.getString("PCode"),rs.getInt("PID"),level+1);
+							contentHandler.endElement("","navpage","navpage");
+						}
+					}
+				}
+				else {
+					if(rs.getBoolean("Valid") && rs.getBoolean("InSidebar") && dbid>1) {
+						if(rs.getBoolean("haschild") && level < 10) {
+							generateTree(conn, dbid, level+1, authenticated);
+						}
+						else {
+							createNavPage(rs.getString("Name"),rs.getString("PCode"),rs.getInt("PID"),level+1);
+							contentHandler.endElement("","navpage","navpage");
+						}
+					}
+				}
+			}
+		}
+		catch(SQLException e) {
 			
-			Permission tempperm = null;
-			if(authenticated) {
-				tempperm = Authentication.assignPermissions(session, request.getRemoteAddr(), dbid, conn);
-				if( (rs.getBoolean("Valid") && rs.getBoolean("InSidebar")) || 
-						tempperm.hasPermission(Permission.EDITABLE) || 
-						tempperm.hasPermission(Permission.VALIDABLE)) {
-					if(rs.getBoolean("haschild")) {
-							generateTree(dbid, level+1, authenticated, conn);
-					}
-					else {
-						createNavPage(rs.getString("Name"),rs.getString("PCode"),rs.getInt("PID"),level+1);
-						contentHandler.endElement("","navpage","navpage");
-					}
-				}
-			}
-			else {
-				if(rs.getBoolean("Valid") && rs.getBoolean("InSidebar") && dbid>1) {
-					if(rs.getBoolean("haschild") && level < 10) {
-						generateTree(dbid, level+1, authenticated, conn);
-					}
-					else {
-						createNavPage(rs.getString("Name"),rs.getString("PCode"),rs.getInt("PID"),level+1);
-						contentHandler.endElement("","navpage","navpage");
-					}
-				}
-			}
+		}
+		finally {
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - NavbarGenerator.generateTree exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - NavbarGenerator.generateTree exception " + fe.getMessage());}
+
 		}
 		
 //		if(authenticated) {
@@ -354,8 +371,7 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 //			}
 //		}
 			
-		rs.close();
-		st.close();
+
 		
 		contentHandler.endElement("","navpage","navpage");
 	}
@@ -445,52 +461,52 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 	 * @param link
 	 * @throws SAXException
 	 */
-	private void addAddPage(String pageName, String link) throws SAXException {
-		AttributesImpl hrefAttrs = new AttributesImpl();
-		
-		hrefAttrs.addCDATAAttribute("name",pageName);
-		hrefAttrs.addCDATAAttribute("link",link);
-
-		contentHandler.startElement("","navpage","navpage", hrefAttrs);
-		contentHandler.endElement("","navpage","navpage");
-	}
+//	private void addAddPage(String pageName, String link) throws SAXException {
+//		AttributesImpl hrefAttrs = new AttributesImpl();
+//		
+//		hrefAttrs.addCDATAAttribute("name",pageName);
+//		hrefAttrs.addCDATAAttribute("link",link);
+//
+//		contentHandler.startElement("","navpage","navpage", hrefAttrs);
+//		contentHandler.endElement("","navpage","navpage");
+//	}
 
 	/**
 	 * @deprecated
 	 * long c = 0 se vogliamo nipoti, 
 	 * altrimenti: se vogliamo solo i figli, allora c = 1
 	 */
-	private TreeSet<PageTree> getChildren(long tempPid, long c, Connection conn) throws SQLException, JOpac2Exception {
-		
-		TreeSet<PageTree> v = new TreeSet<PageTree>();
-		String remoteaddr=request.getRemoteAddr();
-		Statement st = conn.createStatement();
-		ResultSet rs = st.executeQuery("Select PID,Name,HasChild,Valid,InSidebar from tblpagine where PaPID=" +  tempPid);
-		while(rs.next()){
-			long dbid = rs.getLong("PID");
-			Permission tempperm = Authentication.assignPermissions(session, remoteaddr, dbid, conn);
-			if( (rs.getBoolean("Valid") && rs.getBoolean("InSidebar")) || tempperm.hasPermission(Permission.EDITABLE) || tempperm.hasPermission(Permission.VALIDABLE)){
-				PageTree pt = null;
-				TreeSet<PageTree> v1 = null;
-				if(c==0){
-					v1 = getChildren(dbid,0, conn);
-					//v1.add(new PageTree(new Vector(),true, aggiungiPagina, tempPid));
-				}
-				else v1 = new TreeSet<PageTree>();
-				pt = new PageTree(v1,DBGateway.isLeaf(dbid, remoteaddr, session, conn), rs.getString("Name"), dbid );
-				v.add(pt);
-			}
-		}
-		Permission tempperm = Authentication.assignPermissions(session, remoteaddr, tempPid, conn);
-		if(DBGateway.getPageLevel(tempPid,0, conn)<4 && tempperm.hasPermission(Permission.EDITABLE)){
-			v.add(new PageTree(new TreeSet<PageTree>(),true, PageTree.aggiungiPagina, tempPid));
-			v.add(new PageTree(new TreeSet<PageTree>(),true, PageTree.aggiungiLink, tempPid));
-		}
-			
-		rs.close();
-		st.close();
-		return v;
-	}
+//	private TreeSet<PageTree> getChildren(long tempPid, long c, Connection conn) throws SQLException, JOpac2Exception {
+//		
+//		TreeSet<PageTree> v = new TreeSet<PageTree>();
+//		String remoteaddr=request.getRemoteAddr();
+//		Statement st = conn.createStatement();
+//		ResultSet rs = st.executeQuery("Select PID,Name,HasChild,Valid,InSidebar from tblpagine where PaPID=" +  tempPid);
+//		while(rs.next()){
+//			long dbid = rs.getLong("PID");
+//			Permission tempperm = Authentication.assignPermissions(session, remoteaddr, dbid, conn);
+//			if( (rs.getBoolean("Valid") && rs.getBoolean("InSidebar")) || tempperm.hasPermission(Permission.EDITABLE) || tempperm.hasPermission(Permission.VALIDABLE)){
+//				PageTree pt = null;
+//				TreeSet<PageTree> v1 = null;
+//				if(c==0){
+//					v1 = getChildren(dbid,0, conn);
+//					//v1.add(new PageTree(new Vector(),true, aggiungiPagina, tempPid));
+//				}
+//				else v1 = new TreeSet<PageTree>();
+//				pt = new PageTree(v1,DBGateway.isLeaf(dbid, remoteaddr, session, conn), rs.getString("Name"), dbid );
+//				v.add(pt);
+//			}
+//		}
+//		Permission tempperm = Authentication.assignPermissions(session, remoteaddr, tempPid, conn);
+//		if(DBGateway.getPageLevel(tempPid,0, conn)<4 && tempperm.hasPermission(Permission.EDITABLE)){
+//			v.add(new PageTree(new TreeSet<PageTree>(),true, PageTree.aggiungiPagina, tempPid));
+//			v.add(new PageTree(new TreeSet<PageTree>(),true, PageTree.aggiungiLink, tempPid));
+//		}
+//			
+//		rs.close();
+//		st.close();
+//		return v;
+//	}
 
 	/**
 	 * @deprecated
@@ -500,68 +516,68 @@ public class NavbarGenerator extends MyAbstractPageGenerator {
 	 * @throws SAXException
 	 * @throws SQLException
 	 */
-	private void processTree(PageTree tree, long level, Connection conn) throws SAXException, SQLException {
-		
-		String text = tree.getRootName();
-		
-		AttributesImpl attrs = new AttributesImpl();
-		
-		
-//		AttributesImpl hrefAttrs = new AttributesImpl();
+//	private void processTree(PageTree tree, long level, Connection conn) throws SAXException, SQLException {
 //		
-//		hrefAttrs.addCDATAAttribute("name",text); //pageName
-//		hrefAttrs.addCDATAAttribute("code",pageCode);
-//		hrefAttrs.addCDATAAttribute("pid",Integer.toString(pid));
-//		hrefAttrs.addCDATAAttribute("level",Integer.toString(level));
-//		hrefAttrs.addCDATAAttribute("link",pageCode);
-//		if(pid==pageId) {
-//			hrefAttrs.addCDATAAttribute("selected","true");
+//		String text = tree.getRootName();
+//		
+//		AttributesImpl attrs = new AttributesImpl();
+//		
+//		
+////		AttributesImpl hrefAttrs = new AttributesImpl();
+////		
+////		hrefAttrs.addCDATAAttribute("name",text); //pageName
+////		hrefAttrs.addCDATAAttribute("code",pageCode);
+////		hrefAttrs.addCDATAAttribute("pid",Integer.toString(pid));
+////		hrefAttrs.addCDATAAttribute("level",Integer.toString(level));
+////		hrefAttrs.addCDATAAttribute("link",pageCode);
+////		if(pid==pageId) {
+////			hrefAttrs.addCDATAAttribute("selected","true");
+////		}
+//
+//		
+//		
+//		attrs.addCDATAAttribute("text",text);
+//		
+//		boolean haschild = false;
+//		
+//		haschild = !(tree.isLeaf());
+//		
+//		if(tree.getRootName().equals(PageTree.aggiungiPagina)){
+//			attrs.addCDATAAttribute("link","pagecreate?papid="+tree.getRootPid()+"&pid=0&type=section");
+//			if(tree.getRootPid() == pageId && newpage) attrs.addCDATAAttribute("active","true");
 //		}
-
-		
-		
-		attrs.addCDATAAttribute("text",text);
-		
-		boolean haschild = false;
-		
-		haschild = !(tree.isLeaf());
-		
-		if(tree.getRootName().equals(PageTree.aggiungiPagina)){
-			attrs.addCDATAAttribute("link","pagecreate?papid="+tree.getRootPid()+"&pid=0&type=section");
-			if(tree.getRootPid() == pageId && newpage) attrs.addCDATAAttribute("active","true");
-		}
-		else if(tree.getRootName().equals(PageTree.aggiungiLink)){
-			attrs.addCDATAAttribute("link","pagecreate?papid="+tree.getRootPid()+"&pid=0&type=externalLink");
-			if(tree.getRootPid() == pageId && newpage) attrs.addCDATAAttribute("active","true");
-		}
-		else{
-			if(haschild && level > 1){
-				if(tree.getChilds().isEmpty() || (!toggle && tree.getRootPid() == pageId)){
-					attrs.addCDATAAttribute("img2","closed");
-				}
-				else
-					attrs.addCDATAAttribute("img2","opened");
-			}
-			
-			String link = "pageview?pid="+tree.getRootPid();
-			if(toggle && pageId == tree.getRootPid())link = link + "&amp;toggle=false";
-			
-			attrs.addCDATAAttribute("link",link);
-			if(activePids.contains(Long.valueOf(tree.getRootPid()))){
-				attrs.addCDATAAttribute("active","true");
-			}
-		}
-		if(level>0)
-			contentHandler.startElement("","navpage","navpage", attrs);
-		
-		Iterator<PageTree> iter = tree.getChilds().iterator();
-		long childLevel = level + 1;
-		while(iter.hasNext()){
-			PageTree pt = (PageTree)iter.next();
-			processTree(pt,childLevel, conn);
-		}	
-		if(level>0)
-			contentHandler.endElement("","navpage","navpage");
-	}
+//		else if(tree.getRootName().equals(PageTree.aggiungiLink)){
+//			attrs.addCDATAAttribute("link","pagecreate?papid="+tree.getRootPid()+"&pid=0&type=externalLink");
+//			if(tree.getRootPid() == pageId && newpage) attrs.addCDATAAttribute("active","true");
+//		}
+//		else{
+//			if(haschild && level > 1){
+//				if(tree.getChilds().isEmpty() || (!toggle && tree.getRootPid() == pageId)){
+//					attrs.addCDATAAttribute("img2","closed");
+//				}
+//				else
+//					attrs.addCDATAAttribute("img2","opened");
+//			}
+//			
+//			String link = "pageview?pid="+tree.getRootPid();
+//			if(toggle && pageId == tree.getRootPid())link = link + "&amp;toggle=false";
+//			
+//			attrs.addCDATAAttribute("link",link);
+//			if(activePids.contains(Long.valueOf(tree.getRootPid()))){
+//				attrs.addCDATAAttribute("active","true");
+//			}
+//		}
+//		if(level>0)
+//			contentHandler.startElement("","navpage","navpage", attrs);
+//		
+//		Iterator<PageTree> iter = tree.getChilds().iterator();
+//		long childLevel = level + 1;
+//		while(iter.hasNext()){
+//			PageTree pt = (PageTree)iter.next();
+//			processTree(pt,childLevel, conn);
+//		}	
+//		if(level>0)
+//			contentHandler.endElement("","navpage","navpage");
+//	}
 
 }

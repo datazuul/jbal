@@ -57,7 +57,7 @@ public class PageCreator extends MyAbstractPageGenerator {
 				attrCid.addCDATAAttribute("sfa",String.valueOf(permission.hasPermission(Permission.SFA)));
 				hasChildren = false;
 			}
-			attrCid = doColor(id, attrCid, conn);
+			attrCid = doColor(id, attrCid);
 			contentHandler.startElement("",componentType,componentType,attrCid);
 			
 			if(hasChildren){
@@ -65,7 +65,7 @@ public class PageCreator extends MyAbstractPageGenerator {
 		    	ResultSet rs = st.executeQuery("select CID from tblcontenuti where PaCID=" + id +"  order by OrderNumber"); // ho tolto and IDStato=3
 				while(rs.next()){
 					long childId = rs.getLong(1);
-					processChild(childId, conn);
+					processChild(childId);
 				}
 				rs.close();
 				st.close();
@@ -77,7 +77,7 @@ public class PageCreator extends MyAbstractPageGenerator {
 			contentHandler.endElement("",componentType,componentType);
 		}
 		else
-			super.subClassProcess(componentType, id, attrCid, hasChildren, conn);
+			super.subClassProcess(componentType, id, attrCid, hasChildren);
 	}
 	
 	private void newComponent(String newComponentType) throws SAXException, SQLException{

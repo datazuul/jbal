@@ -47,7 +47,7 @@ import junit.framework.TestCase;
  *
  */
 public class TemplatorTest extends TestCase {
-	
+	private boolean escape=false;
 	private String xml1="<record nature=\"a\">\n"+
 				"<jid>6142</jid>\n"+
 				"<db>treviso</db>\n"+
@@ -151,7 +151,7 @@ public class TemplatorTest extends TestCase {
 		String in="{{/record/item:<a href='[[primo]]'>[[secondo]]</a>}}";
 		String out="<a href='a'>1</a><a href='b'>2</a><a href='c'>3</a>";
 		Document doc=XMLUtil.String2XML(indoc);
-		String ret=Templator.parseContext(doc, in);
+		String ret=Templator.parseContext(doc, in,escape);
 		System.out.println(ret);
 		assertTrue("OK",ret.equals(out));
 	}
@@ -161,7 +161,7 @@ public class TemplatorTest extends TestCase {
 		String in="{{^Limit(/record/ISBD|30| <a href=\"/dettaglio/?query=JID=[[/record/jid]]\">Continua</a>):[[.]]}}";
 		String out="Il *pensiero americano <a href=\"/dettaglio/?query=JID=6142\">Continua</a>";
 		Document doc=XMLUtil.String2XML(xml1);
-		String ret=Templator.parseContext(doc, in);
+		String ret=Templator.parseContext(doc, in,escape);
 
 		System.out.println(ret);
 		assertTrue("OK",ret.equals(out));
@@ -171,7 +171,7 @@ public class TemplatorTest extends TestCase {
 		String in="{{^Limit(Nella vecchia fattoria, ia ia oooooo, c'è la mucca di zio tobia, ia ia oooo|30| <a href=\"\">Continua</a>):[[.]]}}";
 		String out="Nella vecchia fattoria, ia ia <a href=\"\">Continua</a>";
 		Document doc=XMLUtil.String2XML(xml1);
-		String ret=Templator.parseContext(doc, in);
+		String ret=Templator.parseContext(doc, in,escape);
 
 		System.out.println(ret);
 		assertTrue("OK",ret.equals(out));
@@ -181,7 +181,7 @@ public class TemplatorTest extends TestCase {
 		String in="{{^Group(,|item|/record/primo|/record/secondo):<a href='[[primo]]'>[[secondo]]</a>}}";
 		String out="<a href='a'>1</a><a href='b'>2</a><a href='c'>3</a>";
 		Document doc=XMLUtil.String2XML(xml2);
-		String ret=Templator.parseContext(doc, in);
+		String ret=Templator.parseContext(doc, in,escape);
 
 		System.out.println(ret);
 		assertTrue("OK",ret.equals(out));
@@ -192,7 +192,7 @@ public class TemplatorTest extends TestCase {
 		String out="<a href='a'>a</a><a href='b'>b</a><a href='c'>c</a>";
 
 		Document doc=XMLUtil.String2XML(xml2);
-		String ret=Templator.parseContext(doc, in);
+		String ret=Templator.parseContext(doc, in,escape);
 
 		System.out.println(ret);
 		assertTrue("OK",ret.equals(out));
@@ -203,7 +203,7 @@ public class TemplatorTest extends TestCase {
 		String out="<p><b><a href='RA4353750'>Filosofia, epistemologia, logica / saggi di Barone ... [et al.]. - Milano : Edizioni di Comunita , 1958. - XI, 340 p. ; 25 cm</a></b>" +
 				"<b><a href='RA4353751'>Scienze sociali / saggi di Barbano ... [et al.]. - Milano : Edizioni di Comunita , 1958. - XI, 390 p. ; 25 cm</a></b></p>";
 		Document doc=XMLUtil.String2XML(xml1);
-		String ret=Templator.parseContext(doc, "{{/:"+in+"}}");
+		String ret=Templator.parseContext(doc, "{{/:"+in+"}}",escape);
 		
 		System.out.println(ret);
 		assertTrue("OK",ret.equals(out));
@@ -213,7 +213,7 @@ public class TemplatorTest extends TestCase {
 		String in="<p>{{/record/haspart:<b>ciao</b>}}</p>"; // se c'e' haspart, per ogni haspart fa quello indicato
 		String out="<p><b>ciao</b></p>";
 		Document doc=XMLUtil.String2XML(xml1);
-		String ret=Templator.parseContext(doc, "{{/:"+in+"}}");
+		String ret=Templator.parseContext(doc, "{{/:"+in+"}}",escape);
 		
 		System.out.println(ret);
 		assertTrue("OK",ret.equals(out));
@@ -223,7 +223,7 @@ public class TemplatorTest extends TestCase {
 		String in="<p>{{/record/haspart:<b>ciao{{/:<i>[[record/ISBD]]</i>}}</b>}}</p>"; 
 		String out="<p><b>ciao<i>Il *pensiero americano contemporaneo / direzione dell'opera Ferruccio Rossi-Landi. - Milano : Edizioni di Comunita. - 2 v. ; 25 cm. - In testa al front.: Centro di studi metodologici di Torino</i></b></p>";
 		Document doc=XMLUtil.String2XML(xml1);
-		String ret=Templator.parseContext(doc, "{{/:"+in+"}}");
+		String ret=Templator.parseContext(doc, "{{/:"+in+"}}",escape);
 		
 		System.out.println(ret);
 		assertTrue("OK",ret.equals(out));
@@ -233,7 +233,7 @@ public class TemplatorTest extends TestCase {
 		String in="<p>{{//bid:<b>[[.]]</b>}}</p>"; 
 		String out="<p><b>RA4353750</b><b>RA4353751</b><b>RA4388959</b></p>";
 		Document doc=XMLUtil.String2XML(xml1);
-		String ret=Templator.parseContext(doc, "{{/:"+in+"}}");
+		String ret=Templator.parseContext(doc, "{{/:"+in+"}}",escape);
 		
 		System.out.println(ret);
 		assertTrue("OK",ret.equals(out));
@@ -243,7 +243,7 @@ public class TemplatorTest extends TestCase {
 		String in="<p>{{/:<b>[[//bid]]</b>}}</p>"; 
 		String out="<p><b>RA4353750RA4353751RA4388959</b></p>";
 		Document doc=XMLUtil.String2XML(xml1);
-		String ret=Templator.parseContext(doc, "{{/:"+in+"}}");
+		String ret=Templator.parseContext(doc, "{{/:"+in+"}}",escape);
 		
 		System.out.println(ret);
 		assertTrue("OK",ret.equals(out));
@@ -253,7 +253,7 @@ public class TemplatorTest extends TestCase {
 		String in="[[*RAW*]]"; 
 		String out="<pre><?xml version=\"1.0\" encoding=\"UTF-8\"?><record>	<primo>a, b, c</primo>	<secondo>1, 2, 3</secondo></record></pre>";
 		Document doc=XMLUtil.String2XML(xml2);
-		String ret=Templator.parseContext(doc, "{{/:"+in+"}}");
+		String ret=Templator.parseContext(doc, "{{/:"+in+"}}",escape);
 		ret=ret.replaceAll("&lt;", "<").replaceAll("&gt;", ">");
 		System.out.println(ret);
 		assertTrue("OK",ret.equals(out));

@@ -26,7 +26,7 @@ package JSites.transformation;
 *******************************************************************************/
 
 import java.io.IOException;
-import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Map;
 
 import org.apache.avalon.framework.parameters.Parameters;
@@ -43,25 +43,23 @@ public class ActiveTab extends MyAbstractPageTransformer {
 
 	private long activePid;
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
 		super.setup(arg0, arg1, arg2, arg3);
 
 		activePid = Long.parseLong(request.getParameter("pid"));
 
-		Connection conn = null;
-		try{
-			conn = getConnection(dbname);
-			long pLevel = DBGateway.getPageLevel(activePid,0,conn);
+		try {
+			long pLevel = DBGateway.getPageLevel(datasourceComponent,activePid,0);
 			
 			while(pLevel>1){
-				activePid = DBGateway.getPapid(activePid,conn);	
-				pLevel = DBGateway.getPageLevel(activePid,0,conn);
+				activePid = DBGateway.getPapid(datasourceComponent,activePid);	
+				pLevel = DBGateway.getPageLevel(datasourceComponent,activePid,0);
 			}
-		}catch(Exception e) {e.printStackTrace();}
-		
-		try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
-
+		}
+		catch(SQLException e) {
+			throw new ProcessingException(e.getMessage());
+		}
 	}
 	
 	public void startElement(String namespaceURI, String localName, String qName, Attributes attributes) throws SAXException

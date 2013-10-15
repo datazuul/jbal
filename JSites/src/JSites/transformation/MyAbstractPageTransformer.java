@@ -41,6 +41,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.activity.Disposable;
+import org.apache.avalon.framework.component.Component;
 import org.apache.avalon.framework.component.ComponentException;
 import org.apache.avalon.framework.component.ComponentManager;
 import org.apache.avalon.framework.component.ComponentSelector;
@@ -64,10 +65,12 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
 	
 	public ComponentSelector dbselector;
 	public ComponentManager manager;
+	
 //	public SessionManager sessionManager;
 	protected Request request;
 	protected Session session;
 	protected String dbname = null;
+	protected DataSourceComponent datasourceComponent = null;
 	protected AttributesImpl emptyAttrs = new AttributesImpl();
 	protected boolean debug=false;
 	protected Permission permission=null;
@@ -88,13 +91,37 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
 			System.out.println("Request was: " + request.getQueryString());
 		}
 		permission=(Permission)session.getAttribute("permission");
-		pagedata=(Hashtable)session.getAttribute("lastdata");
+		pagedata=(Hashtable<String,String>)session.getAttribute("lastdata");
 		sitemapParameters=arg3;
+		try {
+			datasourceComponent=((DataSourceComponent)dbselector.select(dbname));
+		} catch (ComponentException e) {
+			e.printStackTrace();
+		}
 	}
+	
+   public void recycle() {
+	   try {
+	  		this.manager.release(datasourceComponent);
+	  	}
+	  	catch(Exception e) {}
+	   
+	    super.recycle();
+	    request=null;
+	  	session=null;;
+	  	dbname = null;
+	  	
+	  	datasourceComponent = null;
+	  	emptyAttrs = new AttributesImpl();
+	  	debug=false;
+	  	permission=null;
+	  	pagedata=null;
+	  	sitemapParameters=null;
+   }
 	
 	public void compose(ComponentManager manager) throws ComponentException {
 		this.manager = manager;
-        dbselector = (ComponentSelector) manager.lookup(DataSourceComponent.ROLE + "Selector");
+        dbselector = (ComponentSelector) manager.lookup(DataSourceComponent.ROLE + "Selector");		
 //        sessionManager = (SessionManager) manager.lookup(SessionManager.ROLE);
     }
 	
@@ -102,11 +129,11 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
 		this.manager.release(dbselector);
 	}
     
-    public Connection getConnection(String db) throws ComponentException, SQLException {
-    	return ((DataSourceComponent)dbselector.select(db)).getConnection();
-    }
+//    public Connection getConnection(String db) throws ComponentException, SQLException {
+//    	return ((DataSourceComponent)dbselector.select(db)).getConnection();
+//    }
     
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void printRequestData(Map arg1, Parameters arg3) {
 		 
 		 String name = "";
@@ -125,7 +152,7 @@ public abstract class MyAbstractPageTransformer extends AbstractTransformer impl
 		 System.out.println("REQUEST QUERY = " + request.getQueryString());
 		 
 		 System.out.println("Request parameters:");
-		 @SuppressWarnings("unchecked")
+	
 		Enumeration<String> e = (Enumeration<String>)request.getParameterNames();
 		 while(e.hasMoreElements()){
 			 name = (String)e.nextElement();

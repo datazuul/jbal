@@ -44,35 +44,30 @@ public class BricioleGenerator extends MyAbstractPageGenerator {
 	public void generate() throws SAXException {
 		
 		contentHandler.startDocument();
-
-		Connection conn = null;
 		try{
-			conn = this.getConnection(dbname);
-			String nome = DBGateway.getPageName(this.pageId, conn);
-			long papid = DBGateway.getPapid(pageId, conn);
-			int pageLevel = DBGateway.getPageLevel(pageId, 0, conn)+1;
+			String nome = DBGateway.getPageName(datasourceComponent,this.pageId);
+			long papid = DBGateway.getPapid(datasourceComponent,pageId);
+			int pageLevel = DBGateway.getPageLevel(datasourceComponent,pageId, 0)+1;
 			if( pageLevel >= startLevel){
 				contentHandler.startElement("","briciole","briciole", emptyAttrs);
 				if (papid >= startLevel) 
 //					nome = DBGateway.getPageName(papid, conn);
-					nome = getParent(papid, conn) + " > " + nome;
+					nome = getParent(papid) + " > " + nome;
 				contentHandler.characters(nome.toCharArray(), 0, nome.length());
 				contentHandler.endElement("","briciole","briciole");
 			}
 		} catch(Exception e) {e.printStackTrace();}
-		
-		try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
-		
+				
 		contentHandler.endDocument();
 		
 	}
 
-	private String getParent(long pid, Connection conn) throws SQLException {
+	private String getParent(long pid) throws SQLException {
 		
-		String ret = "<a href=\"pageview?pid="+pid+"\">"+DBGateway.getPageName(pid, conn)+"</a>";
-		long papid = DBGateway.getPapid(pid, conn);
+		String ret = "<a href=\"pageview?pid="+pid+"\">"+DBGateway.getPageName(datasourceComponent,pid)+"</a>";
+		long papid = DBGateway.getPapid(datasourceComponent,pid);
 		if(papid >= startLevel){
-			ret = getParent(papid, conn)  + " > " + ret;
+			ret = getParent(papid)  + " > " + ret;
 		}
 		
 		return ret;

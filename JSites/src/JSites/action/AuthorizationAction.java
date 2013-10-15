@@ -28,6 +28,7 @@ package JSites.action;
 import java.sql.Connection;
 import java.util.Map;
 
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.component.ComponentException;
 import org.apache.avalon.framework.component.ComponentManager;
 import org.apache.avalon.framework.parameters.Parameters;
@@ -50,13 +51,13 @@ public class AuthorizationAction extends PageAction  {
 		super.act(redirector, resolver, objectModel, source, parameters);
 		if(dbname==null)
 			return objectModel;
-				
-		try{
+		DataSourceComponent datasourceComponent=null;
+		try {
+			datasourceComponent=((DataSourceComponent)dbselector.select(dbname));
 			long pageId;
 			String pcode = request.getParameter("pcode");
-			
 			if(pcode != null) {
-				pid = DBGateway.getPidFrom(pcode, conn);
+				pid = DBGateway.getPidFrom(datasourceComponent,pcode);
 			}
 			
 			if(pid == -1){
@@ -69,12 +70,15 @@ public class AuthorizationAction extends PageAction  {
 			
 			String permissionCode = "";
 			
-			Permission permission = Authentication.assignPermissions(session, request.getRemoteAddr(), pageId, conn);
+			Permission permission = Authentication.assignPermissions(datasourceComponent,session, request.getRemoteAddr(), pageId);
 			
 			permissionCode = String.valueOf((int)permission.getPermissionCode());
 			
 			objectModel.put("permissionCode", permissionCode);
 		} catch(Exception e) {}
+		finally {
+			if(datasourceComponent!=null) this.manager.release(datasourceComponent);
+		}
 		
 		
 		return objectModel;

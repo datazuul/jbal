@@ -156,7 +156,8 @@ public class WikiTransformer3 extends MyAbstractPageTransformer{
 				isHtml=true;
 				try {
 					doFinalHtml(s.toString());
-				} catch (IOException e1) {
+				} catch (Exception e1) {
+					System.out.println(s.toString());
 					e1.printStackTrace();
 				}
 				isHtml=false;

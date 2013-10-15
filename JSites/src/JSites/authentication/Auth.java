@@ -37,7 +37,7 @@ public class Auth {
     
     public NamingEnumeration SearchADS(String userID) throws Exception {
         NamingEnumeration n=null;
-        n=ctx.search("","(sAMAccountName="+userID+")", ctls);
+        n=ctx.search("","(&(objectClass=user)(sAMAccountName="+userID+"))", ctls);
         return n;
     }
     
@@ -124,7 +124,6 @@ public class Auth {
 	    } catch (NamingException e) {
 		e.printStackTrace();
 	    }
-
 	}
 }
 

@@ -25,8 +25,10 @@ package JSites.action;
 *
 *******************************************************************************/
 
+import java.sql.Connection;
 import java.util.Map;
 
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Redirector;
@@ -52,9 +54,14 @@ public class DeleteComponentAction extends PageAction {
 			String remoteAddr=request.getRemoteAddr();
 			
 			if(permission.hasPermission(Permission.VALIDABLE)) {
-				try{
-					if(cid!=0)DBGateway.deleteComponent(cid, username, remoteAddr, conn);
+				DataSourceComponent datasourceComponent=null;
+				try {
+					datasourceComponent=((DataSourceComponent)dbselector.select(dbname));
+					if(cid!=0)DBGateway.deleteComponent(datasourceComponent, cid, username, remoteAddr);
 				}catch(Exception e){e.printStackTrace();}
+				finally {
+					if(datasourceComponent!=null) this.manager.release(datasourceComponent);
+				}
 			}
 			
 		}

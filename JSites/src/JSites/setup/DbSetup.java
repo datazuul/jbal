@@ -35,7 +35,6 @@ public abstract class DbSetup {
 	public static DbSetup getInstance(String name) {
 		DbSetup dbs=null;
 		if(name.contains("mysql")) return new DbSetupMysql();
-		if(name.contains("derby")) return new DbSetupDerby();
 		return dbs;
 	}
 	
@@ -100,12 +99,12 @@ public abstract class DbSetup {
 		"(5,'tabs',NULL,0,0)," +
 		"(6,'lingue',NULL,0,0)," +
 		"(7,'strumenti',NULL,0,0)," +
-		"(8,'ricerca',NULL,0,0)," +
+		"(8,'',NULL,0,0)," +
 		"(9,'section',NULL,0,0)," +
 		"(10,'footerContent',NULL,0,0)," +
 		"(11,'navbar',NULL,1,0)," +
-		"(12,'sidebar',NULL,0,0)"; //," +
-//		"(13,'briciole',NULL,0,0)";
+		"(12,'sidebar',NULL,0,0), " +
+		"(13,'briciole',NULL,0,0)";
 		Statement st=conn.createStatement();
 		st.execute(sql);
 		st.close();
@@ -123,7 +122,8 @@ public abstract class DbSetup {
 				"(2,12,3,1)," +
 				"(3,9,4,6)," +
 				"(4,10,3,1)," +
-				"(11,12,3,1)";
+				"(11,12,3,1)," +
+				"(1,13,3,5)";
 		Statement st=conn.createStatement();
 		st.execute(sql);
 		st.close();

@@ -25,9 +25,11 @@ package JSites.action;
 *
 *******************************************************************************/
 
+import java.sql.Connection;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.SourceResolver;
@@ -41,30 +43,32 @@ public class CreatePageAction extends PageAction {
 	public Map act(Redirector redirector, SourceResolver resolver, Map objectModel, String source, Parameters parameters) throws Exception {
 		
 		super.act(redirector, resolver, objectModel, source, parameters);
-			
 		if(permission.hasPermission(Permission.VALIDABLE)) {
 			String pcode="";
-			try{
+			DataSourceComponent datasourceComponent=null;
+			try {
+				datasourceComponent=((DataSourceComponent)dbselector.select(dbname));
 				String title=request.getParameter("title");
 				if(pid!=-1 && title!=null && title.trim().length()>0) {
-					int newpid = DBGateway.getNewPageId(conn);
-					DBGateway.createPage(title, newpid, (int)pid, conn);
+					int newpid = DBGateway.getNewPageId(datasourceComponent);
+					DBGateway.createPage(datasourceComponent, title, newpid, (int)pid);
 					
-					long newContentCid = DBGateway.getNewFreeCid(conn);
-					DBGateway.saveDBComponent(newContentCid,"content",1,0,new Date(), newpid, "", 
-							username, remoteAddr, conn);
-					DBGateway.linkPageContainers(newContentCid, newpid, conn);
+					long newContentCid = DBGateway.getNewFreeCid(datasourceComponent);
+					DBGateway.saveDBComponent(datasourceComponent, newContentCid,"content",1,0,new Date(), newpid, "", 
+							username, remoteAddr);
+					DBGateway.linkPageContainers(datasourceComponent, newContentCid, newpid);
 					
-					DBGateway.clonePermission((int)pid,newpid,conn);
+					DBGateway.clonePermission(datasourceComponent, (int)pid,newpid);
 					
-					pcode=DBGateway.getPageCode(newpid, conn);
+					pcode=DBGateway.getPageCode(datasourceComponent, newpid);
 					pid=newpid;
 				}
 				else {
-					pcode=DBGateway.getPageCode(pid, conn);
+					pcode=DBGateway.getPageCode(datasourceComponent, pid);
 				}
 			}catch(Exception e){e.printStackTrace();}
 			finally {
+				if(datasourceComponent!=null) this.manager.release(datasourceComponent);
 				request.setAttribute("pagecode", pcode);
 				request.setAttribute("pid", pid);
 			}

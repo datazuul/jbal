@@ -7,12 +7,14 @@ import java.io.UnsupportedEncodingException;
 import org.w3c.dom.Document;
 import org.w3c.tidy.Tidy;
 
+import JSites.utils.JTidy;
+
 public class Limit implements TextFunction {
 
-	public String parse(Document doc, String in, String... args) throws Exception {
+	public String parse(Document doc, String in, boolean escape, String... args) throws Exception {
 			String temp="";
 			try {
-				temp=Templator.parseContext(doc, "{{"+args[0]+":"+in+"}}");
+				temp=Templator.parseContext(doc, "{{"+args[0]+":"+in+"}}",escape);
 			}
 			catch(Exception e) {
 				temp=args[0];
@@ -29,36 +31,16 @@ public class Limit implements TextFunction {
 				int u=temp.lastIndexOf(" ",limit);
 				temp=temp.substring(0,u);
 				if(args.length>2) {
-					String t2=Templator.parseContext(doc, "{{/:"+args[2]+"}}");
+					String t2=Templator.parseContext(doc, "{{/:"+args[2]+"}}",escape);
 					temp=temp+t2;
 				}
 			}
 			
-			
-			return jtidy(temp);
+			String r=JTidy.jtidy(temp).replaceAll("\\p{C}", " ");
+
+			return r;
 	}
 
-	private String jtidy(String temp) {
-		String r="";
-		Tidy tidy = new Tidy(); // obtain a new Tidy instance
-		tidy.setXHTML(false);
-		tidy.setPrintBodyOnly(true);
-		tidy.setQuiet(true);
-		tidy.setShowWarnings(false);
-		tidy.setQuoteMarks(true);
-		tidy.setOutputEncoding("utf-8");
-		tidy.setInputEncoding("utf-8");
-		tidy.setXmlOut(true); // set desired config options using tidy setters 
-		                          // (equivalent to command line options)
-		tidy.setXmlPi(false);
-		ByteArrayOutputStream baos=new ByteArrayOutputStream();
-		try {
-			tidy.parse(new ByteArrayInputStream(temp.getBytes("utf-8")), baos);
-			r=baos.toString("utf-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} // run tidy, providing an input and output stream
-		return r;
-	}
+
 	
 }

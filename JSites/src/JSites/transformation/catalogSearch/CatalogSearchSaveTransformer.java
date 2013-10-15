@@ -41,6 +41,7 @@ import org.jopac2.engine.EngineFactory;
 import org.jopac2.jbal.RecordFactory;
 import org.jopac2.jbal.RecordInterface;
 import org.jopac2.jbal.xml.Mdb;
+import org.jopac2.utils.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.apache.cocoon.xml.AttributesImpl;
@@ -56,13 +57,29 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 	Hashtable<String,Channel> mergeChannel=null;
 	Hashtable<String,El> fields=null;
 	
-	StringBuffer sb = new StringBuffer();
-	StringBuffer order=new StringBuffer();
+	StringBuffer sb = null;
+	StringBuffer order=null;
 	
 	@Override
 	public void setup(SourceResolver arg0, Map arg1, String arg2, Parameters arg3) throws ProcessingException, SAXException, IOException {
 		super.setup(arg0, arg1, arg2, arg3);
+		sb = new StringBuffer();
+		order=new StringBuffer();
 	}
+
+
+	
+	@Override
+	public void recycle() {
+		super.recycle();
+		sb=null;
+		order=null;
+		searchChannel=null;
+		listChannel=null;
+		mergeChannel=null;
+		fields=null;
+	}
+
 
 
 	@Override
@@ -110,19 +127,21 @@ public class CatalogSearchSaveTransformer extends MyAbstractPageTransformer {
 			String catalog=request.getParameter("catalogConnection");
 			
 			if(catalogFormat.equalsIgnoreCase("mdb")) {
-				Connection conn;
+				Connection conn=null;
 				try {
-					conn = getConnection(dbname);
+					conn = datasourceComponent.getConnection();
 					Engine engine=EngineFactory.getEngine(conn, catalog, "db");
 					chr=engine.getChannels("mdb");
-					conn.close();
 				} catch (Exception e) {
 					e.printStackTrace();
-				} 
+				}
+				finally {
+					if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - CatalogSearchSaveTransformer.endElement exception " + fe.getMessage());}
+				}
 			}
 			else {
 				try {
-					RecordInterface ma=RecordFactory.buildRecord(0, null, catalogFormat, 0);
+					RecordInterface ma=RecordFactory.buildRecord("0", null, catalogFormat, 0);
 					chr=ma.getChannels();
 				} catch (Exception e) {
 					e.printStackTrace();

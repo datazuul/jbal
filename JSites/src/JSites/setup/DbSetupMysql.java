@@ -79,10 +79,19 @@ public class DbSetupMysql extends DbSetup {
 		String sql="CREATE TABLE tblnews (CID integer, startdate varchar(8) NOT NULL," +
 				"enddate varchar(8) NOT NULL," +
 				"list tinyint(1), " +
+				"eventstarttime VARCHAR(12), " +
+				"eventendtime VARCHAR(12), " +
 				"PRIMARY KEY (CID)," +
 				"KEY Index_2 (startdate), " +
 				"KEY Index_3 (enddate), " +
+				"KEY evstarttime (eventstarttime), " +
+				"KEY evendtime (eventendtime), " +
 				"KEY Index_4 (list) ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
+		
+//		ALTER TABLE tblnews ADD COLUMN eventstarttime VARCHAR(12) NULL  , 
+//		ADD COLUMN eventendtime VARCHAR(12) NULL  , 
+//		ADD INDEX evstarttime (eventstarttime ASC) , 
+//		ADD INDEX evendtime (eventendtime ASC) ;
 		
 		try {
 			st.execute(sql);

@@ -67,7 +67,8 @@ public abstract class AbstractTextSerializer extends AbstractSerializer
      * Cache for avoiding unnecessary checks of namespaces abilities.
      * It associates a Boolean to the transformer class name.
      */
-    private static final Map needsNamespaceCache = new HashMap();
+    @SuppressWarnings("rawtypes")
+	private static final Map needsNamespaceCache = new HashMap();
 
     /**
      * The trax <code>TransformerFactory</code> used by this serializer.
@@ -313,7 +314,8 @@ public abstract class AbstractTextSerializer extends AbstractSerializer
      * with namespaces defined only with calls to <code>startPrefixMapping</code> (no
      * xmlns:xxx attributes) and check if they are present in the resulting text.
      */
-    protected boolean needsNamespacesAsAttributes() throws Exception {
+    @SuppressWarnings("unchecked")
+	protected boolean needsNamespacesAsAttributes() throws Exception {
 
         SAXTransformerFactory factory = getTransformerFactory();
 
@@ -368,19 +370,23 @@ public abstract class AbstractTextSerializer extends AbstractSerializer
         /**
          * The prefixes of startPrefixMapping() declarations for the coming element.
          */
-        private List prefixList = new ArrayList();
+        @SuppressWarnings("rawtypes")
+		private List prefixList = new ArrayList();
 
         /**
          * The URIs of startPrefixMapping() declarations for the coming element.
          */
-        private List uriList = new ArrayList();
+        @SuppressWarnings("rawtypes")
+		private List uriList = new ArrayList();
 
         /**
          * Maps of URI<->prefix mappings. Used to work around a bug in the Xalan
          * serializer.
          */
-        private Map uriToPrefixMap = new HashMap();
-        private Map prefixToUriMap = new HashMap();
+        @SuppressWarnings("rawtypes")
+		private Map uriToPrefixMap = new HashMap();
+        @SuppressWarnings("rawtypes")
+		private Map prefixToUriMap = new HashMap();
 
         /**
          * True if there has been some startPrefixMapping() for the coming element.
@@ -399,7 +405,8 @@ public abstract class AbstractTextSerializer extends AbstractSerializer
          * Track mappings to be able to add <code>xmlns:</code> attributes
          * in <code>startElement()</code>.
          */
-        public void startPrefixMapping(String prefix, String uri) throws SAXException {
+        @SuppressWarnings("unchecked")
+		public void startPrefixMapping(String prefix, String uri) throws SAXException {
             // Store the mappings to reconstitute xmlns:attributes
             // except prefixes starting with "xml": these are reserved
             // VG: (uri != null) fixes NPE in startElement

@@ -28,6 +28,8 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
+
 public class PageTree implements Comparable<PageTree>{
 	
 	private String rootName;
@@ -65,10 +67,10 @@ public class PageTree implements Comparable<PageTree>{
 			this.childs = childs;
 	}
 	
-	public PageTree(TreeSet<PageTree> childs, boolean leaf, long pid, Connection conn) {
+	public PageTree(DataSourceComponent datasourceComponent, TreeSet<PageTree> childs, boolean leaf, long pid) {
 		isLeaf = leaf;
 		try {
-			rootName = DBGateway.getPageName(pid, conn);
+			rootName = DBGateway.getPageName(datasourceComponent, pid);
 		} catch (SQLException e) {
 			rootName ="Could not get page name from DB";
 		}

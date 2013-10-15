@@ -25,8 +25,10 @@ package JSites.action;
 *
 *******************************************************************************/
 
+import java.sql.Connection;
 import java.util.Map;
 
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.SourceResolver;
@@ -40,15 +42,19 @@ public class PageViewSidebarAction extends PageAction {
 	public Map act(Redirector redirector, SourceResolver resolver, Map objectModel, String source, Parameters parameters) throws Exception {
 		
 		super.act(redirector, resolver, objectModel, source, parameters);
-		
 		if(parameters.getParameter("containerType").equals("content")){
 			
 			boolean viewsidebar = Boolean.parseBoolean(request.getParameter("viewsidebar"));
 			
 			if(permission.hasPermission(Permission.VALIDABLE)) {
-				try{
-					DBGateway.setPageViewSidebar(conn, pid, viewsidebar);
+				DataSourceComponent datasourceComponent=null;
+				try {
+					datasourceComponent=((DataSourceComponent)dbselector.select(dbname));
+					DBGateway.setPageViewSidebar(datasourceComponent, pid, viewsidebar);
 				}catch(Exception e){e.printStackTrace();}
+				finally {
+					if(datasourceComponent!=null) this.manager.release(datasourceComponent);
+				}
 			}
 		}
 		return objectModel;

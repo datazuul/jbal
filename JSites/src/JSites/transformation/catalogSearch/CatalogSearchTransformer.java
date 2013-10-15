@@ -27,8 +27,6 @@ package JSites.transformation.catalogSearch;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -42,19 +40,18 @@ import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.caching.CacheableProcessingComponent;
 import org.apache.cocoon.environment.SourceResolver;
-
+import org.apache.cocoon.xml.AttributesImpl;
+import org.apache.cocoon.xml.dom.DOMStreamer;
+import org.apache.excalibur.source.SourceValidity;
 import org.jopac2.engine.Engine;
 import org.jopac2.engine.EngineFactory;
 import org.jopac2.engine.ItemCardinality;
 import org.jopac2.engine.utils.SearchResultSet;
-
 import org.jopac2.jbal.RecordInterface;
+import org.jopac2.utils.Utils;
 import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.apache.cocoon.xml.AttributesImpl;
-import org.apache.cocoon.xml.dom.DOMStreamer;
-import org.apache.excalibur.source.SourceValidity;
 
 import JSites.transformation.MyAbstractPageTransformer;
 import JSites.utils.Util;
@@ -63,6 +60,7 @@ import JSites.utils.Util;
 public class CatalogSearchTransformer extends MyAbstractPageTransformer implements CacheableProcessingComponent{
 	
 	private String catalogConnection = null, dbType=null, defaultQuery=null, catalogOrder=null, direction=null;
+//	private String engineType="db";
 	private String rxp=null,merge="";
 	private StringBuffer sb = null;
 //	private String dbUrl=null;
@@ -70,8 +68,8 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 	private boolean desc=false; //, isMerge=false;
 	private DOMStreamer streamer;
 //	private String[] toMerge=null;
-    private Record2document r2d=null;
-    private MergeRecords mr=null;
+//    private Record2document r2d=null;
+//    private MergeRecords mr=null;
     private Document prevDoc=null;
 	
     private boolean readCatalogConnection = false, readDbType = false, isRxp = false, 
@@ -89,8 +87,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 //		toMerge=null;
     	streamer = new DOMStreamer(this.xmlConsumer);
     	prevDoc=null;
-    	r2d=new Record2document();
-    	mr=new MergeRecords();
+
     	catalogConnection = null;
     	dbType=null; 
     	defaultQuery=null; 
@@ -179,7 +176,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 			isRxp = false;
 			rxp = sb.toString().trim();
 			sb.delete(0, sb.length());
-			String t=Util.getRequestData(request, "rxp");
+			String t=(String)session.getAttribute("rxp"); //Util.getRequestData(request, "rxp");
 			if(t!=null && t.trim().length()>0) rxp=t;
 		}
 		else if(loc.equals("direction")) {
@@ -206,7 +203,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 	}
 
 	private void throwResults() throws ComponentException, SQLException, SAXException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-		Connection conn=null;
+		
 		
 		String attr_query=getQuery();
 		String attr_order=Util.getRequestData(request, "orderby");
@@ -234,7 +231,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 			}
 		}
 		
-		conn = getConnection(dbname);
+		
 
 		SearchResultSet result=null;
 		
@@ -242,6 +239,12 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 			String t=Util.getRequestData(request, "catalog");
 			if(t!=null && t.length()>0) catalogConnection=t;
 		}
+		
+		String engineType="db";
+		if(catalogConnection.startsWith("http")) engineType="solr";
+			
+		String enType=Util.getRequestData(request, "engine");
+		if(enType!=null && !enType.isEmpty()) engineType=enType;
 		
 		try {
         	rxpn=Integer.parseInt(rxp);
@@ -269,8 +272,11 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 		
 		if(orderBy==null || orderBy.length()==0) orderBy=catalogOrder;
 
+		Connection conn = null;
 		try {
-			Engine engine = EngineFactory.getEngine(conn,catalogConnection,"db");
+			
+			if(engineType.equals(EngineFactory.ENGINE_DB)) conn=datasourceComponent.getConnection(); // se è solr non serve una connessione al db
+			Engine engine = EngineFactory.getEngine(conn,catalogConnection,engineType);
 			
 			if(checkListParameter("list")) {
 				String[] list=getListParameter("list");
@@ -286,7 +292,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 					}
 					throwField("listRecord", list[0]);
 					
-					throwResults(conn, catalogQuery, toMerge, result); 
+					throwResults(engineType, catalogQuery, toMerge, result); 
 				}
 			}
 			else if(checkListParameter("nlist")) {
@@ -306,7 +312,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 					
 					throwField("listRecord", list[0]);
 					
-					throwResults(conn, catalogQuery, toMerge, result); // sempre true, perche' e' il metodo di lista diverso
+					throwResults(engineType, catalogQuery, toMerge, result); // sempre true, perche' e' il metodo di lista diverso
 				}
 			}
 			else if(catalogQuery!=null && catalogQuery.length()>0) {
@@ -315,9 +321,9 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 					int e = catalogQuery.indexOf("&");
 					if(e<0)e=catalogQuery.length();
 					
-					long id = Long.parseLong( catalogQuery.substring(4, e) );
+					String id = catalogQuery.substring(4, e);
 					result = new SearchResultSet();
-					Vector<Long> recordIDs = new Vector<Long>();
+					Vector<String> recordIDs = new Vector<String>();
 					recordIDs.add(id);
 					result.setRecordIDs(recordIDs);
 				}
@@ -327,7 +333,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 					
 					String bid = catalogQuery.substring(4, e);
 					result = new SearchResultSet();
-					Vector<Long> recordIDs = engine.getJIDbyBID(conn, catalogConnection, bid);
+					Vector<String> recordIDs = engine.getJIDbyBID(conn, catalogConnection, bid);
 					result.setRecordIDs(recordIDs);
 				}
 				else {
@@ -362,14 +368,23 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 					
 	
 				}
-				throwResults(conn, catalogQuery, toMerge, result);
+//				if(engineType.equals(EngineFactory.ENGINE_DB) && (conn==null||conn.isClosed())) {
+//					System.out.println(Utils.currentDate()+" - CatalogSearchTransformer.throwResults:");
+//					System.out.println("dbname: "+dbname);
+//					System.out.println("catalog: "+catalogConnection);
+//					if(conn==null) System.out.println("Connection is null!");
+//					else System.out.println("Connection is closed!");
+//					conn=datasourceComponent.getConnection();
+//				}
+				throwResults(engineType, catalogQuery, toMerge, result);
 			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-
-		conn.close();
+		finally {
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - CatalogSearchTransformer.throwResults() exception " + fe.getMessage());}
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -452,9 +467,11 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 	}
 
 
-	private void throwResults(Connection conn, String catalogQuery, String[] toMerge,
+	private void throwResults(String engineType, String catalogQuery, String[] toMerge,
 			SearchResultSet result) throws SAXException {
 		int page = 0;
+    	Record2document r2d=new Record2document();
+    	MergeRecords mr=new MergeRecords();
 		String display = JSites.utils.Util.getRequestData(request, "display");
 		String sPage = Util.getRequestData(request, "page");
 		if (sPage != null) {
@@ -473,7 +490,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 		throwQueryData(catalogQuery, result, useStemmer);
 		throwSearchData(result);
 
-		Vector<Long> v = result.getRecordIDs();
+		Vector<String> v = result.getRecordIDs();
 		if (desc)
 			Collections.reverse(v);
 
@@ -491,21 +508,21 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 			int i=start;
 			end=start;
 			int _rxpn=rxpn;
-//			Connection myConnection=null;
+			Connection conn=null;
 
 			
 			try {
-//				myConnection = getConnection(dbname);
-				Engine engine=EngineFactory.getEngine(conn, catalogConnection, "db");
+				if(engineType.equals(EngineFactory.ENGINE_DB)) conn=datasourceComponent.getConnection();
+				Engine engine=EngineFactory.getEngine(conn, catalogConnection, engineType);
 				
 				while (_rxpn>0 && end<nrec) {
-					Long t = v.get(i++);
+					String t = v.get(i++);
 
 //					RecordInterface ma = DbGateway.getNotiziaByJID(
 //							myConnection, catalogConnection, t.toString());
 					
 					
-					RecordInterface ma = engine.getNotiziaByJID(t.toString());
+					RecordInterface ma = engine.getNotiziaByJID(t);
 					
 //					myConnection.close();
 					
@@ -550,12 +567,7 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 				e2.printStackTrace();
 			}
 			finally {
-//				if(myConnection!=null) {
-//					try {
-//						myConnection.close();
-//					} catch (SQLException e) {
-//					}
-//				}
+				if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - CatalogSearchTransformer.throwResults(...) exception " + fe.getMessage());}
 			}
 			
 			if(prevDoc!=null) {
@@ -571,8 +583,8 @@ public class CatalogSearchTransformer extends MyAbstractPageTransformer implemen
 		
 		contentHandler.endElement("", "resultSet", "resultSet");
 		if(v!=null && v.size()>0) {
-			throwField("sjid", Long.toString(v.get(start)));
-			throwField("ejid", Long.toString(v.get(end<nrec?end:nrec-1)));
+			throwField("sjid", v.get(start<nrec?start:nrec-1));
+			throwField("ejid", v.get(end<nrec?end:nrec-1));
 		}
 	}
 	

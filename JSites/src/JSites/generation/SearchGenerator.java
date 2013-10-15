@@ -43,11 +43,7 @@ import org.jopac2.jbal.iso2709.Eutmarc;
 import org.xml.sax.SAXException;
 
 public class SearchGenerator extends MyAbstractPageGenerator {
-	
-	private String catalogQuery = "";
-	private Engine engine = null;
-	private Connection conn;
-	private String catalog;
+
 	
 	@Override
 	@SuppressWarnings("rawtypes")
@@ -56,9 +52,9 @@ public class SearchGenerator extends MyAbstractPageGenerator {
 		super.setup(resolver, objectModel, src, par);
 		
 		try {
-			catalog = par.getParameter("catalog");
-			conn = this.getConnection(dbname);
-			engine = EngineFactory.getEngine(conn, src, "db");
+//			catalog = par.getParameter("catalog");
+//			conn = this.getConnection(dbname);
+//			engine = EngineFactory.getEngine(conn, src, "db");
 		} catch (Exception e) { }
 		
 	}
@@ -72,57 +68,57 @@ public class SearchGenerator extends MyAbstractPageGenerator {
 
 		contentHandler.startElement("", "record", "record", emptyAttrs);
 		
-		Long t = Long.parseLong(request.getParameter("JID"));
+		String t = request.getParameter("JID");
 		
 		
 		RecordInterface ri;
 		try {
-			ri = engine.getNotiziaByJID(t);
-			String ts = String.valueOf(t);
-			throwField("ID", ts);
-			
-			String title = ri.getTitle();
-			throwField("title", title);
-			
-			if(ri instanceof Eutmarc){
-				Eutmarc rieut = ((Eutmarc)ri);
-				throwField("prezzo", rieut.getAvailabilityAndOrPrice());
-				try {
-				if(rieut.getImage() != null)
-					throwField("image", "images/pubimages/eut"+t+".jpg");
-				else
-					throwField("image", "images/pubimages/NS.jpg");
-				}
-				catch(Exception e) {};
-				
-			}
-			
-
-			contentHandler.startElement("", "authors", "authors", emptyAttrs);
-			Vector<String> auths = ri.getAuthors();
-			Iterator<String> autiter = auths.iterator();
-			while(autiter.hasNext()){
-				String author = autiter.next();
-				author = author.replaceAll(" ,", ",");
-				throwField("author", author);
-			}
-			contentHandler.endElement("", "authors", "authors");
-
-			
-			String bid = ri.getBid();
-			throwField("bid", bid);
-			
-			String pubdate = ri.getPublicationDate();
-			throwField("pubdate", pubdate);
-			
-			String pubplace = ri.getPublicationPlace();
-			throwField("pubplace", pubplace);
-			
-			String abs = ri.getAbstract();
-			throwField("abstract", abs);
-			
-			String isbn = ri.getStandardNumber();
-			throwField("isbn", isbn);
+//			ri = engine.getNotiziaByJID(t);
+//			String ts = String.valueOf(t);
+//			throwField("ID", ts);
+//			
+//			String title = ri.getTitle();
+//			throwField("title", title);
+//			
+//			if(ri instanceof Eutmarc){
+//				Eutmarc rieut = ((Eutmarc)ri);
+//				throwField("prezzo", rieut.getAvailabilityAndOrPrice());
+//				try {
+//				if(rieut.getImage() != null)
+//					throwField("image", "images/pubimages/eut"+t+".jpg");
+//				else
+//					throwField("image", "images/pubimages/NS.jpg");
+//				}
+//				catch(Exception e) {};
+//				
+//			}
+//			
+//
+//			contentHandler.startElement("", "authors", "authors", emptyAttrs);
+//			Vector<String> auths = ri.getAuthors();
+//			Iterator<String> autiter = auths.iterator();
+//			while(autiter.hasNext()){
+//				String author = autiter.next();
+//				author = author.replaceAll(" ,", ",");
+//				throwField("author", author);
+//			}
+//			contentHandler.endElement("", "authors", "authors");
+//
+//			
+//			String bid = ri.getBid();
+//			throwField("bid", bid);
+//			
+//			String pubdate = ri.getPublicationDate();
+//			throwField("pubdate", pubdate);
+//			
+//			String pubplace = ri.getPublicationPlace();
+//			throwField("pubplace", pubplace);
+//			
+//			String abs = ri.getAbstract();
+//			throwField("abstract", abs);
+//			
+//			String isbn = ri.getStandardNumber();
+//			throwField("isbn", isbn);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}

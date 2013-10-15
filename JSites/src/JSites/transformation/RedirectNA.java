@@ -58,7 +58,6 @@ public class RedirectNA extends MyAbstractPageTransformer {
 		 String q = request.getRequestURI();
 		 if(q.contains("view"))
 			 isView = true;
-		 Connection conn=null;
 		 try{
 			 long pageId=1;
 			 String pCode = request.getParameter("pcode");
@@ -73,22 +72,20 @@ public class RedirectNA extends MyAbstractPageTransformer {
 			 else if(request.getParameter("papid")!=null && (permission.hasPermission(Permission.ACCESSIBLE)||permission.hasPermission(Permission.EDITABLE))){
 				 redirect = false;
 			 }
-			 
-			 conn = this.getConnection(dbname);
-			
+			 			
 			 try {
 				if (pCode != null)
-					pageId = DBGateway.getPidFrom(pCode, conn);
+					pageId = DBGateway.getPidFrom(datasourceComponent, pCode);
 					if(pageId == -1) pageId=1;
 
 //				Session session = this.sessionManager.getSession(true);
-				permission = Authentication.assignPermissions(session, request.getRemoteAddr(), pageId, conn);
+				permission = Authentication.assignPermissions(datasourceComponent, session, request.getRemoteAddr(), pageId);
 //				try {
 //					permission = Authentication.assignPermissions(session, pageId, conn);
 //				} catch (JOpac2Exception e) {
 //					e.printStackTrace();
 //				}
-				String readRedir = DBGateway.getRedirectURL(pageId, conn);
+				String readRedir = DBGateway.getRedirectURL(datasourceComponent, pageId);
 				if (readRedir != null && isView
 						&& permission.hasPermission(Permission.ACCESSIBLE)) {
 					redirURL = readRedir;
@@ -97,30 +94,30 @@ public class RedirectNA extends MyAbstractPageTransformer {
 					if (permission.hasPermission(Permission.EDITABLE)
 							|| permission.hasPermission(Permission.VALIDABLE)) {
 					} else {
-						conn.close();
 						return;
 					}
 				}
 			} catch (SQLException e) {
-				if (conn != null && !e.getMessage().contains("User/Username exception")) {
-					try {
-						DBGateway.caricaDB(conn);
-					}
-					catch(Exception ee) {
-						ee.printStackTrace();
-					}
-					finally {
-						conn.close();
-					}
-				}
 				e.printStackTrace();
-			}
-
-			try {
-				if (conn != null)
-					conn.close();
-			} catch (SQLException e) {
-				System.out.println("Non ho potuto chiudere la connessione");
+//				if (conn != null && !e.getMessage().contains("User/Username exception")) {
+//					try {
+//						DBGateway.caricaDB(conn);
+//					}
+//					catch(Exception ee) {
+//						ee.printStackTrace();
+//					}
+//					finally {
+//						conn.close();
+//					}
+//				}
+//				e.printStackTrace();
+//			}
+//
+//			try {
+//				if (conn != null)
+//					conn.close();
+//			} catch (SQLException e) {
+//				System.out.println("Non ho potuto chiudere la connessione");
 			}	 
 			 
 		 }

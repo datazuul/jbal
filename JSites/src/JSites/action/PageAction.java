@@ -43,9 +43,9 @@ import org.apache.cocoon.environment.SourceResolver;
 import JSites.authentication.Authentication;
 import JSites.authentication.Permission;
 
-public abstract class PageAction implements Action, Composable, Disposable{
+public abstract class PageAction implements Action, Composable, Disposable {
 	
-	private ComponentSelector dbselector;
+	protected ComponentSelector dbselector;
 	protected String dbname;
 	protected Request request;
 	protected Session session;
@@ -59,11 +59,12 @@ public abstract class PageAction implements Action, Composable, Disposable{
 	protected String cidString=null;
 	protected String pacidString=null;
 	protected Permission permission=null;
-	protected Connection conn=null;
 	protected String dataDirectory=null;
 	
 	@SuppressWarnings("rawtypes")
 	public Map act(Redirector redirector, SourceResolver resolver, Map objectModel, String source, Parameters parameters) throws Exception {
+		Connection conn=null;
+
 		request = (Request)(objectModel.get("request"));
 		session = request.getSession(true);
 		dbname = request.getParameter("db");
@@ -92,9 +93,16 @@ public abstract class PageAction implements Action, Composable, Disposable{
 			System.out.println("No datadir param in request and no datadir param sitemap");
 		}
 		
-		conn=getConnection(dbname);
-		permission = Authentication.assignPermissions(session, request.getRemoteAddr(), pid, conn);
-		conn.close();
+		DataSourceComponent datasourceComponent=null;
+		try {
+			datasourceComponent=((DataSourceComponent)dbselector.select(dbname));
+			permission = Authentication.assignPermissions(datasourceComponent,session, request.getRemoteAddr(), pid);
+		} catch(Exception e) {
+			throw e;
+		}
+		finally {
+			if(datasourceComponent!=null) this.manager.release(datasourceComponent);
+		}
 		return objectModel;
 	}
 	
@@ -105,13 +113,9 @@ public abstract class PageAction implements Action, Composable, Disposable{
 	
 	public void dispose() {
 		try {
-			if(conn!=null) conn.close();
+//			if(conn!=null) conn.close();
 		}
 		catch(Exception e) {}
 		this.manager.release(dbselector);
 	}
-	
-	private Connection getConnection(String db) throws ComponentException, SQLException {
-    	return ((DataSourceComponent)dbselector.select(db)).getConnection();
-    }
 }

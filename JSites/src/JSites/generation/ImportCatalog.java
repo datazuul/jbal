@@ -31,6 +31,7 @@ package JSites.generation;
  */
 
 import java.io.*;
+import java.nio.charset.Charset;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -47,6 +48,7 @@ import org.apache.avalon.framework.component.ComponentException;
 import org.apache.cocoon.servlet.multipart.Part;
 import org.jopac2.engine.Engine;
 import org.jopac2.engine.EngineFactory;
+import org.jopac2.utils.Utils;
 
 import JSites.setup.Setup;
 
@@ -82,7 +84,7 @@ public class ImportCatalog extends MyAbstractPageGenerator {
         }
         else if(part!=null && pid!=null && cid!=null && catalog!=null && format!=null && dbtype!=null) {
         	
-	        
+	        Connection tc=null;
 	        try {
 	        	contentHandler.startElement("","loading","loading",new AttributesImpl());
 		        InputStream in = null;
@@ -121,7 +123,6 @@ public class ImportCatalog extends MyAbstractPageGenerator {
 		        contentHandler.endElement("","load","load");
 
 		        
-				String JOpac2confdir=getResource("/")+"WEB-INF/conf/engine/";
 				
 				boolean background=true;
 
@@ -138,13 +139,11 @@ public class ImportCatalog extends MyAbstractPageGenerator {
 				}
 				
 				
-				Connection tc=this.getConnection(dbname);
+				tc=datasourceComponent.getConnection();
 				String sourcePath=this.getResource(".");
-				String dbUser=Setup.rilevaParametroDb(sourcePath, dbname, "user");
-				String dbPassword=Setup.rilevaParametroDb(sourcePath, dbname, "password");
 				
 				Engine engine=EngineFactory.getEngine(tc, catalog, "db");
-				engine.importRecords(in,format,background,console,console);
+				engine.importRecords(in, Charset.forName("utf-8"),format,background,console,console);
 				
 				
 				
@@ -159,6 +158,11 @@ public class ImportCatalog extends MyAbstractPageGenerator {
 					e1.printStackTrace();
 				}
 			}
+	        finally {
+				if(tc!=null) try{tc.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - ImportCatalog.generate connection exception " + fe.getMessage());}
+
+	        }
+	        
 			try {
 				contentHandler.endElement("","loading","loading");
 			} catch (SAXException e) {

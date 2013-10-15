@@ -25,8 +25,10 @@ package JSites.action;
 *
 *******************************************************************************/
 
+import java.sql.Connection;
 import java.util.Map;
 
+import org.apache.avalon.excalibur.datasource.DataSourceComponent;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.SourceResolver;
@@ -42,13 +44,16 @@ public class ErasePageAction extends PageAction {
 		super.act(redirector, resolver, objectModel, source, parameters);
 		String pcode="";
 		if(permission.hasPermission(Permission.VALIDABLE)) {
-			try{
-				long papid=DBGateway.getPapid(pid, conn);
-				pcode=DBGateway.getPageCode(pid, conn);
-				DBGateway.erasePage(pid, username, remoteAddr, conn);
-				pcode=DBGateway.getPageCode(papid, conn);
+			DataSourceComponent datasourceComponent=null;
+			try {
+				datasourceComponent=((DataSourceComponent)dbselector.select(dbname));
+				long papid=DBGateway.getPapid(datasourceComponent, pid);
+				pcode=DBGateway.getPageCode(datasourceComponent, pid);
+				DBGateway.erasePage(datasourceComponent, pid, username, remoteAddr);
+				pcode=DBGateway.getPageCode(datasourceComponent, papid);
 			}catch(Exception e){e.printStackTrace();}
 			finally {
+				if(datasourceComponent!=null) this.manager.release(datasourceComponent);
 				request.setAttribute("pagecode", pcode);
 			}
 		}

@@ -52,19 +52,17 @@ public class NewsListGenerator extends MyAbstractPageGenerator {
 		
 		String reqDate=JSites.utils.DateUtil.getDateString();
 			
-		Connection conn = null;
 		try{
-			conn = this.getConnection(dbname);
 			String channel=request.getParameter("channel");
 			if(channel!=null) {
-				this.pageId=DBGateway.getPidFrom(channel, conn);
+				this.pageId=DBGateway.getPidFrom(datasourceComponent, channel);
 			}
-			Vector<NewsItem> news = DBGateway.getNewsCID(conn, reqDate);
+			Vector<NewsItem> news = DBGateway.getNewsCID(datasourceComponent, reqDate);
 			Iterator<NewsItem> i = news.iterator();
 			NewsItem t = null;
 			while(i.hasNext()) {
 				t = i.next();
-				if(DBGateway.isGrandParent(this.pageId, t.getPid(), conn)) {
+				if(DBGateway.isGrandParent(datasourceComponent, this.pageId, t.getPid())) {
 					AttributesImpl a=new AttributesImpl();
 					a.addCDATAAttribute("pid", Long.toString(t.getPid()));
 					a.addCDATAAttribute("cid", Long.toString(t.getCid()));
@@ -86,9 +84,7 @@ public class NewsListGenerator extends MyAbstractPageGenerator {
 				}
 			}
 		}catch(Exception e) {e.printStackTrace();}
-		
-		try{ if(conn!=null)conn.close(); } catch(Exception e){System.out.println("Non ho potuto chiudere la connessione");}
-		
+				
 		
 		contentHandler.endElement("","newslist","newslist");
 		

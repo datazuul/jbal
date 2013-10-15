@@ -42,18 +42,18 @@ import org.xml.sax.SAXException;
 
 public class AuthGenerator extends MyAbstractPageGenerator {
 	
-	private String username;
-	private String password;
-	private String displayName="",mail="";
+
+//	private String displayName="",mail="";
 	private String connectString="", realm="";
 
 	public void generate() throws SAXException {
-		username = request.getParameter("name");
-		password = request.getParameter("password");
+		String username = request.getParameter("name");
+		String password = request.getParameter("password");
 		
 		contentHandler.startDocument();
 		contentHandler.startElement("","authentication","authentication", this.emptyAttrs);
 		
+//		String[] data=test(username, password);
 		if(username.equals("guest") || test(username, password)){
 			contentHandler.startElement("","ID","ID", this.emptyAttrs);
 			contentHandler.characters(username.toCharArray(), 0, username.length());
@@ -65,17 +65,17 @@ public class AuthGenerator extends MyAbstractPageGenerator {
 			
 			contentHandler.startElement("","data","data", this.emptyAttrs);
 			
-			contentHandler.startElement("","displayName","displayName", this.emptyAttrs);
-			contentHandler.characters(displayName.toCharArray(), 0, displayName.length());
-			contentHandler.endElement("","displayName","displayName");
+//			contentHandler.startElement("","displayName","displayName", this.emptyAttrs);
+//			contentHandler.characters(data[0].toCharArray(), 0, data[0].length());
+//			contentHandler.endElement("","displayName","displayName");
 			
 			contentHandler.startElement("","username","username", this.emptyAttrs);
 			contentHandler.characters(username.toCharArray(), 0, username.length());
 			contentHandler.endElement("","username","username");
 			
-			contentHandler.startElement("","mail","mail", this.emptyAttrs);
-			contentHandler.characters(mail.toCharArray(), 0, mail.length());
-			contentHandler.endElement("","mail","mail");
+//			contentHandler.startElement("","mail","mail", this.emptyAttrs);
+//			contentHandler.characters(data[1].toCharArray(), 0, data[1].length());
+//			contentHandler.endElement("","mail","mail");
 			
 			contentHandler.endElement("","data","data");
 		}
@@ -89,37 +89,39 @@ public class AuthGenerator extends MyAbstractPageGenerator {
 
 	private boolean test(String u, String p) {
 		
-		boolean ret = false;
-		
+		boolean result = false;
+		Auth ads=null;
         try {
-            Auth ads=new Auth(realm+"\\"+u, p, connectString);
+            ads=new Auth(realm+"\\"+u, p, connectString);
             ads.Logon();
             
-            @SuppressWarnings("rawtypes")
-			NamingEnumeration n=ads.Search("(sAMAccountName="+u+")");
-            SearchResult sr = null;
-            int count=0;
-            
-            while(n.hasMoreElements()) {
-                count++;
-                sr = (SearchResult)n.nextElement();
-                //ads.listAttributes(sr,System.out);
-                displayName = ads.getAttribute(sr,"displayName");
-                mail = ads.getAttribute(sr,"mail");
-
-                //System.out.println(ads.getAttribute(sr,"cn")+" "+ads.getAttribute(sr,"mail"));
-            }
-            
-            ads.close();
-            ret=true;
-            
+//            @SuppressWarnings("rawtypes")
+//			NamingEnumeration n=ads.Search("(sAMAccountName="+u+")");
+//            SearchResult sr = null;
+//            
+//            while(n.hasMoreElements()) {
+//                sr = (SearchResult)n.nextElement();
+//                //ads.listAttributes(sr,System.out);
+//                result[0] = ads.getAttribute(sr,"displayName");
+//                result[1] = ads.getAttribute(sr,"mail");
+//
+//                //System.out.println(ads.getAttribute(sr,"cn")+" "+ads.getAttribute(sr,"mail"));
+//            }
+            result=true;
+                 
         }
         catch (Exception e) {
             System.out.println(u + " ha sbagliato password!");
         }
+        finally {
+        	try {
+				ads.close();
+			} catch (Exception e) {
+//				e.printStackTrace();
+			}
+        }
         
-        return ret;
-
+        return result;
     }
 	
 	

@@ -38,75 +38,95 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.apache.cocoon.xml.AttributesImpl;
+import org.jopac2.utils.Utils;
 import org.xml.sax.SAXException;
 
 import JSites.authentication.Permission;
 import JSites.utils.DBGateway;
 
-
+/**
+ * @deprecated
+ * @author romano
+ *
+ */
 public class PageOrderer extends MyAbstractPageGenerator{
 	
 	private long orderedPacid = 0; //inteso come id del contenitore
 	//private String childType = ""; //tipo del componente corrente
 	
-	public void orderChild(long id, Connection conn) throws SQLException, SAXException{
+	public void orderChild(long id) throws SQLException, SAXException{
 
-		Statement st = conn.createStatement();
-		ResultSet rs = st.executeQuery("select * from tblcomponenti where CID='"+id+"'");
-		if(!rs.next()){
-			rs.close();
-			st.close();
-			return;
-		}
-		String componentType = rs.getString("Type");
-		String attributes = rs.getString("Attributes");
-		boolean hasChildren = rs.getBoolean("HasChildren");
-		rs.close();
-		st.close();
+		Connection conn=null;
+		Statement st = null;
+		ResultSet rs = null;
 		
-		AttributesImpl attrCid = new AttributesImpl();
-		attrCid.addCDATAAttribute("cid",String.valueOf(id));
-		attrCid.addCDATAAttribute("type",componentType);
-		if(componentType.equals("content")){
-			attrCid.addCDATAAttribute("accessible",String.valueOf(permission.hasPermission(Permission.ACCESSIBLE)));
-			attrCid.addCDATAAttribute("editable",String.valueOf(permission.hasPermission(Permission.EDITABLE)));
-			attrCid.addCDATAAttribute("validable",String.valueOf(permission.hasPermission(Permission.VALIDABLE)));
-			attrCid.addCDATAAttribute("sfa",String.valueOf(permission.hasPermission(Permission.SFA)));
+		try {
+			st = conn.createStatement();
+			rs = st.executeQuery("select * from tblcomponenti where CID='"+id+"'");
+			if(!rs.next()){
+				rs.close();
+				st.close();
+				return;
+			}
+			String componentType = rs.getString("Type");
+			String attributes = rs.getString("Attributes");
+			boolean hasChildren = rs.getBoolean("HasChildren");
+			
+			AttributesImpl attrCid = new AttributesImpl();
+			attrCid.addCDATAAttribute("cid",String.valueOf(id));
+			attrCid.addCDATAAttribute("type",componentType);
+			if(componentType.equals("content")){
+				attrCid.addCDATAAttribute("accessible",String.valueOf(permission.hasPermission(Permission.ACCESSIBLE)));
+				attrCid.addCDATAAttribute("editable",String.valueOf(permission.hasPermission(Permission.EDITABLE)));
+				attrCid.addCDATAAttribute("validable",String.valueOf(permission.hasPermission(Permission.VALIDABLE)));
+				attrCid.addCDATAAttribute("sfa",String.valueOf(permission.hasPermission(Permission.SFA)));
+			}
+			if(attributes!=null){
+				attrCid.addCDATAAttribute("data",attributes);
+			}
+			
+			subClassProcess("ordering", id, attrCid, hasChildren);
+			
 		}
-		if(attributes!=null){
-			attrCid.addCDATAAttribute("data",attributes);
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - PageOrderer.orderChild resultset exception " + fe.getMessage());}
+			if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - PageOrderer.orderChild statement exception " + fe.getMessage());}
+			if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - PageOrderer.orderChild connection exception " + fe.getMessage());}
 		}
 		
-		subClassProcess("ordering", id, attrCid, hasChildren, conn);
+
 
 	}
 
-	protected void init(Connection conn){
-		super.init(conn);
+	protected void init(){
+		super.init();
 		try{
 //			String temp = request.getParameter("pacid");
 //			orderedPacid = Long.parseLong(temp);
 			
 			String temp = request.getParameter("pid");
-			orderedPacid = DBGateway.getContentCID(Long.parseLong(temp), conn);
+			orderedPacid = DBGateway.getContentCID(datasourceComponent,Long.parseLong(temp));
 			
 			
 		}
 		catch(Exception e){
-			System.out.println("The QueryString was: " + request.getQueryString());
+//			System.out.println("The QueryString was: " + request.getQueryString());
 			System.out.println("Class: "+this.getClass().getCanonicalName());
 			e.printStackTrace();
 		}
 	}
 
-	protected void subClassProcess(String componentType, long id, AttributesImpl attrCid, boolean hasChildren, Connection conn) throws SAXException, SQLException {
+	protected void subClassProcess(String componentType, long id, AttributesImpl attrCid, boolean hasChildren) throws SAXException, SQLException {
 		
 		boolean ordering = false;
 		if(id==orderedPacid){
 			ordering = true;
 			componentType = componentType+"2Order";
 		}
-		attrCid = doColor(id, attrCid, conn);
+		attrCid = doColor(id, attrCid);
 		if(componentType.equals("content")){
 			attrCid.addCDATAAttribute("accessible",String.valueOf(permission.hasPermission(Permission.ACCESSIBLE)));
 			attrCid.addCDATAAttribute("editable",String.valueOf(permission.hasPermission(Permission.EDITABLE)));
@@ -115,19 +135,32 @@ public class PageOrderer extends MyAbstractPageGenerator{
 		contentHandler.startElement("",componentType,componentType,attrCid);
 
 		if(hasChildren){
-			PreparedStatement st = conn.prepareStatement("select CID from tblcontenuti where StateID=3 and PaCID=? order by OrderNumber");
-			st.setLong(1, id);
-			ResultSet rs = st.executeQuery(); // ho tolto and IDStato=3
-			while(rs.next()){
-				long childId = rs.getLong(1);
-		
-				if(ordering)
-					orderChild(childId, conn);
-				else
-					processChild(childId, conn);
+			Connection conn=null;
+			PreparedStatement st=null;
+			ResultSet rs=null;
+			
+			try {
+				conn=datasourceComponent.getConnection();
+				st = conn.prepareStatement("select CID from tblcontenuti where StateID=3 and PaCID=? order by OrderNumber");
+				st.setLong(1, id);
+				rs = st.executeQuery(); // ho tolto and IDStato=3
+				while(rs.next()){
+					long childId = rs.getLong(1);
+			
+					if(ordering)
+						orderChild(childId);
+					else
+						processChild(childId);
+				}
 			}
-			rs.close();
-			st.close();
+			catch(SQLException e) {
+				
+			}
+			finally {
+				if(rs!=null) try{rs.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - PageOrderer.subClassProcess resultset exception " + fe.getMessage());}
+				if(st!=null) try{st.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - PageOrderer.subClassProcess statement exception " + fe.getMessage());}
+				if(conn!=null) try{conn.close();} catch(Exception fe) {System.out.println(Utils.currentDate()+" - PageOrderer.subClassProcess connection exception " + fe.getMessage());}
+			}
 		}
 
 		contentHandler.endElement("",componentType,componentType);

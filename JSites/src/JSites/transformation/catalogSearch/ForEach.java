@@ -22,7 +22,7 @@ public class ForEach implements TextFunction {
 	 * @return
 	 * @throws Exception
 	 */
-	public String parse(Document doc, String in, String... args) throws Exception {
+	public String parse(Document doc, String in, boolean escape, String... args) throws Exception {
 			String r="";
 			
 			Object result=null;
@@ -40,7 +40,7 @@ public class ForEach implements TextFunction {
 
 		    for (int j = 1; j <= nodes.getLength(); j++) {
 //		    	Node parent=nodes.item(j).getParentNode(); // questo e' lo specifico item
-		    	r=r+Templator.parseContext(doc,"{{"+args[0]+"["+j+"]"+":"+in+"}}"); // + qualche cosa che è la valutazione dell'input su quel nodo
+		    	r=r+Templator.parseContext(doc,"{{"+args[0]+"["+j+"]"+":"+in+"}}",escape); // + qualche cosa che è la valutazione dell'input su quel nodo
 		    }
 			
 			return r;
