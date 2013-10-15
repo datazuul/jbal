@@ -935,11 +935,19 @@
         </trigger>
             +-->
             
-            <!-- JOpac2 clean news trigger -->
-            <trigger name="clean-news"
+        <!-- JOpac2 clean news trigger -->
+        <trigger name="clean-news"
                  target="clean-news-role"
                  concurrent-runs="false">
           <cron>0 0 23 * * ? *</cron>
+
+        </trigger>
+        
+        <!-- JOpac2 catalogSearch truncate ricerche/ricerche_dettaglio tables -->
+        <trigger name="truncate-ricerche"
+                 target="truncate-ricerche-role"
+                 concurrent-runs="false">
+          <cron>0 0 6,11,13,15,17,19,21,23 * * ? *</cron>
 
         </trigger>
             
@@ -948,6 +956,10 @@
     
     <!-- JOpac2 cron component -->
     <component class="JSites.cron.CleanNews" logger="JSites.cron.test" role="clean-news-role">
+    	<datasources>WEB-INF/dbConnections.xml</datasources>
+    </component>
+    
+    <component class="JSites.cron.TruncateTablesRicerche" logger="JSites.cron.test" role="truncate-ricerche-role">
     	<datasources>WEB-INF/dbConnections.xml</datasources>
     </component>
 
