@@ -1,0 +1,2 @@
+This project aims to develop a java library to access different bibliographic record types with a uniform interface api. The starting point is some code developed for an opensource opac engine. Because the record interface code part of that project has been used for other projects I decided to publish in a different package and as a separate library.
+The library creates an interface to access, manipulate and compare records from different sources and with different syntaxes (raw text, iso2709, xml, unimarc, marc21, sutrs, ...).
